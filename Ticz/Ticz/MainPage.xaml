@@ -8,6 +8,48 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Border VerticalAlignment="Top" Canvas.ZIndex="100">
+            <local:ucToastList DataContext="{Binding Notifications}"/>
+        </Border>
+        
+        <Pivot ItemsSource="{Binding MyDeviceGroups}">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <Grid x:Name="grid">
+                        <TextBlock Text="{Binding DeviceGroupName}" />
+                    </Grid>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <Pivot.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <ListView ItemsSource="{Binding Devices}" ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="0,0,0,5" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <local:myLightSwitch DataContext="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
     </Grid>
+    <Page.BottomAppBar>
+        <AppBar IsOpen="True" IsSticky="True">
+            <StackPanel Orientation="Horizontal">
+                <AppBarButton Name="settings" Icon="Setting" Label="settings" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
+                <AppBarButton Name="Refresh" Icon="Refresh" Label="Refresh" Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+        </AppBar>
+    </Page.BottomAppBar>
 </Page>

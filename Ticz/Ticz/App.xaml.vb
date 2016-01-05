@@ -4,6 +4,8 @@
 NotInheritable Class App
     Inherits Application
 
+    Public myViewModel As New TiczViewModel
+
     ''' <summary>
     ''' Initializes a new instance of the App class.
     ''' </summary>
