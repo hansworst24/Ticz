@@ -13,49 +13,30 @@
     
     mc:Ignorable="d">
     <UserControl.Resources>
+        <local:TypeImageToDataTemplateConvertor x:Key="myImageConvertor"/>
+        
         <Storyboard x:Name="FadeOutMessage">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ThisMessage">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation To="50" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/> 
         </Storyboard>
         <Storyboard x:Name="FadeInMessage">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ThisMessage">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Name="SetInfoIcon">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ErrorIcon">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="InfoIcon">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Name="SetErrorIcon">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="InfoIcon">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ErrorIcon">
-                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation To="0" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/>
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="ThisMessage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="ThisMessage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,2,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="ErrorIcon" Grid.Column="0" Source="/Images/transport_error.png" Width="40" Height="40" VerticalAlignment="Top"/>
-        <Image x:Name="InfoIcon" Grid.Column="0" Source="/Images/information.png" Width="40" Height="40" VerticalAlignment="Top"/>
+        <Viewbox x:Name="Icon" Margin="10,0,0,0" Grid.Column="0" Grid.RowSpan="2" Height="30" Width="30" Stretch="Uniform">
+            <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding TypeImg, Converter={StaticResource myImageConvertor}}"/>
+        </Viewbox>
         <Border  Grid.Column="1"
                         CornerRadius="0" Opacity="1"
                         BorderThickness="1"
                         Margin="4" Padding="4">
 
-            <TextBlock Text="{Binding msg}" Style="{ThemeResource BodyTextBlockStyle}" 
+            <TextBlock Text="{Binding msg}" Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center" 
                              TextWrapping="Wrap"/>
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding isGoing}"  Value="True">
@@ -64,16 +45,17 @@
                 <Core:DataTriggerBehavior Binding="{Binding isGoing}"  Value="False">
                     <Media:ControlStoryboardAction Storyboard="{StaticResource FadeInMessage}" />
                 </Core:DataTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{Binding isError}"  Value="False">
-                    <Media:ControlStoryboardAction Storyboard="{StaticResource SetInfoIcon}" />
-                </Core:DataTriggerBehavior>
                 <Core:DataTriggerBehavior Binding="{Binding isError}"  Value="True">
-                    <Media:ControlStoryboardAction Storyboard="{StaticResource SetErrorIcon}" />
+                    <Core:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ThisMessage}" Value="DarkRed"/>
                 </Core:DataTriggerBehavior>
-
+                <Core:DataTriggerBehavior Binding="{Binding isError}"  Value="False">
+                    <Core:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ThisMessage}" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Border>
-
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="MessageTransform" Y="50"/>
+        </Grid.RenderTransform>
     </Grid>
 </UserControl>
     
