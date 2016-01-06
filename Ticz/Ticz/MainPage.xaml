@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Border VerticalAlignment="Bottom" Canvas.ZIndex="100">
-            <local:ucToastList DataContext="{Binding Notifications}"/>
+            <local:ucToastMessage DataContext="{Binding Notify}"/>
         </Border>
         
         <Pivot ItemsSource="{Binding MyDeviceGroups}">

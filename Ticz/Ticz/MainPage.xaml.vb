@@ -17,7 +17,7 @@ Public NotInheritable Class MainPage
 
         'Redirect to Settings Page if IP/Port are not valid
         If Not vm.TiczSettings.ContainsValidIPDetails Then
-            vm.Notifications.AddMessage(New ToastMessageViewModel With {.isError = True, .msg = "IP/Port settings not valid", .secondsToShow = 2})
+            vm.Notify.Update(True, 2, "IP/Port settings not valid")
             Await Me.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, Sub()
                                                                                             Me.Frame.Navigate(GetType(AppSettingsPage))
                                                                                         End Sub)
@@ -45,7 +45,7 @@ Public NotInheritable Class MainPage
             End If
             'Set the datacontext
             Me.DataContext = vm
-            End If
+        End If
 
     End Sub
 
