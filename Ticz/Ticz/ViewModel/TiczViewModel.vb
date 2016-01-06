@@ -51,6 +51,10 @@ Public Class TypeImageToDataTemplateConvertor
                 Return CType(Application.Current.Resources("current"), DataTemplate)
             Case "override_mini"
                 Return CType(Application.Current.Resources("setpoint"), DataTemplate)
+            Case "error"
+                Return CType(Application.Current.Resources("error"), DataTemplate)
+            Case "info"
+                Return CType(Application.Current.Resources("info"), DataTemplate)
             Case Else
                 Return CType(Application.Current.Resources("unknown"), DataTemplate)
 
@@ -488,7 +492,7 @@ Public Class Device
             Me.Data = deserialized.result(0).Data
             setStatus()
         Else
-            app.myViewModel.Notifications.AddMessage(New ToastMessageViewModel With {.isError = True, .msg = "Error getting device status", .secondsToShow = 3})
+            app.myViewModel.Notify.Update(True, 2, "Error getting device status")
             Me.needsInitializing = False
         End If
 
@@ -550,12 +554,12 @@ Public Class Device
     Public Async Function SwitchDevice(url As String) As Task
         Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
         If Not response.IsSuccessStatusCode Then
-            app.myViewModel.Notifications.AddMessage(New ToastMessageViewModel With {.isError = True, .msg = "Error switching device", .secondsToShow = 3})
+            app.myViewModel.Notify.Update(True, 2, "Error switching device")
         Else
             If Not response.Content Is Nothing Then
                 Dim domoRes As domoResponse = JsonConvert.DeserializeObject(Of domoResponse)(Await response.Content.ReadAsStringAsync())
                 If domoRes.status <> "OK" Then
-                    app.myViewModel.Notifications.AddMessage(New ToastMessageViewModel With {.isError = True, .msg = domoRes.message, .secondsToShow = 3})
+                    app.myViewModel.Notify.Update(True, 2, domoRes.message)
                 End If
                 Me.needsInitializing = False
                 If Me.PassCode <> "" Then Me.PassCode = ""
@@ -623,7 +627,7 @@ Public Class Plans
             Return New retvalue With {.issuccess = True}
         Else
             WriteToDebug("Plans.Load()", response.ReasonPhrase)
-            app.myViewModel.Notifications.AddMessage(New ToastMessageViewModel With {.isError = True, .msg = response.ReasonPhrase, .secondsToShow = 4})
+            app.myViewModel.Notify.Update(True, 2, response.ReasonPhrase)
             Return New retvalue With {.issuccess = False, .err = response.ReasonPhrase}
         End If
 
@@ -663,6 +667,26 @@ End Class
 Public Class ToastMessageViewModel
     Inherits ViewModelBase
     Public Property msg As String
+        Get
+            Return _msg
+        End Get
+        Set(value As String)
+            _msg = value
+            RaisePropertyChanged()
+        End Set
+    End Property
+    Private Property _msg As String
+    Public Property TypeImg As String
+        Get
+            Return _TypeImg
+        End Get
+        Set(value As String)
+            _TypeImg = value
+            RaisePropertyChanged()
+        End Set
+    End Property
+    Private Property _TypeImg As String
+
     Public Property isGoing As Boolean
         Get
             Return _isGoing
@@ -679,6 +703,7 @@ Public Class ToastMessageViewModel
             Return _isError
         End Get
         Set(value As Boolean)
+            If value = True Then TypeImg = "error" Else TypeImg = "info"
             _isError = value
             RaisePropertyChanged("isError")
         End Set
@@ -686,6 +711,29 @@ Public Class ToastMessageViewModel
     Private Property _isError As Boolean
 
     Public Property secondsToShow As Integer
+
+    Public Async Function Update(err As Boolean, show As Integer, message As String) As Task
+        isGoing = False
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         isError = err
+                                                                                                     End Sub)
+
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         msg = message
+                                                                                                     End Sub)
+        Await Task.Delay(New TimeSpan(0, 0, show))
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         isGoing = True
+                                                                                                     End Sub)
+        Await Task.Delay(500)
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         msg = ""
+                                                                                                     End Sub)
+    End Function
+
+    Public Sub New()
+        isGoing = True
+    End Sub
 End Class
 
 
@@ -695,7 +743,7 @@ Public Class TiczViewModel
     Public Property MyDeviceGroups As New List(Of DeviceGroup)
     Public Property MyPlans As New Plans
     Public Property TiczSettings As New AppSettings
-    Public Property Notifications As New ToastListViewModel
+    Public Property Notify As New ToastMessageViewModel
 
     Public ReadOnly Property GoToSettingsCommand As RelayCommand
         Get
@@ -717,7 +765,7 @@ Public Class TiczViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         For Each d In myDevices.result
-                                            Await d.getStatus()
+                                            d.getStatus()
                                         Next
                                     End Sub)
         End Get
