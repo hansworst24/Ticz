@@ -45,7 +45,7 @@
         </Pivot>
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsOpen="True" IsSticky="True">
+        <AppBar IsOpen="False" IsSticky="False">
             <StackPanel Orientation="Horizontal">
                 <AppBarButton Name="settings" Icon="Setting" Label="settings" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
                 <AppBarButton Name="Refresh" Icon="Refresh" Label="Refresh" Command="{Binding RefreshCommand}"/>
