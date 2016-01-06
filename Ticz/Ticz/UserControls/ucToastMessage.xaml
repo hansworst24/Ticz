@@ -55,7 +55,7 @@
                         BorderThickness="1"
                         Margin="4" Padding="4">
 
-            <TextBlock Text="{Binding msg}" FontSize="{ThemeResource TextStyleLargeFontSize}" 
+            <TextBlock Text="{Binding msg}" Style="{ThemeResource BodyTextBlockStyle}" 
                              TextWrapping="Wrap"/>
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding isGoing}"  Value="True">
