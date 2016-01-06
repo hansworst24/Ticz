@@ -34,7 +34,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <local:myLightSwitch DataContext="{Binding}"/>
+                                        <local:ucDevice DataContext="{Binding}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

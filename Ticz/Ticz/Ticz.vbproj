@@ -116,8 +116,8 @@
     <Compile Include="settings.xaml.vb">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\myLightSwitch.xaml.vb">
-      <DependentUpon>myLightSwitch.xaml</DependentUpon>
+    <Compile Include="UserControls\ucDevice.xaml.vb">
+      <DependentUpon>ucDevice.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucToastList.xaml.vb">
       <DependentUpon>ucToastList.xaml</DependentUpon>
@@ -161,7 +161,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\myLightSwitch.xaml">
+    <Page Include="UserControls\ucDevice.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
