@@ -483,7 +483,7 @@ Public Class Device
         '            Me.IconURI = "zut" 'Trigger iNotify
     End Function
 
-    Public Async Function getStatus() As Task
+    Public Async Function getStatus() As Task(Of retvalue)
         needsInitializing = True
         Dim response As HttpResponseMessage = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
         If response.IsSuccessStatusCode Then
@@ -491,9 +491,11 @@ Public Class Device
             Me.Status = deserialized.result(0).Status
             Me.Data = deserialized.result(0).Data
             setStatus()
+            Return New retvalue With {.issuccess = 1}
         Else
             app.myViewModel.Notify.Update(True, 2, "Error getting device status")
             Me.needsInitializing = False
+            Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
         End If
 
     End Function
@@ -765,7 +767,9 @@ Public Class TiczViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         For Each d In myDevices.result
-                                            d.getStatus()
+                                            Dim ret As retvalue = Await d.getStatus()
+                                            'Exit the for loop if for one device we couldn't get the status
+                                            If Not ret.issuccess Then Exit For
                                         Next
                                     End Sub)
         End Get
@@ -802,9 +806,6 @@ Public Class TiczViewModel
         End Set
     End Property
     Private Property _myFavourites As Devices
-
-
-
 
 
     Public Sub New()
