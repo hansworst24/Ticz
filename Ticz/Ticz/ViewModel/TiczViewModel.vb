@@ -726,6 +726,8 @@ Public Class Device
                 If domoRes.status <> "OK" Then
                     app.myViewModel.Notify.Update(True, 2, domoRes.message)
                     Return New retvalue With {.err = "Error switching device", .issuccess = 0}
+                Else
+                    app.myViewModel.Notify.Update(False, 2, "Device switched")
                 End If
                 Return New retvalue With {.issuccess = 1}
             End If
@@ -908,11 +910,15 @@ Public Class ToastMessageViewModel
         End Set
     End Property
     Private Property _msg As String
-    Public ReadOnly Property IconDataTemplate As DataTemplate
+    Public Property IconDataTemplate As DataTemplate
         Get
             If isError Then Return CType(Application.Current.Resources("error"), DataTemplate) Else Return CType(Application.Current.Resources("info"), DataTemplate)
         End Get
+        Set(value As DataTemplate)
+            RaisePropertyChanged()
+        End Set
     End Property
+    Private Property _IconDataTemplate As DataTemplate
 
     Public Property isGoing As Boolean
         Get
@@ -926,6 +932,16 @@ Public Class ToastMessageViewModel
     Private Property _isGoing As Boolean
 
     Public Property isError As Boolean
+        Get
+            Return _isError
+        End Get
+        Set(value As Boolean)
+            _isError = value
+            RaisePropertyChanged()
+            RaisePropertyChanged("IconDataTemplate")
+        End Set
+    End Property
+    Private Property _isError As Boolean
 
     Public Property secondsToShow As Integer
 
