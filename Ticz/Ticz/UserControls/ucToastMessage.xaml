@@ -13,8 +13,6 @@
     
     mc:Ignorable="d">
     <UserControl.Resources>
-        <local:TypeImageToDataTemplateConvertor x:Key="myImageConvertor"/>
-        
         <Storyboard x:Name="FadeOutMessage">
             <DoubleAnimation To="50" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/> 
         </Storyboard>
@@ -29,7 +27,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Viewbox x:Name="Icon" Margin="10,0,0,0" Grid.Column="0" Grid.RowSpan="2" Height="30" Width="30" Stretch="Uniform">
-            <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding TypeImg, Converter={StaticResource myImageConvertor}}"/>
+            <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
         </Viewbox>
         <Border  Grid.Column="1"
                         CornerRadius="0" Opacity="1"

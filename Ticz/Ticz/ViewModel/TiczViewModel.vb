@@ -201,6 +201,7 @@ Public Class Devices
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(body)
             result.Clear()
             For Each r In deserialized.result
+                r.Initialize()
                 r.setStatus()
                 result.Add(r)
             Next
@@ -351,11 +352,7 @@ Public Class Device
     End Property
 
 
-    Public ReadOnly Property Icon As DataTemplate
-        Get
-            Return CType(Application.Current.Resources("lightbulb"), DataTemplate)
-        End Get
-    End Property
+    Public Property IconDataTemplate As DataTemplate
 
 
     Public Property PassCode As String
@@ -630,6 +627,46 @@ Public Class Device
         isOn = False
         PlanIDs = New List(Of Integer)
         ShowPassCodeInput = False
+
+    End Sub
+
+    ''' <summary>
+    ''' Based on the JSON properties of the Device, set additional properties of the ViewModel. 
+    ''' </summary>
+    Public Sub Initialize()
+        'Set the IconDataTemplate to reflect the device's Type
+        Select Case TypeImg
+            Case "lightbulb"
+                IconDataTemplate = CType(Application.Current.Resources("lightbulb"), DataTemplate)
+            Case "contact"
+                IconDataTemplate = CType(Application.Current.Resources("contact"), DataTemplate)
+            Case "temperature"
+                IconDataTemplate = CType(Application.Current.Resources("temperature"), DataTemplate)
+            Case "LogitechMediaServer"
+                IconDataTemplate = CType(Application.Current.Resources("music"), DataTemplate)
+            Case "hardware"
+                IconDataTemplate = CType(Application.Current.Resources("percentage"), DataTemplate)
+            Case "doorbell"
+                IconDataTemplate = CType(Application.Current.Resources("doorbell"), DataTemplate)
+            Case "counter"
+                IconDataTemplate = CType(Application.Current.Resources("counter"), DataTemplate)
+            Case "Media"
+                IconDataTemplate = CType(Application.Current.Resources("media"), DataTemplate)
+            Case "current"
+                IconDataTemplate = CType(Application.Current.Resources("current"), DataTemplate)
+            Case "override_mini"
+                IconDataTemplate = CType(Application.Current.Resources("setpoint"), DataTemplate)
+            Case "error"
+                IconDataTemplate = CType(Application.Current.Resources("error"), DataTemplate)
+            Case "info"
+                IconDataTemplate = CType(Application.Current.Resources("info"), DataTemplate)
+            Case "scene"
+                IconDataTemplate = CType(Application.Current.Resources("scene"), DataTemplate)
+            Case "group"
+                IconDataTemplate = CType(Application.Current.Resources("group"), DataTemplate)
+            Case Else
+                IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
+        End Select
     End Sub
 End Class
 Public Class DeviceGroup
@@ -714,16 +751,11 @@ Public Class ToastMessageViewModel
         End Set
     End Property
     Private Property _msg As String
-    Public Property TypeImg As String
+    Public ReadOnly Property IconDataTemplate As DataTemplate
         Get
-            Return _TypeImg
+            If isError Then Return CType(Application.Current.Resources("error"), DataTemplate) Else Return CType(Application.Current.Resources("info"), DataTemplate)
         End Get
-        Set(value As String)
-            _TypeImg = value
-            RaisePropertyChanged()
-        End Set
     End Property
-    Private Property _TypeImg As String
 
     Public Property isGoing As Boolean
         Get
@@ -737,16 +769,6 @@ Public Class ToastMessageViewModel
     Private Property _isGoing As Boolean
 
     Public Property isError As Boolean
-        Get
-            Return _isError
-        End Get
-        Set(value As Boolean)
-            If value = True Then TypeImg = "error" Else TypeImg = "info"
-            _isError = value
-            RaisePropertyChanged("isError")
-        End Set
-    End Property
-    Private Property _isError As Boolean
 
     Public Property secondsToShow As Integer
 
