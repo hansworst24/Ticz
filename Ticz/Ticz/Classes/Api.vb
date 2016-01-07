@@ -28,6 +28,14 @@
         Return String.Format("http://{0}:{1}/json.htm?type=devices&rid={2}", serverIP, serverPort, idx)
     End Function
 
+    Public Function SwitchProtectedScene(idx As String, switchstate As String) As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchscene&&idx={2}&switchcmd={3}", serverIP, serverPort, idx, switchstate)
+    End Function
+
+
+    Public Function SwitchScene(idx As String, switchstate As String) As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchscene&&idx={2}&switchcmd={3}", serverIP, serverPort, idx, switchstate)
+    End Function
 
     Public Function SwitchProtectedLight(idx As String, switchstate As String, passcode As String) As String
         'Hack that forces a random password, when no password was given. Domoticz didn't check for a passcode for protected switches properly. This got fixed in commit
