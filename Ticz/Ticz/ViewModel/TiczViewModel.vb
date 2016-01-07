@@ -55,6 +55,8 @@ Public Class TypeImageToDataTemplateConvertor
                 Return CType(Application.Current.Resources("error"), DataTemplate)
             Case "info"
                 Return CType(Application.Current.Resources("info"), DataTemplate)
+            Case "scene"
+                Return CType(Application.Current.Resources("scene"), DataTemplate)
             Case Else
                 Return CType(Application.Current.Resources("unknown"), DataTemplate)
 
@@ -333,6 +335,21 @@ Public Class Device
 
     Const Visible As String = "Visible"
     Const Collapsed As String = "Collapsed"
+
+    Public ReadOnly Property BatteryLevelVisibility As String
+        Get
+            If BatteryLevel <= 100 Then Return Visible Else Return Collapsed
+        End Get
+    End Property
+
+    Public ReadOnly Property BatteryLevelString As String
+        Get
+            Return String.Format("{0} %", BatteryLevel)
+        End Get
+    End Property
+
+
+
 
     Public Property PassCode As String
         Get
