@@ -57,6 +57,8 @@ Public Class TypeImageToDataTemplateConvertor
                 Return CType(Application.Current.Resources("info"), DataTemplate)
             Case "scene"
                 Return CType(Application.Current.Resources("scene"), DataTemplate)
+            Case "group"
+                Return CType(Application.Current.Resources("group"), DataTemplate)
             Case Else
                 Return CType(Application.Current.Resources("unknown"), DataTemplate)
 
@@ -480,6 +482,7 @@ Public Class Device
     Private Property _IconURI As String
 
     Public Function setStatus()
+
         If Not SwitchType Is Nothing Then
             Select Case SwitchType
                 Case "On/Off"
@@ -493,8 +496,19 @@ Public Class Device
                     If Status = "Open" Then isOn = True Else isOn = False
             End Select
         Else
-            CanBeSwitched = False
-            isOn = True
+            If Not Type Is Nothing Then
+                Select Case Type
+                    Case "Scene"
+                        CanBeSwitched = True
+                        If Status = "Off" Then isOn = False Else isOn = True
+                    Case "Group"
+                        CanBeSwitched = True
+                        If Status = "Off" Then isOn = False Else isOn = True
+                    Case Else
+                        CanBeSwitched = False
+                        isOn = True
+                End Select
+            End If
         End If
         needsInitializing = False
         '            Me.IconURI = "zut" 'Trigger iNotify
