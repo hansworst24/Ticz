@@ -599,9 +599,9 @@ Public Class Device
                                             Exit Sub
                                         End If
                                         If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
+                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "On", PassCode))
                                             ShowPassCodeInput = False
                                             PassCode = ""
-                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "On", PassCode))
                                         Else
                                             Await SwitchDevice((New Api).SwitchScene(idx, "On"))
                                         End If
