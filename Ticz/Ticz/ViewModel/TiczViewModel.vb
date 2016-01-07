@@ -351,6 +351,11 @@ Public Class Device
     End Property
 
 
+    Public ReadOnly Property Icon As DataTemplate
+        Get
+            Return CType(Application.Current.Resources("lightbulb"), DataTemplate)
+        End Get
+    End Property
 
 
     Public Property PassCode As String

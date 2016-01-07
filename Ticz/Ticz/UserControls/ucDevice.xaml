@@ -34,7 +34,7 @@
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform">
-                        <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding TypeImg, Converter={StaticResource myImageConvertor}}"/>
+                        <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding Icon}"/>
                     </Viewbox>
                     <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}"/>
                     <TextBlock x:Uid="Data" VerticalAlignment="Center" TextTrimming="WordEllipsis" Grid.Row="1" Grid.Column="1" Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Data}"/>
