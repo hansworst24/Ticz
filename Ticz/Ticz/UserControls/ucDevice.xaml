@@ -20,10 +20,11 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Button x:Name="DeviceButton"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
+        <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
             <Button.Content>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
@@ -36,9 +37,9 @@
                     <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform">
                         <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
                     </Viewbox>
-                    <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}"/>
-                    <TextBlock x:Uid="Data" VerticalAlignment="Center" TextTrimming="WordEllipsis" Grid.Row="1" Grid.Column="1" Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Data}"/>
-                    <Grid Grid.Row="1" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}"/>
+                    <TextBlock x:Uid="Status" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Status}"/>
+                    <Grid Grid.Row="0" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -63,10 +64,17 @@
                                 </ContentPresenter.ContentTemplate>
                             </ContentPresenter>
                         </Viewbox>
-                        <TextBlock Margin="10,0,0,0"  Grid.Column="1" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" FontSize="12" Foreground="#FF808080" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" FontSize="12" Foreground="#FF808080" VerticalAlignment="Center"/>
                     </Grid>
-
-                    <ProgressBar Grid.Row="2" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>
+                    <Grid Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding OnOffButtonVisibility}" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="ButtonOn" Margin="10,0,10,0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
+                        <Button x:Name="ButtonOff" Margin="10,0,10,0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
+                    </Grid>
+                    <ProgressBar Grid.Row="3" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>
                 </Grid>
             </Button.Content>
             <Interactivity:Interaction.Behaviors>
@@ -84,11 +92,9 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock VerticalAlignment="Center" Grid.Column="0" Text="Password"  Style="{ThemeResource BodyTextBlockStyle}"/>
                     <TextBox VerticalAlignment="Center" Grid.Column="1" Margin="20,0,0,0" Text="{Binding PassCode, Mode=TwoWay}"/>
-                    <Button VerticalAlignment="Center" Grid.Column="2" Content="Go !" Command="{Binding ProtectedButtonPressedCommand}"/>
                 </Grid>
             </Button.Content>
             <Interactivity:Interaction.Behaviors>

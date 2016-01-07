@@ -201,7 +201,11 @@ Public Class Devices
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(body)
             result.Clear()
             For Each r In deserialized.result
+                'Hack to show the Data Field as Status, if there is no Status Field
+                If r.Status = "" Then r.Status = r.Data
+                'Set additional (ViewModel) Properties based on the received json data
                 r.Initialize()
+
                 r.setStatus()
                 result.Add(r)
             Next
@@ -333,11 +337,10 @@ Public Class Device
     Public Property idx As String
     Public Property CameraIdx As String
 #End Region
+#Region "ViewModel Properties"
 
-    Private app As App = CType(Application.Current, App)
-
-    Const Visible As String = "Visible"
-    Const Collapsed As String = "Collapsed"
+    Public Property SwitchOnURI As String
+    Public Property SwitchOffURI As String
 
     Public ReadOnly Property BatteryLevelVisibility As String
         Get
@@ -388,8 +391,22 @@ Public Class Device
         End Set
     End Property
     Private _DetailsVisiblity As String
-    Public Property IsDimmer As Boolean
-    Public Property CanBeSwitched As Boolean
+
+    Public Property OnOffButtonVisibility As String
+
+
+    Public Property isMixed As Boolean
+        Get
+            Return _isMixed
+        End Get
+        Set(value As Boolean)
+            _isMixed = value
+            RaisePropertyChanged("isMixed")
+        End Set
+    End Property
+    Private Property _isMixed As Boolean
+
+
     Public Property isOn As Boolean
         Get
             Return _isOn
@@ -483,6 +500,18 @@ Public Class Device
     End Property
     Private Property _IconURI As String
 
+#End Region
+
+    Private app As App = CType(Application.Current, App)
+
+    Const Visible As String = "Visible"
+    Const Collapsed As String = "Collapsed"
+
+
+    Public Property IsDimmer As Boolean
+    Public Property CanBeSwitched As Boolean
+
+
     Public Function setStatus()
 
         If Not SwitchType Is Nothing Then
@@ -505,7 +534,17 @@ Public Class Device
                         If Status = "Off" Then isOn = False Else isOn = True
                     Case "Group"
                         CanBeSwitched = True
-                        If Status = "Off" Then isOn = False Else isOn = True
+                        Select Case Status
+                            Case "Off"
+                                isOn = False
+                                isMixed = False
+                            Case "On"
+                                isOn = True
+                                isMixed = False
+                            Case "Mixed"
+                                isOn = True
+                                isMixed = True
+                        End Select
                     Case Else
                         CanBeSwitched = False
                         isOn = True
@@ -517,14 +556,27 @@ Public Class Device
     End Function
 
     Public Async Function getStatus() As Task(Of retvalue)
+        Dim response As HttpResponseMessage
         needsInitializing = True
-        Dim response As HttpResponseMessage = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
+        If Type = "Group" Or Type = "Scene" Then
+            response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+        Else
+            response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
+        End If
         If response.IsSuccessStatusCode Then
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
-            Me.Status = deserialized.result(0).Status
-            Me.Data = deserialized.result(0).Data
-            setStatus()
-            Return New retvalue With {.issuccess = 1}
+            Dim myDevice As Device = (From d In deserialized.result Where d.idx = idx Select d).FirstOrDefault()
+            If Not myDevice Is Nothing Then
+                Me.Status = myDevice.Status
+                Me.Data = myDevice.Data
+                If Me.Status = "" Then Me.Status = Me.Data
+                setStatus()
+                Return New retvalue With {.issuccess = 1}
+            Else
+                app.myViewModel.Notify.Update(True, 2, "Error getting device status")
+                Me.needsInitializing = False
+                Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
+            End If
         Else
             app.myViewModel.Notify.Update(True, 2, "Error getting device status")
             Me.needsInitializing = False
@@ -533,49 +585,126 @@ Public Class Device
 
     End Function
 
-    Public ReadOnly Property ProtectedButtonPressedCommand As RelayCommand
+    Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.ProtectedButtonPressedCommand()", String.Format("Code : {0}", PassCode))
-                                        Dim url As String
-                                        Me.needsInitializing = True
-                                        If Me.Status = "Off" Then
-                                            url = (New Api).SwitchProtectedLight(Me.idx, "On", PassCode)
-                                        Else
-                                            url = (New Api).SwitchProtectedLight(Me.idx, "Off", PassCode)
+                                        WriteToDebug("Device.GroupSwitchOn()", "executed")
+                                        If [Protected] And ShowPassCodeInput = False Then
+                                            ShowPassCodeInput = True
+                                            Exit Sub
                                         End If
-                                        ShowPassCodeInput = False
-                                        Await SwitchDevice(url)
+                                        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
+                                            ShowPassCodeInput = False
+                                            PassCode = ""
+                                            Exit Sub
+                                        End If
+                                        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
+                                            ShowPassCodeInput = False
+                                            PassCode = ""
+                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "On", PassCode))
+                                        Else
+                                            Await SwitchDevice((New Api).SwitchScene(idx, "On"))
+                                        End If
+
                                     End Sub)
+
         End Get
     End Property
+
+    Public ReadOnly Property GroupSwitchOff As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        WriteToDebug("Device.GroupSwitchOff()", "executed")
+                                        If [Protected] And ShowPassCodeInput = False Then
+                                            ShowPassCodeInput = True
+                                            Exit Sub
+                                        End If
+                                        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
+                                            ShowPassCodeInput = False
+                                            PassCode = ""
+                                            Exit Sub
+                                        End If
+                                        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
+                                            ShowPassCodeInput = False
+                                            PassCode = ""
+                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "Off", PassCode))
+                                        Else
+                                            Await SwitchDevice((New Api).SwitchScene(idx, "Off"))
+                                        End If
+
+                                    End Sub)
+
+        End Get
+    End Property
+
+
+
 
     Public ReadOnly Property ButtonPressedCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim url As String
-                                        Me.needsInitializing = True
                                         If Me.CanBeSwitched Then
-                                            If Me.Protected Then
-                                                If Me.ShowPassCodeInput Then
-                                                    Me.ShowPassCodeInput = False
-                                                Else
-                                                    Me.ShowPassCodeInput = True
-                                                End If
+                                            Dim switchToState As String
+                                            Dim url As String
+                                            Me.needsInitializing = True
+                                            'Exit Sub if the device represents a group (we have seperate buttons for that
+                                            If Type = "Group" Then
+                                                Me.getStatus()
                                                 Me.needsInitializing = False
                                                 Exit Sub
-                                            Else
-                                                If Me.Status = "Off" Then
-                                                    url = (New Api).SwitchLight(Me.idx, "On")
+                                            End If
+                                            If Me.isOn Then switchToState = "Off" Else switchToState = "On"
+                                            'Open the PassCode box if the device is protected and the PassCode box is not visible
+                                            If [Protected] And ShowPassCodeInput = False Then
+                                                ShowPassCodeInput = True
+                                                Me.needsInitializing = False
+                                                Exit Sub
+                                            End If
+                                            'Close the passcode input if it's open and no passcode was provided
+                                            If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
+                                                ShowPassCodeInput = False
+                                                Me.needsInitializing = False
+                                                Exit Sub
+                                            End If
+                                            'Set the URI for switching the device
+                                            If [Protected] Then
+                                                If Type = "Group" Or Type = "Scene" Then
+                                                    url = (New Api).SwitchProtectedScene(Me.idx, switchToState, PassCode)
+                                                ElseIf SwitchType = "On/Off" Or SwitchType = "Media Player" Or SwitchType = "Contact" Then
+                                                    url = (New Api).SwitchProtectedLight(Me.idx, switchToState, PassCode)
                                                 Else
-                                                    url = (New Api).SwitchLight(Me.idx, "Off")
+                                                    'Exit Sub for the moment, if the device is neither of the types we checked
+                                                    Await getStatus()
+                                                    ShowPassCodeInput = False
+                                                    Exit Sub
                                                 End If
-                                                Await SwitchDevice(url)
+                                                ShowPassCodeInput = False
+                                            Else
+                                                If Type = "Group" Or Type = "Scene" Then
+                                                    url = (New Api).SwitchScene(Me.idx, switchToState)
+                                                ElseIf SwitchType = "On/Off" Or SwitchType = "Media Player" Or SwitchType = "Contact" Then
+                                                    url = (New Api).SwitchLight(Me.idx, switchToState)
+                                                Else
+                                                    'Exit Sub for the moment, if the device is neither of the types we checked
+                                                    Await getStatus()
+                                                    Exit Sub
+                                                End If
+
+                                            End If
+
+                                            'Execute the switch
+                                            If Not url = "" Then
+                                                If Me.PassCode <> "" Then Me.PassCode = ""
+                                                Dim ret As retvalue = Await SwitchDevice(url)
+                                                Me.needsInitializing = False
+                                                Await getStatus()
                                             End If
                                         Else
-                                            'Only retreive the status of the device, if it can't be switched
-                                            Await Me.getStatus()
+                                            'Only get the status of the device if it can't be switched
+                                            Await getStatus()
                                         End If
+
+
                                     End Sub)
 
         End Get
@@ -586,26 +715,22 @@ Public Class Device
     ''' </summary>
     ''' <param name="url"></param>
     ''' <returns></returns>
-    Public Async Function SwitchDevice(url As String) As Task
+    Public Async Function SwitchDevice(url As String) As Task(Of retvalue)
         Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
         If Not response.IsSuccessStatusCode Then
             app.myViewModel.Notify.Update(True, 2, "Error switching device")
+            Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
                 Dim domoRes As domoResponse = JsonConvert.DeserializeObject(Of domoResponse)(Await response.Content.ReadAsStringAsync())
                 If domoRes.status <> "OK" Then
                     app.myViewModel.Notify.Update(True, 2, domoRes.message)
+                    Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                 End If
-                Me.needsInitializing = False
-                If Me.PassCode <> "" Then Me.PassCode = ""
-                Await Me.getStatus()
+                Return New retvalue With {.issuccess = 1}
             End If
         End If
     End Function
-
-
-
-
     Public ReadOnly Property ButtonRightTappedCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
@@ -622,6 +747,7 @@ Public Class Device
 
 
     Public Sub New()
+        OnOffButtonVisibility = Collapsed
         needsInitializing = False
         DetailsVisiblity = Collapsed
         isOn = False
@@ -667,6 +793,37 @@ Public Class Device
             Case Else
                 IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
         End Select
+
+        'Check if the device supports switching on/off.
+        'TODO : Probably better logic exists on how to determine if a device can switch or not, but for now this will do.
+        If Not SwitchType Is Nothing Then
+            Select Case SwitchType
+                Case "On/Off"
+                    CanBeSwitched = True
+                    If Status = "On" Then isOn = True Else isOn = False
+                Case "Media Player"
+                    CanBeSwitched = True
+                    If Status = "Off" Then isOn = False Else isOn = True
+                Case "Contact"
+                    CanBeSwitched = True
+                    If Status = "Open" Then isOn = True Else isOn = False
+            End Select
+        Else
+            If Not Type Is Nothing Then
+                Select Case Type
+                    Case "Scene"
+                        CanBeSwitched = True
+                        If Status = "Off" Then isOn = False Else isOn = True
+                    Case "Group"
+                        CanBeSwitched = True
+                        OnOffButtonVisibility = Visible
+                        If Status = "Off" Then isOn = False Else isOn = True
+                    Case Else
+                        CanBeSwitched = False
+                        isOn = True
+                End Select
+            End If
+        End If
     End Sub
 End Class
 Public Class DeviceGroup
