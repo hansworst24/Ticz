@@ -1,4 +1,5 @@
 ﻿Imports System.Net
+Imports System.Threading
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
@@ -573,12 +574,12 @@ Public Class Device
                 setStatus()
                 Return New retvalue With {.issuccess = 1}
             Else
-                app.myViewModel.Notify.Update(True, 2, "Error getting device status")
+                app.myViewModel.Notify.Update(True, "Error getting device status")
                 Me.needsInitializing = False
                 Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
             End If
         Else
-            app.myViewModel.Notify.Update(True, 2, "Error getting device status")
+            app.myViewModel.Notify.Update(True, "Error getting device status")
             Me.needsInitializing = False
             Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
         End If
@@ -718,16 +719,16 @@ Public Class Device
     Public Async Function SwitchDevice(url As String) As Task(Of retvalue)
         Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
         If Not response.IsSuccessStatusCode Then
-            app.myViewModel.Notify.Update(True, 2, "Error switching device")
+            app.myViewModel.Notify.Update(True, "Error switching device")
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
                 Dim domoRes As domoResponse = JsonConvert.DeserializeObject(Of domoResponse)(Await response.Content.ReadAsStringAsync())
                 If domoRes.status <> "OK" Then
-                    app.myViewModel.Notify.Update(True, 2, domoRes.message)
+                    app.myViewModel.Notify.Update(True, domoRes.message)
                     Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                 Else
-                    app.myViewModel.Notify.Update(False, 2, "Device switched")
+                    app.myViewModel.Notify.Update(False, "Device switched")
                 End If
                 Return New retvalue With {.issuccess = 1}
             End If
@@ -861,7 +862,7 @@ Public Class Plans
             Return New retvalue With {.issuccess = True}
         Else
             WriteToDebug("Plans.Load()", response.ReasonPhrase)
-            app.myViewModel.Notify.Update(True, 2, response.ReasonPhrase)
+            app.myViewModel.Notify.Update(True, response.ReasonPhrase)
             Return New retvalue With {.issuccess = False, .err = response.ReasonPhrase}
         End If
 
@@ -900,6 +901,8 @@ End Class
 
 Public Class ToastMessageViewModel
     Inherits ViewModelBase
+
+    Public Property popupTask As Task
 
 
     'Public ReadOnly Property NotificationMargin As Thickness
@@ -972,24 +975,73 @@ Public Class ToastMessageViewModel
 
     Public Property secondsToShow As Integer
 
-    Public Async Function Update(err As Boolean, show As Integer, message As String) As Task
-        isGoing = False
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                         isError = err
-                                                                                                     End Sub)
+    'Public Async Function Update(err As Boolean, show As Integer, message As String) As Task
+    '    isGoing = False
+    '    Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                     isError = err
+    '                                                                                                 End Sub)
 
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                         msg = message
-                                                                                                     End Sub)
-        Await Task.Delay(New TimeSpan(0, 0, show))
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '    Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                     msg = message
+    '                                                                                                 End Sub)
+    '    Await Task.Delay(New TimeSpan(0, 0, show))
+    '    Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                     isGoing = True
+    '                                                                                                 End Sub)
+    '    Await Task.Delay(500)
+    '    Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                     msg = ""
+    '                                                                                                 End Sub)
+    'End Function
+
+    Public cts As New CancellationTokenSource
+    Public ct As CancellationToken = cts.Token
+
+    Private Async Function ShowMessage(ct As CancellationToken, intSeconds As Integer) As Task
+        Dim timeWaited As Integer
+        While Not ct.IsCancellationRequested
+            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Async Sub()
+                                                                                                             isGoing = False
+                                                                                                         End Sub)
+            If intSeconds > 0 Then
+                If intSeconds * 1000 > timeWaited Then
+                    timeWaited += 100
+                    Await Task.Delay(100)
+                Else
+                    cts.Cancel()
+                End If
+            End If
+        End While
+        'cts.Cancel()
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Async Sub()
                                                                                                          isGoing = True
                                                                                                      End Sub)
-        Await Task.Delay(500)
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                         msg = ""
-                                                                                                     End Sub)
+
     End Function
+
+
+    Public Async Function Clear() As Task
+        If ct.CanBeCanceled Then
+            cts.Cancel()
+        End If
+    End Function
+
+
+    Public Async Function Update(err As Boolean, message As String, Optional seconds As Integer = 2) As Task
+        WriteToDebug("ToasMessageViewModel.Update()", "executed")
+        If ct.CanBeCanceled Then
+            cts.Cancel()
+            'Await Task.Delay(500)
+        End If
+        cts = New CancellationTokenSource
+        ct = cts.Token
+        msg = message
+        isError = err
+        popupTask = Await Task.Factory.StartNew(Function() ShowMessage(ct, seconds), ct)
+
+    End Function
+
+
 
     Public Sub New()
         isGoing = True
@@ -1024,11 +1076,35 @@ Public Class TiczViewModel
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
+                                        'Some test-code to run each update request for each device in Paralell.. just because we can. Might come in handy when on slow conneciton
+                                        'Dim tList As New List(Of Task(Of retvalue))
+                                        'Dim tooManyErrors As Boolean
+                                        'Dim errors As Integer
+
+                                        'For Each d In myDevices.result
+                                        '    tList.Add(d.getStatus())
+                                        'Next
+
+                                        'While (tList.Count > 0 And Not tooManyErrors)
+                                        '    Dim result = Task.WhenAny(tList.ToArray())
+                                        '    tList.Remove(Await result)
+                                        '    If Not (Await (Await result)).issuccess Then
+                                        '        errors += 1
+                                        '        If errors > 3 Then
+                                        '            tooManyErrors = True
+                                        '            WriteToDebug("too many errors", "asdas")
+                                        '        End If
+                                        '    Else
+                                        '        WriteToDebug((Await (Await result)).issuccess, "asdas")
+                                        '    End If
+                                        'End While
+
+
                                         For Each d In myDevices.result
-                                            Dim ret As retvalue = Await d.getStatus()
-                                            'Exit the for loop if for one device we couldn't get the status
-                                            If Not ret.issuccess Then Exit For
+                                            d.getStatus()
+                                            ' WriteToDebug(ret.issuccess, "asdas")
                                         Next
+
                                     End Sub)
         End Get
     End Property

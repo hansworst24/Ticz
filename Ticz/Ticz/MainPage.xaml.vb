@@ -17,13 +17,14 @@ Public NotInheritable Class MainPage
 
         'Redirect to Settings Page if IP/Port are not valid
         If Not vm.TiczSettings.ContainsValidIPDetails Then
-            vm.Notify.Update(True, 2, "IP/Port settings not valid")
+            vm.Notify.Update(True, "IP/Port settings not valid", 0)
             Await Me.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, Sub()
                                                                                             Me.Frame.Navigate(GetType(AppSettingsPage))
                                                                                         End Sub)
 
         Else
             'First Load the (Room) Plans
+            vm.Notify.Update(False, "connecting...", 0)
             Dim retplan As retvalue = Await vm.MyPlans.Load()
             If retplan.issuccess Then
                 'Load the devices
@@ -42,6 +43,9 @@ Public NotInheritable Class MainPage
                 For Each plan In vm.MyPlans.result.OrderBy(Function(x) x.Order)
                     vm.MyDeviceGroups.Add(New DeviceGroup With {.DeviceGroupName = plan.Name, .Devices = (From d In vm.myDevices.result Where d.PlanIDs.Contains(plan.idx) Select d).ToObservableCollection()})
                 Next
+                vm.Notify.Clear()
+            Else
+                vm.Notify.Update(True, "connection error", 0)
             End If
             'Set the datacontext
             Me.DataContext = vm
