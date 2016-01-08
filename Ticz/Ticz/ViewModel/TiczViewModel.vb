@@ -589,24 +589,7 @@ Public Class Device
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.GroupSwitchOn()", "executed")
-                                        If [Protected] And ShowPassCodeInput = False Then
-                                            ShowPassCodeInput = True
-                                            Exit Sub
-                                        End If
-                                        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
-                                            ShowPassCodeInput = False
-                                            PassCode = ""
-                                            Exit Sub
-                                        End If
-                                        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
-                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "On", PassCode))
-                                            ShowPassCodeInput = False
-                                            PassCode = ""
-                                        Else
-                                            Await SwitchDevice((New Api).SwitchScene(idx, "On"))
-                                        End If
-
+                                        Await SwitchGroup("On")
                                     End Sub)
 
         End Get
@@ -615,24 +598,7 @@ Public Class Device
     Public ReadOnly Property GroupSwitchOff As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.GroupSwitchOff()", "executed")
-                                        If [Protected] And ShowPassCodeInput = False Then
-                                            ShowPassCodeInput = True
-                                            Exit Sub
-                                        End If
-                                        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
-                                            ShowPassCodeInput = False
-                                            PassCode = ""
-                                            Exit Sub
-                                        End If
-                                        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
-                                            ShowPassCodeInput = False
-                                            PassCode = ""
-                                            Await SwitchDevice((New Api).SwitchProtectedScene(idx, "Off", PassCode))
-                                        Else
-                                            Await SwitchDevice((New Api).SwitchScene(idx, "Off"))
-                                        End If
-
+                                        Await SwitchGroup("Off")
                                     End Sub)
 
         End Get
@@ -710,6 +676,29 @@ Public Class Device
 
         End Get
     End Property
+
+
+    Public Async Function SwitchGroup(ToStatus As String) As Task
+        WriteToDebug("Device.SwitchGroup()", "executed")
+        If [Protected] And ShowPassCodeInput = False Then
+            ShowPassCodeInput = True
+            Exit Function
+        End If
+        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
+            ShowPassCodeInput = False
+            PassCode = ""
+            Exit Function
+        End If
+        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
+            Await SwitchDevice((New Api).SwitchProtectedScene(idx, ToStatus, PassCode))
+            ShowPassCodeInput = False
+            PassCode = ""
+        Else
+            Await SwitchDevice((New Api).SwitchScene(idx, ToStatus))
+        End If
+
+    End Function
+
 
     ''' <summary>
     ''' Switch the Device On/Off based on the URL provided. The URL can either be for a normal switch, or for a protected switch
