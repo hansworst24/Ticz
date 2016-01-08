@@ -900,6 +900,32 @@ End Class
 
 Public Class ToastMessageViewModel
     Inherits ViewModelBase
+
+
+    'Public ReadOnly Property NotificationMargin As Thickness
+
+    '    Get
+    '        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+    '        If Not rootFrame Is Nothing Then
+    '            Dim p As Page = TryCast(rootFrame.Content, Page)
+    '            If Not p Is Nothing Then
+    '                If p.BottomAppBar.IsOpen Then
+    '                    Return New Thickness(0, 0, 0, 12)
+    '                Else
+    '                    Return New Thickness(0, 0, 0, 0)
+    '                End If
+    '            End If
+    '        Else
+    '            Return New Thickness(0, 0, 0, 0)
+    '        End If
+
+    '    End Get
+    'End Property
+
+
+
+
+
     Public Property msg As String
         Get
             Return _msg
@@ -939,6 +965,7 @@ Public Class ToastMessageViewModel
             _isError = value
             RaisePropertyChanged()
             RaisePropertyChanged("IconDataTemplate")
+            'RaisePropertyChanged("NotificationMargin")
         End Set
     End Property
     Private Property _isError As Boolean

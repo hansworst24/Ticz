@@ -14,14 +14,14 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Name="FadeOutMessage">
-            <DoubleAnimation To="50" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/> 
+            <DoubleAnimation To="80" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/> 
         </Storyboard>
         <Storyboard x:Name="FadeInMessage">
             <DoubleAnimation To="0" Duration="0:0:0.3" Storyboard.TargetProperty="Y" Storyboard.TargetName="MessageTransform"/>
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="ThisMessage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,2,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}">
+    <Grid x:Name="ThisMessage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,2,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -52,7 +52,7 @@
             </Interactivity:Interaction.Behaviors>
         </Border>
         <Grid.RenderTransform>
-            <TranslateTransform x:Name="MessageTransform" Y="50"/>
+            <TranslateTransform x:Name="MessageTransform" Y="0"/>
         </Grid.RenderTransform>
     </Grid>
 </UserControl>

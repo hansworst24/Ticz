@@ -54,10 +54,17 @@ NotInheritable Class App
             ' parameter
             rootFrame.Navigate(GetType(MainPage), e.Arguments)
         End If
-
+        ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible)
+        AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
         ' Ensure the current window is active
         Window.Current.Activate()
     End Sub
+
+    Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
+        Dim a As String
+        WriteToDebug("asdasdda", "asdasd")
+    End Sub
+
 
     ''' <summary>
     ''' Invoked when Navigation to a certain page fails

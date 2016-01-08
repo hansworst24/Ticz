@@ -52,4 +52,15 @@ Public NotInheritable Class MainPage
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
 
     End Sub
+
+    Private Sub AppBar_SizeChanged(sender As Object, e As SizeChangedEventArgs)
+
+    End Sub
+
+    Private Sub AppBar_Tapped(sender As Object, e As TappedRoutedEventArgs)
+        Dim a As AppBar = CType(sender, AppBar)
+        'If a.IsOpen Then vm.NotifiCationMargin = 36 Else vm.NotificationMargin = 0
+        WriteToDebug("AppBar.AppBar_Tapped()", a.ActualHeight)
+
+    End Sub
 End Class
