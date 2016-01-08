@@ -507,6 +507,10 @@ Public Class Device
 
     Const Visible As String = "Visible"
     Const Collapsed As String = "Collapsed"
+    Const switchOn As String = "On"
+    Const switchOff As String = "Off"
+    Const contactOpen As String = "Open"
+    Const groupMixed As String = "Mixed"
 
 
     Public Property IsDimmer As Boolean
@@ -519,30 +523,30 @@ Public Class Device
             Select Case SwitchType
                 Case "On/Off"
                     CanBeSwitched = True
-                    If Status = "On" Then isOn = True Else isOn = False
+                    If Status = switchOn Then isOn = True Else isOn = False
                 Case "Media Player"
                     CanBeSwitched = True
-                    If Status = "Off" Then isOn = False Else isOn = True
+                    If Status = switchOff Then isOn = False Else isOn = True
                 Case "Contact"
                     CanBeSwitched = True
-                    If Status = "Open" Then isOn = True Else isOn = False
+                    If Status = contactOpen Then isOn = True Else isOn = False
             End Select
         Else
             If Not Type Is Nothing Then
                 Select Case Type
                     Case "Scene"
                         CanBeSwitched = True
-                        If Status = "Off" Then isOn = False Else isOn = True
+                        If Status = switchOff Then isOn = False Else isOn = True
                     Case "Group"
                         CanBeSwitched = True
                         Select Case Status
-                            Case "Off"
+                            Case switchOff
                                 isOn = False
                                 isMixed = False
-                            Case "On"
+                            Case switchOn
                                 isOn = True
                                 isMixed = False
-                            Case "Mixed"
+                            Case groupMixed
                                 isOn = True
                                 isMixed = True
                         End Select
@@ -552,18 +556,18 @@ Public Class Device
                 End Select
             End If
         End If
-        needsInitializing = False
-        '            Me.IconURI = "zut" 'Trigger iNotify
     End Function
 
     Public Async Function getStatus() As Task(Of retvalue)
+        'Await Task.Delay(2000)
         Dim response As HttpResponseMessage
-        needsInitializing = True
         If Type = "Group" Or Type = "Scene" Then
             response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+            'Return New retvalue With {.issuccess = 0, .err = "sorry, groups not allowed"}
         Else
             response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
         End If
+
         If response.IsSuccessStatusCode Then
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
             Dim myDevice As Device = (From d In deserialized.result Where d.idx = idx Select d).FirstOrDefault()
@@ -572,24 +576,25 @@ Public Class Device
                 Me.Data = myDevice.Data
                 If Me.Status = "" Then Me.Status = Me.Data
                 setStatus()
+                needsInitializing = False
                 Return New retvalue With {.issuccess = 1}
             Else
-                app.myViewModel.Notify.Update(True, "Error getting device status")
+                'app.myViewModel.Notify.Update(True, "Error getting device status")
                 Me.needsInitializing = False
                 Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
             End If
         Else
-            app.myViewModel.Notify.Update(True, "Error getting device status")
+            'app.myViewModel.Notify.Update(True, "Error getting device status") 
             Me.needsInitializing = False
             Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
         End If
-
+        needsInitializing = False
     End Function
 
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Await SwitchGroup("On")
+                                        Await SwitchGroup(switchOn)
                                     End Sub)
 
         End Get
@@ -598,7 +603,7 @@ Public Class Device
     Public ReadOnly Property GroupSwitchOff As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Await SwitchGroup("Off")
+                                        Await SwitchGroup(switchOff)
                                     End Sub)
 
         End Get
@@ -620,7 +625,7 @@ Public Class Device
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
-                                            If Me.isOn Then switchToState = "Off" Else switchToState = "On"
+                                            If Me.isOn Then switchToState = switchOff Else switchToState = switchOn
                                             'Open the PassCode box if the device is protected and the PassCode box is not visible
                                             If [Protected] And ShowPassCodeInput = False Then
                                                 ShowPassCodeInput = True
@@ -1065,35 +1070,39 @@ Public Class TiczViewModel
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        'Some test-code to run each update request for each device in Paralell.. just because we can. Might come in handy when on slow conneciton
-                                        'Dim tList As New List(Of Task(Of retvalue))
-                                        'Dim tooManyErrors As Boolean
-                                        'Dim errors As Integer
+                                        Await Notify.Update(False, "refreshing...", 0)
+                                        'Perform some parralelism by starting the refresh of a batch of tasks concurrently
+                                        'Not perse a requirement, but worth coding like this, in case you have a slow network connection and querying the server takes some time
+                                        Dim errors As Integer
 
-                                        'For Each d In myDevices.result
-                                        '    tList.Add(d.getStatus())
-                                        'Next
-
-                                        'While (tList.Count > 0 And Not tooManyErrors)
-                                        '    Dim result = Task.WhenAny(tList.ToArray())
-                                        '    tList.Remove(Await result)
-                                        '    If Not (Await (Await result)).issuccess Then
-                                        '        errors += 1
-                                        '        If errors > 3 Then
-                                        '            tooManyErrors = True
-                                        '            WriteToDebug("too many errors", "asdas")
-                                        '        End If
-                                        '    Else
-                                        '        WriteToDebug((Await (Await result)).issuccess, "asdas")
-                                        '    End If
-                                        'End While
-
-
-                                        For Each d In myDevices.result
-                                            d.getStatus()
-                                            ' WriteToDebug(ret.issuccess, "asdas")
+                                        Dim amountOfDevices = myDevices.result.Count
+                                        Dim amountPerRun = 4
+                                        Dim amountOfRuns = Math.Ceiling(amountOfDevices / amountPerRun)
+                                        For run As Integer = 0 To amountOfRuns - 1
+                                            Dim taskList As New List(Of Task(Of retvalue))
+                                            For device As Integer = 0 To amountPerRun - 1
+                                                WriteToDebug("TiczViewModel.RefreshCommand", String.Format("Adding device {0} to queue {1}", device + run, run))
+                                                If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
+                                                    taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
+                                                End If
+                                            Next
+                                            'Await Task.Delay(500)
+                                            While (taskList.Count > 0)
+                                                Dim finishedRefresh As Task(Of retvalue) = Await Task.WhenAny(taskList.ToArray())
+                                                taskList.Remove(finishedRefresh)
+                                                If Not finishedRefresh.Result.issuccess Then
+                                                    errors += 1
+                                                Else
+                                                    WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
+                                                End If
+                                            End While
                                         Next
 
+                                        If errors > 0 Then
+                                            Await Notify.Update(True, "Some devices didn't refresh", 2)
+                                        Else
+                                            Await Notify.Clear()
+                                        End If
                                     End Sub)
         End Get
     End Property
