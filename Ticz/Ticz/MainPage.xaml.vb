@@ -4,6 +4,7 @@ Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports Ticz.TiczViewModel
 Imports Windows.Web.Http
+Imports WinRTXamlToolkit.Controls
 ''' <summary>
 ''' An empty page that can be used on its own or navigated to within a Frame.
 ''' </summary>
@@ -70,7 +71,7 @@ Public NotInheritable Class MainPage
 
     Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)
         Dim gv As GridView = CType(sender, GridView)
-        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
+        Dim Panel = CType(gv.ItemsPanelRoot, WrapPanel)
         Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
         If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
         Panel.ItemWidth = e.NewSize.Width / amountOfColumns
