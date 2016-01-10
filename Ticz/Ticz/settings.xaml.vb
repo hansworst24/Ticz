@@ -143,7 +143,7 @@ Partial Public Class AppSettings
         'settings.Save()
     End Sub
 
-    Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4}).ToList
+    Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).ToList
     Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)
         Get
             Return _NumberOfColumns
