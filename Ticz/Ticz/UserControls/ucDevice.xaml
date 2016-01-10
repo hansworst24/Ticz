@@ -37,9 +37,9 @@
                     <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform">
                         <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
                     </Viewbox>
-                    <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}"/>
-                    <TextBlock x:Uid="Status" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Status}"/>
-                    <Grid Grid.Row="0" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
+                    <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}" TextWrapping="NoWrap"/>
+                    <TextBlock x:Uid="Status" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Status}" TextWrapping="NoWrap"/>
+                    <!--<Grid Grid.Row="0" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -65,7 +65,7 @@
                             </ContentPresenter>
                         </Viewbox>
                         <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" FontSize="12" Foreground="#FF808080" VerticalAlignment="Center"/>
-                    </Grid>
+                    </Grid>-->
                     <Grid Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding OnOffButtonVisibility}" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -106,7 +106,7 @@
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Button>
-        <Grid Grid.Row="2" Visibility="{Binding DetailsVisiblity}">
+        <!--<Grid Grid.Row="2" Visibility="{Binding DetailsVisiblity}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -159,10 +159,10 @@
                 <RowDefinition/>
                 
             </Grid.RowDefinitions>
-            <!--<TextBlock Grid.Row="0" Grid.Column="0" Text="addjMulti"/>
+            --><!--<TextBlock Grid.Row="0" Grid.Column="0" Text="addjMulti"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="addjMulti2"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="addjValue"/>
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="addjValue2"/>-->
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="addjValue2"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Text="BatteryLevel"/>
             <TextBlock Grid.Row="5" Grid.Column="0" Text="CustomImage"/>
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Data"/>
@@ -204,10 +204,10 @@
             <TextBlock Grid.Row="42" Grid.Column="0" Text="YOffset"/>
             <TextBlock Grid.Row="43" Grid.Column="0" Text="idx"/>
             
-            <!--<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding addjMulti}"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding addjMulti}"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding addjMulti2}"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding addjValue}"/>
-            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding addjValue2}"/>-->
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding addjValue2}"/>
             <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding BatteryLevel}"/>
             <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CustomImage}"/>
             <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Data}"/>
@@ -247,9 +247,9 @@
             <TextBlock Grid.Row="40" Grid.Column="1" Text="{Binding UsedByCamera}"/>
             <TextBlock Grid.Row="41" Grid.Column="1" Text="{Binding XOffset}"/>
             <TextBlock Grid.Row="42" Grid.Column="1" Text="{Binding YOffset}"/>
-            <TextBlock Grid.Row="43" Grid.Column="1" Text="{Binding idx}"/>
+            <TextBlock Grid.Row="43" Grid.Column="1" Text="{Binding idx}"/>--><!--
             
-        </Grid>
+        </Grid>-->
         <Interactivity:Interaction.Behaviors>
             <Core:DataTriggerBehavior Binding="{Binding isOn, Mode=TwoWay}" Value="True">
                 <Core:ChangePropertyAction PropertyName="Foreground" TargetObject="{Binding ElementName=IconCP}" Value="{ThemeResource SystemControlBackgroundAccentBrush}"/>
