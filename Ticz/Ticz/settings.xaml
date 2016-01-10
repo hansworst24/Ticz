@@ -5,6 +5,9 @@
     xmlns:local="using:Ticz"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -33,15 +36,8 @@
                 <Button      Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
                 <TextBlock   Text="{Binding TestConnectionResult}"/>
                 <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
-                <TextBlock   Text="Timeout"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Slider Grid.Column="0"  Minimum="4" Maximum="20" Value="{Binding Source={StaticResource appSettings}, Path=TimeOut, Mode=TwoWay}" SmallChange="1" />
-                    <TextBlock Margin="30,0,0,0" VerticalAlignment="Center" Grid.Column="1" Text="{Binding TimeOutText, Mode=TwoWay}"/>
-                </Grid>
+                <TextBlock   Text="Minimum Columns"/>
+                <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 

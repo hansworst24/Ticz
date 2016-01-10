@@ -1,6 +1,7 @@
 ﻿Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 
+
 Partial Public Class AppSettings
     Inherits ViewModelBase
 
@@ -10,7 +11,7 @@ Partial Public Class AppSettings
     Const strServerPortKeyName As String = "strServerPort"
     Const strUsernameKeyName As String = "strUserName"
     Const strUserPasswordKeyName As String = "strUserPassword"
-    Const strTimeOutKeyName As String = "intTimeOut"
+    Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
 
 
 #If DEBUG Then
@@ -20,6 +21,7 @@ Partial Public Class AppSettings
     Const strUsernameDefault = ""
     Const strUserPasswordDefault = ""
     Const strTimeOutDefault = 5
+    Const strMinimumNumberOfColumnsDefault = 2
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -27,6 +29,7 @@ Partial Public Class AppSettings
     Const strUsernameDefault = ""
     Const strUserPasswordDefault = ""
     Const strTimeOutDefault = 5
+    Const strMinimumNumberOfColumnsDefault = 2
 #End If
 
     Const strConnectionStatusDefault = False
@@ -140,30 +143,23 @@ Partial Public Class AppSettings
         'settings.Save()
     End Sub
 
-    Public Property TimeOut As Integer
+    Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4}).ToList
+    Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)
         Get
-            Return GetValueOrDefault(Of Integer)(strTimeOutKeyName, strTimeOutDefault)
+            Return _NumberOfColumns
+        End Get
+    End Property
+
+    Public Property MinimumNumberOfColumns As Integer
+        Get
+            Return GetValueOrDefault(Of Integer)(strMinimumNumberOfColumnsKeyName, strMinimumNumberOfColumnsDefault)
         End Get
         Set(value As Integer)
-            If AddOrUpdateValue(strTimeOutKeyName, value) Then
+            If AddOrUpdateValue(strMinimumNumberOfColumnsKeyName, value) Then
                 Save()
-                RaisePropertyChanged("TimeOutText")
             End If
         End Set
     End Property
-
-
-    Public Property TimeOutText As String
-        Get
-            Return String.Format("{0} seconds", TimeOut.ToString)
-        End Get
-        Set(value As String)
-            _TimeOutText = value
-            RaisePropertyChanged("TimeOutText")
-        End Set
-    End Property
-    Private Property _TimeOutText As String
-
 
     Public Property ServerPort As String
         Get
