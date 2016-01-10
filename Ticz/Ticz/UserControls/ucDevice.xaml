@@ -14,7 +14,7 @@
     <!--<UserControl.Resources>
         <local:TypeImageToDataTemplateConvertor x:Key="myImageConvertor"/>
     </UserControl.Resources>-->
-    <Grid HorizontalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -22,11 +22,11 @@
         </Grid.RowDefinitions>
         <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
             <Button.Content>
-                <Grid HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -66,14 +66,14 @@
                         </Viewbox>
                         <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" FontSize="12" Foreground="#FF808080" VerticalAlignment="Center"/>
                     </Grid>-->
-                    <Grid Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding OnOffButtonVisibility}" HorizontalAlignment="Stretch">
+                    <!--<Grid Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding OnOffButtonVisibility}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="ButtonOn" Margin="10,0,10,0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
                         <Button x:Name="ButtonOff" Margin="10,0,10,0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
-                    </Grid>
+                    </Grid>-->
                     <ProgressBar Grid.Row="3" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>
                 </Grid>
             </Button.Content>
@@ -86,7 +86,17 @@
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Button>
-        <Button x:Name="ProtectedButton" Grid.Row="1" Visibility="Collapsed" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
+        <Border x:Name="OnOffButtonsBorder" Grid.Row="1" Visibility="Collapsed" Style="{StaticResource DeviceBorder}">
+            <Grid Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2" Margin="50,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="ButtonOn" Margin="10,0,10,0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
+                <Button x:Name="ButtonOff" Margin="10,0,10,0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
+            </Grid>
+        </Border>
+        <Button x:Name="ProtectedButton" Grid.Row="2" Visibility="Collapsed" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
             <Button.Content>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
@@ -103,6 +113,12 @@
                 </Core:DataTriggerBehavior>
                 <Core:DataTriggerBehavior Binding="{Binding ShowPassCodeInput}" Value="False">
                     <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ProtectedButton}" Value="Collapsed"/>
+                </Core:DataTriggerBehavior>
+                <Core:DataTriggerBehavior Binding="{Binding ShowOnOffButtons}" Value="True">
+                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=OnOffButtonsBorder}" Value="Visible"/>
+                </Core:DataTriggerBehavior>
+                <Core:DataTriggerBehavior Binding="{Binding ShowOnOffButtons}" Value="False">
+                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=OnOffButtonsBorder}" Value="Collapsed"/>
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Button>
