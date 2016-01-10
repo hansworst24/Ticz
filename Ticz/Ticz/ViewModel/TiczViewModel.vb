@@ -1081,7 +1081,7 @@ Public Class TiczViewModel
                                         For run As Integer = 0 To amountOfRuns - 1
                                             Dim taskList As New List(Of Task(Of retvalue))
                                             For device As Integer = 0 To amountPerRun - 1
-                                                WriteToDebug("TiczViewModel.RefreshCommand", String.Format("Adding device {0} to queue {1}", device + run, run))
+                                                WriteToDebug("TiczViewModel.RefreshCommand", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
                                                 If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
                                                     taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
                                                 End If
