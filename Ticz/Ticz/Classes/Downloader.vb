@@ -18,7 +18,7 @@ Public Class Downloader
             filter.AllowUI = False
             filter.UseProxy = False
             Using wc As New HttpClient(filter)
-                Dim cts As New CancellationTokenSource(vm.TiczSettings.TimeOut * 1000)
+                Dim cts As New CancellationTokenSource(5000)
                 Try
                     WriteToDebug("Downloader.DownloadJSON", url)
                     Dim response As HttpResponseMessage = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
