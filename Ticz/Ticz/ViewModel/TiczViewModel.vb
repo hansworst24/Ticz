@@ -393,7 +393,16 @@ Public Class Device
     End Property
     Private _DetailsVisiblity As String
 
-    Public Property OnOffButtonVisibility As String
+    Public Property ShowOnOffButtons As Boolean
+        Get
+            Return _ShowOnOffButtons
+        End Get
+        Set(value As Boolean)
+            _ShowOnOffButtons = value
+            RaisePropertyChanged()
+        End Set
+    End Property
+    Private Property _ShowOnOffButtons As Boolean
 
 
     Public Property isMixed As Boolean
@@ -615,12 +624,19 @@ Public Class Device
     Public ReadOnly Property ButtonPressedCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
+                                        WriteToDebug("Device.ButtonPressedCommand()", "executed")
                                         If Me.CanBeSwitched Then
                                             Dim switchToState As String
                                             Dim url As String
                                             Me.needsInitializing = True
                                             'Exit Sub if the device represents a group (we have seperate buttons for that
                                             If Type = "Group" Then
+                                                If Not ShowOnOffButtons Then
+                                                    ShowOnOffButtons = True
+                                                Else
+                                                    ShowOnOffButtons = False
+                                                    If [Protected] Then ShowPassCodeInput = False
+                                                End If
                                                 Me.getStatus()
                                                 Me.needsInitializing = False
                                                 Exit Sub
@@ -691,13 +707,17 @@ Public Class Device
         End If
         If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
             ShowPassCodeInput = False
+            ShowOnOffButtons = False
             PassCode = ""
             Exit Function
         End If
         If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
             Await SwitchDevice((New Api).SwitchProtectedScene(idx, ToStatus, PassCode))
             ShowPassCodeInput = False
+            ShowOnOffButtons = False
             PassCode = ""
+            Me.getStatus()
+            Me.needsInitializing = False
         Else
             Await SwitchDevice((New Api).SwitchScene(idx, ToStatus))
         End If
@@ -744,7 +764,7 @@ Public Class Device
 
 
     Public Sub New()
-        OnOffButtonVisibility = Collapsed
+        ShowOnOffButtons = False
         needsInitializing = False
         DetailsVisiblity = Collapsed
         isOn = False
@@ -813,7 +833,6 @@ Public Class Device
                         If Status = "Off" Then isOn = False Else isOn = True
                     Case "Group"
                         CanBeSwitched = True
-                        OnOffButtonVisibility = Visible
                         If Status = "Off" Then isOn = False Else isOn = True
                     Case Else
                         CanBeSwitched = False
