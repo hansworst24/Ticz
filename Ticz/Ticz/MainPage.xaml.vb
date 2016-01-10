@@ -67,4 +67,13 @@ Public NotInheritable Class MainPage
         WriteToDebug("AppBar.AppBar_Tapped()", a.ActualHeight)
 
     End Sub
+
+    Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)
+        Dim gv As GridView = CType(sender, GridView)
+        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
+        Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
+        If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
+        Panel.ItemWidth = e.NewSize.Width / amountOfColumns
+
+    End Sub
 End Class

@@ -23,7 +23,40 @@
             <Pivot.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <ListView ItemsSource="{Binding Devices}" ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+                        <GridView  ItemsSource="{Binding Devices}" SizeChanged="GridView_SizeChanged">
+                            <!--<GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </GridView.ItemContainerStyle>-->
+                            <!--<GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>-->
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch" MaxWidth="400">
+                                        <local:ucDevice DataContext="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                        <!--<ListView ItemsSource="{Binding Devices}" ContinuumNavigationTransitionInfo.ExitElementContainer="True" >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    --><!--<StackPanel/>--><!--
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -38,7 +71,7 @@
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-                        </ListView>
+                        </ListView>-->
                     </Grid>
                 </DataTemplate>
             </Pivot.ItemTemplate>
