@@ -1139,10 +1139,10 @@ End Class
 Public Class TiczViewModel
     Inherits ViewModelBase
 
-    Public Property MyRooms As New List(Of Room)
+    Public Property MyRooms As ObservableCollection(Of Room)
     Public Property MyPlans As New Plans
     Public Property TiczSettings As New AppSettings
-    Public Property Notify As New ToastMessageViewModel
+    Public Property Notify As ToastMessageViewModel
 
     Public ReadOnly Property GoToSettingsCommand As RelayCommand
         Get
@@ -1154,11 +1154,6 @@ Public Class TiczViewModel
                                     End Sub)
         End Get
     End Property
-
-
-
-
-
 
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
@@ -1201,16 +1196,16 @@ Public Class TiczViewModel
         End Get
     End Property
 
-    Public Property myLightSwitches As Light_Switches
-        Get
-            Return _myLightSwitches
-        End Get
-        Set(value As Light_Switches)
-            _myLightSwitches = value
-            RaisePropertyChanged("myLightSwitches")
-        End Set
-    End Property
-    Private Property _myLightSwitches As Light_Switches
+    'Public Property myLightSwitches As Light_Switches
+    '    Get
+    '        Return _myLightSwitches
+    '    End Get
+    '    Set(value As Light_Switches)
+    '        _myLightSwitches = value
+    '        RaisePropertyChanged("myLightSwitches")
+    '    End Set
+    'End Property
+    'Private Property _myLightSwitches As Light_Switches
 
     Public Property myDevices As Devices
         Get
@@ -1222,21 +1217,23 @@ Public Class TiczViewModel
         End Set
     End Property
     Private Property _myDevices As Devices
-    Public Property myFavourites As Devices
-        Get
-            Return _myFavourites
-        End Get
-        Set(value As Devices)
-            _myFavourites = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _myFavourites As Devices
+    'Public Property myFavourites As Devices
+    '    Get
+    '        Return _myFavourites
+    '    End Get
+    '    Set(value As Devices)
+    '        _myFavourites = value
+    '        RaisePropertyChanged()
+    '    End Set
+    'End Property
+    'Private Property _myFavourites As Devices
 
 
     Public Sub New()
-        myLightSwitches = New Light_Switches
+        MyRooms = New ObservableCollection(Of Room)
+        Notify = New ToastMessageViewModel
+        'myLightSwitches = New Light_Switches
         myDevices = New Devices
-        myFavourites = New Devices
+        'myFavourites = New Devices
     End Sub
 End Class

@@ -24,10 +24,10 @@ Public NotInheritable Class MainPage
                                                                                         End Sub)
 
         Else
+            Me.DataContext = vm
             'First Load the (Room) Plans
             vm.MyRooms.Clear()
             Await vm.Notify.Update(False, "connecting...", 0)
-            Await Task.Delay(5000)
             Dim retplan As retvalue = Await vm.MyPlans.Load()
             If retplan.issuccess Then
                 Await vm.MyPlans.Load()
