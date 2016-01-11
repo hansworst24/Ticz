@@ -10,9 +10,7 @@
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <local:AppSettings x:Key="appSettings"/>
-    </Page.Resources>
+
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>

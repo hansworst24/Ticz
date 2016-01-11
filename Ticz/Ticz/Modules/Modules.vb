@@ -1,7 +1,7 @@
 ﻿Module Modules
-    Public Function WriteToDebug(caller As String, content As String)
+    Public Sub WriteToDebug(caller As String, content As String)
         Debug.WriteLine(String.Format("Thread : {0,3} : {1,15} : {2,60} : {3}", Environment.CurrentManagedThreadId, Date.Now.TimeOfDay.ToString, caller, content))
-    End Function
+    End Sub
 
 
 

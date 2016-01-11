@@ -50,8 +50,8 @@ Public NotInheritable Class MainPage
                         End If
 
                     Next
-                    Await vm.Notify.Clear()
-                Else
+                vm.Notify.Clear()
+            Else
                     Await vm.Notify.Update(True, "connection error", 0)
             End If
                 'Set the datacontext

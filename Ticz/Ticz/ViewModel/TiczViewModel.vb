@@ -463,76 +463,76 @@ Public Class Device
         End Set
     End Property
     Private _needsInitializing As Boolean
-    Public Property IconURI As String
-        Get
-            Dim DomoticzIP As String = (New Api).serverIP
-            Dim DomoticzPort As String = (New Api).serverPort
-            Select Case SwitchType
-                Case "On/Off"
-                    Return "ms-appx:///Images/lightbulb.svg"
-                Case "Contact"
-                    Return "ms-appx:///Images/magnet.png"
-                Case "Doorbell"
-                    Return String.Format("http://{0}:{1}/images/doorbell48.png", DomoticzIP, DomoticzPort)
-                Case "Door Lock"
-                    If Status = "Open" Then Return String.Format("http://{0}:{1}/images/door48open.png", DomoticzIP, DomoticzPort)
-                    If Status = "Closed" Then Return String.Format("http://{0}:{1}/images/door48.png", DomoticzIP, DomoticzPort)
-                Case "Dimmer"
-                    If Status = "On" Then Return String.Format("http://{0}:{1}/images/Dimmer48_On.png", DomoticzIP, DomoticzPort)
-                    If Status = "Off" Then Return String.Format("http://{0}:{1}/images/Dimmer48_Off.png", DomoticzIP, DomoticzPort)
-                Case "Blinds"
-                    If Status = "Open" Then Return String.Format("http://{0}:{1}/images/blindsopen48sel.png", DomoticzIP, DomoticzPort)
-                    If Status = "Closed" Then Return String.Format("http://{0}:{1}/images/blinds48sel.png", DomoticzIP, DomoticzPort)
-                Case "Smoke Detector"
-                    If Status = "On" Then Return String.Format("http://{0}:{1}/images/smoke48on.png", DomoticzIP, DomoticzPort)
-                    If Status = "Off" Then Return String.Format("http://{0}:{1}/images/smoke48off.png", DomoticzIP, DomoticzPort)
-                Case "X10 Siren"
-                    If Status = "On" Then Return String.Format("http://{0}:{1}/images/siren-on.png", DomoticzIP, DomoticzPort)
-                    If Status = "Off" Then Return String.Format("http://{0}:{1}/images/siren-off.png", DomoticzIP, DomoticzPort)
-                Case "Media Player"
-                    If Status = "On" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_On.png", DomoticzIP, DomoticzPort)
-                    If Status = "Playing" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_On.png", DomoticzIP, DomoticzPort)
-                    If Status = "Off" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_Off.png", DomoticzIP, DomoticzPort)
+    'Public Property IconURI As String
+    '    Get
+    '        Dim DomoticzIP As String = (New Api).serverIP
+    '        Dim DomoticzPort As String = (New Api).serverPort
+    '        Select Case SwitchType
+    '            Case "On/Off"
+    '                Return "ms-appx:///Images/lightbulb.svg"
+    '            Case "Contact"
+    '                Return "ms-appx:///Images/magnet.png"
+    '            Case "Doorbell"
+    '                Return String.Format("http://{0}:{1}/images/doorbell48.png", DomoticzIP, DomoticzPort)
+    '            Case "Door Lock"
+    '                If Status = "Open" Then Return String.Format("http://{0}:{1}/images/door48open.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Closed" Then Return String.Format("http://{0}:{1}/images/door48.png", DomoticzIP, DomoticzPort)
+    '            Case "Dimmer"
+    '                If Status = "On" Then Return String.Format("http://{0}:{1}/images/Dimmer48_On.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Off" Then Return String.Format("http://{0}:{1}/images/Dimmer48_Off.png", DomoticzIP, DomoticzPort)
+    '            Case "Blinds"
+    '                If Status = "Open" Then Return String.Format("http://{0}:{1}/images/blindsopen48sel.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Closed" Then Return String.Format("http://{0}:{1}/images/blinds48sel.png", DomoticzIP, DomoticzPort)
+    '            Case "Smoke Detector"
+    '                If Status = "On" Then Return String.Format("http://{0}:{1}/images/smoke48on.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Off" Then Return String.Format("http://{0}:{1}/images/smoke48off.png", DomoticzIP, DomoticzPort)
+    '            Case "X10 Siren"
+    '                If Status = "On" Then Return String.Format("http://{0}:{1}/images/siren-on.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Off" Then Return String.Format("http://{0}:{1}/images/siren-off.png", DomoticzIP, DomoticzPort)
+    '            Case "Media Player"
+    '                If Status = "On" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_On.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Playing" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_On.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Off" Then Return String.Format("http://{0}:{1}/images/LogitechMediaServer48_Off.png", DomoticzIP, DomoticzPort)
 
-                Case Nothing
-                    Select Case Type
-                        Case "Scene"
-                            Return String.Format("http://{0}:{1}/images/scenes.png", DomoticzIP, DomoticzPort)
-                        Case "General"
-                            Select Case SubType
-                                Case "Percentage"
-                                    Return "ms-appx:///Images/percentage.png"
-                            End Select
-                        Case "Usage"
-                            Select Case SubType
-                                Case "Electric"
-                                    Return "ms-appx:///Images/power.png"
-                            End Select
-                        Case "Temp"
-                            Return "ms-appx:///Images/temperature.png"
-                        Case "P1 Smart Meter"
-                            Select Case SubType
-                                Case "Gas"
-                                    Return String.Format("http://{0}:{1}/images/Gas48.png", DomoticzIP, DomoticzPort)
-                                Case "Energy"
-                                    Return String.Format("http://{0}:{1}/images/Counter48.png", DomoticzIP, DomoticzPort)
-                            End Select
-                        Case "Thermostat"
-                            Return String.Format("http://{0}:{1}/images/override.png", DomoticzIP, DomoticzPort)
-                        Case Else
+    '            Case Nothing
+    '                Select Case Type
+    '                    Case "Scene"
+    '                        Return String.Format("http://{0}:{1}/images/scenes.png", DomoticzIP, DomoticzPort)
+    '                    Case "General"
+    '                        Select Case SubType
+    '                            Case "Percentage"
+    '                                Return "ms-appx:///Images/percentage.png"
+    '                        End Select
+    '                    Case "Usage"
+    '                        Select Case SubType
+    '                            Case "Electric"
+    '                                Return "ms-appx:///Images/power.png"
+    '                        End Select
+    '                    Case "Temp"
+    '                        Return "ms-appx:///Images/temperature.png"
+    '                    Case "P1 Smart Meter"
+    '                        Select Case SubType
+    '                            Case "Gas"
+    '                                Return String.Format("http://{0}:{1}/images/Gas48.png", DomoticzIP, DomoticzPort)
+    '                            Case "Energy"
+    '                                Return String.Format("http://{0}:{1}/images/Counter48.png", DomoticzIP, DomoticzPort)
+    '                        End Select
+    '                    Case "Thermostat"
+    '                        Return String.Format("http://{0}:{1}/images/override.png", DomoticzIP, DomoticzPort)
+    '                    Case Else
 
-                            Return String.Format("http://{0}:{1}/images/current48.png", DomoticzIP, DomoticzPort)
-                    End Select
-                Case Else
-                    If Status = "On" Then Return String.Format("http://{0}:{1}/images/Light48_On.png", DomoticzIP, DomoticzPort)
-                    If Status = "Off" Then Return String.Format("http://{0}:{1}/images/Light48_Off.png", DomoticzIP, DomoticzPort)
+    '                        Return String.Format("http://{0}:{1}/images/current48.png", DomoticzIP, DomoticzPort)
+    '                End Select
+    '            Case Else
+    '                If Status = "On" Then Return String.Format("http://{0}:{1}/images/Light48_On.png", DomoticzIP, DomoticzPort)
+    '                If Status = "Off" Then Return String.Format("http://{0}:{1}/images/Light48_Off.png", DomoticzIP, DomoticzPort)
 
-            End Select
-        End Get
-        Set(value As String)
-            RaisePropertyChanged()
-        End Set
-    End Property
+    '        End Select
+    '    End Get
+    '    Set(value As String)
+    '        RaisePropertyChanged()
+    '    End Set
+    'End Property
     Private Property _IconURI As String
 
 #End Region
@@ -551,7 +551,7 @@ Public Class Device
     Public Property CanBeSwitched As Boolean
 
 
-    Public Function setStatus()
+    Public Sub setStatus()
 
         If Not SwitchType Is Nothing Then
             Select Case SwitchType
@@ -590,7 +590,7 @@ Public Class Device
                 End Select
             End If
         End If
-    End Function
+    End Sub
 
     Public Async Function getStatus() As Task(Of retvalue)
         'Await Task.Delay(2000)
@@ -662,7 +662,7 @@ Public Class Device
                                                     ShowOnOffButtons = False
                                                     If [Protected] Then ShowPassCodeInput = False
                                                 End If
-                                                Me.getStatus()
+                                                Await Me.getStatus()
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
@@ -741,7 +741,7 @@ Public Class Device
             ShowPassCodeInput = False
             ShowOnOffButtons = False
             PassCode = ""
-            Me.getStatus()
+            Await Me.getStatus()
             Me.needsInitializing = False
         Else
             Await SwitchDevice((New Api).SwitchScene(idx, ToStatus))
@@ -758,19 +758,20 @@ Public Class Device
     Public Async Function SwitchDevice(url As String) As Task(Of retvalue)
         Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
         If Not response.IsSuccessStatusCode Then
-            app.myViewModel.Notify.Update(True, "Error switching device")
+            Await app.myViewModel.Notify.Update(True, "Error switching device")
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
                 Dim domoRes As domoResponse = JsonConvert.DeserializeObject(Of domoResponse)(Await response.Content.ReadAsStringAsync())
                 If domoRes.status <> "OK" Then
-                    app.myViewModel.Notify.Update(True, domoRes.message)
+                    Await app.myViewModel.Notify.Update(True, domoRes.message)
                     Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                 Else
-                    app.myViewModel.Notify.Update(False, "Device switched")
+                    Await app.myViewModel.Notify.Update(False, "Device switched")
                 End If
                 Return New retvalue With {.issuccess = 1}
             End If
+            Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
         End If
     End Function
     Public ReadOnly Property ButtonRightTappedCommand As RelayCommand
@@ -960,7 +961,7 @@ Public Class Plans
             Return New retvalue With {.issuccess = True}
         Else
             WriteToDebug("Plans.Load()", response.ReasonPhrase)
-            app.myViewModel.Notify.Update(True, response.ReasonPhrase)
+            Await app.myViewModel.Notify.Update(True, response.ReasonPhrase)
             Return New retvalue With {.issuccess = False, .err = response.ReasonPhrase}
         End If
 
@@ -1098,7 +1099,7 @@ Public Class ToastMessageViewModel
     Private Async Function ShowMessage(ct As CancellationToken, intSeconds As Integer) As Task
         Dim timeWaited As Integer
         While Not ct.IsCancellationRequested
-            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Async Sub()
+            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
                                                                                                              isGoing = False
                                                                                                          End Sub)
             If intSeconds > 0 Then
@@ -1111,18 +1112,18 @@ Public Class ToastMessageViewModel
             End If
         End While
         'cts.Cancel()
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Async Sub()
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
                                                                                                          isGoing = True
                                                                                                      End Sub)
 
     End Function
 
 
-    Public Async Function Clear() As Task
+    Public Sub Clear()
         If ct.CanBeCanceled Then
             cts.Cancel()
         End If
-    End Function
+    End Sub
 
 
     Public Async Function Update(err As Boolean, message As String, Optional seconds As Integer = 2) As Task
@@ -1201,7 +1202,7 @@ Public Class TiczViewModel
                                         If errors > 0 Then
                                             Await Notify.Update(True, "Some devices didn't refresh", 2)
                                         Else
-                                            Await Notify.Clear()
+                                            Notify.Clear()
                                         End If
                                     End Sub)
         End Get
