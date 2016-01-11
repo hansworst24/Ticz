@@ -193,8 +193,24 @@ Public Class Devices
         result = New ObservableCollection(Of Device)
     End Sub
 
+    Private app As App = CType(Application.Current, App)
+
     Public Overloads Async Function Load() As Task(Of retvalue)
-        Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON((New Api).getDevices)
+        Dim url As String
+        If Not app.myViewModel.MyPlans Is Nothing Then
+            'Check if there is a room called "Ticz". If so, we will only load devices within this room, so that this room can be used as TestRoom, by adding / removing different devices
+            If app.myViewModel.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
+                'We found a room called "Ticz", get the IDX
+                Dim roomIDX As String = (From r In app.myViewModel.MyPlans.result Where r.Name = "Ticz" Select r.idx).FirstOrDefault
+                url = (New Api).getDevicesForRoom(roomIDX)
+            Else
+                url = (New Api).getDevices()
+            End If
+        Else
+            url = (New Api).getDevices()
+        End If
+
+        Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
         If response.IsSuccessStatusCode Then
             Dim body As String = Await response.Content.ReadAsStringAsync()
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(body)
@@ -204,12 +220,7 @@ Public Class Devices
                 If r.Status = "" Then
                     r.Status = r.Data
                 End If
-
-                'If Me.status = "" Then Me.status = Me.Data
-                'If r.Status = "" Then r.Status = r.Data
-                'Set additional (ViewModel) Properties based on the received json data
                 r.Initialize()
-
                 r.setStatus()
                 result.Add(r)
             Next
