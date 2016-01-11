@@ -13,63 +13,57 @@
             <local:ucToastMessage DataContext="{Binding Notify}"/>
         </Border>
         
-        <Pivot ItemsSource="{Binding MyDeviceGroups}">
+        <Pivot ItemsSource="{Binding MyRooms}">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <Grid x:Name="grid">
-                        <TextBlock Text="{Binding DeviceGroupName}" />
+                        <TextBlock Text="{Binding RoomName}" Style="{ThemeResource SubheaderTextBlockStyle}" />
                     </Grid>
                 </DataTemplate>
             </Pivot.HeaderTemplate>
             <Pivot.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <GridView  ItemsSource="{Binding Devices}" SizeChanged="GridView_SizeChanged">
-                            <GridView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <xaml:WrapPanel Orientation="Horizontal"/>
-                                    <!--<WrapPanel Orientation="Horizontal"/>-->
-                                    <!--<VariableSizedWrapGrid Orientation="Horizontal" />-->
-                                </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-                            <GridView.ItemContainerStyle>
-                                <Style TargetType="GridViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalAlignment" Value="Stretch"/>
-                                </Style>
-                            </GridView.ItemContainerStyle>
-                            <GridView.ItemTemplate>
-                                <DataTemplate>
-                                    <!--<Grid HorizontalAlignment="Stretch" MaxWidth="400">-->
-                                        <local:ucDevice DataContext="{Binding}"/>
-                                    <!--</Grid>-->
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-                        </GridView>
-                        <!--<ListView ItemsSource="{Binding Devices}" ContinuumNavigationTransitionInfo.ExitElementContainer="True" >
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    --><!--<StackPanel/>--><!--
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
+                        <ListView ItemsSource="{Binding DeviceGroups}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Margin" Value="0,0,0,5" />
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <local:ucDevice DataContext="{Binding}"/>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding title}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                        <GridView Grid.Row="1"  ItemsSource="{Binding result}" SizeChanged="GridView_SizeChanged">
+                                            <GridView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <xaml:WrapPanel Orientation="Horizontal" ScrollViewer.VerticalScrollMode="Disabled"/>
+                                                </ItemsPanelTemplate>
+                                            </GridView.ItemsPanel>
+                                            <GridView.ItemContainerStyle>
+                                                <Style TargetType="GridViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                                </Style>
+                                            </GridView.ItemContainerStyle>
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <local:ucDevice DataContext="{Binding}"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                        </GridView>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-                        </ListView>-->
+                        </ListView>
                     </Grid>
                 </DataTemplate>
             </Pivot.ItemTemplate>

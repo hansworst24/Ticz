@@ -189,8 +189,6 @@ Public Class Devices
     Public Property status As String
     Public Property title As String
 
-
-
     Public Sub New()
         result = New ObservableCollection(Of Device)
     End Sub
@@ -203,7 +201,12 @@ Public Class Devices
             result.Clear()
             For Each r In deserialized.result
                 'Hack to show the Data Field as Status, if there is no Status Field
-                If r.Status = "" Then r.Status = r.Data
+                If r.Status = "" Then
+                    r.Status = r.Data
+                End If
+
+                'If Me.status = "" Then Me.status = Me.Data
+                'If r.Status = "" Then r.Status = r.Data
                 'Set additional (ViewModel) Properties based on the received json data
                 r.Initialize()
 
@@ -286,6 +289,7 @@ Public Class Device
         Set(value As String)
             _Data = value
             RaisePropertyChanged()
+            If _Data <> "" AndAlso _Data <> _Status AndAlso SwitchType = "Media Player" Then ShowData = True Else ShowData = False
         End Set
     End Property
     Private Property _Data As String
@@ -381,6 +385,16 @@ Public Class Device
     End Property
     Private Property _ShowPassCodeInput As Boolean
 
+    Public Property ShowData As Boolean
+        Get
+            Return _ShowData
+        End Get
+        Set(value As Boolean)
+            _ShowData = value
+            RaisePropertyChanged()
+        End Set
+    End Property
+    Private Property _ShowData As Boolean
 
     Public Property DetailsVisiblity As String
         Get
@@ -820,7 +834,14 @@ Public Class Device
                     If Status = "On" Then isOn = True Else isOn = False
                 Case "Media Player"
                     CanBeSwitched = True
-                    If Status = "Off" Then isOn = False Else isOn = True
+
+                    If Status = "Off" Then
+                        isOn = False
+                        ShowData = False
+                    Else
+                        isOn = True
+                        ShowData = True
+                    End If
                 Case "Contact"
                     CanBeSwitched = True
                     If Status = "Open" Then isOn = True Else isOn = False
@@ -842,14 +863,67 @@ Public Class Device
         End If
     End Sub
 End Class
-Public Class DeviceGroup
-    Public Property DeviceGroupName As String
-    Public Property Devices As ObservableCollection(Of Device)
+
+Public Class Group(Of T)
+    Inherits ObservableCollection(Of T)
+
+    Public ReadOnly Property vm As Ticz.TiczViewModel
+        Get
+            Return CType(Application.Current, App).myViewModel
+        End Get
+
+    End Property
+
+    Public Sub New(name As String, items As IEnumerable(Of T))
+        Me.Key = name
+        For Each item As T In items
+            Me.Add(item)
+        Next
+    End Sub
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        Dim that As Group(Of T) = TryCast(obj, Group(Of T))
+
+        Return (that IsNot Nothing) AndAlso (Me.Key.Equals(that.Key))
+    End Function
+
+    Public Property Key As String
+        Get
+            Return m_Key
+        End Get
+        Set(value As String)
+            m_Key = value
+        End Set
+    End Property
+    Private m_Key As String
+End Class
+
+Public Class Rooms
+    Public Property rooms As List(Of Room)
 
     Public Sub New()
-        'Devices = New ObservableCollection(Of Device)
+        rooms = New List(Of Room)
+        rooms.Add(New Room With {.RoomName = "Room1"})
+        rooms.Add(New Room With {.RoomName = "Room2"})
+        rooms.Add(New Room With {.RoomName = "Room3"})
+        rooms.Add(New Room With {.RoomName = "Room4"})
+
     End Sub
 End Class
+
+
+
+Public Class Room
+    Public Property RoomName As String
+    Public Property DeviceGroups As List(Of Devices)
+
+
+    Public Sub New()
+
+    End Sub
+End Class
+
+
 Public Class Plans
     Public Property result As ObservableCollection(Of Plan)
     Public Property status As String
@@ -1065,7 +1139,7 @@ End Class
 Public Class TiczViewModel
     Inherits ViewModelBase
 
-    Public Property MyDeviceGroups As New List(Of DeviceGroup)
+    Public Property MyRooms As New List(Of Room)
     Public Property MyPlans As New Plans
     Public Property TiczSettings As New AppSettings
     Public Property Notify As New ToastMessageViewModel
@@ -1093,7 +1167,7 @@ Public Class TiczViewModel
                                         'Perform some parralelism by starting the refresh of a batch of tasks concurrently
                                         'Not perse a requirement, but worth coding like this, in case you have a slow network connection and querying the server takes some time
                                         Dim errors As Integer
-
+                                        Dim maximumErrorsBeforeTerminate As Integer = 3
                                         Dim amountOfDevices = myDevices.result.Count
                                         Dim amountPerRun = 4
                                         Dim amountOfRuns = Math.Ceiling(amountOfDevices / amountPerRun)
@@ -1106,7 +1180,7 @@ Public Class TiczViewModel
                                                 End If
                                             Next
                                             'Await Task.Delay(500)
-                                            While (taskList.Count > 0)
+                                            While (taskList.Count > 0 And errors < maximumErrorsBeforeTerminate)
                                                 Dim finishedRefresh As Task(Of retvalue) = Await Task.WhenAny(taskList.ToArray())
                                                 taskList.Remove(finishedRefresh)
                                                 If Not finishedRefresh.Result.issuccess Then
@@ -1115,6 +1189,7 @@ Public Class TiczViewModel
                                                     WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
                                                 End If
                                             End While
+                                            If errors >= maximumErrorsBeforeTerminate Then Exit For
                                         Next
 
                                         If errors > 0 Then

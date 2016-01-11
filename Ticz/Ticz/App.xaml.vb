@@ -62,7 +62,7 @@ NotInheritable Class App
 
     Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
         Dim a As String
-        WriteToDebug("asdasdda", "asdasd")
+        WriteToDebug("App.VisibleBoundsChanged", "executed")
     End Sub
 
 
