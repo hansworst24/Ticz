@@ -506,24 +506,35 @@ Public Class Device
             Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
             Dim myDevice As Device = (From d In deserialized.result Where d.idx = idx Select d).FirstOrDefault()
             If Not myDevice Is Nothing Then
-                Me.Status = myDevice.Status
-                Me.Data = myDevice.Data
-                'Show Data Field as Status when the Status Field is empty
-                If Me.Status = "" Then Me.Status = Me.Data
-                setStatus()
-                needsInitializing = False
+                Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                                 Me.Status = myDevice.Status
+                                                                                                                 Me.Data = myDevice.Data
+                                                                                                                 'Show Data Field as Status when the Status Field is empty
+                                                                                                                 If Me.Status = "" Then Me.Status = Me.Data
+                                                                                                                 setStatus()
+                                                                                                                 needsInitializing = False
+                                                                                                             End Sub)
                 Return New retvalue With {.issuccess = 1}
             Else
                 'app.myViewModel.Notify.Update(True, "Error getting device status")
-                Me.needsInitializing = False
+                Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                                 Me.needsInitializing = False
+                                                                                                             End Sub)
+
                 Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
             End If
         Else
             'app.myViewModel.Notify.Update(True, "Error getting device status") 
-            Me.needsInitializing = False
+            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                             Me.needsInitializing = False
+                                                                                                         End Sub)
+
             Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
         End If
-        needsInitializing = False
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         needsInitializing = False
+                                                                                                     End Sub)
+
     End Function
 
     Public ReadOnly Property GroupSwitchOn As RelayCommand
@@ -997,11 +1008,13 @@ Public Class ToastMessageViewModel
     Public cts As New CancellationTokenSource
     Public ct As CancellationToken = cts.Token
 
-    Private Async Function ShowMessage(ct As CancellationToken, intSeconds As Integer) As Task
+    Private Async Function ShowMessage(message As String, err As Boolean, intSeconds As Integer, ct As CancellationToken) As Task
         Dim timeWaited As Integer
         While Not ct.IsCancellationRequested
             Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
                                                                                                              isGoing = False
+                                                                                                             msg = message
+                                                                                                             isError = err
                                                                                                          End Sub)
             If intSeconds > 0 Then
                 If intSeconds * 1000 > timeWaited Then
@@ -1031,13 +1044,10 @@ Public Class ToastMessageViewModel
         WriteToDebug("ToasMessageViewModel.Update()", "executed")
         If ct.CanBeCanceled Then
             cts.Cancel()
-            'Await Task.Delay(500)
         End If
         cts = New CancellationTokenSource
         ct = cts.Token
-        msg = message
-        isError = err
-        popupTask = Await Task.Factory.StartNew(Function() ShowMessage(ct, seconds), ct)
+        popupTask = Await Task.Factory.StartNew(Function() ShowMessage(message, err, seconds, ct), ct)
 
     End Function
 
@@ -1056,6 +1066,10 @@ Public Class TiczViewModel
     Public Property MyPlans As New Plans
     Public Property TiczSettings As New AppSettings
     Public Property Notify As ToastMessageViewModel
+    Public Property TiczRefresher As Task
+    Public ct As CancellationToken
+    Public tokenSource As New CancellationTokenSource()
+
 
     Public ReadOnly Property GoToSettingsCommand As RelayCommand
         Get
@@ -1091,40 +1105,7 @@ Public Class TiczViewModel
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Await Notify.Update(False, "refreshing...", 0)
-                                        'Perform some parralelism by starting the refresh of a batch of tasks concurrently
-                                        'Not perse a requirement, but worth coding like this, in case you have a slow network connection and querying the server takes some time
-                                        Dim errors As Integer
-                                        Dim maximumErrorsBeforeTerminate As Integer = 3
-                                        Dim amountOfDevices = myDevices.result.Count
-                                        Dim amountPerRun = 4
-                                        Dim amountOfRuns = Math.Ceiling(amountOfDevices / amountPerRun)
-                                        For run As Integer = 0 To amountOfRuns - 1
-                                            Dim taskList As New List(Of Task(Of retvalue))
-                                            For device As Integer = 0 To amountPerRun - 1
-                                                WriteToDebug("TiczViewModel.RefreshCommand", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
-                                                If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
-                                                    taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
-                                                End If
-                                            Next
-                                            'Await Task.Delay(500)
-                                            While (taskList.Count > 0 And errors < maximumErrorsBeforeTerminate)
-                                                Dim finishedRefresh As Task(Of retvalue) = Await Task.WhenAny(taskList.ToArray())
-                                                taskList.Remove(finishedRefresh)
-                                                If Not finishedRefresh.Result.issuccess Then
-                                                    errors += 1
-                                                Else
-                                                    WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
-                                                End If
-                                            End While
-                                            If errors >= maximumErrorsBeforeTerminate Then Exit For
-                                        Next
-
-                                        If errors > 0 Then
-                                            Await Notify.Update(True, "Some devices didn't refresh", 2)
-                                        Else
-                                            Notify.Clear()
-                                        End If
+                                        Await Refresh()
                                     End Sub)
         End Get
     End Property
@@ -1169,4 +1150,80 @@ Public Class TiczViewModel
         myDevices = New Devices
         'myFavourites = New Devices
     End Sub
+
+    Public Async Sub StartRefresh()
+        WriteToDebug("TiczViewModel.StartRefresh()", "")
+        If TiczRefresher Is Nothing OrElse TiczRefresher.IsCompleted Then
+            If TiczSettings.SecondsForRefresh > 0 Then
+                tokenSource = New CancellationTokenSource
+                ct = tokenSource.Token
+                TiczRefresher = Await Task.Factory.StartNew(Function() PerformAutoRefresh(ct), ct)
+            Else
+                WriteToDebug("TiczViewModel.StartRefresh()", "SecondsForRefresh = 0, not starting background task...")
+            End If
+        End If
+    End Sub
+
+    Public Sub StopRefresh()
+        If ct.CanBeCanceled Then
+            tokenSource.Cancel()
+            'tokenSource.Dispose()
+        End If
+        WriteToDebug("TiczViewModel.StopRefresh()", "")
+    End Sub
+
+
+    Public Async Function PerformAutoRefresh(ct As CancellationToken) As Task
+        Dim refreshperiod As Integer = TiczSettings.SecondsForRefresh
+        While Not ct.IsCancellationRequested
+            WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
+            Dim i As Integer = 0
+            While i < refreshperiod * 1000
+                Await Task.Delay(250)
+                i += 250
+                If ct.IsCancellationRequested Then Exit While
+            End While
+            If ct.IsCancellationRequested Then Exit While
+            Await Refresh()
+            WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
+        End While
+
+    End Function
+
+    Public Async Function Refresh() As Task
+        Await Notify.Update(False, "refreshing...", 0)
+        'Perform some parralelism by starting the refresh of a batch of tasks concurrently
+        'Not perse a requirement, but worth coding like this, in case you have a slow network connection and querying the server takes some time
+        Dim errors As Integer
+        Dim maximumErrorsBeforeTerminate As Integer = 3
+        Dim amountOfDevices = myDevices.result.Count
+        Dim amountPerRun = 4
+        Dim amountOfRuns = Math.Ceiling(amountOfDevices / amountPerRun)
+        For run As Integer = 0 To amountOfRuns - 1
+            Dim taskList As New List(Of Task(Of retvalue))
+            For device As Integer = 0 To amountPerRun - 1
+                WriteToDebug("TiczViewModel.Refresh()", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
+                If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
+                    taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
+                End If
+            Next
+            'Await Task.Delay(500)
+            While (taskList.Count > 0 And errors < maximumErrorsBeforeTerminate)
+                Dim finishedRefresh As Task(Of retvalue) = Await Task.WhenAny(taskList.ToArray())
+                taskList.Remove(finishedRefresh)
+                If Not finishedRefresh.Result.issuccess Then
+                    errors += 1
+                Else
+                    WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
+                End If
+            End While
+            If errors >= maximumErrorsBeforeTerminate Then Exit For
+        Next
+
+        If errors > 0 Then
+            Await Notify.Update(True, "Some devices didn't refresh", 2)
+        Else
+            Notify.Clear()
+        End If
+    End Function
 End Class

@@ -15,6 +15,7 @@ Partial Public Class AppSettings
     Const strShowMarqueeKeyName As String = "strShowMarquee"
     Const strShowFavouritesKeyName As String = "strShowFavourites"
     Const strShowAllDevicesKeyName As String = "strShowAllDevices"
+    Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -27,6 +28,7 @@ Partial Public Class AppSettings
     Const strShowMarqueeDefault = "False"
     Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = "False"
+    Const strSecondsForRefreshDefault = 0
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -38,6 +40,7 @@ Partial Public Class AppSettings
     Const strShowMarqueeDefault = "False"
     Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = "False"
+    Const strSecondsForRefreshDefault = 0
 #End If
 
     Const strConnectionStatusDefault = False
@@ -189,6 +192,25 @@ Partial Public Class AppSettings
             End If
         End Set
     End Property
+
+    Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
+    Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
+        Get
+            Return _SecondsForRefresh
+        End Get
+    End Property
+
+    Public Property SecondsForRefresh As Integer
+        Get
+            Return GetValueOrDefault(Of Integer)(strSecondsForRefreshKeyName, strSecondsForRefreshDefault)
+        End Get
+        Set(value As Integer)
+            If AddOrUpdateValue(strSecondsForRefreshKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
 
     Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).ToList
     Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)

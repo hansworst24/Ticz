@@ -71,11 +71,12 @@ Public NotInheritable Class MainPage
                 Await vm.Notify.Update(True, "connection error", 0)
             End If
         End If
+        vm.StartRefresh()
 
     End Sub
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
-
+        vm.StopRefresh()
     End Sub
 
     Private Sub AppBar_SizeChanged(sender As Object, e As SizeChangedEventArgs)

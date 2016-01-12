@@ -12,7 +12,7 @@
 
 
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock x:Uid="Settings" Grid.Row="0" Grid.Column="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="10,10,10,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Center"/>
-        <ScrollViewer Grid.Row="1" Margin="10,0,10,0">
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,20">
             <Grid>
                 <StackPanel Orientation="Vertical">
                     <TextBlock   Text="IP Address"/>
@@ -35,6 +35,9 @@
                     <Button      Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
                     <TextBlock   Text="{Binding TestConnectionResult}"/>
                     <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
+                    <TextBlock   Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
                     <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock   Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
