@@ -74,7 +74,14 @@
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Name="settings" Icon="Setting" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
-                    <AppBarButton Name="Refresh" Icon="Refresh" Command="{Binding RefreshCommand}"/>
+                    <AppBarButton Name="refresh" Icon="Refresh" Command="{Binding RefreshCommand}"/>
+                    <AppBarButton Icon="More">
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="about..." Command="{Binding GoToAboutCommand}"/>
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
                 </StackPanel>
             </CommandBar.Content>
         </CommandBar>
