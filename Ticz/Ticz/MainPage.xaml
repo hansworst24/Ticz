@@ -70,7 +70,7 @@
         </Pivot>
     </Grid>
     <Page.BottomAppBar>
-        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact">
+        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" Style="{ThemeResource TiczCommandBarStyle}">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Name="settings" Icon="Setting" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>

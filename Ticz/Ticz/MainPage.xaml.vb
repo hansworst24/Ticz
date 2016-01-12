@@ -3,6 +3,7 @@
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports Ticz.TiczViewModel
+Imports Windows.UI.Core
 Imports Windows.Web.Http
 Imports WinRTXamlToolkit.Controls
 ''' <summary>
@@ -15,7 +16,12 @@ Public NotInheritable Class MainPage
     Dim vm As TiczViewModel = app.myViewModel
 
     Protected Overrides Async Sub OnNavigatedTo(e As NavigationEventArgs)
-
+        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+        If rootFrame.CanGoBack Then
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+        Else
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+        End If
         'Redirect to Settings Page if IP/Port are not valid
         If Not vm.TiczSettings.ContainsValidIPDetails Then
             Await vm.Notify.Update(True, "IP/Port settings not valid", 0)
