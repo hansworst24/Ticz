@@ -12,7 +12,9 @@ Partial Public Class AppSettings
     Const strUsernameKeyName As String = "strUserName"
     Const strUserPasswordKeyName As String = "strUserPassword"
     Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
-
+    Const strShowMarqueeKeyName As String = "strShowMarquee"
+    Const strShowFavouritesKeyName As String = "strShowFavourites"
+    Const strShowAllDevicesKeyName As String = "strShowAllDevices"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -22,6 +24,9 @@ Partial Public Class AppSettings
     Const strUserPasswordDefault = ""
     Const strTimeOutDefault = 5
     Const strMinimumNumberOfColumnsDefault = 2
+    Const strShowMarqueeDefault = "False"
+    Const strShowFavouritesDefault = "True"
+    Const strShowAllDevicesDefault = "False"
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -30,6 +35,9 @@ Partial Public Class AppSettings
     Const strUserPasswordDefault = ""
     Const strTimeOutDefault = 5
     Const strMinimumNumberOfColumnsDefault = 2
+    Const strShowMarqueeDefault = "False"
+    Const strShowFavouritesDefault = "True"
+    Const strShowAllDevicesDefault = "False"
 #End If
 
     Const strConnectionStatusDefault = False
@@ -142,6 +150,45 @@ Partial Public Class AppSettings
     Public Sub Save()
         'settings.Save()
     End Sub
+
+    Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
+    Public ReadOnly Property YesNoChoices As List(Of String)
+        Get
+            Return _YesNoList
+        End Get
+    End Property
+
+    Public Property ShowFavourites As String
+        Get
+            Return GetValueOrDefault(Of String)(strShowFavouritesKeyName, strShowFavouritesDefault)
+        End Get
+        Set(value As String)
+            If AddOrUpdateValue(strShowFavouritesKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+    Public Property ShowAllDevices As String
+        Get
+            Return GetValueOrDefault(Of String)(strShowAllDevicesKeyName, strShowAllDevicesDefault)
+        End Get
+        Set(value As String)
+            If AddOrUpdateValue(strShowAllDevicesKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
+    Public Property ShowMarquee As String
+        Get
+            Return GetValueOrDefault(Of String)(strShowMarqueeKeyName, strShowMarqueeDefault)
+        End Get
+        Set(value As String)
+            If AddOrUpdateValue(strShowMarqueeKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
 
     Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).ToList
     Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)

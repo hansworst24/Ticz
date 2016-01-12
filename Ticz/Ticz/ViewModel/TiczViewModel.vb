@@ -490,43 +490,7 @@ Public Class Device
 
     Public Sub setStatus()
 
-        If Not SwitchType Is Nothing Then
-            Select Case SwitchType
-                Case "On/Off"
-                    CanBeSwitched = True
-                    If Status = switchOn Then isOn = True Else isOn = False
-                Case "Media Player"
-                    CanBeSwitched = True
-                    If Status = switchOff Then isOn = False Else isOn = True
-                Case "Contact"
-                    CanBeSwitched = True
-                    If Status = contactOpen Then isOn = True Else isOn = False
-            End Select
-        Else
-            If Not Type Is Nothing Then
-                Select Case Type
-                    Case "Scene"
-                        CanBeSwitched = True
-                        If Status = switchOff Then isOn = False Else isOn = True
-                    Case "Group"
-                        CanBeSwitched = True
-                        Select Case Status
-                            Case switchOff
-                                isOn = False
-                                isMixed = False
-                            Case switchOn
-                                isOn = True
-                                isMixed = False
-                            Case groupMixed
-                                isOn = True
-                                isMixed = True
-                        End Select
-                    Case Else
-                        CanBeSwitched = False
-                        isOn = True
-                End Select
-            End If
-        End If
+
     End Sub
 
     Public Async Function getStatus() As Task(Of retvalue)
@@ -534,7 +498,6 @@ Public Class Device
         Dim response As HttpResponseMessage
         If Type = "Group" Or Type = "Scene" Then
             response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
-            'Return New retvalue With {.issuccess = 0, .err = "sorry, groups not allowed"}
         Else
             response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
         End If
@@ -545,6 +508,7 @@ Public Class Device
             If Not myDevice Is Nothing Then
                 Me.Status = myDevice.Status
                 Me.Data = myDevice.Data
+                'Show Data Field as Status when the Status Field is empty
                 If Me.Status = "" Then Me.Status = Me.Data
                 setStatus()
                 needsInitializing = False
@@ -789,10 +753,10 @@ Public Class Device
                         ShowData = False
                     Else
                         isOn = True
-                        ShowData = True
+                        If app.myViewModel.TiczSettings.ShowMarquee Then ShowData = True
                     End If
                 Case "Contact"
-                    CanBeSwitched = True
+                        CanBeSwitched = True
                     If Status = "Open" Then isOn = True Else isOn = False
             End Select
         Else

@@ -40,7 +40,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform">
-                        <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
+                        <ContentPresenter x:Name="IconCP" CacheMode="BitmapCache" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
                     </Viewbox>
                     <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}" TextWrapping="NoWrap"/>
                     <TextBlock x:Uid="Status" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Status}" TextWrapping="NoWrap"/>
@@ -66,7 +66,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Viewbox x:Name="Battery" Grid.Column="0" VerticalAlignment="Center" Height="12" Stretch="Uniform">
-                            <ContentPresenter x:Name="BatteryCP" Foreground="#FF808080" Content="{x:Null}">
+                            <ContentPresenter x:Name="BatteryCP" CacheMode="BitmapCache" Foreground="#FF808080" Content="{x:Null}">
                                 <ContentPresenter.ContentTemplate>
                                     <DataTemplate>
                                         <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg2" Width="639.37494" Height="319.03745">

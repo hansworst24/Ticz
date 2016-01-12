@@ -21,24 +21,35 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock x:Uid="Settings" Grid.Row="0" Grid.Column="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="10,10,10,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Center"/>
-        <Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="20,0,0,0">
-            <StackPanel Orientation="Vertical">
-                <TextBlock   Text="IP Address"/>
-                <TextBox     Text="{Binding ServerIP, Mode=TwoWay}"/>
-                <TextBlock   Text="Port" VerticalAlignment="Center"/>
-                <TextBox     Text="{Binding ServerPort, Mode=TwoWay}" />
-                <TextBlock   Text="Username"/>
-                <TextBox     Text="{Binding Username, Mode=TwoWay}"/>
-                <TextBlock   Text="Password"/>
-                <PasswordBox Password="{Binding Password, Mode=TwoWay}"/>
-                <Button      Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
-                <TextBlock   Text="{Binding TestConnectionResult}"/>
-                <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
-                <TextBlock   Text="Minimum Columns"/>
-                <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
-            </StackPanel>
-        </Grid>
-
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,0">
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock   Text="IP Address"/>
+                    <TextBox     Text="{Binding ServerIP, Mode=TwoWay}"/>
+                    <TextBlock   Text="Port" VerticalAlignment="Center"/>
+                    <TextBox     Text="{Binding ServerPort, Mode=TwoWay}" />
+                    <TextBlock   Text="Username"/>
+                    <TextBox     Text="{Binding Username, Mode=TwoWay}"/>
+                    <TextBlock   Text="Password"/>
+                    <PasswordBox Password="{Binding Password, Mode=TwoWay}"/>
+                    <Button      Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
+                    <TextBlock   Text="{Binding TestConnectionResult}"/>
+                    <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
+                    <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
+                    <TextBlock   Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
+                    <TextBlock   Text="Show 'All Devices'" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="Shows all devices within a last 'Room'" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />
+                    <TextBlock   Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox x:Name="cbShowMarquee" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowMarquee, Mode=TwoWay}" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
     </Grid>
     <Page.BottomAppBar>
         <AppBar IsOpen="True" IsSticky="True">
