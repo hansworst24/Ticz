@@ -1,6 +1,6 @@
 ﻿Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
-
+Imports Windows.UI.Core
 
 Partial Public Class AppSettings
     Inherits ViewModelBase
@@ -265,6 +265,12 @@ Public NotInheritable Class AppSettingsPage
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
         Me.DataContext = app.myViewModel.TiczSettings
+        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+        If rootFrame.CanGoBack Then
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+        Else
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+        End If
     End Sub
 
 

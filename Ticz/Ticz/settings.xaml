@@ -51,11 +51,11 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-    <Page.BottomAppBar>
+    <!--<Page.BottomAppBar>
         <AppBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact">
             <StackPanel Orientation="Horizontal">
                 <AppBarButton Name="Back" Icon="Back" Command="{Binding NavigateBackCommand}"/>
             </StackPanel>
         </AppBar>
-    </Page.BottomAppBar>
+    </Page.BottomAppBar>-->
 </Page>
