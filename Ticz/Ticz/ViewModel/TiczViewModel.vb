@@ -1068,6 +1068,26 @@ Public Class TiczViewModel
         End Get
     End Property
 
+    Public ReadOnly Property NavigateBackCommand As RelayCommand
+        Get
+            Return New RelayCommand(Sub()
+                                        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+                                        If rootFrame.CanGoBack Then rootFrame.GoBack()
+                                    End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property GoToAboutCommand As RelayCommand
+        Get
+            Return New RelayCommand(Sub()
+                                        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+                                        If Not rootFrame.Navigate(GetType(AboutPage)) Then
+                                            Throw New Exception("Couldn't nagivate to settings page")
+                                        End If
+                                    End Sub)
+        End Get
+    End Property
+
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
