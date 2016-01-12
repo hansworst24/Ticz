@@ -5,15 +5,53 @@
 
 
     Public Function ConstructDeviceGroups(devices As IEnumerable(Of Device)) As List(Of Devices)
-        Dim scenes = (From d In devices Where d.Type = "Scene" Or d.Type = "Group" Select d).ToList.ToObservableCollection()
-        Dim switches = (From d In devices Where d.Type = "Lighting 2" Select d).ToList.ToObservableCollection()
-        Dim temps = (From d In devices Where d.Type = "Temp" Select d).ToList.ToObservableCollection()
-        Dim utils = (From d In devices Where d.Type = "General" Select d).ToList.ToObservableCollection()
+#If DEBUG Then
+        Dim list = devices.ToList
+        For Each d In list
+            WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
+        Next
+#End If
+        'Go through each device, and map it to a seperate subcollection
+        Dim scenes, switches, weather, temps, utils, other As New ObservableCollection(Of Device)
+        For Each d In devices.ToList()
+            Select Case d.Type
+                Case "Scene"
+                    scenes.Add(d)
+                Case "Group"
+                    scenes.Add(d)
+                Case "Lighting 2"
+                    switches.Add(d)
+                Case "Temp + Humidity + Baro"
+                    weather.Add(d)
+                Case "Wind"
+                    weather.Add(d)
+                Case "UV"
+                    weather.Add(d)
+                Case "Rain"
+                    weather.Add(d)
+                Case "Temp"
+                    temps.Add(d)
+                Case "Thermostat"
+                    temps.Add(d)
+                Case "General"
+                    utils.Add(d)
+                Case "Usage"
+                    utils.Add(d)
+                Case "P1 Smart Meter"
+                    utils.Add(d)
+                Case Else
+                    other.Add(d)
+                    WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
+            End Select
+        Next
+
         Dim dglist As New List(Of Devices)
         If Not scenes.Count = 0 Then dglist.Add(New Devices With {.title = "Scenes / Groups", .result = scenes})
         If Not switches.Count = 0 Then dglist.Add(New Devices With {.title = "Lights / Switches", .result = switches})
-        If Not temps.Count = 0 Then dglist.Add(New Devices With {.title = "Temp. Sensors", .result = temps})
+        If Not temps.Count = 0 Then dglist.Add(New Devices With {.title = "Temperature Sensors", .result = temps})
+        If Not weather.Count = 0 Then dglist.Add(New Devices With {.title = "Weather Sensors", .result = weather})
         If Not utils.Count = 0 Then dglist.Add(New Devices With {.title = "Utility Sensors", .result = utils})
+        If Not other.Count = 0 Then dglist.Add(New Devices With {.title = "Other Devices", .result = other})
         Return dglist
     End Function
 
