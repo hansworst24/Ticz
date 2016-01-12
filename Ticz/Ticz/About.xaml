@@ -62,7 +62,7 @@
         </ScrollViewer>
     </Grid>
     
-    <Page.BottomAppBar>
+    <!--<Page.BottomAppBar>
         <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
@@ -70,5 +70,5 @@
                 </StackPanel>
             </CommandBar.Content>
         </CommandBar>
-    </Page.BottomAppBar>
+    </Page.BottomAppBar>-->
 </Page>
