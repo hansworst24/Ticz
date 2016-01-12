@@ -490,6 +490,43 @@ Public Class Device
 
     Public Sub setStatus()
 
+        If Not SwitchType Is Nothing Then
+            Select Case SwitchType
+                Case "On/Off"
+                    CanBeSwitched = True
+                    If Status = switchOn Then isOn = True Else isOn = False
+                Case "Media Player"
+                    CanBeSwitched = True
+                    If Status = switchOff Then isOn = False Else isOn = True
+                Case "Contact"
+                    CanBeSwitched = True
+                    If Status = contactOpen Then isOn = True Else isOn = False
+            End Select
+        Else
+            If Not Type Is Nothing Then
+                Select Case Type
+                    Case "Scene"
+                        CanBeSwitched = True
+                        If Status = switchOff Then isOn = False Else isOn = True
+                    Case "Group"
+                        CanBeSwitched = True
+                        Select Case Status
+                            Case switchOff
+                                isOn = False
+                                isMixed = False
+                            Case switchOn
+                                isOn = True
+                                isMixed = False
+                            Case groupMixed
+                                isOn = True
+                                isMixed = True
+                        End Select
+                    Case Else
+                        CanBeSwitched = False
+                        isOn = True
+                End Select
+            End If
+        End If
 
     End Sub
 
@@ -1202,7 +1239,7 @@ Public Class TiczViewModel
         For run As Integer = 0 To amountOfRuns - 1
             Dim taskList As New List(Of Task(Of retvalue))
             For device As Integer = 0 To amountPerRun - 1
-                WriteToDebug("TiczViewModel.Refresh()", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
+                ' WriteToDebug("TiczViewModel.Refresh()", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
                 If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
                     taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
                 End If
@@ -1214,7 +1251,7 @@ Public Class TiczViewModel
                 If Not finishedRefresh.Result.issuccess Then
                     errors += 1
                 Else
-                    WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
+                    'WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
                 End If
             End While
             If errors >= maximumErrorsBeforeTerminate Then Exit For
