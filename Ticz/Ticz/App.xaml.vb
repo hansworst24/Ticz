@@ -30,6 +30,8 @@ NotInheritable Class App
             Me.DebugSettings.EnableFrameRateCounter = True
         End If
 #End If
+        'Add BackKeyHandler for HardwareButtons
+        AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
 
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
 
@@ -63,6 +65,20 @@ NotInheritable Class App
     Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
         WriteToDebug("App.VisibleBoundsChanged", "executed")
     End Sub
+
+
+    Private Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+        WriteToDebug("App.App_BackRequested", "executed")
+        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+        If rootFrame Is Nothing Then Exit Sub
+        If rootFrame.CanGoBack AndAlso e.Handled = False Then
+            e.Handled = True
+            rootFrame.GoBack()
+        End If
+    End Sub
+
+
+
 
 
     ''' <summary>
