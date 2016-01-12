@@ -52,14 +52,9 @@
         </ScrollViewer>
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsOpen="True" IsSticky="True">
+        <AppBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact">
             <StackPanel Orientation="Horizontal">
-                <!--<CommandBar>
-                    <CommandBar.SecondaryCommands>
-                        <AppBarButton Name="settings" Icon="Setting" Label="settings" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
-                    </CommandBar.SecondaryCommands>
-                </CommandBar>-->
-                <AppBarButton Name="Back" Icon="Back" Label="Back" Command="{Binding NavigateBackCommand}"/>
+                <AppBarButton Name="Back" Icon="Back" Command="{Binding NavigateBackCommand}"/>
             </StackPanel>
         </AppBar>
     </Page.BottomAppBar>
