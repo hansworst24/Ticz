@@ -10,6 +10,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Classes/Dictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+
+            
             <Style x:Key="EllipsisButton" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
