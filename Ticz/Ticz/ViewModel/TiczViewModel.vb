@@ -726,6 +726,7 @@ Public Class Device
     Public ReadOnly Property ButtonRightTappedCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
+                                        WriteToDebug("Device.ButtonRightTappedCommand()", "executed")
                                         If Me.DetailsVisiblity = Visible Then
                                             Me.DetailsVisiblity = Collapsed
                                         Else

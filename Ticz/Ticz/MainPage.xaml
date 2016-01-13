@@ -43,8 +43,8 @@
                         </Grid.Resources>
                         <SemanticZoom>
                             <SemanticZoom.ZoomedInView>
-                                <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" 
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+                                <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" 
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" Style="{StaticResource myListViewStyle}">
                                     <ListView.GroupStyle>
                                         <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                     </ListView.GroupStyle>
