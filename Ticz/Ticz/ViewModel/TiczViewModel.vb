@@ -782,6 +782,10 @@ Public Class Device
                 IconDataTemplate = CType(Application.Current.Resources("scene"), DataTemplate)
             Case "group"
                 IconDataTemplate = CType(Application.Current.Resources("group"), DataTemplate)
+            Case "visibility"
+                IconDataTemplate = CType(Application.Current.Resources("visibility"), DataTemplate)
+            Case "rain"
+                IconDataTemplate = CType(Application.Current.Resources("rain"), DataTemplate)
             Case Else
                 IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
         End Select
@@ -876,7 +880,9 @@ End Class
 
 Public Class Room
     Public Property RoomName As String
-    Public Property DeviceGroups As List(Of Devices)
+    'Public Property DeviceGroups As List(Of Devices)
+    Public Property DeviceGroups As ObservableCollection(Of Group(Of Device))
+
 
 
     Public Sub New()

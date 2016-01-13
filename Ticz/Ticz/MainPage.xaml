@@ -38,8 +38,8 @@
                                             <RowDefinition Height="auto"/>
                                             <RowDefinition Height="auto"/>
                                         </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding title}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                                        <GridView Grid.Row="1"  ItemsSource="{Binding result}" SizeChanged="GridView_SizeChanged" ScrollViewer.VerticalScrollMode="Disabled">
+                                        <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                        <GridView Grid.Row="1"  ItemsSource="{Binding}">
                                             <GridView.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <xaml:WrapPanel Orientation="Horizontal" ScrollViewer.VerticalScrollMode="Disabled"/>

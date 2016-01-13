@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <local:CanvasWidthToClipWidthConvertor x:Key="myClipConvertor"/>
     </UserControl.Resources>
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
         <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
             <Button.Content>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid>
                     <Grid.Resources>
                         <Storyboard x:Name="MarqueeOn">
                             <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" Duration="0:0:20" From="{Binding Path=ActualWidth, ElementName=MarqueeCanvas}" To=" -300" RepeatBehavior="Forever"/>
@@ -135,7 +135,7 @@
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Button>
-        <Grid Grid.Row="2" Visibility="{Binding DetailsVisiblity}">
+        <Grid Grid.Row="2" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -213,7 +213,7 @@
             <TextBlock Grid.Row="22" Grid.Column="0" Text="Name"/>
             <TextBlock Grid.Row="23" Grid.Column="0" Text="Notifications"/>
             <TextBlock Grid.Row="24" Grid.Column="0" Text="PlanID"/>
-            <TextBlock Grid.Row="25" Grid.Column="0" Text="PlanIDs"/>
+            <!--<TextBlock Grid.Row="25" Grid.Column="0" Text="PlanIDs"/>-->
             <TextBlock Grid.Row="26" Grid.Column="0" Text="Protected"/>
             <TextBlock Grid.Row="27" Grid.Column="0" Text="ShowNotifications"/>
             <TextBlock Grid.Row="28" Grid.Column="0" Text="SignalLevel"/>
@@ -258,7 +258,7 @@
             <TextBlock Grid.Row="22" Grid.Column="1" Text="{Binding Name}"/>
             <TextBlock Grid.Row="23" Grid.Column="1" Text="{Binding Notifications}"/>
             <TextBlock Grid.Row="24" Grid.Column="1" Text="{Binding PlanID}"/>
-            <TextBlock Grid.Row="25" Grid.Column="1" Text="{Binding PlanIDs}"/>
+            <!--<TextBlock Grid.Row="25" Grid.Column="1" Text="{Binding PlanIDs}"/>-->
             <TextBlock Grid.Row="26" Grid.Column="1" Text="{Binding Protected}"/>
             <TextBlock Grid.Row="27" Grid.Column="1" Text="{Binding ShowNotifications}"/>
             <TextBlock Grid.Row="28" Grid.Column="1" Text="{Binding SignalLevel}"/>

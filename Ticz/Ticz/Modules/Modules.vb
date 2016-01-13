@@ -4,7 +4,7 @@
     End Sub
 
 
-    Public Function ConstructDeviceGroups(devices As IEnumerable(Of Device)) As List(Of Devices)
+    Public Function ConstructDeviceGroups(devices As IEnumerable(Of Device)) As ObservableCollection(Of Group(Of Device))
 #If DEBUG Then
         Dim list = devices.ToList
         For Each d In list
@@ -44,15 +44,23 @@
                     WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
             End Select
         Next
+        Dim dglist2 As New ObservableCollection(Of Group(Of Device))
 
-        Dim dglist As New List(Of Devices)
-        If Not scenes.Count = 0 Then dglist.Add(New Devices With {.title = "Scenes / Groups", .result = scenes})
-        If Not switches.Count = 0 Then dglist.Add(New Devices With {.title = "Lights / Switches", .result = switches})
-        If Not temps.Count = 0 Then dglist.Add(New Devices With {.title = "Temperature Sensors", .result = temps})
-        If Not weather.Count = 0 Then dglist.Add(New Devices With {.title = "Weather Sensors", .result = weather})
-        If Not utils.Count = 0 Then dglist.Add(New Devices With {.title = "Utility Sensors", .result = utils})
-        If Not other.Count = 0 Then dglist.Add(New Devices With {.title = "Other Devices", .result = other})
-        Return dglist
+        If Not scenes.Count = 0 Then dglist2.Add(New [Group](Of Device)("Scenes / Groups", scenes))
+        If Not switches.Count = 0 Then dglist2.Add(New [Group](Of Device)("Lights / Switches", switches))
+        If Not temps.Count = 0 Then dglist2.Add(New [Group](Of Device)("Temperature Sensors", temps))
+        If Not weather.Count = 0 Then dglist2.Add(New [Group](Of Device)("Weather Sensors", weather))
+        If Not utils.Count = 0 Then dglist2.Add(New [Group](Of Device)("Utility Sensors", utils))
+        If Not other.Count = 0 Then dglist2.Add(New [Group](Of Device)("Other Devices", other))
+
+        'Dim dglist As New List(Of Devices)
+        'If Not scenes.Count = 0 Then dglist.Add(New Devices With {.title = "Scenes / Groups", .result = scenes})
+        'If Not switches.Count = 0 Then dglist.Add(New Devices With {.title = "Lights / Switches", .result = switches})
+        'If Not temps.Count = 0 Then dglist.Add(New Devices With {.title = "Temperature Sensors", .result = temps})
+        'If Not weather.Count = 0 Then dglist.Add(New Devices With {.title = "Weather Sensors", .result = weather})
+        'If Not utils.Count = 0 Then dglist.Add(New Devices With {.title = "Utility Sensors", .result = utils})
+        'If Not other.Count = 0 Then dglist.Add(New Devices With {.title = "Other Devices", .result = other})
+        Return dglist2
     End Function
 
 
