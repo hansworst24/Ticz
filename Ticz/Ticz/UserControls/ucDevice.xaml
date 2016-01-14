@@ -20,7 +20,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch" Command="{Binding ButtonPressedCommand}">
+        <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch">
             <Button.Content>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -96,6 +96,9 @@
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="RightTapped" SourceObject="{Binding ElementName=DeviceButton}">
                     <Core:InvokeCommandAction Command="{Binding ButtonRightTappedCommand}"/>
+                </Core:EventTriggerBehavior>
+                <Core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding ElementName=DeviceButton}">
+                    <Core:InvokeCommandAction Command="{Binding ButtonPressedCommand}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Button>
