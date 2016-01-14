@@ -93,7 +93,7 @@ Public NotInheritable Class MainPage
     Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)
         WriteToDebug("MainPage.GridView_SizeChanged()", "executed")
         Dim gv As GridView = CType(sender, GridView)
-        Dim Panel = CType(gv.ItemsPanelRoot, WrapPanel)
+        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
         Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
         If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
         Panel.ItemWidth = e.NewSize.Width / amountOfColumns

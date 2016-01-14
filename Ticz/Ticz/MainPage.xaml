@@ -85,46 +85,44 @@
             <Pivot.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <ListView ItemsSource="{Binding DeviceGroups}">
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalAlignment" Value="Top"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="auto"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                                        <GridView Grid.Row="1"  ItemsSource="{Binding}" SizeChanged="GridView_SizeChanged">
-                                            <GridView.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <xaml:WrapPanel Orientation="Horizontal" ScrollViewer.VerticalScrollMode="Disabled"/>
-                                                </ItemsPanelTemplate>
-                                            </GridView.ItemsPanel>
-                                            <GridView.ItemContainerStyle>
-                                                <Style TargetType="GridViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                                    <Setter Property="VerticalAlignment" Value="Top"/>
-                                                </Style>
-                                            </GridView.ItemContainerStyle>
-                                            <GridView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <local:ucDevice DataContext="{Binding}"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </GridView.ItemTemplate>
-                                        </GridView>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <Grid.Resources>
+                            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
+                        </Grid.Resources>
+                        <SemanticZoom>
+                            <SemanticZoom.ZoomedInView>
+                                <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" SizeChanged="GridView_SizeChanged">
+                                    <GridView.GroupStyle>
+                                        <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                    </GridView.GroupStyle>
+                                    <GridView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsWrapGrid Orientation="Horizontal"/>
+                                            <!--<xaml:WrapPanel Orientation="Vertical" ScrollViewer.VerticalScrollMode="Disabled"/>-->
+                                        </ItemsPanelTemplate>
+                                    </GridView.ItemsPanel>
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                            <Setter Property="VerticalAlignment" Value="Top"/>
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <local:ucDevice DataContext="{Binding}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                            </SemanticZoom.ZoomedInView>
+                            <SemanticZoom.ZoomedOutView>
+                                <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
+                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
+                                </ListView>
+                            </SemanticZoom.ZoomedOutView>
+                        </SemanticZoom>
                     </Grid>
                 </DataTemplate>
             </Pivot.ItemTemplate>

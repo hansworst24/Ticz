@@ -33,16 +33,16 @@ Partial Public Class AppSettings
     Const strUseBitmapIconsDefault = False
 #Else
     'PROD SETTINGS
-    Const strServerIPDefault = ""
-    Const strServerPortDefault = ""
-    Const strUsernameDefault = ""
-    Const strUserPasswordDefault = ""
+    Const strServerIPDefault = "192.168.168.4"
+    Const strServerPortDefault = "8888"
+    Const strUsernameDefault = "cre8or"
+    Const strUserPasswordDefault = "plex4220"
     Const strTimeOutDefault = 5
     Const strMinimumNumberOfColumnsDefault = 2
-    Const strShowMarqueeDefault = "False"
+    Const strShowMarqueeDefault = "True"
     Const strShowFavouritesDefault = "True"
-    Const strShowAllDevicesDefault = "False"
-    Const strSecondsForRefreshDefault = 0
+    Const strShowAllDevicesDefault = "True"
+    Const strSecondsForRefreshDefault = 10
     Const strUseBitmapIconsDefault = False
 #End If
 
