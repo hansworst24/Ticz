@@ -24,102 +24,102 @@ Public Class retvalue
 End Class
 
 
-Public Class Light_Switches
-    Public Property result As ObservableCollection(Of Light_Switch)
-    Public Property status As String
-    Public Property title As String
+'Public Class Light_Switches
+'    Public Property result As ObservableCollection(Of Light_Switch)
+'    Public Property status As String
+'    Public Property title As String
 
-    Public Async Function Load() As Task
-        Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON((New Api).getLightSwitches)
-        Dim body As String = Await response.Content.ReadAsStringAsync()
-        Dim deserialized = JsonConvert.DeserializeObject(Of Light_Switches)(body)
-        For Each r In deserialized.result
-            result.Add(r)
-            Await r.getStatus()
+'    Public Async Function Load() As Task
+'        Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON((New Api).getLightSwitches)
+'        Dim body As String = Await response.Content.ReadAsStringAsync()
+'        Dim deserialized = JsonConvert.DeserializeObject(Of Light_Switches)(body)
+'        For Each r In deserialized.result
+'            result.Add(r)
+'            Await r.getStatus()
 
-        Next
-        Me.status = deserialized.status
-        Me.title = deserialized.status
-    End Function
+'        Next
+'        Me.status = deserialized.status
+'        Me.title = deserialized.status
+'    End Function
 
-    Public Sub New()
-        result = New ObservableCollection(Of Light_Switch)
-    End Sub
-End Class
-Public Class Light_Switch
-    Inherits ViewModelBase
-    '/json.htm?type=command&param=getlightswitches
-    '/json.htm?type=devices&filter=light&used=true&order=Name
+'    Public Sub New()
+'        result = New ObservableCollection(Of Light_Switch)
+'    End Sub
+'End Class
+'Public Class Light_Switch
+'    Inherits ViewModelBase
+'    '/json.htm?type=command&param=getlightswitches
+'    '/json.htm?type=devices&filter=light&used=true&order=Name
 
-    Public Property IsDimmer As Boolean
-    Public Property Name As String
-    Public Property SubType As String
-    Public Property Type As String
-    Public Property IDX As String
-    Public Property isOn As Boolean
-        Get
-            Return _isOn
-        End Get
-        Set(value As Boolean)
-            _isOn = value
-            RaisePropertyChanged("isOn")
-        End Set
-    End Property
-    Private Property _isOn As Boolean
-    Public Property Data As String
-    Public Property needsInitializing As Boolean
-        Get
-            Return _needsInitializing
-        End Get
-        Set(value As Boolean)
-            _needsInitializing = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private _needsInitializing As Boolean
-    Public Property IconURI As String
-        Get
-            If isOn Then
-                Return "http://192.168.168.4:8888/images/contact48_open.png"
-            Else Return "http://192.168.168.4:8888/images/contact48.png"
-            End If
-        End Get
-        Set(value As String)
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _IconURI As String
+'    Public Property IsDimmer As Boolean
+'    Public Property Name As String
+'    Public Property SubType As String
+'    Public Property Type As String
+'    Public Property IDX As String
+'    Public Property isOn As Boolean
+'        Get
+'            Return _isOn
+'        End Get
+'        Set(value As Boolean)
+'            _isOn = value
+'            RaisePropertyChanged("isOn")
+'        End Set
+'    End Property
+'    Private Property _isOn As Boolean
+'    Public Property Data As String
+'    Public Property needsInitializing As Boolean
+'        Get
+'            Return _needsInitializing
+'        End Get
+'        Set(value As Boolean)
+'            _needsInitializing = value
+'            RaisePropertyChanged()
+'        End Set
+'    End Property
+'    Private _needsInitializing As Boolean
+'    Public Property IconURI As String
+'        Get
+'            If isOn Then
+'                Return "http://192.168.168.4:8888/images/contact48_open.png"
+'            Else Return "http://192.168.168.4:8888/images/contact48.png"
+'            End If
+'        End Get
+'        Set(value As String)
+'            RaisePropertyChanged()
+'        End Set
+'    End Property
+'    Private Property _IconURI As String
 
 
 
-    Public Async Function getStatus() As Task
-        Dim a = Await (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.IDX))
-        Dim deserialized = JsonConvert.DeserializeObject(Of Light_Switches)(Await a.Content.ReadAsStringAsync)
-        If deserialized.result(0).Data = "On" Then Me.isOn = True Else Me.isOn = False
-        needsInitializing = False
-    End Function
+'    Public Async Function getStatus() As Task
+'        Dim a = Await (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.IDX))
+'        Dim deserialized = JsonConvert.DeserializeObject(Of Light_Switches)(Await a.Content.ReadAsStringAsync)
+'        If deserialized.result(0).Data = "On" Then Me.isOn = True Else Me.isOn = False
+'        needsInitializing = False
+'    End Function
 
-    Public ReadOnly Property LightOnOff As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        Dim url As String
-                                        If Me.isOn Then
-                                            url = (New Api).SwitchLight(Me.IDX, "On")
-                                        Else
-                                            url = (New Api).SwitchLight(Me.IDX, "Off")
-                                        End If
-                                        Dim b = Await (New Downloader).DownloadJSON(url)
-                                        'Re-pull the status
-                                        Await Me.getStatus()
-                                    End Sub)
+'    Public ReadOnly Property LightOnOff As RelayCommand
+'        Get
+'            Return New RelayCommand(Async Sub()
+'                                        Dim url As String
+'                                        If Me.isOn Then
+'                                            url = (New Api).SwitchLight(Me.IDX, "On")
+'                                        Else
+'                                            url = (New Api).SwitchLight(Me.IDX, "Off")
+'                                        End If
+'                                        Dim b = Await (New Downloader).DownloadJSON(url)
+'                                        'Re-pull the status
+'                                        Await Me.getStatus()
+'                                    End Sub)
 
-        End Get
-    End Property
+'        End Get
+'    End Property
 
-    Public Sub New()
-        needsInitializing = True
-    End Sub
-End Class
+'    Public Sub New()
+'        needsInitializing = True
+'    End Sub
+'End Class
 Public Class Devices
     Inherits ViewModelBase
     Public Property result As ObservableCollection(Of Device)
@@ -236,7 +236,7 @@ Public Class Device
         Set(value As String)
             _Data = value
             RaisePropertyChanged()
-            If _Data <> "" AndAlso _Data <> _Status AndAlso SwitchType = "Media Player" Then ShowData = True Else ShowData = False
+            If _Data <> "" AndAlso _Data <> _Status AndAlso SwitchType = "Media Player" Then DataVisibility = const_Visible Else DataVisibility = const_Collapsed
         End Set
     End Property
     Private Property _Data As String
@@ -291,12 +291,38 @@ Public Class Device
 #End Region
 #Region "ViewModel Properties"
 
+
+    Public Property BitmapIconVisibility As String
+    Public Property VectorIconVisibility As String
+    Public ReadOnly Property IconForegroundColor As Brush
+        Get
+            If isOn Then
+                Return Application.Current.Resources("SystemControlHighlightAccentBrush")
+            Else
+                Dim myBrush As New SolidColorBrush
+                myBrush.Color = Color.FromArgb(255, 128, 128, 128)
+                Return myBrush
+            End If
+        End Get
+    End Property
+
+    Public Property OnOffButtonVisibility As String
+        Get
+            Return _OnOffButtonVisibility
+        End Get
+        Set(value As String)
+            _OnOffButtonVisibility = value
+            RaisePropertyChanged("OnOffButtonVisibility")
+        End Set
+    End Property
+    Private Property _OnOffButtonVisibility As String
+
     Public Property SwitchOnURI As String
     Public Property SwitchOffURI As String
 
     Public ReadOnly Property BatteryLevelVisibility As String
         Get
-            If BatteryLevel <= 100 Then Return Visible Else Return Collapsed
+            If BatteryLevel <= 100 Then Return const_Visible Else Return const_Collapsed
         End Get
     End Property
 
@@ -309,7 +335,6 @@ Public Class Device
 
     Public Property IconDataTemplate As DataTemplate
 
-
     Public Property PassCode As String
         Get
             Return _PassCode
@@ -321,27 +346,49 @@ Public Class Device
     End Property
     Private Property _PassCode As String
 
-    Public Property ShowPassCodeInput As Boolean
+    Public Property PassCodeInputVisibility As String
         Get
-            Return _ShowPassCodeInput
+            Return _PassCodeInputVisibility
         End Get
-        Set(value As Boolean)
-            _ShowPassCodeInput = value
-            RaisePropertyChanged()
+        Set(value As String)
+            _PassCodeInputVisibility = value
+            RaisePropertyChanged("PassCodeInputVisibility")
         End Set
     End Property
-    Private Property _ShowPassCodeInput As Boolean
+    Private Property _PassCodeInputVisibility As String
 
-    Public Property ShowData As Boolean
+    'Public Property ShowPassCodeInput As Boolean
+    '    Get
+    '        Return _ShowPassCodeInput
+    '    End Get
+    '    Set(value As Boolean)
+    '        _ShowPassCodeInput = value
+    '        RaisePropertyChanged()
+    '    End Set
+    'End Property
+    'Private Property _ShowPassCodeInput As Boolean
+
+
+    Public Property DataVisibility As String
         Get
-            Return _ShowData
+            Return _DataVisibility
         End Get
-        Set(value As Boolean)
-            _ShowData = value
+        Set(value As String)
+            _DataVisibility = value
             RaisePropertyChanged()
         End Set
     End Property
-    Private Property _ShowData As Boolean
+    Private Property _DataVisibility As String
+    'Public Property ShowData As Boolean
+    '    Get
+    '        Return _ShowData
+    '    End Get
+    '    Set(value As Boolean)
+    '        _ShowData = value
+    '        RaisePropertyChanged()
+    '    End Set
+    'End Property
+    'Private Property _ShowData As Boolean
 
     Public Property DetailsVisiblity As String
         Get
@@ -354,16 +401,16 @@ Public Class Device
     End Property
     Private _DetailsVisiblity As String
 
-    Public Property ShowOnOffButtons As Boolean
-        Get
-            Return _ShowOnOffButtons
-        End Get
-        Set(value As Boolean)
-            _ShowOnOffButtons = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _ShowOnOffButtons As Boolean
+    'Public Property ShowOnOffButtons As Boolean
+    '    Get
+    '        Return _ShowOnOffButtons
+    '    End Get
+    '    Set(value As Boolean)
+    '        _ShowOnOffButtons = value
+    '        RaisePropertyChanged()
+    '    End Set
+    'End Property
+    'Private Property _ShowOnOffButtons As Boolean
 
 
     Public Property isMixed As Boolean
@@ -385,6 +432,7 @@ Public Class Device
         Set(value As Boolean)
             _isOn = value
             RaisePropertyChanged("isOn")
+            RaisePropertyChanged("IconForegroundColor")
         End Set
     End Property
     Private Property _isOn As Boolean
@@ -399,6 +447,8 @@ Public Class Device
         End Set
     End Property
     Private _needsInitializing As Boolean
+
+    Public Property IconURI As String
     'Public Property IconURI As String
     '    Get
     '        Dim DomoticzIP As String = (New Api).serverIP
@@ -469,14 +519,14 @@ Public Class Device
     '        RaisePropertyChanged()
     '    End Set
     'End Property
-    Private Property _IconURI As String
+    'Private Property _IconURI As String
 
 #End Region
 
     Private app As App = CType(Application.Current, App)
 
-    Const Visible As String = "Visible"
-    Const Collapsed As String = "Collapsed"
+    Const const_Visible As String = "Visible"
+    Const const_Collapsed As String = "Collapsed"
     Const switchOn As String = "On"
     Const switchOff As String = "Off"
     Const contactOpen As String = "Open"
@@ -488,13 +538,16 @@ Public Class Device
 
 
     Public Async Function Update(Optional d As Device = Nothing) As Task
+        'Check if the device's Icon has been set (either PNG or vector image)
         If IconDataTemplate Is Nothing Then
             Me.Initialize()
         End If
+
+        'If we haven't sent an updated device to this function, retrieve the device's latest status from the server
         If d Is Nothing Then
             Dim response As HttpResponseMessage
             If Type = "Group" Or Type = "Scene" Then
-                response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+                response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getAllScenes()))
             Else
                 response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
             End If
@@ -504,60 +557,56 @@ Public Class Device
                 Dim myDevice As Device = (From dev In deserialized.result Where dev.idx = idx Select dev).FirstOrDefault()
                 If Not myDevice Is Nothing Then
                     d = myDevice
+                Else
+                    Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2)
                 End If
             End If
         End If
 
-        Status = d.Status
-        Data = d.Data
-        If Not SwitchType Is Nothing Then
-            Select Case SwitchType
-                Case "On/Off"
-                    CanBeSwitched = True
-                    If Status = switchOn Then isOn = True Else isOn = False
-                Case "Media Player"
-                    CanBeSwitched = True
-                    If Status = switchOff Then isOn = False Else isOn = True
-                Case "Contact"
-                    CanBeSwitched = True
-                    If Status = contactOpen Then isOn = True Else isOn = False
-            End Select
-        Else
-            If Not Type Is Nothing Then
-                Select Case Type
-                    Case "Scene"
-                        CanBeSwitched = True
-                        If Status = switchOff Then isOn = False Else isOn = True
-                    Case "Group"
-                        CanBeSwitched = True
-                        Select Case Status
-                            Case switchOff
-                                isOn = False
-                                isMixed = False
-                            Case switchOn
-                                isOn = True
-                                isMixed = False
-                            Case groupMixed
-                                isOn = True
-                                isMixed = True
-                        End Select
-                    Case Else
-                        CanBeSwitched = False
-                        isOn = True
-                End Select
-            End If
-        End If
-        If d Is Nothing Then
-            Exit Function
-        Else
-            Me.Status = d.Status
-            Me.Data = d.Data
-            'Show Data Field as Status when the Status Field is empty
-            If Me.Status = "" Then Me.Status = Me.Data
-            'setStatus()
-            needsInitializing = False
-        End If
-
+        'Set properties which raise propertychanged events on the UI thread
+        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+                                                                                                         Status = d.Status
+                                                                                                         Data = d.Data
+                                                                                                         If Status = "" Then Status = Data
+                                                                                                         If Not SwitchType Is Nothing Then
+                                                                                                             Select Case SwitchType
+                                                                                                                 Case "On/Off"
+                                                                                                                     CanBeSwitched = True
+                                                                                                                     If Status = switchOn Then isOn = True Else isOn = False
+                                                                                                                 Case "Media Player"
+                                                                                                                     CanBeSwitched = True
+                                                                                                                     If Status = switchOff Then isOn = False Else isOn = True
+                                                                                                                 Case "Contact"
+                                                                                                                     CanBeSwitched = True
+                                                                                                                     If Status = contactOpen Then isOn = True Else isOn = False
+                                                                                                             End Select
+                                                                                                         Else
+                                                                                                             If Not Type Is Nothing Then
+                                                                                                                 Select Case Type
+                                                                                                                     Case "Scene"
+                                                                                                                         CanBeSwitched = True
+                                                                                                                         If Status = switchOff Then isOn = False Else isOn = True
+                                                                                                                     Case "Group"
+                                                                                                                         CanBeSwitched = True
+                                                                                                                         Select Case Status
+                                                                                                                             Case switchOff
+                                                                                                                                 isOn = False
+                                                                                                                                 isMixed = False
+                                                                                                                             Case switchOn
+                                                                                                                                 isOn = True
+                                                                                                                                 isMixed = False
+                                                                                                                             Case groupMixed
+                                                                                                                                 isOn = True
+                                                                                                                                 isMixed = True
+                                                                                                                         End Select
+                                                                                                                     Case Else
+                                                                                                                         CanBeSwitched = False
+                                                                                                                         isOn = True
+                                                                                                                 End Select
+                                                                                                             End If
+                                                                                                         End If
+                                                                                                         needsInitializing = False
+                                                                                                     End Sub)
 
     End Function
 
@@ -679,11 +728,11 @@ Public Class Device
                                             Me.needsInitializing = True
                                             'Exit Sub if the device represents a group (we have seperate buttons for that
                                             If Type = "Group" Then
-                                                If Not ShowOnOffButtons Then
-                                                    ShowOnOffButtons = True
+                                                If OnOffButtonVisibility = const_Collapsed Then
+                                                    OnOffButtonVisibility = const_Visible
                                                 Else
-                                                    ShowOnOffButtons = False
-                                                    If [Protected] Then ShowPassCodeInput = False
+                                                    OnOffButtonVisibility = const_Collapsed
+                                                    If [Protected] Then PassCodeInputVisibility = const_Collapsed
                                                 End If
                                                 Await Me.Update()
                                                 Me.needsInitializing = False
@@ -691,14 +740,14 @@ Public Class Device
                                             End If
                                             If Me.isOn Then switchToState = switchOff Else switchToState = switchOn
                                             'Open the PassCode box if the device is protected and the PassCode box is not visible
-                                            If [Protected] And ShowPassCodeInput = False Then
-                                                ShowPassCodeInput = True
+                                            If [Protected] And PassCodeInputVisibility = const_Collapsed Then
+                                                PassCodeInputVisibility = const_Visible
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
                                             'Close the passcode input if it's open and no passcode was provided
-                                            If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
-                                                ShowPassCodeInput = False
+                                            If [Protected] And PassCodeInputVisibility = const_Visible And PassCode = "" Then
+                                                PassCodeInputVisibility = const_Collapsed
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
@@ -711,10 +760,10 @@ Public Class Device
                                                 Else
                                                     'Exit Sub for the moment, if the device is neither of the types we checked
                                                     Await Update()
-                                                    ShowPassCodeInput = False
+                                                    PassCodeInputVisibility = const_Collapsed
                                                     Exit Sub
                                                 End If
-                                                ShowPassCodeInput = False
+                                                PassCodeInputVisibility = const_Collapsed
                                             Else
                                                 If Type = "Group" Or Type = "Scene" Then
                                                     url = (New Api).SwitchScene(Me.idx, switchToState)
@@ -749,20 +798,20 @@ Public Class Device
 
     Public Async Function SwitchGroup(ToStatus As String) As Task
         WriteToDebug("Device.SwitchGroup()", "executed")
-        If [Protected] And ShowPassCodeInput = False Then
-            ShowPassCodeInput = True
+        If [Protected] And PassCodeInputVisibility = const_Collapsed Then
+            PassCodeInputVisibility = const_Visible
             Exit Function
         End If
-        If [Protected] And ShowPassCodeInput = True And PassCode = "" Then
-            ShowPassCodeInput = False
-            ShowOnOffButtons = False
+        If [Protected] And PassCodeInputVisibility = const_Visible And PassCode = "" Then
+            PassCodeInputVisibility = const_Collapsed
+            OnOffButtonVisibility = const_Collapsed
             PassCode = ""
             Exit Function
         End If
-        If [Protected] And ShowPassCodeInput = True And PassCode <> "" Then
+        If [Protected] And PassCodeInputVisibility = const_Visible And PassCode <> "" Then
             Await SwitchDevice((New Api).SwitchProtectedScene(idx, ToStatus, PassCode))
-            ShowPassCodeInput = False
-            ShowOnOffButtons = False
+            PassCodeInputVisibility = const_Collapsed
+            OnOffButtonVisibility = const_Collapsed
             PassCode = ""
             Await Me.Update()
             Me.needsInitializing = False
@@ -801,10 +850,10 @@ Public Class Device
         Get
             Return New RelayCommand(Sub()
                                         WriteToDebug("Device.ButtonRightTappedCommand()", "executed")
-                                        If Me.DetailsVisiblity = Visible Then
-                                            Me.DetailsVisiblity = Collapsed
+                                        If Me.DetailsVisiblity = const_Visible Then
+                                            Me.DetailsVisiblity = const_Collapsed
                                         Else
-                                            Me.DetailsVisiblity = Visible
+                                            Me.DetailsVisiblity = const_Visible
                                         End If
                                     End Sub)
 
@@ -814,12 +863,13 @@ Public Class Device
 
 
     Public Sub New()
-        ShowOnOffButtons = False
+        OnOffButtonVisibility = const_Collapsed
         needsInitializing = False
-        DetailsVisiblity = Collapsed
+        DetailsVisiblity = const_Collapsed
         isOn = False
         PlanIDs = New List(Of Integer)
-        ShowPassCodeInput = False
+        PassCodeInputVisibility = const_Collapsed
+        DataVisibility = const_Collapsed
 
     End Sub
 
@@ -830,40 +880,65 @@ Public Class Device
         'Set the IconDataTemplate to reflect the device's Type
         Select Case TypeImg
             Case "lightbulb"
+                IconURI = "ms-appx:///Images/lightbulb.png"
                 IconDataTemplate = CType(Application.Current.Resources("lightbulb"), DataTemplate)
             Case "contact"
+                IconURI = "ms-appx:///Images/magnet.png"
                 IconDataTemplate = CType(Application.Current.Resources("contact"), DataTemplate)
             Case "temperature"
+                IconURI = "ms-appx:///Images/temperature.png"
                 IconDataTemplate = CType(Application.Current.Resources("temperature"), DataTemplate)
             Case "LogitechMediaServer"
+                IconURI = "ms-appx:///Images/music.png"
                 IconDataTemplate = CType(Application.Current.Resources("music"), DataTemplate)
             Case "hardware"
+                IconURI = "ms-appx:///Images/percentage.png"
                 IconDataTemplate = CType(Application.Current.Resources("percentage"), DataTemplate)
             Case "doorbell"
+                IconURI = "ms-appx:///Images/doorbell.png"
                 IconDataTemplate = CType(Application.Current.Resources("doorbell"), DataTemplate)
             Case "counter"
+                IconURI = "ms-appx:///Images/counter.png"
                 IconDataTemplate = CType(Application.Current.Resources("counter"), DataTemplate)
             Case "Media"
+                IconURI = "ms-appx:///Images/media.png"
                 IconDataTemplate = CType(Application.Current.Resources("media"), DataTemplate)
             Case "current"
+                IconURI = "ms-appx:///Images/current.png"
                 IconDataTemplate = CType(Application.Current.Resources("current"), DataTemplate)
             Case "override_mini"
+                IconURI = "ms-appx:///Images/setpoint.png"
                 IconDataTemplate = CType(Application.Current.Resources("setpoint"), DataTemplate)
             Case "error"
+                IconURI = "ms-appx:///Images/error.png"
                 IconDataTemplate = CType(Application.Current.Resources("error"), DataTemplate)
             Case "info"
+                IconURI = "ms-appx:///Images/info.png"
                 IconDataTemplate = CType(Application.Current.Resources("info"), DataTemplate)
             Case "scene"
+                IconURI = "ms-appx:///Images/scene.png"
                 IconDataTemplate = CType(Application.Current.Resources("scene"), DataTemplate)
             Case "group"
+                IconURI = "ms-appx:///Images/group.png"
                 IconDataTemplate = CType(Application.Current.Resources("group"), DataTemplate)
             Case "visibility"
+                IconURI = "ms-appx:///Images/visibility.png"
                 IconDataTemplate = CType(Application.Current.Resources("visibility"), DataTemplate)
             Case "rain"
+                IconURI = "ms-appx:///Images/rain.png"
                 IconDataTemplate = CType(Application.Current.Resources("rain"), DataTemplate)
             Case Else
+                IconURI = "ms-appx:///Images/unknown.png"
                 IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
         End Select
+
+        If app.myViewModel.TiczSettings.UseBitmapIcons Then
+            BitmapIconVisibility = const_Visible
+            VectorIconVisibility = const_Collapsed
+        Else
+            BitmapIconVisibility = const_Collapsed
+            VectorIconVisibility = const_Visible
+        End If
 
         'Check if the device supports switching on/off.
         'TODO : Probably better logic exists on how to determine if a device can switch or not, but for now this will do.
@@ -877,10 +952,10 @@ Public Class Device
 
                     If Status = "Off" Then
                         isOn = False
-                        ShowData = False
+                        DataVisibility = const_Collapsed
                     Else
                         isOn = True
-                        If app.myViewModel.TiczSettings.ShowMarquee Then ShowData = True
+                        If app.myViewModel.TiczSettings.ShowMarquee Then DataVisibility = const_Visible
                     End If
                 Case "Contact"
                         CanBeSwitched = True
@@ -1296,20 +1371,22 @@ Public Class TiczViewModel
         While Not ct.IsCancellationRequested
             WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
             Dim i As Integer = 0
+            WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
             While i < refreshperiod * 1000
                 Await Task.Delay(250)
                 i += 250
                 If ct.IsCancellationRequested Then Exit While
             End While
             If ct.IsCancellationRequested Then Exit While
+            WriteToDebug("TiczViewModel.PerformAutoRefresh", "refreshing")
             Await Refresh()
-            WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
         End While
 
     End Function
 
     Public Async Function Refresh() As Task
         Await Notify.Update(False, "refreshing...", 0)
+        Dim sWatch = Stopwatch.StartNew()
 
         'Get all devices
         Dim dev_response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getAllDevices()))
@@ -1318,7 +1395,7 @@ Public Class TiczViewModel
             If Not refreshedDevices Is Nothing Then
                 For Each d In myDevices.result
                     'Send each devices it's up-to-date status so it can update itself
-                    d.Update((From dev In refreshedDevices.result Where dev.idx = d.idx Select dev).FirstOrDefault())
+                    Await d.Update((From dev In refreshedDevices.result Where dev.idx = d.idx Select dev).FirstOrDefault())
                 Next
             End If
         Else
@@ -1326,19 +1403,27 @@ Public Class TiczViewModel
         End If
 
         'Get all scenes
-        Dim grp_response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+        Dim grp_response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getAllScenes()))
         If grp_response.IsSuccessStatusCode Then
-            Dim refreshedScenes = JsonConvert.DeserializeObject(Of Devices)(Await dev_response.Content.ReadAsStringAsync)
+            Dim refreshedScenes = JsonConvert.DeserializeObject(Of Devices)(Await grp_response.Content.ReadAsStringAsync)
             If Not refreshedScenes Is Nothing Then
-                For Each d In myDevices.result
-                    'Send each devices it's up-to-date status so it can update itself
-                    d.Update((From dev In refreshedScenes.result Where dev.idx = d.idx Select dev).FirstOrDefault())
+                For Each d In (myDevices.result.Where(Function(x) x.Type = "Group" Or x.Type = "Scene").ToList())
+                    'Send each scene it's up-to-date status so it can update itself
+                    Await d.Update((From dev In refreshedScenes.result Where dev.idx = d.idx Select dev).FirstOrDefault())
                 Next
             End If
         Else
             Await Notify.Update(True, "couldn't load scene/group status", 2)
         End If
+
+
+        'Clear the Notification
         If dev_response.IsSuccessStatusCode AndAlso grp_response.IsSuccessStatusCode Then
+            'But only if the amount of time passed for the Refresh is around 500ms (approx. time for the animation showing "Refreshing" to be on the screen
+            If sWatch.ElapsedMilliseconds < 500 Then
+                WriteToDebug("TiczViewModel.Refresh()", String.Format("Refresh took {0} ms", sWatch.ElapsedMilliseconds))
+                Await Task.Delay(500 - sWatch.ElapsedMilliseconds)
+            End If
             Notify.Clear()
         End If
     End Function

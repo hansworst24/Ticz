@@ -38,6 +38,9 @@
                     <TextBlock   Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock   Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
+                    <TextBlock   Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ToggleSwitch IsOn="{Binding UseBitmapIcons, Mode=TwoWay}" />
                     <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock   Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />

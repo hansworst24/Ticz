@@ -23,15 +23,15 @@
         Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true", serverIP, serverPort)
     End Function
 
-    Public Function getDevices() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name", serverIP, serverPort)
-    End Function
+    'Public Function getDevices() As String
+    '    Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name", serverIP, serverPort)
+    'End Function
 
-    Public Function getLightSwitches() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getlightswitches", serverIP, serverPort)
-    End Function
+    'Public Function getLightSwitches() As String
+    '    Return String.Format("http://{0}:{1}/json.htm?type=command&param=getlightswitches", serverIP, serverPort)
+    'End Function
 
-    Public Function getSceneStatus() As String
+    Public Function getAllScenes() As String
         Return String.Format("http://{0}:{1}/json.htm?type=scenes", serverIP, serverPort)
     End Function
 
