@@ -236,7 +236,6 @@ Public Class Device
         Set(value As String)
             _Data = value
             RaisePropertyChanged()
-            If _Data <> "" AndAlso _Data <> _Status AndAlso SwitchType = "Media Player" Then DataVisibility = const_Visible Else DataVisibility = const_Collapsed
         End Set
     End Property
     Private Property _Data As String
@@ -949,13 +948,12 @@ Public Class Device
                     If Status = "On" Then isOn = True Else isOn = False
                 Case "Media Player"
                     CanBeSwitched = True
-
                     If Status = "Off" Then
                         isOn = False
                         DataVisibility = const_Collapsed
                     Else
                         isOn = True
-                        If app.myViewModel.TiczSettings.ShowMarquee Then DataVisibility = const_Visible
+                        If app.myViewModel.TiczSettings.ShowMarquee Then DataVisibility = const_Visible Else DataVisibility = const_Collapsed
                     End If
                 Case "Contact"
                         CanBeSwitched = True

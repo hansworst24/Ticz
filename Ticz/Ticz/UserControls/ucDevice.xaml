@@ -13,6 +13,7 @@
 
     <UserControl.Resources>
         <local:CanvasWidthToClipWidthConvertor x:Key="myClipConvertor"/>
+        <local:CanvasWidthToWidthConvertor x:Key="myWidthConvertor"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -23,13 +24,6 @@
         <Button x:Name="DeviceButton" IsEnabled="True"  Grid.Row="0" HorizontalAlignment="Stretch"  Style="{StaticResource DeviceButton}" HorizontalContentAlignment="Stretch" Command="{Binding ButtonPressedCommand}">
             <Button.Content>
                 <Grid>
-                    <Grid.Resources>
-                        <Storyboard x:Name="MarqueeOn">
-                            <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" 
-                                             Duration="0:0:20" From="{Binding Path=ActualWidth, ElementName=MarqueeCanvas}" 
-                                             To=" -300" RepeatBehavior="Forever" />
-                        </Storyboard>
-                    </Grid.Resources>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
@@ -51,8 +45,21 @@
                         <Canvas.Clip>
                             <RectangleGeometry Rect="{Binding ActualWidth, ElementName=MarqueeCanvas, Converter={StaticResource myClipConvertor}}"/>
                         </Canvas.Clip>
+                        <Canvas.Resources>
+                            <Storyboard x:Name="MarqueeOn">
+                                <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" 
+                                             Duration="0:0:20" From="{Binding Path=Text, ElementName=tbWidthCanvas}" 
+                                             To=" -300" RepeatBehavior="Forever" />
+                            </Storyboard>
+                        </Canvas.Resources>
                         <TextBlock Name="tbData" Text="{Binding Data}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding DataVisibility}" Value="Visible">
+                                <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}" ControlStoryboardOption="Play"/>
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                     </Canvas>
+                    <TextBlock Name="tbWidthCanvas" Text="{Binding ActualWidth, ElementName=MarqueeCanvas}" Visibility="Collapsed" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
                     <Grid Grid.Row="1" Grid.RowSpan="1" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -81,12 +88,6 @@
                         <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="#FF808080" VerticalAlignment="Center"/>
                     </Grid>
                     <ProgressBar Grid.Row="3" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:DataTriggerBehavior Binding="{Binding DataVisibility}" Value="Visible">
-                            <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}" ControlStoryboardOption="Play"/>
-                        </Core:DataTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-
                 </Grid>
             </Button.Content>
             <Interactivity:Interaction.Behaviors>

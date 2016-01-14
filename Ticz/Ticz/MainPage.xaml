@@ -65,7 +65,6 @@
                                 </ListView>
                             </SemanticZoom.ZoomedInView>
                             <SemanticZoom.ZoomedOutView>
-
                                 <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
                                       ItemTemplate="{StaticResource ListViewJumpListTemplate}">
                                 </ListView>

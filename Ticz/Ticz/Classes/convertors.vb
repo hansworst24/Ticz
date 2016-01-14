@@ -10,9 +10,7 @@ Public Class CanvasWidthToClipWidthConvertor
     End Function
 
     Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, language As String) As Object Implements IValueConverter.ConvertBack
-        Dim ts As TimeSpan = CType(value, TimeSpan)
-        Dim dt As New Date
-        Return dt.Add(ts)
+        Throw New NotImplementedException
     End Function
 End Class
 
