@@ -120,22 +120,8 @@
                     <TextBox VerticalAlignment="Center" Grid.Column="1" Margin="20,0,0,0" Text="{Binding PassCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </Button.Content>
-            <!--<Interactivity:Interaction.Behaviors>
-                <Core:DataTriggerBehavior Binding="{Binding ShowPassCodeInput}" Value="True">
-                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ProtectedButton}" Value="Visible"/>
-                </Core:DataTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{Binding ShowPassCodeInput}" Value="False">
-                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ProtectedButton}" Value="Collapsed"/>
-                </Core:DataTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{Binding ShowOnOffButtons}" Value="True">
-                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=OnOffButtonsBorder}" Value="Visible"/>
-                </Core:DataTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{Binding ShowOnOffButtons}" Value="False">
-                    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=OnOffButtonsBorder}" Value="Collapsed"/>
-                </Core:DataTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>-->
         </Button>
-        <!--<Grid Grid.Row="2" Visibility="{Binding DetailsVisiblity}">
+        <Grid Grid.Row="2" Visibility="{Binding DetailsVisiblity}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -188,10 +174,10 @@
                 <RowDefinition/>
                 
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="addjMulti"/>
+            <!--<TextBlock Grid.Row="0" Grid.Column="0" Text="addjMulti"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="addjMulti2"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="addjValue"/>
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="addjValue2"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="addjValue2"/>-->
             <TextBlock Grid.Row="4" Grid.Column="0" Text="BatteryLevel"/>
             <TextBlock Grid.Row="5" Grid.Column="0" Text="CustomImage"/>
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Data"/>
@@ -233,10 +219,10 @@
             <TextBlock Grid.Row="42" Grid.Column="0" Text="YOffset"/>
             <TextBlock Grid.Row="43" Grid.Column="0" Text="idx"/>
             
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding addjMulti}"/>
+            <!--<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding addjMulti}"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding addjMulti2}"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding addjValue}"/>
-            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding addjValue2}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding addjValue2}"/>-->
             <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding BatteryLevel}"/>
             <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CustomImage}"/>
             <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Data}"/>
@@ -278,6 +264,6 @@
             <TextBlock Grid.Row="42" Grid.Column="1" Text="{Binding YOffset}"/>
             <TextBlock Grid.Row="43" Grid.Column="1" Text="{Binding idx}"/>
             
-        </Grid>-->
+        </Grid>
     </Grid>
 </UserControl>
