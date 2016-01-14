@@ -93,7 +93,7 @@
                 <VisualStateGroup>
                     <VisualState>
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="640" />
+                            <AdaptiveTrigger MinWindowWidth="480" />
                         </VisualState.StateTriggers>
                         <VisualState.Setters>
                         <Setter Target="RoomsPivot.ItemTemplate" Value="{StaticResource PivotItemTemplateBigScreen}" />
