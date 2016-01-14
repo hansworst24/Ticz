@@ -25,7 +25,9 @@
                 <Grid>
                     <Grid.Resources>
                         <Storyboard x:Name="MarqueeOn">
-                            <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" Duration="0:0:20" From="{Binding Path=ActualWidth, ElementName=MarqueeCanvas}" To=" -300" RepeatBehavior="Forever"/>
+                            <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" 
+                                             Duration="0:0:20" From="{Binding Path=ActualWidth, ElementName=MarqueeCanvas}" 
+                                             To=" -300" RepeatBehavior="Forever" />
                         </Storyboard>
                     </Grid.Resources>
                     <Grid.RowDefinitions>
@@ -45,11 +47,11 @@
                     </Viewbox>
                     <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}"  Margin="20,0,0,0" Text="{Binding Name}" TextWrapping="NoWrap"/>
                     <TextBlock x:Uid="Status" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="20,0,0,0" Text="{Binding Status}" TextWrapping="NoWrap"/>
-                    <Canvas x:Name="MarqueeCanvas" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5,0,0,0" HorizontalAlignment="Stretch" Height="22" Background="Transparent">
+                    <Canvas x:Name="MarqueeCanvas" Grid.Row="1" Grid.Column="2" Visibility="{Binding DataVisibility}" Grid.ColumnSpan="2" Margin="5,0,0,0" HorizontalAlignment="Stretch" Height="22" Background="Transparent">
                         <Canvas.Clip>
                             <RectangleGeometry Rect="{Binding ActualWidth, ElementName=MarqueeCanvas, Converter={StaticResource myClipConvertor}}"/>
                         </Canvas.Clip>
-                        <TextBlock Name="tbData" Text="{Binding Data}" Visibility="{Binding DataVisibility}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <TextBlock Name="tbData" Text="{Binding Data}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
                     </Canvas>
                     <Grid Grid.Row="1" Grid.RowSpan="1" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
                         <Grid.ColumnDefinitions>
