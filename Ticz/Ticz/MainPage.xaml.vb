@@ -52,8 +52,8 @@ Public NotInheritable Class MainPage
                 End If
 
                 For Each plan In vm.MyPlans.result.OrderBy(Function(x) x.Order)
-                    Dim devicesForThisRoom = From d In vm.myDevices.result Where d.PlanIDs.Contains(plan.idx) Select d
-                    If Not devicesForThisRoom Is Nothing Then
+                    Dim devicesForThisRoom As IEnumerable(Of Device) = From d In vm.myDevices.result Where d.PlanIDs.Contains(plan.idx) Select d
+                    If devicesForThisRoom.ToList.Count > 0 Then
                         vm.MyRooms.Add(New Room With {.RoomName = plan.Name, .DeviceGroups = ConstructDeviceGroups(devicesForThisRoom)})
                     End If
                 Next

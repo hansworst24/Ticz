@@ -139,12 +139,12 @@ Public Class Devices
             If app.myViewModel.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
                 'We found a room called "Ticz", get the IDX
                 Dim roomIDX As String = (From r In app.myViewModel.MyPlans.result Where r.Name = "Ticz" Select r.idx).FirstOrDefault
-                url = (New Api).getDevicesForRoom(roomIDX)
+                url = (New Api).getAllDevicesForRoom(roomIDX)
             Else
-                url = (New Api).getDevices()
+                url = (New Api).getAllDevices()
             End If
         Else
-            url = (New Api).getDevices()
+            url = (New Api).getAllDevices()
         End If
 
         Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
@@ -157,8 +157,7 @@ Public Class Devices
                 If r.Status = "" Then
                     r.Status = r.Data
                 End If
-                r.Initialize()
-                r.setStatus()
+                Await r.Update(r)
                 result.Add(r)
             Next
             Me.status = deserialized.status
@@ -488,8 +487,29 @@ Public Class Device
     Public Property CanBeSwitched As Boolean
 
 
-    Public Sub setStatus()
+    Public Async Function Update(Optional d As Device = Nothing) As Task
+        If IconDataTemplate Is Nothing Then
+            Me.Initialize()
+        End If
+        If d Is Nothing Then
+            Dim response As HttpResponseMessage
+            If Type = "Group" Or Type = "Scene" Then
+                response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+            Else
+                response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
+            End If
 
+            If response.IsSuccessStatusCode Then
+                Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
+                Dim myDevice As Device = (From dev In deserialized.result Where dev.idx = idx Select dev).FirstOrDefault()
+                If Not myDevice Is Nothing Then
+                    d = myDevice
+                End If
+            End If
+        End If
+
+        Status = d.Status
+        Data = d.Data
         If Not SwitchType Is Nothing Then
             Select Case SwitchType
                 Case "On/Off"
@@ -527,52 +547,106 @@ Public Class Device
                 End Select
             End If
         End If
-
-    End Sub
-
-    Public Async Function getStatus() As Task(Of retvalue)
-        'Await Task.Delay(2000)
-        Dim response As HttpResponseMessage
-        If Type = "Group" Or Type = "Scene" Then
-            response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+        If d Is Nothing Then
+            Exit Function
         Else
-            response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
+            Me.Status = d.Status
+            Me.Data = d.Data
+            'Show Data Field as Status when the Status Field is empty
+            If Me.Status = "" Then Me.Status = Me.Data
+            'setStatus()
+            needsInitializing = False
         End If
 
-        If response.IsSuccessStatusCode Then
-            Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
-            Dim myDevice As Device = (From d In deserialized.result Where d.idx = idx Select d).FirstOrDefault()
-            If Not myDevice Is Nothing Then
-                Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                                 Me.Status = myDevice.Status
-                                                                                                                 Me.Data = myDevice.Data
-                                                                                                                 'Show Data Field as Status when the Status Field is empty
-                                                                                                                 If Me.Status = "" Then Me.Status = Me.Data
-                                                                                                                 setStatus()
-                                                                                                                 needsInitializing = False
-                                                                                                             End Sub)
-                Return New retvalue With {.issuccess = 1}
-            Else
-                'app.myViewModel.Notify.Update(True, "Error getting device status")
-                Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                                 Me.needsInitializing = False
-                                                                                                             End Sub)
-
-                Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
-            End If
-        Else
-            'app.myViewModel.Notify.Update(True, "Error getting device status") 
-            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                             Me.needsInitializing = False
-                                                                                                         End Sub)
-
-            Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
-        End If
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                         needsInitializing = False
-                                                                                                     End Sub)
 
     End Function
+
+
+    'Public Sub setStatus()
+
+    '    If Not SwitchType Is Nothing Then
+    '        Select Case SwitchType
+    '            Case "On/Off"
+    '                CanBeSwitched = True
+    '                If Status = switchOn Then isOn = True Else isOn = False
+    '            Case "Media Player"
+    '                CanBeSwitched = True
+    '                If Status = switchOff Then isOn = False Else isOn = True
+    '            Case "Contact"
+    '                CanBeSwitched = True
+    '                If Status = contactOpen Then isOn = True Else isOn = False
+    '        End Select
+    '    Else
+    '        If Not Type Is Nothing Then
+    '            Select Case Type
+    '                Case "Scene"
+    '                    CanBeSwitched = True
+    '                    If Status = switchOff Then isOn = False Else isOn = True
+    '                Case "Group"
+    '                    CanBeSwitched = True
+    '                    Select Case Status
+    '                        Case switchOff
+    '                            isOn = False
+    '                            isMixed = False
+    '                        Case switchOn
+    '                            isOn = True
+    '                            isMixed = False
+    '                        Case groupMixed
+    '                            isOn = True
+    '                            isMixed = True
+    '                    End Select
+    '                Case Else
+    '                    CanBeSwitched = False
+    '                    isOn = True
+    '            End Select
+    '        End If
+    '    End If
+
+    'End Sub
+
+    'Public Async Function getStatus() As Task(Of retvalue)
+    'Await Task.Delay(2000)
+    'Dim response As HttpResponseMessage
+    'If Type = "Group" Or Type = "Scene" Then
+    '        response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+    '    Else
+    '        response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getDeviceStatus(Me.idx)))
+    '    End If
+
+    'If response.IsSuccessStatusCode Then
+    'Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(Await response.Content.ReadAsStringAsync)
+    'Dim myDevice As Device = (From d In deserialized.result Where d.idx = idx Select d).FirstOrDefault()
+    '        If Not myDevice Is Nothing Then
+    '            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                             Me.Status = myDevice.Status
+    '                                                                                                             Me.Data = myDevice.Data
+    '                                                                                                             'Show Data Field as Status when the Status Field is empty
+    '                                                                                                             If Me.Status = "" Then Me.Status = Me.Data
+    '                                                                                                             setStatus()
+    '                                                                                                             needsInitializing = False
+    '                                                                                                         End Sub)
+    '            Return New retvalue With {.issuccess = 1}
+    '        Else
+    '            'app.myViewModel.Notify.Update(True, "Error getting device status")
+    '            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                             Me.needsInitializing = False
+    '                                                                                                         End Sub)
+
+    '            Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
+    '        End If
+    '    Else
+    '        'app.myViewModel.Notify.Update(True, "Error getting device status") 
+    '        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                         Me.needsInitializing = False
+    '                                                                                                     End Sub)
+
+    '        Return New retvalue With {.issuccess = 0, .err = "Error getting device status"}
+    '    End If
+    '    Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
+    '                                                                                                     needsInitializing = False
+    '                                                                                                 End Sub)
+
+    'End Function
 
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
@@ -611,7 +685,7 @@ Public Class Device
                                                     ShowOnOffButtons = False
                                                     If [Protected] Then ShowPassCodeInput = False
                                                 End If
-                                                Await Me.getStatus()
+                                                Await Me.Update()
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
@@ -636,7 +710,7 @@ Public Class Device
                                                     url = (New Api).SwitchProtectedLight(Me.idx, switchToState, PassCode)
                                                 Else
                                                     'Exit Sub for the moment, if the device is neither of the types we checked
-                                                    Await getStatus()
+                                                    Await Update()
                                                     ShowPassCodeInput = False
                                                     Exit Sub
                                                 End If
@@ -648,7 +722,7 @@ Public Class Device
                                                     url = (New Api).SwitchLight(Me.idx, switchToState)
                                                 Else
                                                     'Exit Sub for the moment, if the device is neither of the types we checked
-                                                    Await getStatus()
+                                                    Await Update()
                                                     Exit Sub
                                                 End If
 
@@ -659,11 +733,11 @@ Public Class Device
                                                 If Me.PassCode <> "" Then Me.PassCode = ""
                                                 Dim ret As retvalue = Await SwitchDevice(url)
                                                 Me.needsInitializing = False
-                                                Await getStatus()
+                                                Await Update()
                                             End If
                                         Else
                                             'Only get the status of the device if it can't be switched
-                                            Await getStatus()
+                                            Await Update()
                                         End If
 
 
@@ -690,7 +764,7 @@ Public Class Device
             ShowPassCodeInput = False
             ShowOnOffButtons = False
             PassCode = ""
-            Await Me.getStatus()
+            Await Me.Update()
             Me.needsInitializing = False
         Else
             Await SwitchDevice((New Api).SwitchScene(idx, ToStatus))
@@ -1236,37 +1310,35 @@ Public Class TiczViewModel
 
     Public Async Function Refresh() As Task
         Await Notify.Update(False, "refreshing...", 0)
-        'Perform some parralelism by starting the refresh of a batch of tasks concurrently
-        'Not perse a requirement, but worth coding like this, in case you have a slow network connection and querying the server takes some time
-        Dim errors As Integer
-        Dim maximumErrorsBeforeTerminate As Integer = 3
-        Dim amountOfDevices = myDevices.result.Count
-        Dim amountPerRun = 4
-        Dim amountOfRuns = Math.Ceiling(amountOfDevices / amountPerRun)
-        For run As Integer = 0 To amountOfRuns - 1
-            Dim taskList As New List(Of Task(Of retvalue))
-            For device As Integer = 0 To amountPerRun - 1
-                ' WriteToDebug("TiczViewModel.Refresh()", String.Format("Adding device {0} to queue {1}", (run * amountPerRun) + device + 1, run))
-                If (run * amountPerRun) + device + 1 <= myDevices.result.Count - 1 Then
-                    taskList.Add(myDevices.result((run * amountPerRun) + device).getStatus())
-                End If
-            Next
-            'Await Task.Delay(500)
-            While (taskList.Count > 0 And errors < maximumErrorsBeforeTerminate)
-                Dim finishedRefresh As Task(Of retvalue) = Await Task.WhenAny(taskList.ToArray())
-                taskList.Remove(finishedRefresh)
-                If Not finishedRefresh.Result.issuccess Then
-                    errors += 1
-                Else
-                    'WriteToDebug(finishedRefresh.Result.issuccess, "asdas")
-                End If
-            End While
-            If errors >= maximumErrorsBeforeTerminate Then Exit For
-        Next
 
-        If errors > 0 Then
-            Await Notify.Update(True, "Some devices didn't refresh", 2)
+        'Get all devices
+        Dim dev_response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getAllDevices()))
+        If dev_response.IsSuccessStatusCode Then
+            Dim refreshedDevices = JsonConvert.DeserializeObject(Of Devices)(Await dev_response.Content.ReadAsStringAsync)
+            If Not refreshedDevices Is Nothing Then
+                For Each d In myDevices.result
+                    'Send each devices it's up-to-date status so it can update itself
+                    d.Update((From dev In refreshedDevices.result Where dev.idx = d.idx Select dev).FirstOrDefault())
+                Next
+            End If
         Else
+            Await Notify.Update(True, "couldn't load device status", 2)
+        End If
+
+        'Get all scenes
+        Dim grp_response = Await Task.Run(Function() (New Downloader).DownloadJSON((New Api).getSceneStatus()))
+        If grp_response.IsSuccessStatusCode Then
+            Dim refreshedScenes = JsonConvert.DeserializeObject(Of Devices)(Await dev_response.Content.ReadAsStringAsync)
+            If Not refreshedScenes Is Nothing Then
+                For Each d In myDevices.result
+                    'Send each devices it's up-to-date status so it can update itself
+                    d.Update((From dev In refreshedScenes.result Where dev.idx = d.idx Select dev).FirstOrDefault())
+                Next
+            End If
+        Else
+            Await Notify.Update(True, "couldn't load scene/group status", 2)
+        End If
+        If dev_response.IsSuccessStatusCode AndAlso grp_response.IsSuccessStatusCode Then
             Notify.Clear()
         End If
     End Function
