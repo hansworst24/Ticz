@@ -13,7 +13,6 @@
 
     <UserControl.Resources>
         <local:CanvasWidthToClipWidthConvertor x:Key="myClipConvertor"/>
-        <local:CanvasWidthToWidthConvertor x:Key="myWidthConvertor"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
