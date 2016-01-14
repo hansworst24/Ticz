@@ -34,6 +34,9 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="60" Width="60" CornerRadius="10" BorderThickness="0" BorderBrush="{Binding IconForegroundColor}" Background="{Binding IconForegroundColor}" Visibility="{Binding IconVisibility}" VerticalAlignment="Center">
+                        <Image x:Name="IconImage" Height="50" Width="50" Source="{Binding IconURI}" />
+                    </Border>
                     <BitmapIcon x:Name="IconBitmap" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" UriSource="{Binding IconURI}" Foreground="{Binding IconForegroundColor}" Visibility="{Binding BitmapIconVisibility}"/>
                     <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform" Visibility="{Binding VectorIconVisibility}">
                         <ContentPresenter x:Name="IconCP" CacheMode="BitmapCache" Foreground="{Binding IconForegroundColor}" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
@@ -44,19 +47,20 @@
                         <Canvas.Clip>
                             <RectangleGeometry Rect="{Binding ActualWidth, ElementName=MarqueeCanvas, Converter={StaticResource myClipConvertor}}"/>
                         </Canvas.Clip>
-                        <Canvas.Resources>
-                            <Storyboard x:Name="MarqueeOn">
-                                <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" 
-                                             Duration="0:0:20" From="{Binding Path=Text, ElementName=tbWidthCanvas}" 
+                        <TextBlock Name="tbData" Text="{Binding Data}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}">
+                            <TextBlock.Resources>
+                                <Storyboard x:Name="MarqueeOn">
+                                    <DoubleAnimation Storyboard.TargetName="tbData" Storyboard.TargetProperty="(Canvas.Left)" 
+                                             Duration="0:0:20" From="{Binding ActualWidth, ElementName=MarqueeCanvas}" 
                                              To=" -300" RepeatBehavior="Forever" />
-                            </Storyboard>
-                        </Canvas.Resources>
-                        <TextBlock Name="tbData" Text="{Binding Data}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+                                </Storyboard>
+                            </TextBlock.Resources>
                         <Interactivity:Interaction.Behaviors>
                             <Core:DataTriggerBehavior Binding="{Binding DataVisibility}" Value="Visible">
                                 <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}" ControlStoryboardOption="Play"/>
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
+                        </TextBlock>
                     </Canvas>
                     <TextBlock Name="tbWidthCanvas" Text="{Binding ActualWidth, ElementName=MarqueeCanvas}" Visibility="Collapsed" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
                     <Grid Grid.Row="1" Grid.RowSpan="1" Grid.Column="2" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
@@ -86,7 +90,7 @@
                         </Viewbox>
                         <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="#FF808080" VerticalAlignment="Center"/>
                     </Grid>
-                    <ProgressBar Grid.Row="3" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>
+                    <!--<ProgressBar Grid.Row="3" Grid.Column="0" Background="Transparent" IsIndeterminate="{Binding needsInitializing}"/>-->
                 </Grid>
             </Button.Content>
             <Interactivity:Interaction.Behaviors>

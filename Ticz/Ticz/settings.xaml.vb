@@ -17,6 +17,7 @@ Partial Public Class AppSettings
     Const strShowAllDevicesKeyName As String = "strShowAllDevices"
     Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
     Const strUseBitmapIconsKeyName As String = "blUseBitmapIcons"
+    Const strSwitchIconBackgroundKeyName As String = "strSwitchIconBackground"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -31,6 +32,7 @@ Partial Public Class AppSettings
     Const strShowAllDevicesDefault = "False"
     Const strSecondsForRefreshDefault = 0
     Const strUseBitmapIconsDefault = False
+    Const strSwitchIconBackgroundDefault = False
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -44,6 +46,7 @@ Partial Public Class AppSettings
     Const strShowAllDevicesDefault = "True"
     Const strSecondsForRefreshDefault = 10
     Const strUseBitmapIconsDefault = False
+    Const strSwitchIconBackgroundDefault = False
 #End If
 
     Const strConnectionStatusDefault = False
@@ -162,6 +165,17 @@ Partial Public Class AppSettings
         Get
             Return _YesNoList
         End Get
+    End Property
+
+    Public Property SwitchIconBackground As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strSwitchIconBackgroundKeyName, strSwitchIconBackgroundDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strSwitchIconBackgroundKeyName, value) Then
+                Save()
+            End If
+        End Set
     End Property
 
     Public Property UseBitmapIcons As Boolean

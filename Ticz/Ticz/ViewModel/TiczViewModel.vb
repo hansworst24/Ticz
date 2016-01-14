@@ -291,6 +291,7 @@ Public Class Device
 #Region "ViewModel Properties"
 
 
+    Public Property IconVisibility As String
     Public Property BitmapIconVisibility As String
     Public Property VectorIconVisibility As String
     Public ReadOnly Property IconForegroundColor As Brush
@@ -869,7 +870,6 @@ Public Class Device
         PlanIDs = New List(Of Integer)
         PassCodeInputVisibility = const_Collapsed
         DataVisibility = const_Collapsed
-
     End Sub
 
     ''' <summary>
@@ -926,15 +926,29 @@ Public Class Device
             Case "rain"
                 IconURI = "ms-appx:///Images/rain.png"
                 IconDataTemplate = CType(Application.Current.Resources("rain"), DataTemplate)
+            Case "wind"
+                IconURI = "ms-appx:///Images/wind.png"
+                IconDataTemplate = CType(Application.Current.Resources("wind"), DataTemplate)
+            Case "uv"
+                IconURI = "ms-appx:///Images/uvi.png"
+                IconDataTemplate = CType(Application.Current.Resources("uvi"), DataTemplate)
             Case Else
                 IconURI = "ms-appx:///Images/unknown.png"
                 IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
         End Select
 
         If app.myViewModel.TiczSettings.UseBitmapIcons Then
-            BitmapIconVisibility = const_Visible
-            VectorIconVisibility = const_Collapsed
+            If app.myViewModel.TiczSettings.SwitchIconBackground Then
+                IconVisibility = const_Visible
+                BitmapIconVisibility = const_Collapsed
+                VectorIconVisibility = const_Collapsed
+            Else
+                BitmapIconVisibility = const_Visible
+                IconVisibility = const_Collapsed
+                VectorIconVisibility = const_Collapsed
+            End If
         Else
+            IconVisibility = const_Collapsed
             BitmapIconVisibility = const_Collapsed
             VectorIconVisibility = const_Visible
         End If

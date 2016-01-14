@@ -41,6 +41,11 @@
                     <TextBlock   Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock   Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding UseBitmapIcons, Mode=TwoWay}" />
+
+                    <TextBlock   Text="Use Icon Background for on/off" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock   Text="By default, the icon itself will change from grey to the selected accent color when the device is switched on. When this setting is enabled, it will switch the icon background and keep the icon itself black. When using vector images, this setting has no effect." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ToggleSwitch IsOn="{Binding SwitchIconBackground, Mode=TwoWay}" />
+                    
                     <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock   Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
