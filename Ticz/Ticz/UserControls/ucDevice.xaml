@@ -113,7 +113,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock VerticalAlignment="Center" Grid.Column="0" Text="Password"  Style="{ThemeResource BodyTextBlockStyle}"/>
-                    <TextBox VerticalAlignment="Center" Grid.Column="1" Margin="20,0,0,0" Text="{Binding PassCode, Mode=TwoWay}"/>
+                    <TextBox VerticalAlignment="Center" Grid.Column="1" Margin="20,0,0,0" Text="{Binding PassCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </Button.Content>
             <!--<Interactivity:Interaction.Behaviors>
