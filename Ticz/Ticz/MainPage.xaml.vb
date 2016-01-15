@@ -43,13 +43,18 @@ Public NotInheritable Class MainPage
                 Await vm.myDevices.Load()
 
                 Await vm.Notify.Update(False, "creating rooms...", 0)
-                If vm.TiczSettings.ShowFavourites Then
-                    'Construct a first Room in which we'll show all favourite devices
-                    Dim favs = From d In vm.myDevices.result Where d.Favorite = 1 Select d
-                    If Not favs Is Nothing Then
-                        vm.MyRooms.Add(New Room With {.RoomName = "Favourites", .DeviceGroups = ConstructDeviceGroups(favs)})
+
+                'Only show Favourites when there isn't a test-room "Ticz" created
+                If Not vm.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
+                    If vm.TiczSettings.ShowFavourites Then
+                        'Construct a first Room in which we'll show all favourite devices
+                        Dim favs = From d In vm.myDevices.result Where d.Favorite = 1 Select d
+                        If Not favs Is Nothing Then
+                            vm.MyRooms.Add(New Room With {.RoomName = "Favourites", .DeviceGroups = ConstructDeviceGroups(favs)})
+                        End If
                     End If
                 End If
+
 
                 For Each plan In vm.MyPlans.result.OrderBy(Function(x) x.Order)
                     Dim devicesForThisRoom As IEnumerable(Of Device) = From d In vm.myDevices.result Where d.PlanIDs.Contains(plan.idx) Select d
@@ -58,14 +63,16 @@ Public NotInheritable Class MainPage
                     End If
                 Next
 
-                If vm.TiczSettings.ShowAllDevices Then
-                    'Construct a last Room in which we'll show all devices
-                    Dim alldevs = From d In vm.myDevices.result Select d
-                    If Not alldevs Is Nothing Then
-                        vm.MyRooms.Add(New Room With {.RoomName = "All Devices", .DeviceGroups = ConstructDeviceGroups(alldevs)})
+                'Only show All Devices when there isn't a test-room "Ticz" created
+                If Not vm.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
+                    If vm.TiczSettings.ShowAllDevices Then
+                        'Construct a last Room in which we'll show all devices
+                        Dim alldevs = From d In vm.myDevices.result Select d
+                        If Not alldevs Is Nothing Then
+                            vm.MyRooms.Add(New Room With {.RoomName = "All Devices", .DeviceGroups = ConstructDeviceGroups(alldevs)})
+                        End If
                     End If
                 End If
-
                 vm.Notify.Clear()
             Else
                 Await vm.Notify.Update(True, "connection error", 0)
@@ -91,12 +98,13 @@ Public NotInheritable Class MainPage
     End Sub
 
     Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)
-        WriteToDebug("MainPage.GridView_SizeChanged()", "executed")
-        Dim gv As GridView = CType(sender, GridView)
-        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
-        Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
-        If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
-        Panel.ItemWidth = e.NewSize.Width / amountOfColumns
+        'WriteToDebug("MainPage.GridView_SizeChanged()", "executed")
+        'Dim gv As GridView = CType(sender, GridView)
+        'Dim Panel = CType(gv.ItemsPanelRoot, WrapPanel)
+        'Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 300)
+        'If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
+        'Panel.ItemWidth = e.NewSize.Width / amountOfColumns
+        'WriteToDebug("Panel Width = ", Panel.ItemWidth)
 
     End Sub
 End Class

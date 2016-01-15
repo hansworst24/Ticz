@@ -16,14 +16,20 @@
                 </Grid.Resources>
                 <SemanticZoom>
                     <SemanticZoom.ZoomedInView>
-                        <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
                                       ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" SizeChanged="GridView_SizeChanged">
                             <GridView.GroupStyle>
-                                <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <xaml:WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
                             </GridView.GroupStyle>
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <ItemsWrapGrid Orientation="Horizontal"/>
+                                    <xaml:WrapPanel Orientation="Vertical"/>
                                 </ItemsPanelTemplate>
                             </GridView.ItemsPanel>
                             <GridView.ItemContainerStyle>
@@ -35,7 +41,10 @@
                             </GridView.ItemContainerStyle>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
-                                        <local:ucDevice DataContext="{Binding}"/>
+                                    <Grid Width="320">
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <!--<local:ucDevice DataContext="{Binding}"/>-->
+                                    </Grid>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
                         </GridView>

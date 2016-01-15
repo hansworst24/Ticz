@@ -8,8 +8,6 @@ Imports Windows.UI
 Imports Windows.UI.Core
 Imports Windows.Web.Http
 
-
-
 Public Class domoResponse
     Public Property message As String
     Public Property status As String
@@ -289,7 +287,6 @@ Public Class Device
     Public Property CameraIdx As String
 #End Region
 #Region "ViewModel Properties"
-
 
     Public Property IconVisibility As String
     Public Property BitmapIconVisibility As String
@@ -970,7 +967,7 @@ Public Class Device
                         If app.myViewModel.TiczSettings.ShowMarquee Then DataVisibility = const_Visible Else DataVisibility = const_Collapsed
                     End If
                 Case "Contact"
-                        CanBeSwitched = True
+                    CanBeSwitched = True
                     If Status = "Open" Then isOn = True Else isOn = False
             End Select
         Else
