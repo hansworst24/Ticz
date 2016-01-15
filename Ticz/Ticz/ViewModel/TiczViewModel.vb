@@ -723,7 +723,7 @@ Public Class Device
                                             Dim switchToState As String
                                             Dim url As String
                                             Me.needsInitializing = True
-                                            'Exit Sub if the device represents a group (we have seperate buttons for that
+                                            'Exit Sub if the device represents a group (we have seperate buttons for Groups)
                                             If Type = "Group" Then
                                                 If OnOffButtonVisibility = const_Collapsed Then
                                                     OnOffButtonVisibility = const_Visible
@@ -735,8 +735,9 @@ Public Class Device
                                                 Me.needsInitializing = False
                                                 Exit Sub
                                             End If
+                                            'Set switchTo state to opposite of current setting
                                             If Me.isOn Then switchToState = switchOff Else switchToState = switchOn
-                                            'Open the PassCode box if the device is protected and the PassCode box is not visible
+                                            'Open the PassCode box if the device/group/scene is protected and the PassCode box is not visible
                                             If [Protected] And PassCodeInputVisibility = const_Collapsed Then
                                                 PassCodeInputVisibility = const_Visible
                                                 Me.needsInitializing = False
@@ -749,30 +750,20 @@ Public Class Device
                                                 Exit Sub
                                             End If
                                             'Set the URI for switching the device
-                                            If [Protected] Then
-                                                If Type = "Group" Or Type = "Scene" Then
-                                                    url = (New Api).SwitchProtectedScene(Me.idx, switchToState, PassCode)
-                                                ElseIf SwitchType = "On/Off" Or SwitchType = "Media Player" Or SwitchType = "Contact" Then
-                                                    url = (New Api).SwitchProtectedLight(Me.idx, switchToState, PassCode)
-                                                Else
-                                                    'Exit Sub for the moment, if the device is neither of the types we checked
-                                                    Await Update()
-                                                    PassCodeInputVisibility = const_Collapsed
-                                                    Exit Sub
-                                                End If
-                                                PassCodeInputVisibility = const_Collapsed
+                                            If Type = "Group" Then
+                                                url = (New Api).SwitchScene(Me.idx, switchToState, PassCode)
+                                            ElseIf Type = "Scene" Then
+                                                'Scenes can only be turned on
+                                                url = (New Api).SwitchScene(Me.idx, switchOn, PassCode)
+                                            ElseIf SwitchType = "On/Off" Or SwitchType = "Media Player" Or SwitchType = "Contact" Then
+                                                url = (New Api).SwitchLight(Me.idx, switchToState, PassCode)
                                             Else
-                                                If Type = "Group" Or Type = "Scene" Then
-                                                    url = (New Api).SwitchScene(Me.idx, switchToState)
-                                                ElseIf SwitchType = "On/Off" Or SwitchType = "Media Player" Or SwitchType = "Contact" Then
-                                                    url = (New Api).SwitchLight(Me.idx, switchToState)
-                                                Else
-                                                    'Exit Sub for the moment, if the device is neither of the types we checked
-                                                    Await Update()
-                                                    Exit Sub
-                                                End If
-
+                                                'Exit Sub for the moment, if the device is neither of the types we checked
+                                                Await Update()
+                                                PassCodeInputVisibility = const_Collapsed
+                                                Exit Sub
                                             End If
+                                            PassCodeInputVisibility = const_Collapsed
 
                                             'Execute the switch
                                             If Not url = "" Then
@@ -806,7 +797,7 @@ Public Class Device
             Exit Function
         End If
         If [Protected] And PassCodeInputVisibility = const_Visible And PassCode <> "" Then
-            Await SwitchDevice((New Api).SwitchProtectedScene(idx, ToStatus, PassCode))
+            Await SwitchDevice((New Api).SwitchScene(idx, ToStatus, PassCode))
             PassCodeInputVisibility = const_Collapsed
             OnOffButtonVisibility = const_Collapsed
             PassCode = ""
