@@ -1038,7 +1038,15 @@ End Class
 
 
 Public Class Room
+    Public ReadOnly Property vm As Ticz.TiczViewModel
+        Get
+            Return CType(Application.Current, App).myViewModel
+        End Get
+
+    End Property
+
     Public Property RoomName As String
+    Public Property RoomIDX As String
     'Public Property DeviceGroups As List(Of Devices)
     Public Property DeviceGroups As ObservableCollection(Of Group(Of Device))
 
@@ -1047,6 +1055,18 @@ Public Class Room
     Public Sub New()
 
     End Sub
+
+    Public Overloads Async Function LoadDevicesForRoom() As Task(Of IEnumerable(Of Device))
+        Dim url As String = (New Api).getAllDevicesForRoom(RoomIDX)
+        Dim response As HttpResponseMessage = Await (New Downloader).DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim deserialized = JsonConvert.DeserializeObject(Of Devices)(body)
+            Return deserialized.result
+        Else
+            Return Nothing
+        End If
+    End Function
 End Class
 
 

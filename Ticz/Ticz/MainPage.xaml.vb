@@ -41,8 +41,31 @@ Public NotInheritable Class MainPage
                 'Load all devices
                 Await vm.Notify.Update(False, "loading devices...", 0)
                 Await vm.myDevices.Load()
-
                 Await vm.Notify.Update(False, "creating rooms...", 0)
+
+                'Create the rooms
+                For Each plan In vm.MyPlans.result.OrderBy(Function(x) x.Order)
+                    Dim newRoom As New Room With {.RoomIDX = plan.idx, .RoomName = plan.Name}
+                    'In order to get the right order for devices in each Room, we need to ask Domoticz which devices it has in each room.
+                    'For each received device, we take the IDX and take the equivalent Device out of the main myDevices List
+                    Dim newRoomDevices = Await newRoom.LoadDevicesForRoom()
+                    Dim newRoomDevicesToAdd As New List(Of Device)
+
+                    For Each d In newRoomDevices
+                        Dim dev As Device = (From n In vm.myDevices.result Where n.idx = d.idx Select n).FirstOrDefault()
+                        If Not dev Is Nothing Then
+                            dev.Initialize()
+                            newRoomDevicesToAdd.Add(dev)
+                        End If
+                    Next
+                    'Construct the DeviceGroups 
+                    newRoom.DeviceGroups = ConstructDeviceGroups(newRoomDevicesToAdd)
+                    If newRoom.DeviceGroups.Count > 0 Then
+                        'and add the Room
+                        vm.MyRooms.Add(newRoom)
+                    End If
+                Next
+
 
                 'Only show Favourites when there isn't a test-room "Ticz" created
                 If Not vm.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
@@ -50,18 +73,10 @@ Public NotInheritable Class MainPage
                         'Construct a first Room in which we'll show all favourite devices
                         Dim favs = From d In vm.myDevices.result Where d.Favorite = 1 Select d
                         If Not favs Is Nothing Then
-                            vm.MyRooms.Add(New Room With {.RoomName = "Favourites", .DeviceGroups = ConstructDeviceGroups(favs)})
+                            vm.MyRooms.Insert(0, (New Room With {.RoomName = "Favourites", .DeviceGroups = ConstructDeviceGroups(favs)}))
                         End If
                     End If
                 End If
-
-
-                For Each plan In vm.MyPlans.result.OrderBy(Function(x) x.Order)
-                    Dim devicesForThisRoom As IEnumerable(Of Device) = From d In vm.myDevices.result Where d.PlanIDs.Contains(plan.idx) Select d
-                    If devicesForThisRoom.ToList.Count > 0 Then
-                        vm.MyRooms.Add(New Room With {.RoomName = plan.Name, .DeviceGroups = ConstructDeviceGroups(devicesForThisRoom)})
-                    End If
-                Next
 
                 'Only show All Devices when there isn't a test-room "Ticz" created
                 If Not vm.MyPlans.result.Any(Function(x) x.Name = "Ticz") Then
