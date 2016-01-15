@@ -42,8 +42,8 @@
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Width="320">
-                                        <TextBlock Text="{Binding Name}"/>
-                                        <!--<local:ucDevice DataContext="{Binding}"/>-->
+                                        <!--<TextBlock Text="{Binding Name}"/>-->
+                                        <local:ucDevice DataContext="{Binding}"/>
                                     </Grid>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
