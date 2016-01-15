@@ -22,7 +22,7 @@
                                 <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                     <GroupStyle.Panel>
                                         <ItemsPanelTemplate>
-                                            <xaml:WrapPanel Orientation="Horizontal"/>
+                                            <xaml:WrapPanel Orientation="Horizontal" Margin="0,0,0,20"/>
                                         </ItemsPanelTemplate>
                                     </GroupStyle.Panel>
                                 </GroupStyle>
@@ -41,10 +41,7 @@
                             </GridView.ItemContainerStyle>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Width="320">
-                                        <!--<TextBlock Text="{Binding Name}"/>-->
-                                        <local:ucDevice DataContext="{Binding}"/>
-                                    </Grid>
+                                        <local:ucDevice DataContext="{Binding}" Width="320"/>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
                         </GridView>

@@ -58,7 +58,7 @@
     
     <DataTemplate x:Key="ListViewHeaderTemplate">
         <Border Grid.Column="0" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0">
-            <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <TextBlock Grid.Row="0" Margin="0,0,0,5" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
             <!--<TextBlock Grid.Row="0" Margin="0,0,0,10" Text="Texterdetext" Style="{ThemeResource SubtitleTextBlockStyle}"/>-->
         </Border>
     </DataTemplate>
