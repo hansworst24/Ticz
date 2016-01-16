@@ -920,6 +920,9 @@ Public Class Device
             Case "uv"
                 IconURI = "ms-appx:///Images/uvi.png"
                 IconDataTemplate = CType(Application.Current.Resources("uvi"), DataTemplate)
+            Case "dimmer"
+                IconURI = "ms-appx:///Images/dimmer.png"
+                IconDataTemplate = CType(Application.Current.Resources("dimmer"), DataTemplate)
             Case Else
                 IconURI = "ms-appx:///Images/unknown.png"
                 IconDataTemplate = CType(Application.Current.Resources("unknown"), DataTemplate)
