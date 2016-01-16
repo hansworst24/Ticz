@@ -37,6 +37,7 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                     <Setter Property="HorizontalAlignment" Value="Stretch"/>
                                     <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="Margin" Value="0,0,10,10"/>
                                 </Style>
                             </GridView.ItemContainerStyle>
                             <GridView.ItemTemplate>

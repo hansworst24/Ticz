@@ -20,6 +20,18 @@
 
 
     <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="480" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="scrolly.Width" Value="400" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -33,7 +45,7 @@
             </Grid.ColumnDefinitions>
             <Image Grid.Row="0" HorizontalAlignment="Right" Height="150" VerticalAlignment="Bottom" Source="/Assets/Square150x150Logo.scale-100.png"/>
         </Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="00,0,10,0">
+        <ScrollViewer x:Name="scrolly" VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="00,0,10,0">
             <Grid Margin="10,40,10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -54,8 +66,8 @@
                 <TextBlock Grid.Row="1" Margin="0,20,0,30" TextAlignment="Justify" Text="Ticz was created by a non-professional programmer as both a hobby, and a need for a Windows Phone app for the splendid Domoticz project. By creating a Universal Windows app, the project will also allow itself to be easily deployed to Windows 10 tablets, PC's and IoT. Please provide your feedback/issues/comments through one of the options mentioned below ! Regards, Frank" TextWrapping="Wrap" FontSize="{ThemeResource TextStyleLargeFontSize}"/>
                 <Image Grid.Row="3" Source="/Images/email.png" HorizontalAlignment="Left" Height="30"/>
                 <HyperlinkButton Grid.Row="3" HorizontalAlignment="Left" Margin="40,0,0,0" NavigateUri="mailto:dips_ticz@outlook.com" Content="dips_ticz@outlook.com" FontSize="{ThemeResource TextStyleLargeFontSize}"/>
-                <Image Grid.Row="4" Source="/Images/forum.png" Margin="0,20,0,0" HorizontalAlignment="Left" Height="30"/>
-                <HyperlinkButton Grid.Row="4" HorizontalAlignment="Left" Margin="40,20,0,0" NavigateUri="https://www.microsoft.com" Content="Ticz thread on Domoticz forum" FontSize="{ThemeResource TextStyleLargeFontSize}"/>
+                <!--<Image Grid.Row="4" Source="/Images/forum.png" Margin="0,20,0,0" HorizontalAlignment="Left" Height="30"/>
+                <HyperlinkButton Grid.Row="4" HorizontalAlignment="Left" Margin="40,20,0,0" NavigateUri="https://www.microsoft.com" Content="Ticz thread on Domoticz forum" FontSize="{ThemeResource TextStyleLargeFontSize}"/>-->
                 <Image Grid.Row="5" Source="/Images/github.png" Margin="0,20,0,0" HorizontalAlignment="Left" Height="30"/>
                 <HyperlinkButton Grid.Row="5" HorizontalAlignment="Left" Margin="40,20,0,0" NavigateUri="https://github.com/hansworst24/Ticz" Content="Source Code on GitHub" FontSize="{ThemeResource TextStyleLargeFontSize}"/>
             </Grid>

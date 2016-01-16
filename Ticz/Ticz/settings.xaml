@@ -52,43 +52,42 @@
                     <ColumnDefinition x:Name="ThirdColumn" Width="0"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
-                    <TextBlock   Text="IP Address"/>
-                    <TextBox     Text="{Binding ServerIP, Mode=TwoWay}"/>
-                    <TextBlock   Text="Port" VerticalAlignment="Center"/>
-                    <TextBox     Text="{Binding ServerPort, Mode=TwoWay}" />
-                    <TextBlock   Text="Username"/>
-                    <TextBox     Text="{Binding Username, Mode=TwoWay}"/>
-                    <TextBlock   Text="Password"/>
-                    <PasswordBox Password="{Binding Password, Mode=TwoWay}"/>
-                    <Button      Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
-                    <TextBlock   Text="{Binding TestConnectionResult}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="IP Address"/>
+                    <TextBox      Text="{Binding ServerIP, Mode=TwoWay}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
+                    <TextBox      Text="{Binding ServerPort, Mode=TwoWay}" />
+                    <TextBlock    Margin="0,5,0,0" Text="Username"/>
+                    <TextBox      Text="{Binding Username, Mode=TwoWay}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="Password"/>
+                    <PasswordBox  Password="{Binding Password, Mode=TwoWay}"/>
+                    <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="{Binding TestConnectionResult}"/>
                     <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
                 </StackPanel>
                 <StackPanel x:Name="SecondSettings" Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
-                    <TextBlock   Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
-                    <TextBlock   Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <TextBlock    Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox     x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
+                    <TextBlock    Margin="0,10,0,0" Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding UseBitmapIcons, Mode=TwoWay}" />
-
-                    <TextBlock   Text="Use Icon Background for on/off" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="By default, the icon itself will change from grey to the selected accent color when the device is switched on. When this setting is enabled, it will switch the icon background and keep the icon itself black. When using vector images, this setting has no effect." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <TextBlock    Margin="0,10,0,0" Text="Use Icon Background for on/off" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="By default, the icon itself will change from grey to the selected accent color when the device is switched on. When this setting is enabled, it will switch the icon background and keep the icon itself black. When using vector images, this setting has no effect." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding SwitchIconBackground, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel x:Name="ThirdSettings" Grid.Row="2" Grid.Column="0"  Orientation="Vertical" Margin="0,0,20,20">
                 <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
-                    <TextBlock   Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
-                    <TextBlock   Text="Show 'All Devices'" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="Shows all devices within a last 'Room'" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />
-                    <TextBlock   Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock   Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox x:Name="cbShowMarquee" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowMarquee, Mode=TwoWay}" />
+                    <TextBlock  Text="Ensures that devices are shown within the minimum amount of columns selected. Ticz automatically adds more columns when required" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
+                    <TextBlock  Margin="0,10,0,0" Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock  Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox   x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
+                    <TextBlock  Margin="0,10,0,0" Text="Show 'All Devices'" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock  Text="Shows all devices within a last 'Room'" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox   x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />
+                    <TextBlock  Margin="0,10,0,0" Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox   x:Name="cbShowMarquee" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowMarquee, Mode=TwoWay}" />
                 </StackPanel>
             </Grid>
         </ScrollViewer>
