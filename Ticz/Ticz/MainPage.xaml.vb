@@ -52,7 +52,7 @@ Public NotInheritable Class MainPage
                     Dim newRoomDevicesToAdd As New List(Of Device)
 
                     For Each d In newRoomDevices
-                        Dim dev As Device = (From n In vm.myDevices.result Where n.idx = d.idx Select n).FirstOrDefault()
+                        Dim dev As Device = (From n In vm.myDevices.result Where n.idx = d.idx And n.Name = d.Name Select n).FirstOrDefault()
                         If Not dev Is Nothing Then
                             dev.Initialize()
                             newRoomDevicesToAdd.Add(dev)
