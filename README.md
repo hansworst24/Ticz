@@ -9,3 +9,20 @@ Support for Windows 10 (tablet/pc) is basically automatically implemented.
 The App will only interface with Domoticz for primary tasks, as reading out devices and switching devices on off. The App's intention is NOT to be able to create/modify/delete devices from within Domoticz. The webGUI of Domoticz is a much better place for doing this.
 
 The Master release will contain a WIP version of the app, with all latest commits. Releases that make it to the Windows Store will be marked as seperate versions.
+
+## Requirements
+
+- Domoticz needs to be configured with Basic-Auth authentication for Authentication to work.
+- Domoticz needs to be configured with Roomplans, in order for Devices to show up. 
+
+## Additional Information
+
+- For both testing purposes as well as troubleshooting, the App contains a simple mechanism, to selectively load devices. When you create a "Ticz" room on your Domoticz server, Ticz will only load devices within this Room, and ignore any other Devices or Rooms. This might come in handy when issues occur with Ticz, which might be caused by a specific Device Type.
+- Ticz was written and tested with the following configuration, therefore devices that weren't part of this setup might not work properly as they need specific configuration :
+  - Domoticz v2.4015
+  - Fibaro Door Sensors / Wallplugs / Relay Switches
+  - GreenWave Powernode 1 and 6
+  - Weather Underground Plugion
+  - Logitech Media Server plugin
+
+
