@@ -25,6 +25,7 @@
     <Assembly Name="*Application*" Dynamic="Required All" />
     <!--<Type Name="Ticz.ToastMessageViewModel" Dynamic="Required Public" />-->
     <Type Name="Windows.UI.Xaml.Controls.Grid" Dynamic="Required Public" />
+    <!--<Type Name="Windows.UI.Xaml.Controls.ContentPresenter" Dynamic="Required Public"/>-->
     
     <!-- Add your application specific runtime directives here. -->
 

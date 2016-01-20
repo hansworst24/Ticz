@@ -57,6 +57,8 @@ NotInheritable Class App
             rootFrame.Navigate(GetType(MainPage), e.Arguments)
         End If
         ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible)
+        ApplicationView.PreferredLaunchViewSize = New Size(800, 480)
+        ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize
         AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
         ' Ensure the current window is active
         Window.Current.Activate()

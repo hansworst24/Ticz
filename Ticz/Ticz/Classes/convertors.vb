@@ -6,7 +6,7 @@ Public Class CanvasWidthToClipWidthConvertor
     Implements IValueConverter
     Public Function Convert(value As Object, targetType As Type, parameter As Object, language As String) As Object Implements IValueConverter.Convert
         Dim width As Integer = CType(value, Integer)
-        Return New Rect With {.X = 0, .Y = 0, .Width = width, .Height = 50}
+        Return New Rect With {.X = 0, .Y = 0, .Width = 200, .Height = 50}
     End Function
 
     Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, language As String) As Object Implements IValueConverter.ConvertBack

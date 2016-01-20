@@ -19,6 +19,10 @@
                     scenes.Add(d)
                 Case "Group"
                     scenes.Add(d)
+                Case "Lighting Limitless/Applamp"
+                    switches.Add(d)
+                Case "Light/Switch"
+                    switches.Add(d)
                 Case "Lighting 2"
                     switches.Add(d)
                 Case "Temp + Humidity + Baro"
