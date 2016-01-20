@@ -15,10 +15,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>Ticz_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -103,6 +104,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Package.StoreAssociation.xml" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -123,8 +125,14 @@
     <Compile Include="settings.xaml.vb">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucDevice_Integrated.xaml.vb">
+      <DependentUpon>ucDevice_Integrated.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucDevice.xaml.vb">
       <DependentUpon>ucDevice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucDevice_Simple.xaml.vb">
+      <DependentUpon>ucDevice_Simple.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucToastList.xaml.vb">
       <DependentUpon>ucToastList.xaml</DependentUpon>
@@ -138,6 +146,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="Ticz_StoreKey.pfx" />
     <None Include="Ticz_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +190,12 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Images\battery.png" />
+    <Content Include="Images\blinds.png" />
     <Content Include="Images\counter.png" />
     <Content Include="Images\current.png" />
+    <Content Include="Images\dimmer.png" />
     <Content Include="Images\doorbell.png" />
+    <Content Include="Images\doorlock.png" />
     <Content Include="Images\email.png" />
     <Content Include="Images\error.png" />
     <Content Include="Images\forum.png" />
@@ -194,6 +206,8 @@
     <Content Include="Images\magnet.png" />
     <Content Include="Images\media.png" />
     <Content Include="Images\music.png" />
+    <Content Include="Images\off.png" />
+    <Content Include="Images\on.png" />
     <Content Include="Images\percentage.png" />
     <Content Include="Images\power.png" />
     <Content Include="Images\rain.png" />
@@ -201,7 +215,9 @@
     <Content Include="Images\setpoint.png" />
     <Content Include="Images\temperature.png" />
     <Content Include="Images\unknown.png" />
+    <Content Include="Images\uvi.png" />
     <Content Include="Images\visibility.png" />
+    <Content Include="Images\wind.png" />
     <Content Include="My Project\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -232,7 +248,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\ucDevice_Integrated.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\ucDevice.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ucDevice_Simple.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

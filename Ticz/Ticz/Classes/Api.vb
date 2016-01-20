@@ -33,6 +33,15 @@
         Return String.Format("http://{0}:{1}/json.htm?type=devices&rid={2}", serverIP, serverPort, idx)
     End Function
 
+    Public Function setDimmer(idx As String, switchstate As String, Optional passcode As String = "") As String
+        If passcode = "" Then
+            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd=Set%20Level&level={3}", serverIP, serverPort, idx, switchstate)
+        Else
+            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd=Set%20Level&level={3}&passcode={4}", serverIP, serverPort, idx, switchstate, passcode)
+        End If
+
+    End Function
+
 
     Public Function SwitchScene(idx As String, switchstate As String, Optional passcode As String = "") As String
         If passcode = "" Then
