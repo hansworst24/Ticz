@@ -784,9 +784,8 @@ Public Class Device
                                                                                                                  End If
                                                                                                              End If
                                                                                                              Status = SelectedLevelName
-                                                                                                         Else
-                                                                                                             If Status = "" Then Status = Data
                                                                                                          End If
+                                                                                                         If Status = "" Then Status = Data
                                                                                                          Initialize()
                                                                                                      End Sub)
 

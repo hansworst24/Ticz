@@ -177,7 +177,7 @@
 
                 <!-- THIS PART IS SHOWN FOR GENERIC DEVICES WHICH ARE NOT SPECIFIED ANY FURTHER-->
                 <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding StatusVisibility}">
-                    <TextBlock Text="{Binding Data}" Margin="0,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Status}" Margin="0,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </Border>
                 <!-- THIS PART IS SHOWN FOR MEDIAPLAYER DEVICES-->
                 <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding MediaPlayerVisibility}">
