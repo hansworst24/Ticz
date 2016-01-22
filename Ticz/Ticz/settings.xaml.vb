@@ -1,9 +1,45 @@
-﻿Imports GalaSoft.MvvmLight
+﻿Imports System.IO.IsolatedStorage
+Imports System.Xml.Serialization
+Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
+Imports Windows.Storage.Streams
 Imports Windows.UI.Core
 
 Partial Public Class AppSettings
     Inherits ViewModelBase
+
+    Public Class RoomConfiguration
+        Inherits ViewModelBase
+        'Public Property RoomIDX As Integer
+        Public Property RoomName As String
+        Public Property ShowRoom As Boolean
+            Get
+                Return _ShowRoom
+            End Get
+            Set(value As Boolean)
+                _ShowRoom = value
+                RaisePropertyChanged()
+            End Set
+        End Property
+        Private Property _ShowRoom As Boolean
+        Public Property RoomView As Integer
+            Get
+                Return _RoomView
+            End Get
+            Set(value As Integer)
+                _RoomView = value
+                RaisePropertyChanged()
+            End Set
+        End Property
+        Private Property _RoomView As Integer
+
+        Public Sub New()
+            Dim app As App = CType(Application.Current, App)
+            RoomView = 0
+            ShowRoom = True
+        End Sub
+    End Class
+
 
     Dim settings As Windows.Storage.ApplicationDataContainer
 
@@ -18,6 +54,8 @@ Partial Public Class AppSettings
     Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
     Const strUseBitmapIconsKeyName As String = "blUseBitmapIcons"
     Const strSwitchIconBackgroundKeyName As String = "strSwitchIconBackground"
+    Const strSelectedRoomViewKeyName As String = "strSelectedRoomView"
+    Const strRoomConfigurationsKeyName As String = "strRoomConfigurations"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -33,6 +71,8 @@ Partial Public Class AppSettings
     Const strSecondsForRefreshDefault = 0
     Const strUseBitmapIconsDefault = False
     Const strSwitchIconBackgroundDefault = False
+    Const strSelectedRoomViewDefault = "Grid View"
+    Const strRoomConfigurationsDefault = ""
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -47,13 +87,53 @@ Partial Public Class AppSettings
     Const strSecondsForRefreshDefault = 10
     Const strUseBitmapIconsDefault = False
     Const strSwitchIconBackgroundDefault = False
+    Const strSelectedRoomViewDefault = "Grid View"
 #End If
 
     Const strConnectionStatusDefault = False
 
     Public Sub New()
         settings = Windows.Storage.ApplicationData.Current.LocalSettings
+        RoomConfigurations = New List(Of RoomConfiguration)
     End Sub
+
+
+    Public Async Function LoadRoomConfigurationsFromFile() As Task(Of List(Of RoomConfiguration))
+        Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+        Dim storageFile As Windows.Storage.StorageFile
+        Dim fileExists As Boolean = True
+        Try
+            storageFile = Await storageFolder.GetFileAsync("roomconfigurations.xml")
+        Catch ex As Exception
+            fileExists = False
+            Return New List(Of RoomConfiguration)
+        End Try
+        Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
+        Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
+        Dim serializer = New XmlSerializer((New List(Of RoomConfiguration)).GetType())
+        Dim stuffToLoad As List(Of RoomConfiguration) = serializer.Deserialize(sessionInputStream.AsStreamForRead())
+        stream.Dispose()
+        Return stuffToLoad
+
+    End Function
+
+    Public Async Function SaveRoomConfigurationsToFile(roomList As List(Of RoomConfiguration)) As Task
+        Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+        Dim storageFile As Windows.Storage.StorageFile = Await storageFolder.CreateFileAsync("roomconfigurations.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting)
+        Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)
+        Dim sessionOutputStream As IOutputStream = stream.GetOutputStreamAt(0)
+        Dim stuffToSave = RoomConfigurations
+        Dim serializer = New XmlSerializer(stuffToSave.GetType())
+        serializer.Serialize(sessionOutputStream.AsStreamForWrite(), stuffToSave)
+        Await sessionOutputStream.FlushAsync()
+        sessionOutputStream.Dispose()
+        stream.Dispose()
+    End Function
+
+
+    Public Property RoomConfigurations As List(Of RoomConfiguration)
+
+
 
     Public Property TestInProgress As Boolean
         Get
@@ -222,6 +302,24 @@ Partial Public Class AppSettings
         End Set
     End Property
 
+    Private _RoomViews As List(Of String) = New List(Of String)({"Icon View", "Grid View", "List View", "Resize View"}).ToList
+    Public ReadOnly Property RoomViewChoices As List(Of String)
+        Get
+            Return _RoomViews
+        End Get
+    End Property
+
+    Public Property SelectedRoomView As String
+        Get
+            Return GetValueOrDefault(Of String)(strSelectedRoomViewKeyName, strSelectedRoomViewDefault)
+        End Get
+        Set(value As String)
+            If AddOrUpdateValue(strSelectedRoomViewKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
     Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
     Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
         Get
@@ -322,11 +420,20 @@ Public NotInheritable Class AppSettingsPage
         Else
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
         End If
+
+        'Dim list = app.myViewModel.TiczSettings.RoomConfigurations
+        'Dim serializer As New XmlSerializer(list.GetType)
+        'Dim file = IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication
+        'Dim stream = New IsolatedStorageFileStream("roomconfiguration.xml", FileMode.OpenOrCreate, file)
+        'serializer.Serialize(stream, list)
+        'If Not stream Is Nothing Then
+        '    WriteToDebug(stream.ToString, "")
+        'End If
     End Sub
 
 
-    Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
-
+    Protected Overrides Async Sub OnNavigatedFrom(e As NavigationEventArgs)
+        Await app.myViewModel.TiczSettings.SaveRoomConfigurationsToFile(app.myViewModel.TiczSettings.RoomConfigurations)
     End Sub
 
 

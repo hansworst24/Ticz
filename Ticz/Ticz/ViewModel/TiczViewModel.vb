@@ -524,6 +524,9 @@ Public Class Device
     Private Const [OFF] As String = "Off"
 
 
+    Public Property ColumnSpan As Integer
+    Public Property RowSpan As Integer
+
     Public ReadOnly Property GasUsage As String
         Get
             Return String.Format("Usage: {0} | Today: {1}", Counter, CounterToday)
@@ -593,6 +596,10 @@ Public Class Device
     End Property
     Private Property _SelectedLevelName As String
 
+    Public Property HeaderFontSize As Integer
+
+    Public Property DeviceContentVisibility As String
+
     Public Property RainVisibility As String
     Public Property P1GasVisibility As String
     Public Property P1ElectricVisibility As String
@@ -608,6 +615,9 @@ Public Class Device
     Public Property DimmerVisibility As String
     Public Property BlindsVisibility As String
     Public Property MediaPlayerVisibility As String
+
+    Public Property IconColumnSpan As Integer
+
 
     Public ReadOnly Property IconForegroundColor As Brush
         Get
@@ -1025,6 +1035,11 @@ Public Class Device
 
 
     Public Sub New()
+        HeaderFontSize = 12
+        DeviceContentVisibility = const_Collapsed
+        IconColumnSpan = 2
+        ColumnSpan = 1
+        RowSpan = 1
         LevelNamesList = New List(Of String)
         DeviceType = ""
         P1GasVisibility = const_Collapsed
@@ -1201,6 +1216,8 @@ Public Class Device
                 DeviceType = TYPE_RAIN
                 CanBeSwitched = False
             Case TEMP_HUMI_BARO
+                ColumnSpan = 2
+                RowSpan = 2
                 TempHumBarVisibility = const_Visible
                 DeviceType = TEMP_HUMI_BARO
                 CanBeSwitched = False
@@ -1239,6 +1256,7 @@ Public Class Device
                     DeviceType = DIMMER
                     If Status = [OFF] Then isOn = False Else isOn = True
                 Case MEDIA_PLAYER
+                    ColumnSpan = 2
                     MediaPlayerVisibility = const_Visible
                     DeviceType = MEDIA_PLAYER
                     If Status = [OFF] Then isOn = False Else isOn = True
@@ -1246,6 +1264,7 @@ Public Class Device
                     SelectorVisibility = const_Visible
                     DeviceType = SELECTOR
                     If Status = [OFF] Then isOn = False Else isOn = True
+                    ColumnSpan = 2
                 Case Else
                     Select Case Type
                         Case GROUP
@@ -1257,6 +1276,15 @@ Public Class Device
                             DeviceType = GENERAL
                     End Select
             End Select
+            If ColumnSpan = 2 Then
+                IconColumnSpan = 1
+                DeviceContentVisibility = const_Visible
+                HeaderFontSize = 16
+            Else
+                IconColumnSpan = 2
+                DeviceContentVisibility = const_Collapsed
+                HeaderFontSize = 12
+            End If
         End If
     End Sub
 End Class
@@ -1311,6 +1339,7 @@ End Class
 
 
 Public Class Room
+    Inherits ViewModelBase
     Public ReadOnly Property vm As Ticz.TiczViewModel
         Get
             Return CType(Application.Current, App).myViewModel
@@ -1322,7 +1351,41 @@ Public Class Room
     Public Property RoomIDX As String
     Public Property DeviceGroups As ObservableCollection(Of Group(Of Device))
 
+    Public Property RoomViewIndex As Integer
+    Public ReadOnly Property RoomView As ControlTemplate
+        Get
+            Select Case RoomViewIndex
+                Case 0
+                    Return Application.Current.Resources("RoomIconView")
+                Case 1
+                    Return Application.Current.Resources("RoomGridView")
+                Case 2
+                    Return Application.Current.Resources("RoomListView")
+                Case 3
+                    Return Application.Current.Resources("RoomVariableGridView")
+                Case Else
+                    Return Application.Current.Resources("RoomIconView")
+            End Select
+        End Get
+    End Property
 
+
+    Public ReadOnly Property GridView_Changed As RelayCommand(Of Object)
+        Get
+            Return New RelayCommand(Of Object)(Sub(x)
+                                                   Dim gv As GridView = CType(x, GridView)
+                                                   WriteToDebug("Room.GridView_Changed()", "executed")
+
+                                                   'WriteToDebug("MainPage.GridView_SizeChanged()", "executed")
+                                                   'Dim gv As GridView = CType(sender, GridView)
+                                                   Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
+                                                   Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
+                                                   If amountOfColumns < vm.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = vm.TiczSettings.MinimumNumberOfColumns
+                                                   Panel.ItemWidth = gv.ActualWidth / amountOfColumns
+                                                   WriteToDebug("Panel Width = ", Panel.ItemWidth)
+                                               End Sub)
+        End Get
+    End Property
 
     Public Sub New()
 
@@ -1493,6 +1556,19 @@ Public Class TiczViewModel
         End Set
     End Property
     Private _selectedDevice As Device
+
+    Public ReadOnly Property ScreenItemView As DataTemplate
+        Get
+            If TiczSettings.SelectedRoomView = "Grid View" Then Return Application.Current.Resources("PivotItemVariableGridView")
+            'If TiczSettings.SelectedRoomView = "Grid View" Then Return Application.Current.Resources("PivotItemTemplateGridView")
+            If TiczSettings.SelectedRoomView = "Icon View" Then Return Application.Current.Resources("PivotItemTemplateIconView")
+            If TiczSettings.SelectedRoomView = "List View" Then Return Application.Current.Resources("PivotItemTemplateListView")
+
+            'Return Application.Current.Resources("PivotItemTemplateListView")
+
+        End Get
+    End Property
+
 
     Public Property MyRooms As ObservableCollection(Of Room)
     Public Property MyPlans As New Plans

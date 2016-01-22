@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -112,6 +112,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\Api.vb" />
+    <Compile Include="Classes\Classes.vb" />
     <Compile Include="Classes\convertors.vb" />
     <Compile Include="Classes\Downloader.vb" />
     <Compile Include="About.xaml.vb">
@@ -124,6 +125,12 @@
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="settings.xaml.vb">
       <DependentUpon>settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucDevice_Resizable.xaml.vb">
+      <DependentUpon>ucDevice_Resizable.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucDevice_Small.xaml.vb">
+      <DependentUpon>ucDevice_Small.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucDevice_Integrated.xaml.vb">
       <DependentUpon>ucDevice_Integrated.xaml</DependentUpon>
@@ -247,6 +254,14 @@
     <Page Include="settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucDevice_Resizable.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ucDevice_Small.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ucDevice_Integrated.xaml">
       <Generator>MSBuild:Compile</Generator>

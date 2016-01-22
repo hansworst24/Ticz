@@ -8,7 +8,8 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
-    mc:Ignorable="d">
+    mc:Ignorable="d" d:DesignHeight="2000"
+    >
 
 
 
@@ -24,8 +25,11 @@
                         <Setter Target="SecondSettings.(Grid.Row)" Value="0" />
                         <Setter Target="ThirdSettings.(Grid.Column)" Value="2" />
                         <Setter Target="ThirdSettings.(Grid.Row)" Value="0" />
+                        <Setter Target="FourthSettings.(Grid.Column)" Value="3" />
+                        <Setter Target="FourthSettings.(Grid.Row)" Value="0" />
                         <Setter Target="SecondColumn.Width" Value="*"/>
                         <Setter Target="ThirdColumn.Width" Value="*"/>
+                        <Setter Target="FourthColumn.Width" Value="*"/>
                     </VisualState.Setters>
                 </VisualState>
 
@@ -42,14 +46,16 @@
         <ScrollViewer Grid.Row="1" Margin="10,0,10,20">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition x:Name="SecondColumn" Width="0"/>
                     <ColumnDefinition x:Name="ThirdColumn" Width="0"/>
+                    <ColumnDefinition x:Name="FourthColumn" Width="0"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
                     <TextBlock    Margin="0,5,0,0" Text="IP Address"/>
@@ -74,6 +80,9 @@
                     <TextBlock    Margin="0,10,0,0" Text="Use Icon Background for on/off" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="By default, the icon itself will change from grey to the selected accent color when the device is switched on. When this setting is enabled, it will switch the icon background and keep the icon itself black. When using vector images, this setting has no effect." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding SwitchIconBackground, Mode=TwoWay}" />
+                    <TextBlock    Text="Select Room Layout" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="You can choose the layout of how the devices are represented in each Room. Icon View shows minimal information in a gridview, Grid View shows more information in a gridview, and List View shows all devices in a long list." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox     x:Name="cbPivotView" ItemsSource="{Binding RoomViewChoices}" SelectedItem="{Binding SelectedRoomView, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel x:Name="ThirdSettings" Grid.Row="2" Grid.Column="0"  Orientation="Vertical" Margin="0,0,20,20">
                 <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -89,6 +98,51 @@
                     <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox   x:Name="cbShowMarquee" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowMarquee, Mode=TwoWay}" />
                 </StackPanel>
+                <StackPanel x:Name="FourthSettings" Grid.Row="3" Grid.Column="0"  Orientation="Vertical" Margin="0,0,20,20">
+                    <TextBlock   Text="Room Configurations" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <Grid HorizontalAlignment="Stretch" Margin="0">
+
+                        <ListView x:Name="lvRoomConfig" Margin="0" ItemsSource="{Binding RoomConfigurations}" HorizontalAlignment="Stretch">
+                            <ListView.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Name"/>
+                                        <TextBlock Grid.Column="1" Text="Show"/>
+                                        <TextBlock Grid.Column="2" Text="View"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.HeaderTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Margin" Value="0,0,0,10"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding RoomName}"/>
+                                        <ToggleSwitch Grid.Column="1" Width="50" IsOn="{Binding ShowRoom, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSmall}"/>
+                                        <ComboBox Grid.Column="2" Width="120" ItemsSource="{Binding ElementName=lvRoomConfig, Path=DataContext.RoomViewChoices}" SelectedIndex="{Binding RoomView, Mode=TwoWay}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+
+                        </ListView>
+                    </Grid>
+                </StackPanel>
+
             </Grid>
         </ScrollViewer>
     </Grid>

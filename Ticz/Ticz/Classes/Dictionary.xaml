@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
     xmlns:local="using:Ticz">
 
     <Style x:Key="DefaultGridViewItemStyle" TargetType="GridViewItem">
@@ -42,7 +44,229 @@
         </Setter>
     </Style>
 
-   
+    <ControlTemplate x:Key="RoomIconView" TargetType="ContentControl">
+        <Grid Margin="-10,0,-10,0">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <SemanticZoom>
+                <SemanticZoom.ZoomedInView>
+                    <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None">
+                        <GridView.GroupStyle>
+                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" HorizontalAlignment="Stretch"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Top"/>
+                                <!--<Setter Property="Margin" Value="0,0,5,5"/>-->
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <!--<local:ucDevice_Integrated DataContext="{Binding}"/>-->
+                                <local:ucDevice_Small DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </SemanticZoom.ZoomedInView>
+                <SemanticZoom.ZoomedOutView>
+                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
+                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
+                    </ListView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="RoomListView" TargetType="ContentControl" >
+        <Grid Margin="-10,0,-10,0">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <SemanticZoom>
+                <SemanticZoom.ZoomedInView>
+                    <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" 
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" Style="{StaticResource myListViewStyle}" SelectionMode="None">
+                        <ListView.GroupStyle>
+                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                        </ListView.GroupStyle>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,0,0,10" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <local:ucDevice_Integrated DataContext="{Binding}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </SemanticZoom.ZoomedInView>
+                <SemanticZoom.ZoomedOutView>
+                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
+                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
+                    </ListView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="RoomGridView" TargetType="ContentControl">
+        <Grid Margin="-10,0,-10,0">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <SemanticZoom>
+                <SemanticZoom.ZoomedInView>
+                    <GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None">
+                        <GridView.GroupStyle>
+                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20"/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalAlignment" Value="Top"/>
+                                <Setter Property="Margin" Value="0,0,10,10"/>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <local:ucDevice_Integrated DataContext="{Binding}"/>
+                                <!--<local:ucDevice_Small DataContext="{Binding}"/>-->
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SizeChanged">
+                                <Core:InvokeCommandAction Command="{Binding GridView_Changed}" CommandParameter="{Binding ElementName=griddie}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </GridView>
+                </SemanticZoom.ZoomedInView>
+                <SemanticZoom.ZoomedOutView>
+                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
+                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
+                    </ListView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="RoomVariableGridView" TargetType="ContentControl">
+        <Grid Margin="0,0,0,0">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <SemanticZoom>
+                <SemanticZoom.ZoomedInView>
+                    <local:VariableGrid  ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" SelectionMode="None" CanReorderItems="True" CanDragItems="True">
+                        <local:VariableGrid.GroupStyle>
+                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <VariableSizedWrapGrid ItemHeight="120" ItemWidth="128" Orientation="Horizontal" CanDrag="True"/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </local:VariableGrid.GroupStyle>
+                        <local:VariableGrid.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Margin" Value="0,0,8,8"/>
+                            </Style>
+                        </local:VariableGrid.ItemContainerStyle>
+                        <local:VariableGrid.ItemTemplate>
+                            <DataTemplate>
+                                <local:ucDevice_Resizable DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </local:VariableGrid.ItemTemplate>
+                        <local:VariableGrid.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <!--<ItemsStackPanel Orientation="Vertical"/>-->
+                                <StackPanel Orientation="Vertical"/>
+                                <!--<VariableSizedWrapGrid ItemHeight="100" ItemWidth="120" Orientation="Horizontal"/>-->
+                            </ItemsPanelTemplate>
+                        </local:VariableGrid.ItemsPanel>
+                    </local:VariableGrid>
+                    <!--<GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
+                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None">
+                        <GridView.GroupStyle>
+                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20"/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalAlignment" Value="Top"/>
+                                <Setter Property="Margin" Value="0,0,10,10"/>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <local:ucDevice_Integrated DataContext="{Binding}"/>
+                                --><!--<local:ucDevice_Small DataContext="{Binding}"/>--><!--
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SizeChanged">
+                                <Core:InvokeCommandAction Command="{Binding GridView_Changed}" CommandParameter="{Binding ElementName=griddie}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </GridView>-->
+                </SemanticZoom.ZoomedInView>
+                <SemanticZoom.ZoomedOutView>
+                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
+                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
+                    </ListView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+        </Grid>
+    </ControlTemplate>
+
     <DataTemplate x:Key="ListViewHeaderTemplate">
         <Border Grid.Column="0" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0">
             <TextBlock Grid.Row="0" Margin="0,0,0,5" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>

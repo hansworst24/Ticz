@@ -8,105 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <DataTemplate x:Key="PivotItemTemplateBigScreen">
-            <Grid>
-                <Grid.Resources>
-                    <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
-                </Grid.Resources>
-                <SemanticZoom>
-                    <SemanticZoom.ZoomedInView>
-                        <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" SizeChanged="GridView_SizeChanged">
-                            <GridView.GroupStyle>
-                                <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20"/>
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
-                                </GroupStyle>
-                            </GridView.GroupStyle>
-                            <GridView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsWrapGrid Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-                            <GridView.ItemContainerStyle>
-                                <Style TargetType="GridViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalAlignment" Value="Top"/>
-                                    <Setter Property="Margin" Value="0,0,10,10"/>
-                                </Style>
-                            </GridView.ItemContainerStyle>
-                            <GridView.ItemTemplate>
-                                <DataTemplate>
-                                        <local:ucDevice_Integrated DataContext="{Binding}"/>
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-                        </GridView>
-                    </SemanticZoom.ZoomedInView>
-                    <SemanticZoom.ZoomedOutView>
-                        <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                        </ListView>
-                    </SemanticZoom.ZoomedOutView>
-                </SemanticZoom>
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="PivotItemTemplateSmallScreen" >
-            <Grid>
-                <Grid.Resources>
-                    <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
-                </Grid.Resources>
-                <SemanticZoom>
-                    <SemanticZoom.ZoomedInView>
-                        <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" 
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" Style="{StaticResource myListViewStyle}" SelectionMode="None">
-                            <ListView.GroupStyle>
-                                <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                            </ListView.GroupStyle>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Margin" Value="0,0,0,10" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <local:ucDevice_Integrated DataContext="{Binding}"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </SemanticZoom.ZoomedInView>
-                    <SemanticZoom.ZoomedOutView>
-                        <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                        </ListView>
-                    </SemanticZoom.ZoomedOutView>
-                </SemanticZoom>
-            </Grid>
-        </DataTemplate>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState>
-                        <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="480" />
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                        <Setter Target="RoomsPivot.ItemTemplate" Value="{StaticResource PivotItemTemplateBigScreen}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                    
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
         <Border VerticalAlignment="Bottom" Canvas.ZIndex="100" Margin="0,0,0,0">
             <local:ucToastMessage DataContext="{Binding Notify}"/>
         </Border>
@@ -293,7 +195,7 @@
             </Grid>
         </Border>
 
-        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding MyRooms}" ItemTemplate="{StaticResource PivotItemTemplateSmallScreen}">
+        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding MyRooms}">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <Grid x:Name="grid">
@@ -301,6 +203,14 @@
                     </Grid>
                 </DataTemplate>
             </Pivot.HeaderTemplate>
+            <Pivot.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <ContentControl Template="{Binding RoomView}"/>
+                        <!--<TextBlock Text="{Binding RoomIDX}"/>-->
+                    </Grid>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
         </Pivot>
     </Grid>
     <Page.BottomAppBar>
