@@ -195,7 +195,7 @@
             </Grid>
         </Border>
 
-        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding MyRooms}">
+        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding MyRooms}" Margin="0" Padding="0">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <Grid x:Name="grid">
@@ -217,8 +217,8 @@
         <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" Style="{ThemeResource TiczCommandBarStyle}">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
-                    <AppBarButton Name="settings" Icon="Setting" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
-                    <AppBarButton Name="refresh" Icon="Refresh" Command="{Binding RefreshCommand}"/>
+                    <AppBarButton Name="abbSettings" Icon="Setting" Visibility="Visible" Command="{Binding GoToSettingsCommand}"/>
+                    <AppBarButton Name="abbRefresh" Icon="Refresh" Command="{Binding RefreshCommand}"/>
                     <AppBarButton Icon="More">
                         <AppBarButton.Flyout>
                             <MenuFlyout>

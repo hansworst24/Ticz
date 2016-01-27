@@ -27,7 +27,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Viewbox x:Name="Icon" Margin="10,0,0,0" Grid.Column="0" Grid.RowSpan="2" Height="30" Width="30" Stretch="Uniform">
-            <ContentPresenter x:Name="IconCP" Foreground="#FF808080" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
+            <Path Fill="#FF808080" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="newDocument" Stretch="Fill"
+                                  Data="{Binding IconPathGeometry}">
+            </Path>
         </Viewbox>
         <Border  Grid.Column="1"
                         CornerRadius="0" Opacity="1"

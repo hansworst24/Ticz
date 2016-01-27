@@ -126,23 +126,17 @@
     <Compile Include="settings.xaml.vb">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucDevice_Fixed.xaml.vb">
+      <DependentUpon>ucDevice_Fixed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucDevice_Resizable.xaml.vb">
       <DependentUpon>ucDevice_Resizable.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ucDevice_Small.xaml.vb">
-      <DependentUpon>ucDevice_Small.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucDevice_Integrated.xaml.vb">
       <DependentUpon>ucDevice_Integrated.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucDevice.xaml.vb">
       <DependentUpon>ucDevice.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ucDevice_Simple.xaml.vb">
-      <DependentUpon>ucDevice_Simple.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ucToastList.xaml.vb">
-      <DependentUpon>ucToastList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucToastMessage.xaml.vb">
       <DependentUpon>ucToastMessage.xaml</DependentUpon>
@@ -198,33 +192,78 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Images\battery.png" />
     <Content Include="Images\blinds.png" />
+    <Content Include="Images\blinds_128.png" />
+    <Content Include="Images\blinds_64.png" />
     <Content Include="Images\counter.png" />
+    <Content Include="Images\counter_128.png" />
+    <Content Include="Images\counter_64.png" />
     <Content Include="Images\current.png" />
+    <Content Include="Images\current_128.png" />
+    <Content Include="Images\current_64.png" />
     <Content Include="Images\dimmer.png" />
+    <Content Include="Images\dimmer_128.png" />
+    <Content Include="Images\dimmer_64.png" />
     <Content Include="Images\doorbell.png" />
+    <Content Include="Images\doorbell_128.png" />
+    <Content Include="Images\doorbell_64.png" />
     <Content Include="Images\doorlock.png" />
+    <Content Include="Images\doorlock_128.png" />
+    <Content Include="Images\doorlock_64.png" />
     <Content Include="Images\email.png" />
     <Content Include="Images\error.png" />
     <Content Include="Images\forum.png" />
     <Content Include="Images\github.png" />
     <Content Include="Images\group.png" />
+    <Content Include="Images\group_128.png" />
+    <Content Include="Images\group_64.png" />
     <Content Include="Images\info.png" />
+    <Content Include="Images\info_64.png" />
     <Content Include="Images\lightbulb.png" />
+    <Content Include="Images\lightbulb_128.png" />
+    <Content Include="Images\lightbulb_64.png" />
     <Content Include="Images\magnet.png" />
+    <Content Include="Images\magnet_128.png" />
+    <Content Include="Images\magnet_64.png" />
     <Content Include="Images\media.png" />
+    <Content Include="Images\media_128.png" />
+    <Content Include="Images\media_64.png" />
     <Content Include="Images\music.png" />
+    <Content Include="Images\music_128.png" />
+    <Content Include="Images\music_64.png" />
     <Content Include="Images\off.png" />
+    <Content Include="Images\off_128.png" />
+    <Content Include="Images\off_64.png" />
     <Content Include="Images\on.png" />
+    <Content Include="Images\on_128.png" />
+    <Content Include="Images\on_64.png" />
     <Content Include="Images\percentage.png" />
+    <Content Include="Images\percentage_128.png" />
+    <Content Include="Images\percentage_64.png" />
     <Content Include="Images\power.png" />
     <Content Include="Images\rain.png" />
+    <Content Include="Images\rain_128.png" />
+    <Content Include="Images\rain_64.png" />
     <Content Include="Images\scene.png" />
+    <Content Include="Images\scene_128.png" />
+    <Content Include="Images\scene_64.png" />
     <Content Include="Images\setpoint.png" />
+    <Content Include="Images\setpoint_128.png" />
+    <Content Include="Images\setpoint_64.png" />
     <Content Include="Images\temperature.png" />
+    <Content Include="Images\temperature_128.png" />
+    <Content Include="Images\temperature_64.png" />
     <Content Include="Images\unknown.png" />
+    <Content Include="Images\unknown_128.png" />
+    <Content Include="Images\unknown_64.png" />
     <Content Include="Images\uvi.png" />
+    <Content Include="Images\uvi_128.png" />
+    <Content Include="Images\uvi_64.png" />
     <Content Include="Images\visibility.png" />
+    <Content Include="Images\visibility_128.png" />
+    <Content Include="Images\visibility_64.png" />
     <Content Include="Images\wind.png" />
+    <Content Include="Images\wind_128.png" />
+    <Content Include="Images\wind_64.png" />
     <Content Include="My Project\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -255,11 +294,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\ucDevice_Resizable.xaml">
+    <Page Include="UserControls\ucDevice_Fixed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\ucDevice_Small.xaml">
+    <Page Include="UserControls\ucDevice_Resizable.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -268,14 +307,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ucDevice.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\ucDevice_Simple.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\ucToastList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -319,7 +350,6 @@
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

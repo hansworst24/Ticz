@@ -1,4 +1,6 @@
 ﻿
+Imports Microsoft.Xaml.Interactivity
+
 Public Class VariableGrid
     Inherits GridView
 
@@ -16,39 +18,16 @@ Public Class VariableGrid
     'PrepareContainerForItemOverride(element, item)
 End Class
 
+Public Class OpenMenuFlyoutAction
+    Inherits DependencyObject
+    Implements IAction
+    Private Function IAction_Execute(sender As Object, parameter As Object) As Object Implements IAction.Execute
+        Dim senderElement As FrameworkElement = TryCast(sender, FrameworkElement)
+        Dim flyoutBase__1 As FlyoutBase = FlyoutBase.GetAttachedFlyout(senderElement)
 
-'Public Class VariableSizedGridView :  GridView
-'{
-'    Protected override void PrepareContainerForItemOverride(Windows.UI.Xaml.DependencyObject element, Object item)
-'    {
-'        Try
-'        {
-'            dynamic gridItem = item;
+        flyoutBase__1.ShowAt(senderElement)
 
-'            var typeItem = item As CommonType;
-'            If (typeItem!= null)
-'            {
-'                var heightPecentage = (300.0 / typeItem.WbmImage.PixelHeight);
-'                var itemWidth = typeItem.WbmImage.PixelWidth * heightPecentage;
-'                var columnSpan = Convert.ToInt32(itemWidth / 10.0);
+        Return Nothing
+    End Function
+End Class
 
-
-'                If (gridItem!= null)
-'                {
-'                    element.SetValue(VariableSizedWrapGrid.ItemWidthProperty, itemWidth);
-'                    element.SetValue(VariableSizedWrapGrid.ColumnSpanProperty, columnSpan);
-'                    element.SetValue(VariableSizedWrapGrid.RowSpanProperty, 1);
-'                }
-'            }
-'        }
-'        Catch
-'        {
-'            element.SetValue(VariableSizedWrapGrid.ItemWidthProperty, 100);
-'            element.SetValue(VariableSizedWrapGrid.ColumnSpanProperty, 1);
-'            element.SetValue(VariableSizedWrapGrid.RowSpanProperty, 1);
-'        }
-'        Finally
-'        {
-'            base.PrepareContainerForItemOverride(element, item);
-'        }
-'    }

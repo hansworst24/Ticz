@@ -11,109 +11,7 @@
     mc:Ignorable="d"
     BorderThickness="0">
     <UserControl.Resources>
-        <!--<local:CanvasWidthToClipWidthConvertor x:Key="myClipConvertor"/>-->
-        <!--<DataTemplate x:Key="MediaPlayerDataTemplate">
-            <TextBlock Name="tbData" Text="{Binding Data}" Margin="10,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="WindDataTemplate">
-            <Border x:Name="Wind" Style="{StaticResource DeviceBorderLess}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Name="tbWindDirection" Text="{Binding Direction}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Name="tbWindSpeed" Text="{Binding Speed}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Name="tbWindGust" Text="{Binding Gust}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Name="tbWindTemperature" Text="{Binding Temp}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Name="tbWindChill" Text="{Binding Chill}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-
-            </Grid>
-            </Border>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="TempHumBaroDataTemplate">
-            <Border x:Name="Wind" Style="{StaticResource DeviceBorderLess}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Temp}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Humidity}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Barometer}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                </Grid>
-            </Border>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="RainDataTemplate">
-            <Border x:Name="Wind" Style="{StaticResource DeviceBorderLess}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Rain}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding RainRate}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                </Grid>
-            </Border>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="SelectorDataTemplate">
-            <Border x:Name="Selector" Style="{StaticResource DeviceBorderLess}">
-                <ComboBox x:Name="cbSelector" HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding LevelNamesList}" SelectedItem="{Binding SelectedLevelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedComboBoxStyle}" >
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="SelectionChanged" >
-                            <Core:InvokeCommandAction Command="{Binding SelectorSelectionChanged}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </ComboBox>
-            </Border>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="DimmerDataTemplate">
-            <Slider x:Name="PercentageSlider" Minimum="{Binding MinDimmerLevel}" Maximum="{Binding MaxDimmerLevel}"  Grid.ColumnSpan="2" Margin="20,0,20,0" Value="{Binding LevelInt, Mode=TwoWay}" StepFrequency="1">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerCaptureLost" SourceObject="{Binding ElementName=PercentageSlider}">
-                        <Core:InvokeCommandAction Command="{Binding SliderValueChanged}"/>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </Slider>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="BlindsDataTemplate">
-            <Grid  VerticalAlignment="Center" Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonOpen" Margin="10,0,10,0" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
-                <Button x:Name="ButtonClose" Margin="10,0,10,0" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
-            </Grid>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="GroupDataTemplate">
-            <Grid  Margin="0,10,0,0" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonOn" Margin="10,0,10,0" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
-                <Button x:Name="ButtonOff" Margin="10,0,10,0" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
-            </Grid>
-        </DataTemplate>-->
-        <!--<DataTemplate x:Key="StatusDataTemplate">
-            <TextBlock x:Uid="Status" VerticalAlignment="Center" TextTrimming="WordEllipsis"  Style="{ThemeResource BodyTextBlockStyle}" Margin="10,5,0,0" Text="{Binding Status}" TextWrapping="NoWrap"/>
-        </DataTemplate>-->
+      
 
     </UserControl.Resources>
     <Border Style="{StaticResource DeviceBorder}" VerticalAlignment="Top">
@@ -125,181 +23,40 @@
             <Button Grid.Column="0" Style="{StaticResource DeviceButtonSimple}" Command="{Binding ButtonPressedCommand}" VerticalAlignment="Center">
                 <Button.Content>
                     <Grid>
-                        <Border Height="60" Width="60" CornerRadius="10" BorderThickness="0" BorderBrush="{Binding IconForegroundColor}" Background="{Binding IconForegroundColor}" Visibility="{Binding IconVisibility}" VerticalAlignment="Center">
-                            <Image x:Name="IconImage" Height="50" Width="50" Source="{Binding IconURI}" />
-                        </Border>
-                        <BitmapIcon x:Name="IconBitmap" Height="50" Width="50" UriSource="{Binding IconURI}" Foreground="{Binding IconForegroundColor}" Visibility="{Binding BitmapIconVisibility}"/>
-                        <Viewbox x:Name="Icon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="50" Width="50" Stretch="Uniform" Visibility="{Binding VectorIconVisibility}">
-                            <ContentPresenter x:Name="IconCP" CacheMode="BitmapCache" Foreground="{Binding IconForegroundColor}" Content="{x:Null}" ContentTemplate="{Binding IconDataTemplate}"/>
+                        <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="50" Width="50"  Stretch="Uniform" Visibility="{Binding VectorIconVisibility}">
+                            <Path Fill="{Binding IconForegroundColor}" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="newDocument" Stretch="Uniform"
+                                  Data="{Binding IconPathGeometry}">
+                            </Path>
                         </Viewbox>
                     </Grid>
                 </Button.Content>
             </Button>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}"  Margin="0,0,0,0" Text="{Binding Name}" TextWrapping="NoWrap"/>
-                <!--<Grid Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Visibility="{Binding BatteryLevelVisibility}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Viewbox x:Name="Battery" Grid.Column="0" VerticalAlignment="Center" Height="12" Stretch="Uniform">
-                        <ContentPresenter x:Name="BatteryCP" CacheMode="BitmapCache" Foreground="#FF808080" Content="{x:Null}">
-                            <ContentPresenter.ContentTemplate>
-                                <DataTemplate>
-                                    <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg2" Width="639.37494" Height="319.03745">
-                                        <Canvas.RenderTransform>
-                                            <TranslateTransform X="0" Y="0"/>
-                                        </Canvas.RenderTransform>
-                                        <Canvas.Resources/>
-                                        <Canvas Name="layer1">
-                                            <Canvas.RenderTransform>
-                                                <TranslateTransform X="-52.053583" Y="-147.27294"/>
-                                            </Canvas.RenderTransform>
-                                            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path3347" Fill="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" Data="m 80.803583 464.91339 c -11.62041 -3.6698 -18.97117 -9.6058 -24.483 -19.77102 l -4.267 -7.86943 0 -130.625 0 -130.625 3.43738 -6.52071 c 4.56972 -8.66875 11.07479 -14.96618 19.57952 -18.95452 l 6.9831 -3.27477 269.374997 0 269.375 0 6.03687 2.78617 c 9.3922 4.33474 15.0572 9.53905 19.69613 18.0944 l 4.267 7.86943 0.4236 25.3125 0.42361 25.3125 19.88885 0 19.8889 0 0 80 0 80 -19.9061 0 -19.90621 0 -0.40632 24.6875 c -0.38832 23.59347 -0.55146 24.99695 -3.6811 31.6706 -4.16257 8.87625 -10.86588 15.57955 -19.74213 19.74215 l -6.9831 3.2747 -267.5 0.2348 c -212.5458 0.1865 -268.527177 -0.09 -272.499997 -1.3443 z m 530.624997 -158.26545 0 -120 -260 0 -259.999997 0 0 120 0 120 259.999997 0 260 0 0 -120 z m -480 0 0 -80 160 0 160 0 0 80 0 80 -160 0 -160 0 0 -80 z"/>
-                                        </Canvas>
-                                    </Canvas>
-                                </DataTemplate>
-                            </ContentPresenter.ContentTemplate>
-                        </ContentPresenter>
-                    </Viewbox>
-                    <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding BatteryLevelString}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="#FF808080" VerticalAlignment="Center"/>
-                </Grid>-->
-
-                <!-- THIS PART IS SHOWN FOR GENERIC DEVICES WHICH ARE NOT SPECIFIED ANY FURTHER-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding StatusVisibility}">
-                    <TextBlock Text="{Binding Status}" Margin="0,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
-                </Border>
-                <!-- THIS PART IS SHOWN FOR MEDIAPLAYER DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding MediaPlayerVisibility}">
-                    <TextBlock Text="{Binding Data}" Margin="0,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR RAIN DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch"  Visibility="{Binding RainVisibility}">
-                    <TextBlock Text="{Binding Rain}" Margin="0,5,0,0" Foreground="#FF808080" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource BodyTextBlockStyle}"/>
-                </Border>
-                
-                <!-- THIS PART IS SHOWN FOR WIND DEVICES-->
-                <Border x:Name="Wind" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top"  HorizontalAlignment="Stretch" Visibility="{Binding WindVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding DirectionSpeedGust}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Grid.Row="1" Text="{Binding TempChill}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR P1 METER GAS DEVICES-->
-                <Border x:Name="P1Gas" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top"  HorizontalAlignment="Stretch" Visibility="{Binding P1GasVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding GasUsage}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR P1 METER ENERGY DEVICES-->
-                <Border x:Name="P1Energy" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top"  HorizontalAlignment="Stretch" Visibility="{Binding P1ElectricVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding Usage}" HorizontalAlignment="Right"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Top" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Grid.Row="0" Text="{Binding EnergyUsage}" TextWrapping="NoWrap"  FontSize="12" Foreground="#FF808080" VerticalAlignment="Top" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Grid.Row="1" Text="{Binding EnergyReturn}"  TextWrapping="NoWrap"  FontSize="12" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR TEMP+HUM+BAR DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding TempHumBarVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Temp}" TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Humidity}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Barometer}"  TextWrapping="NoWrap" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR SELECTOR DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="0" VerticalAlignment="Top"  HorizontalAlignment="Stretch" Visibility="{Binding SelectorVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding SelectedLevelName, Mode=TwoWay}" Foreground="#FF808080" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <ComboBox Grid.Row="1"  Margin="0,5,0,-10" x:Name="cbSelector" HorizontalAlignment="Stretch" ItemsSource="{Binding LevelNamesList}" SelectedItem="{Binding SelectedLevelName, Mode=OneWay}" Style="{StaticResource RoundedComboBoxStyle}" >
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="SelectionChanged" >
-                                    <Core:InvokeCommandAction Command="{Binding SelectorSelectionChanged}" CommandParameter="{Binding SelectedItem, ElementName=cbSelector}"/>
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </ComboBox>
-
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR DIMMER DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding DimmerVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Slider x:Name="PercentageSlider" Minimum="{Binding MinDimmerLevel}" Maximum="{Binding MaxDimmerLevel}"  Margin="20,-10,20,-10" Value="{Binding LevelInt, Mode=TwoWay}" StepFrequency="1">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="PointerCaptureLost" SourceObject="{Binding ElementName=PercentageSlider}">
-                                <Core:InvokeCommandAction Command="{Binding SliderValueChanged}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </Slider>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR BLINDS DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding BlindsVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid  VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="ButtonOpen" Margin="10,0,10,0" Height="40" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
-                        <Button x:Name="ButtonClose" Margin="10,0,10,0" Height="40" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
-                    </Grid>
-                </Border>
-
-                <!-- THIS PART IS SHOWN FOR GROUP DEVICES-->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Visibility="{Binding GroupVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid  Margin="0,0,0,0" VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="ButtonOn" Margin="0,0,10,0" Height="40" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
-                        <Button x:Name="ButtonOff" Margin="10,0,10,0" Height="40" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
-                    </Grid>
-                </Border>
+                <TextBlock x:Uid="Header" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}" FontSize="20"  Margin="0,0,0,0" Text="{Binding Name}" TextWrapping="NoWrap"/>
+                <ContentControl Grid.Row="1" Grid.Column="1" ContentTemplate="{StaticResource DeviceContent}" MinHeight="60" HorizontalContentAlignment="Stretch"/>
+                <TextBlock x:Uid="Footer" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{ThemeResource BaseTextBlockStyle}" FontSize="16"  Margin="0,0,0,0" Text="{Binding PrimaryDeviceInformation}" TextWrapping="NoWrap"/>
             </Grid>
         </Grid>
+        <FlyoutBase.AttachedFlyout>
+            <MenuFlyout>
+                <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem x:Name="mfAddToDashboard" Text="Add To Dashboard" Visibility="{Binding AddToDashboardVisibility}" Command="{Binding AddToDashBoardCommand}"/>
+                <MenuFlyoutItem x:Name="mfRemoveFromDashboard" Text="Remove from Dashboard" Visibility="{Binding RemoveFromDashboardVisibility}" Command="{Binding RemoveFromDashBoardCommand}"/>
+            </MenuFlyout>
+        </FlyoutBase.AttachedFlyout>
         <Interactivity:Interaction.Behaviors>
             <Core:EventTriggerBehavior EventName="RightTapped">
-                <Core:InvokeCommandAction Command="{Binding ShowDeviceDetails}"/>
+                <local:OpenMenuFlyoutAction />
             </Core:EventTriggerBehavior>
         </Interactivity:Interaction.Behaviors>
     </Border>

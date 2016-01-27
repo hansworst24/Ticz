@@ -8,9 +8,173 @@ Imports Windows.UI.Core
 Partial Public Class AppSettings
     Inherits ViewModelBase
 
+    Private app As App = CType(Application.Current, App)
+    Private vm As TiczViewModel = app.myViewModel
+
+    Public Class DeviceConfiguration
+        Public Property DeviceIDX As Integer
+        Public Property DeviceName As String
+        Public Property OnDashboard As Boolean
+        Public Property DashboardOrder As Integer
+        Public Property ColumnSpan As Integer
+        Public Property RowSpan As Integer
+
+        Public Sub New()
+            ColumnSpan = 1
+            RowSpan = 1
+            OnDashboard = False
+        End Sub
+    End Class
+
+
+    Public Class DeviceConfigurations
+        Inherits List(Of DeviceConfiguration)
+
+        Public Sub SortDashboardDevices()
+            Dim intIndex As Integer = 0
+            For Each Device In Me.Where(Function(x) x.OnDashboard).OrderBy(Function(x) x.DashboardOrder)
+                Device.DashboardOrder = intIndex
+                intIndex += 1
+                WriteToDebug(Device.DeviceName, Device.DashboardOrder)
+            Next
+        End Sub
+
+        Public Async Sub AddToDashboard(devidx As Integer, devname As String)
+            Dim devToAdd = (From d In Me Where d.DeviceIDX = devidx And d.DeviceName = devname Select d).FirstOrDefault()
+            Dim lastDev = (From d In Me Where d.OnDashboard Select d).OrderBy(Function(x) x.DashboardOrder).LastOrDefault()
+            If Not devToAdd Is Nothing Then
+                devToAdd.OnDashboard = True
+                If Not lastDev Is Nothing Then
+                    devToAdd.DashboardOrder = lastDev.DashboardOrder + 1
+                Else
+                    devToAdd.DashboardOrder = 0
+                End If
+            End If
+            SortDashboardDevices()
+            Await Save()
+        End Sub
+
+        Public Async Sub RemoveFromDashboard(devidx As Integer, devname As String)
+            Dim devToAdd = (From d In Me Where d.DeviceIDX = devidx And d.DeviceName = devname Select d).FirstOrDefault()
+            If Not devToAdd Is Nothing Then
+                devToAdd.OnDashboard = False
+                devToAdd.DashboardOrder = 0
+            End If
+            SortDashboardDevices()
+            Await Save()
+        End Sub
+
+        Public Async Sub MoveUp(idx As Integer, name As String)
+            Dim devToMove = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+            If Not devToMove Is Nothing Then
+                Dim oldDevice = (From d In Me Where d.OnDashboard And d.DashboardOrder = devToMove.DashboardOrder - 1 Select d).FirstOrDefault()
+                If Not oldDevice Is Nothing Then
+                    Dim oldDeviceIndex = oldDevice.DashboardOrder
+                    oldDevice.DashboardOrder = devToMove.DashboardOrder
+                    devToMove.DashboardOrder = oldDeviceIndex
+                End If
+                SortDashboardDevices()
+                Await Save()
+            End If
+        End Sub
+
+        Public Async Sub MoveDown(idx As Integer, name As String)
+            Dim devToMove = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+            If Not devToMove Is Nothing Then
+                Dim oldDevice = (From d In Me Where d.OnDashboard And d.DashboardOrder = devToMove.DashboardOrder + 1 Select d).FirstOrDefault()
+                If Not oldDevice Is Nothing Then
+                    Dim oldDeviceIndex = oldDevice.DashboardOrder
+                    oldDevice.DashboardOrder = devToMove.DashboardOrder
+                    devToMove.DashboardOrder = oldDeviceIndex
+                End If
+                SortDashboardDevices()
+                Await Save()
+            End If
+        End Sub
+
+        Public Async Function Save() As Task
+            Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+            Dim storageFile As Windows.Storage.StorageFile = Await storageFolder.CreateFileAsync("deviceconfigurations.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting)
+            Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)
+            Dim sessionOutputStream As IOutputStream = stream.GetOutputStreamAt(0)
+            Dim stuffToSave = New List(Of DeviceConfiguration)
+            stuffToSave.AddRange(Me)
+            Dim serializer = New XmlSerializer(stuffToSave.GetType())
+            serializer.Serialize(sessionOutputStream.AsStreamForWrite(), stuffToSave)
+            Await sessionOutputStream.FlushAsync()
+            sessionOutputStream.Dispose()
+            stream.Dispose()
+        End Function
+
+        Public Async Function Load() As Task
+            Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+            Dim storageFile As Windows.Storage.StorageFile
+            Dim stuffToLoad As New List(Of DeviceConfiguration)
+            Try
+                storageFile = Await storageFolder.GetFileAsync("deviceconfigurations.xml")
+            Catch ex As Exception
+                TiczViewModel.Notify.Update(True, "error loading configuration file", 2)
+                Exit Function
+            End Try
+            Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
+            Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
+            Dim serializer = New XmlSerializer((New DeviceConfigurations).GetType())
+            Try
+                stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
+            Catch ex As Exception
+                TiczViewModel.Notify.Update(True, "error loading configuration file", 2)
+                Exit Function
+            End Try
+            stream.Dispose()
+            Me.Clear()
+            Me.AddRange(stuffToLoad)
+        End Function
+
+        Public Function IsOnDashboard(idx As Integer, name As String)
+            Return Me.Any(Function(x) x.DeviceIDX = idx And x.DeviceName = name And x.OnDashboard)
+        End Function
+
+        Public Function RowSpan(idx As Integer, name As String)
+            Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+            If Not dc Is Nothing Then
+                Return dc.RowSpan
+            Else
+                Return 1
+            End If
+        End Function
+
+        Public Function ColumnSpan(idx As Integer, name As String)
+            Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+            If Not dc Is Nothing Then
+                Return dc.ColumnSpan
+            Else
+                Return 1
+            End If
+        End Function
+
+
+        Public Function IsFirstOnDashboard(idx As Integer, name As String)
+            Dim firstDashboardItem = (From d In Me Where d.OnDashboard).OrderBy(Function(x) x.DashboardOrder).FirstOrDefault()
+            If Not firstDashboardItem Is Nothing Then
+                If firstDashboardItem.DeviceIDX = idx And firstDashboardItem.DeviceName = name Then Return True Else Return False
+            End If
+            Return False
+        End Function
+
+        Public Function IsLastOnDashboard(idx As Integer, name As String)
+            Dim lastDashboardItem = (From d In Me Where d.OnDashboard).OrderBy(Function(x) x.DashboardOrder).LastOrDefault()
+            If Not lastDashboardItem Is Nothing Then
+                If lastDashboardItem.DeviceIDX = idx And lastDashboardItem.DeviceName = name Then Return True Else Return False
+            End If
+            Return False
+        End Function
+
+    End Class
+
+
     Public Class RoomConfiguration
         Inherits ViewModelBase
-        'Public Property RoomIDX As Integer
+        Public Property RoomIDX As Integer
         Public Property RoomName As String
         Public Property ShowRoom As Boolean
             Get
@@ -34,10 +198,11 @@ Partial Public Class AppSettings
         Private Property _RoomView As Integer
 
         Public Sub New()
-            Dim app As App = CType(Application.Current, App)
             RoomView = 0
             ShowRoom = True
         End Sub
+
+
     End Class
 
 
@@ -91,11 +256,16 @@ Partial Public Class AppSettings
 #End If
 
     Const strConnectionStatusDefault = False
+    Public Const strDeviceConfigurationFileName As String = "deviceconfigurations.xml"
+    Public Const strRoomConfigurationFileName As String = "roomconfigurations.xml"
+    Public Const strDashboardDevicesFileName As String = "dashboarddevices.xml"
 
     Public Sub New()
         settings = Windows.Storage.ApplicationData.Current.LocalSettings
         RoomConfigurations = New List(Of RoomConfiguration)
+        myDeviceConfigurations = New DeviceConfigurations
     End Sub
+
 
 
     Public Async Function LoadRoomConfigurationsFromFile() As Task(Of List(Of RoomConfiguration))
@@ -103,7 +273,7 @@ Partial Public Class AppSettings
         Dim storageFile As Windows.Storage.StorageFile
         Dim fileExists As Boolean = True
         Try
-            storageFile = Await storageFolder.GetFileAsync("roomconfigurations.xml")
+            storageFile = Await storageFolder.GetFileAsync(strRoomConfigurationFileName)
         Catch ex As Exception
             fileExists = False
             Return New List(Of RoomConfiguration)
@@ -116,6 +286,9 @@ Partial Public Class AppSettings
         Return stuffToLoad
 
     End Function
+
+
+
 
     Public Async Function SaveRoomConfigurationsToFile(roomList As List(Of RoomConfiguration)) As Task
         Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
@@ -132,7 +305,25 @@ Partial Public Class AppSettings
 
 
     Public Property RoomConfigurations As List(Of RoomConfiguration)
+    Public Property myDeviceConfigurations As DeviceConfigurations
 
+
+    Public Function GetDeviceSize(dIDX As Integer) As DeviceConfiguration
+        Dim d As DeviceConfiguration = (From device In myDeviceConfigurations Where device.DeviceIDX = dIDX Select device).FirstOrDefault()
+        If Not d Is Nothing Then
+            Return d
+        End If
+        Return Nothing
+    End Function
+
+    Public Sub SetDeviceSize(dIDX As Integer, cSpan As Integer, rSpan As Integer)
+
+        Dim d As DeviceConfiguration = (From device In myDeviceConfigurations Where device.DeviceIDX = dIDX Select device).FirstOrDefault()
+        If Not d Is Nothing Then
+            d.RowSpan = rSpan
+            d.ColumnSpan = cSpan
+        End If
+    End Sub
 
 
     Public Property TestInProgress As Boolean
@@ -302,7 +493,7 @@ Partial Public Class AppSettings
         End Set
     End Property
 
-    Private _RoomViews As List(Of String) = New List(Of String)({"Icon View", "Grid View", "List View", "Resize View"}).ToList
+    Private _RoomViews As List(Of String) = New List(Of String)({"Icon View", "Grid View", "List View", "Resize View", "Dashboard View"}).ToList
     Public ReadOnly Property RoomViewChoices As List(Of String)
         Get
             Return _RoomViews
@@ -413,7 +604,7 @@ Public NotInheritable Class AppSettingsPage
     Dim app As App = CType(Application.Current, App)
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
-        Me.DataContext = app.myViewModel.TiczSettings
+        Me.DataContext = TiczViewModel.TiczSettings
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame.CanGoBack Then
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
@@ -433,7 +624,7 @@ Public NotInheritable Class AppSettingsPage
 
 
     Protected Overrides Async Sub OnNavigatedFrom(e As NavigationEventArgs)
-        Await app.myViewModel.TiczSettings.SaveRoomConfigurationsToFile(app.myViewModel.TiczSettings.RoomConfigurations)
+        Await TiczViewModel.TiczSettings.SaveRoomConfigurationsToFile(TiczViewModel.TiczSettings.RoomConfigurations)
     End Sub
 
 

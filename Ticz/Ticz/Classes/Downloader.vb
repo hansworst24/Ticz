@@ -10,8 +10,8 @@ Public Class Downloader
     Public Async Function DownloadJSON(url As String) As Task(Of HttpResponseMessage)
 
         Using filter As New HttpBaseProtocolFilter
-            If Not vm.TiczSettings.Password = "" AndAlso Not vm.TiczSettings.Username = "" Then
-                filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = vm.TiczSettings.Password, .UserName = vm.TiczSettings.Username}
+            If Not TiczViewModel.TiczSettings.Password = "" AndAlso Not TiczViewModel.TiczSettings.Username = "" Then
+                filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = TiczViewModel.TiczSettings.Password, .UserName = TiczViewModel.TiczSettings.Username}
             End If
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
             filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache

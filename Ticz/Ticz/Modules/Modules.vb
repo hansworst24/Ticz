@@ -5,12 +5,12 @@
 
 
     Public Function ConstructDeviceGroups(devices As IEnumerable(Of Device)) As ObservableCollection(Of Group(Of Device))
-#If DEBUG Then
-        Dim list = devices.ToList
-        For Each d In list
-            WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
-        Next
-#End If
+        '#If DEBUG Then
+        '        Dim list = devices.ToList
+        '        For Each d In list
+        '            WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
+        '        Next
+        '#End If
         'Go through each device, and map it to a seperate subcollection
         Dim scenes, switches, weather, temps, utils, other As New ObservableCollection(Of Device)
         For Each d In devices.ToList()
