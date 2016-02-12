@@ -67,7 +67,7 @@
                 </Setter>
             </Style>
             <Style x:Key="TiczCommandBarStyle" TargetType="CommandBar">
-                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumBrush}"/>
+                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                 <Setter Property="IsTabStop" Value="False"/>
                 <Setter Property="VerticalAlignment" Value="Top"/>

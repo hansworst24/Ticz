@@ -1,0 +1,285 @@
+﻿<Page
+    x:Class="Ticz.SplitView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:xaml="using:WinRTXamlToolkit.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    mc:Ignorable="d"
+     >
+       <SplitView  x:Name="RootSplitView" DisplayMode="Inline"  OpenPaneLength="256" IsPaneOpen="{Binding SplitViewPaneIsOpen}">
+        <SplitView.Pane>
+            <ScrollViewer Margin="10,0,0,48" VerticalAlignment="Top">
+            <Grid Width="300" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Rooms" FontSize="28" Style="{ThemeResource SubheaderTextBlockStyle}"/>
+                    <ListView x:Name="RoomChooser" Margin="10,0,0,0" Grid.Row="1" ItemsSource="{Binding DomoRooms.result}" ScrollViewer.VerticalScrollMode="Disabled">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                    <TextBlock Text="{Binding Name}" FontSize="20" Style="{ThemeResource SubheaderTextBlockStyle}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                            <Core:InvokeCommandAction Command="{Binding RoomChangedCommand}" CommandParameter="{Binding ElementName=RoomChooser, Path=SelectedItem}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </ListView>
+                    <Button Grid.Row="2" Command="{Binding GoToAboutCommand}" Background="Transparent" Margin="0" Padding="0">
+                        <Button.Content>
+                            <TextBlock Text="About..." FontSize="28" Style="{ThemeResource SubheaderTextBlockStyle}"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </ScrollViewer>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0" Margin="0,0,0,48">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0">
+                        <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{Binding currentRoom.RoomName}" FontSize="24" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    </Border>
+                <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,0">
+                    <local:ucToastMessage DataContext="{Binding Notify}"/>
+                </Border>
+                <Border Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="{Binding DeviceDetailsVisibility}" Canvas.ZIndex="100">
+                    <Grid>
+                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="Black" Opacity="0.9"/>
+                        <Grid HorizontalAlignment="Center"  VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" MaxHeight="300" Style="{StaticResource DeviceBorder}">
+                                <ScrollViewer>
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="addjMulti"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="addjMulti2"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="addjValue"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="addjValue2"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="BatteryLevel"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="CustomImage"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Data"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Description"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Favorite"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="0" Text="HardwareID"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="HardwareName"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="HardwareType"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="HardwareTypeVal"/>
+                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="HaveDimmer"/>
+                                        <TextBlock Grid.Row="14" Grid.Column="0" Text="HaveGroupCmd"/>
+                                        <TextBlock Grid.Row="15" Grid.Column="0" Text="HaveTimeout"/>
+                                        <TextBlock Grid.Row="16" Grid.Column="0" Text="ID"/>
+                                        <TextBlock Grid.Row="17" Grid.Column="0" Text="IsSubDevice"/>
+                                        <TextBlock Grid.Row="18" Grid.Column="0" Text="LastUpdate"/>
+                                        <TextBlock Grid.Row="19" Grid.Column="0" Text="Level"/>
+                                        <TextBlock Grid.Row="20" Grid.Column="0" Text="LevelInt"/>
+                                        <TextBlock Grid.Row="21" Grid.Column="0" Text="MaxDimLevel"/>
+                                        <TextBlock Grid.Row="22" Grid.Column="0" Text="Name"/>
+                                        <TextBlock Grid.Row="23" Grid.Column="0" Text="Notifications"/>
+                                        <TextBlock Grid.Row="24" Grid.Column="0" Text="PlanID"/>
+                                        <TextBlock Grid.Row="25" Grid.Column="0" Text="PlanIDs"/>
+                                        <TextBlock Grid.Row="26" Grid.Column="0" Text="Protected"/>
+                                        <TextBlock Grid.Row="27" Grid.Column="0" Text="ShowNotifications"/>
+                                        <TextBlock Grid.Row="28" Grid.Column="0" Text="SignalLevel"/>
+                                        <TextBlock Grid.Row="29" Grid.Column="0" Text="Status"/>
+                                        <TextBlock Grid.Row="30" Grid.Column="0" Text="StrParam1"/>
+                                        <TextBlock Grid.Row="31" Grid.Column="0" Text="StrParam2"/>
+                                        <TextBlock Grid.Row="32" Grid.Column="0" Text="SubType"/>
+                                        <TextBlock Grid.Row="33" Grid.Column="0" Text="SwitchType"/>
+                                        <TextBlock Grid.Row="34" Grid.Column="0" Text="SwitchTypeVal"/>
+                                        <TextBlock Grid.Row="35" Grid.Column="0" Text="Timers"/>
+                                        <TextBlock Grid.Row="36" Grid.Column="0" Text="Type"/>
+                                        <TextBlock Grid.Row="37" Grid.Column="0" Text="TypeImg"/>
+                                        <TextBlock Grid.Row="38" Grid.Column="0" Text="Unit"/>
+                                        <TextBlock Grid.Row="39" Grid.Column="0" Text="Used"/>
+                                        <TextBlock Grid.Row="40" Grid.Column="0" Text="UsedByCamera"/>
+                                        <TextBlock Grid.Row="41" Grid.Column="0" Text="XOffset"/>
+                                        <TextBlock Grid.Row="42" Grid.Column="0" Text="YOffset"/>
+                                        <TextBlock Grid.Row="43" Grid.Column="0" Text="idx"/>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding addjMulti}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding addjMulti2}"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding addjValue}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding addjValue2}"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding selectedDevice.BatteryLevel}"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding selectedDevice.CustomImage}"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding selectedDevice.Data}"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding selectedDevice.Description}"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding selectedDevice.Favorite}"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding selectedDevice.HardwareID}"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding selectedDevice.HardwareName}"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding selectedDevice.HardwareType}"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding selectedDevice.HardwareTypeVal}"/>
+                                        <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding selectedDevice.HaveDimmer}"/>
+                                        <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding selectedDevice.HaveGroupCmd}"/>
+                                        <TextBlock Grid.Row="15" Grid.Column="1" Text="{Binding selectedDevice.HaveTimeout}"/>
+                                        <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding selectedDevice.ID}"/>
+                                        <TextBlock Grid.Row="17" Grid.Column="1" Text="{Binding selectedDevice.IsSubDevice}"/>
+                                        <TextBlock Grid.Row="18" Grid.Column="1" Text="{Binding selectedDevice.LastUpdate}"/>
+                                        <TextBlock Grid.Row="19" Grid.Column="1" Text="{Binding selectedDevice.Level}"/>
+                                        <TextBlock Grid.Row="20" Grid.Column="1" Text="{Binding selectedDevice.LevelInt}"/>
+                                        <TextBlock Grid.Row="21" Grid.Column="1" Text="{Binding selectedDevice.MaxDimLevel}"/>
+                                        <TextBlock Grid.Row="22" Grid.Column="1" Text="{Binding selectedDevice.Name}"/>
+                                        <TextBlock Grid.Row="23" Grid.Column="1" Text="{Binding selectedDevice.Notifications}"/>
+                                        <TextBlock Grid.Row="24" Grid.Column="1" Text="{Binding selectedDevice.PlanID}"/>
+                                        <TextBlock Grid.Row="25" Grid.Column="1" Text="{Binding selectedDevice.PlanIDs}"/>
+                                        <TextBlock Grid.Row="26" Grid.Column="1" Text="{Binding selectedDevice.Protected}"/>
+                                        <TextBlock Grid.Row="27" Grid.Column="1" Text="{Binding selectedDevice.ShowNotifications}"/>
+                                        <TextBlock Grid.Row="28" Grid.Column="1" Text="{Binding selectedDevice.SignalLevel}"/>
+                                        <TextBlock Grid.Row="29" Grid.Column="1" Text="{Binding selectedDevice.Status}"/>
+                                        <TextBlock Grid.Row="30" Grid.Column="1" Text="{Binding selectedDevice.StrParam1}"/>
+                                        <TextBlock Grid.Row="31" Grid.Column="1" Text="{Binding selectedDevice.StrParam2}"/>
+                                        <TextBlock Grid.Row="32" Grid.Column="1" Text="{Binding selectedDevice.SubType}"/>
+                                        <TextBlock Grid.Row="33" Grid.Column="1" Text="{Binding selectedDevice.SwitchType}"/>
+                                        <TextBlock Grid.Row="34" Grid.Column="1" Text="{Binding selectedDevice.SwitchTypeVal}"/>
+                                        <TextBlock Grid.Row="35" Grid.Column="1" Text="{Binding selectedDevice.Timers}"/>
+                                        <TextBlock Grid.Row="36" Grid.Column="1" Text="{Binding selectedDevice.Type}"/>
+                                        <TextBlock Grid.Row="37" Grid.Column="1" Text="{Binding selectedDevice.TypeImg}"/>
+                                        <TextBlock Grid.Row="38" Grid.Column="1" Text="{Binding selectedDevice.Unit}"/>
+                                        <TextBlock Grid.Row="39" Grid.Column="1" Text="{Binding selectedDevice.Used}"/>
+                                        <TextBlock Grid.Row="40" Grid.Column="1" Text="{Binding selectedDevice.UsedByCamera}"/>
+                                        <TextBlock Grid.Row="41" Grid.Column="1" Text="{Binding selectedDevice.XOffset}"/>
+                                        <TextBlock Grid.Row="42" Grid.Column="1" Text="{Binding selectedDevice.YOffset}"/>
+                                        <TextBlock Grid.Row="43" Grid.Column="1" Text="{Binding selectedDevice.idx}"/>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Border>
+                            <Button Grid.Row="1" Margin="0,10,0,0" Height="40" Content="Close" Width="100" HorizontalAlignment="Right" Style="{StaticResource DeviceButton}" Command="{Binding HideDeviceDetails}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="{Binding PasswordEntryVisibility}" Canvas.ZIndex="100">
+                    <Grid>
+                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="Black" Opacity="0.9"/>
+                        <Grid HorizontalAlignment="Center"  VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DeviceBorder}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Provide Password" Style="{ThemeResource BaseTextBlockStyle}"/>
+                                    <PasswordBox Password="{Binding selectedDevice.PassCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </Border>
+                            <Button Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Content="Cancel" Width="80" HorizontalAlignment="Left" Style="{StaticResource DeviceButton}" Command="{Binding CancelPasswordEntry}"/>
+                            <Button Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" Content="OK" Width="80" HorizontalAlignment="Right" Style="{StaticResource DeviceButton}" Command="{Binding ConfirmPasswordEntry}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <local:ucDeviceList_Icon Grid.Row="1" DataContext="{Binding}" Visibility="{Binding currentRoom.IconViewVisibility}" Margin="0"/>
+                <local:ucDeviceList_List Grid.Row="1" DataContext="{Binding}" Visibility="{Binding currentRoom.ListViewVisibility}" Margin="0"/>
+                <local:ucDeviceList_Grid Grid.Row="1" DataContext="{Binding}" Visibility="{Binding currentRoom.GridViewVisibility}" Margin="0"/>
+                <local:ucDeviceList_Dashboard Grid.Row="1" DataContext="{Binding}" Visibility="{Binding currentRoom.DashboardViewVisibility}" Margin="0"/>
+                <local:ucDeviceList_ResizeGrid Grid.Row="1" DataContext="{Binding}" Visibility="{Binding currentRoom.ResizeGridViewVisibility}" Margin="0"/>
+            </Grid>
+        </SplitView.Content>
+
+    </SplitView>
+    <Page.BottomAppBar>
+        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" HorizontalContentAlignment="Stretch" Width="{Binding ElementName=RootSplitView, Path=ActualWidth}">
+            <CommandBar.Content>
+                <Grid HorizontalAlignment="Stretch">
+                    <AppBarButton Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" Height="48" Command="{Binding OpenRoomSelectionCommand}">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <!--<Border HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{Binding currentRoom.RoomName}" FontSize="20" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    </Border>-->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <AppBarButton Name="abbRefresh" Icon="Refresh" HorizontalAlignment="Right" VerticalAlignment="Center" Height="48" Width="48" Command="{Binding RefreshCommand}"/>
+                        <AppBarButton Name="abbSettings" Icon="Setting" Visibility="Visible" VerticalAlignment="Center" Height="48" Width="48" Command="{Binding GoToSettingsCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.BottomAppBar>
+    <!--<Page.BottomAppBar>
+        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" Style="{ThemeResource TiczCommandBarStyle}">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal">
+                    --><!--<AppBarButton Name="abbRefresh" Icon="Refresh" Command="{Binding RefreshCommand}"/>--><!--
+
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.BottomAppBar>-->
+    <Interactivity:Interaction.Behaviors>
+        <Core:EventTriggerBehavior EventName="Loaded">
+            <Core:InvokeCommandAction Command="{Binding ViewModelLoadedCommand}"/>
+        </Core:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>
+    
+</Page>

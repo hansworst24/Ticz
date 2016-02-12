@@ -44,266 +44,6 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="RoomIconView" TargetType="ContentControl">
-        <Grid x:Name="gridRoomIconView" Margin="-10,0,-10,0">
-            <Grid.Resources>
-                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
-            </Grid.Resources>
-            <SemanticZoom>
-                <SemanticZoom.ZoomedInView>
-                    <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None">
-                        <GridView.GroupStyle>
-                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                <GroupStyle.Panel>
-                                    <ItemsPanelTemplate>
-                                        <ItemsWrapGrid Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0"/>
-                                    </ItemsPanelTemplate>
-                                </GroupStyle.Panel>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal" HorizontalAlignment="Stretch"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                <Setter Property="VerticalAlignment" Value="Top"/>
-                                <!--<Setter Property="Margin" Value="0,0,5,5"/>-->
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <local:ucDevice_Fixed DataContext="{Binding}" Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemWidth}"/>
-                                <!--ItemHeight="{Binding ElementName=Griddie, Path=DataContext.ItemHeight}" ItemWidth="{Binding ElementName=Griddie, Path=DataContext.ItemWidth}"-->
-                                <!--<Rectangle Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemWidth}" Fill="OrangeRed"/>-->
-                                <!--<local:ucDevice_Resizable DataContext="{Binding}" Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemWidth}"/>-->
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                    </ListView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
-        </Grid>
-    </ControlTemplate>
-
-    <ControlTemplate x:Key="RoomListView" TargetType="ContentControl" >
-        <Grid Margin="-10,0,-10,0">
-            <Grid.Resources>
-                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
-            </Grid.Resources>
-            <SemanticZoom>
-                <SemanticZoom.ZoomedInView>
-                    <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent" 
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" Style="{StaticResource myListViewStyle}" SelectionMode="None">
-                        <ListView.GroupStyle>
-                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                        </ListView.GroupStyle>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0,0,0,10" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <!--<Rectangle Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemWidth}" Fill="OrangeRed"/>-->
-                                    <local:ucDevice_Integrated DataContext="{Binding}"/>
-                                    <!--<local:ucDevice_Fixed DataContext="{Binding}" Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemWidth}"/>-->
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                    </ListView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
-        </Grid>
-    </ControlTemplate>
-
-    <ControlTemplate x:Key="RoomGridView" TargetType="ContentControl">
-        <Grid Margin="-10,0,-10,0">
-            <Grid.Resources>
-                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups, Mode=TwoWay}" IsSourceGrouped="True" />
-            </Grid.Resources>
-            <SemanticZoom>
-                <SemanticZoom.ZoomedInView>
-                    <GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Mode=TwoWay}" Background="Transparent"
-                                      ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None">
-                        <GridView.GroupStyle>
-                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                <GroupStyle.Panel>
-                                    <ItemsPanelTemplate>
-                                        <ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20"/>
-                                    </ItemsPanelTemplate>
-                                </GroupStyle.Panel>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalAlignment" Value="Top"/>
-                                <Setter Property="Margin" Value="0,0,10,10"/>
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <!--<Rectangle  Fill="OrangeRed"/>-->
-                                <local:ucDevice_Integrated DataContext="{Binding}"/>
-                                <!--<local:ucDevice_Integrated DataContext="{Binding}"/>-->
-                                <!--<local:ucDevice_Small DataContext="{Binding}"/>-->
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SizeChanged">
-                                <Core:InvokeCommandAction Command="{Binding GridView_Changed}" CommandParameter="{Binding ElementName=griddie}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </GridView>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                    </ListView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
-        </Grid>
-    </ControlTemplate>
-
-    <ControlTemplate x:Key="RoomVariableGridView" TargetType="ContentControl">
-        <Grid x:Name="Griddie" Margin="-10,0,-10,0">
-            <Grid.Resources>
-                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding DeviceGroups}" IsSourceGrouped="True" />
-            </Grid.Resources>
-            <SemanticZoom>
-                <SemanticZoom.ZoomedInView>
-                    <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" SelectionMode="None" CanReorderItems="True" CanDragItems="True" AllowDrop="True">
-                        <local:VariableGrid.GroupStyle>
-                            <GroupStyle HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                <GroupStyle.Panel>
-                                    <ItemsPanelTemplate>
-                                        <VariableSizedWrapGrid Orientation="Horizontal" HorizontalAlignment="Stretch"  HorizontalChildrenAlignment="Left" ItemHeight="{Binding ElementName=Griddie, Path=DataContext.ItemHeight}" ItemWidth="{Binding ElementName=Griddie, Path=DataContext.ItemWidth}" CanDrag="True"/>
-                                    </ItemsPanelTemplate>
-                                </GroupStyle.Panel>
-                            </GroupStyle>
-                        </local:VariableGrid.GroupStyle>
-                        <local:VariableGrid.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Margin" Value="4"/>
-                            </Style>
-                        </local:VariableGrid.ItemContainerStyle>
-                        <local:VariableGrid.ItemTemplate>
-                            <DataTemplate>
-                                <!--<Border BorderBrush="Beige" BorderThickness="20">
-                                    <Rectangle Fill="Orange"/>
-                                </Border>-->
-                                <local:ucDevice_Resizable DataContext="{Binding}" Margin="0"/>
-                                <!--<Rectangle Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}"  Fill="OrangeRed"/>-->
-                                <!--<local:ucDevice_Resizable DataContext="{Binding}" Margin="0"/>-->
-                            </DataTemplate>
-                        </local:VariableGrid.ItemTemplate>
-                        <local:VariableGrid.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <!--<ItemsStackPanel Orientation="Horizontal"/>-->
-                                <StackPanel Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </local:VariableGrid.ItemsPanel>
-                    </local:VariableGrid>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <ListView Background="Black" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}, Path=CollectionGroups}"
-                                      ItemTemplate="{StaticResource ListViewJumpListTemplate}">
-                    </ListView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
-        </Grid>
-    </ControlTemplate>
-
-    <ControlTemplate x:Key="RoomDashboardView" TargetType="ContentControl">
-        <Grid x:Name="Griddie" Margin="-10,0,-10,0">
-            <Grid.Resources>
-                <CollectionViewSource x:Key="cvsDashboardView" Source="{Binding DashboardDevices}" IsSourceGrouped="False"/>
-            </Grid.Resources>
-            <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsDashboardView}}" SelectionMode="None" Background="Transparent" CanReorderItems="True" CanDragItems="True" AllowDrop="True">
-                <local:VariableGrid.ItemContainerStyle>
-                    <Style TargetType="GridViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Margin" Value="4"/>
-                    </Style>
-                </local:VariableGrid.ItemContainerStyle>
-                <local:VariableGrid.ItemTemplate>
-                    <DataTemplate>
-                        <!--<Rectangle Height="{Binding ElementName=gridRoomIconView, Path=DataContext.ItemHeight}" Fill="OrangeRed">
-                            <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem x:Name="mfSmall" Text="Small" Command="{Binding ResizeCommand}" CommandParameter="{Binding ElementName=mfSmall, Path=Text}"/>
-                                    <MenuFlyoutItem x:Name="mfWide" Text="Wide" Command="{Binding ResizeCommand}" CommandParameter="{Binding ElementName=mfWide, Path=Text}"/>
-                                    <MenuFlyoutItem x:Name="mfLarge" Text="Large" Command="{Binding ResizeCommand}" CommandParameter="{Binding ElementName=mfLarge, Path=Text}"/>
-                                    <MenuFlyoutSeparator/>
-                                    <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
-                                    <ToggleMenuFlyoutItem x:Name="mfShowMore" Text="Show More" IsChecked="{Binding ShowMore, Mode=TwoWay}" Command="{Binding ShowMoreCommand}" />
-                                    <MenuFlyoutSeparator/>
-                                    <MenuFlyoutItem x:Name="mfAddToDashboard" Text="Add To Dashboard" Visibility="{Binding AddToDashboardVisibility}" Command="{Binding AddToDashBoardCommand}"/>
-                                    <MenuFlyoutItem x:Name="mfRemoveFromDashboard" Text="Remove from Dashboard" Visibility="{Binding RemoveFromDashboardVisibility}" Command="{Binding RemoveFromDashBoardCommand}"/>
-                                </MenuFlyout>
-                            </FlyoutBase.AttachedFlyout>
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="RightTapped">
-                                    <local:OpenMenuFlyoutAction />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </Rectangle>-->
-                        <local:ucDevice_Resizable DataContext="{Binding}" Margin="0"/>
-                    </DataTemplate>
-                </local:VariableGrid.ItemTemplate>
-                <local:VariableGrid.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <!--<ItemsStackPanel Orientation="Horizontal" AllowDrop="True" HorizontalAlignment="Stretch" CanDrag="True"/>-->
-                        <VariableSizedWrapGrid Orientation="Horizontal" AllowDrop="True" HorizontalAlignment="Stretch"  HorizontalChildrenAlignment="Left" ItemHeight="{Binding ElementName=Griddie, Path=DataContext.ItemHeight}" ItemWidth="{Binding ElementName=Griddie, Path=DataContext.ItemWidth}" CanDrag="True"/>
-                    </ItemsPanelTemplate>
-                </local:VariableGrid.ItemsPanel>
-            </local:VariableGrid>
-        </Grid>
-    </ControlTemplate>
-
-    <DataTemplate x:Key="ListViewHeaderTemplate">
-        <Border Grid.Column="0" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0">
-            <TextBlock Grid.Row="0" Margin="0,0,0,5" Text="{Binding Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-            <!--<TextBlock Grid.Row="0" Margin="0,0,0,10" Text="Texterdetext" Style="{ThemeResource SubtitleTextBlockStyle}"/>-->
-        </Border>
-    </DataTemplate>
-
-    <DataTemplate x:Key="ListViewJumpListTemplate">
-        <Border Grid.Column="0" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0">
-            <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="{Binding Group.Key}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-            </Border>
-    </DataTemplate>
-
     <Style x:Key="myListViewStyle" TargetType="ListView">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="TabNavigation" Value="Once"/>
@@ -423,7 +163,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Padding" Value="2" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="MinWidth" Value="25" />
@@ -462,14 +202,13 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <ColorAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Storyboard.TargetName="ButtonBackground"
+                                                        From="Transparent" To="{ThemeResource SystemAccentColor}" AutoReverse="True" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Border x:Name="ButtonBackground" CornerRadius="10" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                        <Border x:Name="ButtonBackground" CornerRadius="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
                             <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                     </Grid>
@@ -485,7 +224,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="FontFamily" Value="{ThemeResource PhoneFontFamilySemiLight}" />
         <Setter Property="FontSize" Value="{ThemeResource TextStyleLargeFontSize}" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="MinWidth" Value="25" />
         <Setter Property="MinHeight" Value="25" />
@@ -511,9 +250,8 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <ColorAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Storyboard.TargetName="ButtonBackground"
+                                                        From="Transparent" To="{ThemeResource SystemAccentColor}" AutoReverse="True" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -597,7 +335,7 @@
     </Style>
 
     <DataTemplate x:Key="DeviceContent">
-        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding DeviceContentVisibility}" VerticalAlignment="Center" Margin="10,0,0,0">
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="Visible" VerticalAlignment="Center" Margin="10,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -606,13 +344,13 @@
             <TextBlock Grid.Row="0" Text="{Binding SecondaryInformation}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{ThemeResource BodyTextBlockStyle}"/>
             <TextBlock Grid.Row="1" Text="{Binding TertiaryInformation}"   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{ThemeResource BodyTextBlockStyle}"/>
             <TextBlock Grid.Row="2" Text="{Binding QuaternaryInformation}"   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{ThemeResource BodyTextBlockStyle}"/>
-            <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center"   HorizontalAlignment="Stretch" Visibility="{Binding GroupVisibility}">
+            <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{Binding GroupVisibility}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonOn" Margin="0,0,10,0" Height="30" Width="80" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
-                <Button x:Name="ButtonOff" Margin="10,0,0,0" Height="30" Width="80" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
+                <Button x:Name="ButtonOn" Margin="0,0,10,0" Height="30" MinWidth="60" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
+                <Button x:Name="ButtonOff" Margin="10,0,0,0" Height="30" MinWidth="60" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
             </Grid>
             <Border Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="{Binding DimmerVisibility}" Style="{StaticResource DeviceBorderLess}">
                 <Slider x:Name="PercentageSlider" VerticalAlignment="Center" Minimum="{Binding MinDimmerLevel}" Maximum="{Binding MaxDimmerLevel}"  Margin="20,-10,20,-10" Value="{Binding LevelInt, Mode=TwoWay}" StepFrequency="1">
@@ -627,7 +365,7 @@
                 <ComboBox Grid.Row="1" x:Name="cbSelector" HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding LevelNamesList}" SelectedItem="{Binding SelectedLevelName, Mode=OneTime}" Style="{StaticResource RoundedComboBoxStyle}" >
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="SelectionChanged" >
-                            <Core:InvokeCommandAction Command="{Binding SelectorSelectionChanged}" CommandParameter="{Binding SelectedItem, ElementName=cbSelector}"/>
+                            <Core:InvokeCommandAction Command="{Binding SelectorSelectionChanged}" CommandParameter="{Binding ElementName=cbSelector}" />
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </ComboBox>
@@ -638,8 +376,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30" Width="80" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
-                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" Width="80" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
+                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30" MinWidth="60" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
+                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MinWidth="60" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -648,5 +386,5 @@
 
 
 
-    <BitmapImage x:Key="bitmap_lightbulb" UriSource="ms-appx:///Images/lightbulb_64.png"/>
+    <!--<BitmapImage x:Key="bitmap_lightbulb" UriSource="ms-appx:///Images/lightbulb_64.png"/>-->
 </ResourceDictionary>

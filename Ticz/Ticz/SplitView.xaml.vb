@@ -10,11 +10,11 @@ Imports WinRTXamlToolkit.Controls
 ''' <summary>
 ''' An empty page that can be used on its own or navigated to within a Frame.
 ''' </summary>
-Public NotInheritable Class MainPage
+Public NotInheritable Class SplitView
     Inherits Page
 
     Dim app As App = CType(Application.Current, App)
-    Dim vm As TiczViewModel = App.myViewModel
+    Dim vm As TiczViewModel = app.myViewModel
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
 
@@ -24,6 +24,8 @@ Public NotInheritable Class MainPage
         Else
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
         End If
+
+        Me.DataContext = vm
 
     End Sub
 

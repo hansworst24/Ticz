@@ -54,12 +54,24 @@ NotInheritable Class App
             ' When the navigation stack isn't restored navigate to the first page,
             ' configuring the new page by passing required information as a navigation
             ' parameter
-            rootFrame.Navigate(GetType(MainPage), e.Arguments)
+            rootFrame.Navigate(GetType(SplitView), e.Arguments)
         End If
-        ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible)
+        ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow)
         ApplicationView.PreferredLaunchViewSize = New Size(800, 480)
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize
-        AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
+        If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) Then
+            Dim sBar As StatusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView()
+            If Not sBar Is Nothing Then
+                sBar.HideAsync()
+            End If
+        End If
+        If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) Then
+            TiczViewModel.ShowBackButtonBar = False
+        Else
+            TiczViewModel.ShowBackButtonBar = True
+        End If
+
+        'AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
         ' Ensure the current window is active
         Window.Current.Activate()
     End Sub

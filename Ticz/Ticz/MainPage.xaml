@@ -6,7 +6,14 @@
     xmlns:xaml="using:WinRTXamlToolkit.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    mc:Ignorable="d"
+    >
+    <Page.DataContext>
+        <local:TiczViewModel/>
+    </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Border VerticalAlignment="Bottom" Canvas.ZIndex="100" Margin="0,0,0,0">
@@ -195,7 +202,7 @@
             </Grid>
         </Border>
 
-        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding MyRooms}" Margin="0" Padding="0">
+        <Pivot x:Name="RoomsPivot" ItemsSource="{Binding TiczRooms}" Margin="0" Padding="0">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <Grid x:Name="grid">
@@ -230,4 +237,10 @@
             </CommandBar.Content>
         </CommandBar>
     </Page.BottomAppBar>
+    <!--<Interactivity:Interaction.Behaviors>
+        <Core:EventTriggerBehavior EventName="Loaded">
+            <Core:InvokeCommandAction Command="{Binding ViewModelLoadedCommand}"/>
+        </Core:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>-->
+    
 </Page>

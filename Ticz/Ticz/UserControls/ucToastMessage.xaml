@@ -10,7 +10,6 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
-    
     mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Name="FadeOutMessage">
@@ -21,7 +20,7 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="ThisMessage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,2,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" Margin="0">
+    <Grid x:Name="ThisMessage" Background="Transparent" BorderThickness="0,2,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -49,7 +48,7 @@
                     <Core:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ThisMessage}" Value="DarkRed"/>
                 </Core:DataTriggerBehavior>
                 <Core:DataTriggerBehavior Binding="{Binding isError}"  Value="False">
-                    <Core:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ThisMessage}" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                    <Core:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ThisMessage}" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Border>

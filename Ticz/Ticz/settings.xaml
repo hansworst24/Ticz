@@ -13,7 +13,7 @@
 
 
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,0,0">
+    <Grid x:Name="mainGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Margin="0,0,0,0">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -54,24 +54,34 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
                     <TextBlock    Margin="0,5,0,0" Text="IP Address"/>
-                    <TextBox      Text="{Binding ServerIP, Mode=TwoWay}"/>
+                    <TextBox      Text="{Binding TiczSettings.ServerIP, Mode=TwoWay}"/>
                     <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
-                    <TextBox      Text="{Binding ServerPort, Mode=TwoWay}" />
+                    <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" />
                     <TextBlock    Margin="0,5,0,0" Text="Username"/>
-                    <TextBox      Text="{Binding Username, Mode=TwoWay}"/>
+                    <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}"/>
                     <TextBlock    Margin="0,5,0,0" Text="Password"/>
-                    <PasswordBox  Password="{Binding Password, Mode=TwoWay}"/>
-                    <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
-                    <TextBlock    Margin="0,5,0,0" Text="{Binding TestConnectionResult}"/>
-                    <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
+                    <PasswordBox  Password="{Binding TiczSettings.Password, Mode=TwoWay}"/>
+                    <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TiczSettings.TestConnectionCommand}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="{Binding TiczSettings.TestConnectionResult}"/>
+                    <ProgressBar IsIndeterminate="{Binding TiczSettings.TestInProgress}" Background="Transparent"/>
                 </StackPanel>
                 <StackPanel x:Name="SecondSettings" Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
+                    <TextBlock    Text="Preferred Room" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Select the room you want to load when Ticz starts." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ComboBox     x:Name="lbRoomToLoad" ItemsSource="{Binding TiczRoomConfigs}" SelectedItem="{Binding TiczSettings.PreferredRoom, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RoomName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                     <TextBlock    Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox     x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
+                    <ComboBox     x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding TiczSettings.SecondsForRefreshChoices}" SelectedItem="{Binding TiczSettings.SecondsForRefresh, Mode=TwoWay}" />
                     <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Ensures that devices are shown within the minimum amount of columns selected within the Grid View. Ticz automatically adds more columns when required. It provides a way to fine-tune the amount of devices on the screen." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
+                    <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding TiczSettings.NumberOfColumnsChoices}" SelectedItem="{Binding TiczSettings.MinimumNumberOfColumns, Mode=TwoWay}" />
                     <!--<TextBlock  Margin="0,10,0,0" Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox   x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
@@ -80,7 +90,7 @@
                     <ComboBox   x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />-->
                     <TextBlock  Margin="0,10,0,0" Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="cbShowMarquee" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowMarquee, Mode=TwoWay}" />
+                    <ComboBox   x:Name="cbShowMarquee" ItemsSource="{Binding TiczSettings.YesNoChoices}" SelectedItem="{Binding TiczSettings.ShowMarquee, Mode=TwoWay}" />
 
                     <!--<TextBlock    Margin="0,10,0,0" Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
@@ -90,7 +100,7 @@
                     <ToggleSwitch IsOn="{Binding SwitchIconBackground, Mode=TwoWay}" />
                     <TextBlock    Text="Select Room Layout" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="You can choose the layout of how the devices are represented in each Room. Icon View shows minimal information in a gridview, Grid View shows more information in a gridview, and List View shows all devices in a long list." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox     x:Name="cbPivotView" ItemsSource="{Binding RoomViewChoices}" SelectedItem="{Binding SelectedRoomView, Mode=TwoWay}" />-->
+                    <ComboBox     x:Name="cbPivotView" ItemsSource="{Binding RoomViewChoices}" SelectedItem="{Binding currentRoomView, Mode=TwoWay}" />-->
                 </StackPanel>
                 <Grid x:Name="ThirdSettings" Grid.Row="3" Grid.Column="0" Margin="0,0,0,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
@@ -101,7 +111,7 @@
                     <TextBlock Grid.Row="0" Text="Room Configurations" Style="{ThemeResource  SubtitleTextBlockStyle}"/>
                     <TextBlock Grid.Row="1" Text="You can define for each room if the room is visible and in what layout it is presented." Style="{ThemeResource SettingsExplanationStyle}"/>
                     <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0">
-                        <ListView x:Name="lvRoomConfig" Margin="0" ItemsSource="{Binding RoomConfigurations}" ScrollViewer.VerticalScrollMode="Disabled" HorizontalAlignment="Stretch">
+                        <ListView x:Name="lvRoomConfig" Margin="0" ItemsSource="{Binding TiczRoomConfigs}" ScrollViewer.VerticalScrollMode="Disabled" HorizontalAlignment="Stretch">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -141,7 +151,7 @@
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding RoomName}"/>
                                         <ToggleSwitch Grid.Column="1" Grid.Row="0" Margin="10,0,0,0" IsOn="{Binding ShowRoom, Mode=TwoWay}" HorizontalAlignment="Left"/>
-                                        <ComboBox Grid.Column="2" Grid.Row="0" Width="120" ItemsSource="{Binding ElementName=lvRoomConfig, Path=DataContext.RoomViewChoices}" SelectedIndex="{Binding RoomView, Mode=TwoWay}"/>
+                                        <ComboBox Grid.Column="2" Grid.Row="0" Width="120" ItemsSource="{Binding ElementName=mainGrid, Path=DataContext.TiczSettings.RoomViewChoices}" SelectedValue="{Binding RoomView, Mode=TwoWay}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -153,11 +163,15 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-    <!--<Page.BottomAppBar>
-        <AppBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact">
-            <StackPanel Orientation="Horizontal">
-                <AppBarButton Name="Back" Icon="Back" Command="{Binding NavigateBackCommand}"/>
-            </StackPanel>
-        </AppBar>
-    </Page.BottomAppBar>-->
+
+
+    <Page.BottomAppBar>
+        <CommandBar IsOpen="{Binding ShowBackButtonBar}" IsSticky="False" ClosedDisplayMode="Hidden">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal">
+                    <AppBarButton Name="Back" Icon="Back" Command="{Binding NavigateBackCommand}"/>
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

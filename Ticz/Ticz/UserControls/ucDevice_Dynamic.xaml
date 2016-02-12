@@ -1,0 +1,194 @@
+﻿<UserControl
+    x:Class="Ticz.ucDevice_Dynamic"
+    x:Name="MyUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    mc:Ignorable="d" d:DesignHeight="120" d:DesignWidth="240"
+    BorderThickness="0">
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Grid x:Name="rootGrid" Background="Transparent"  Margin="0" Padding="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" BorderThickness="1" >
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="IconView">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Row)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Column)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.RowSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Height" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="50"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="50"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="WideView">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Row)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Column)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.RowSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Row)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Column)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.RowSpan)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                       <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Height" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="50"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="50"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="LargeView">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Row)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Column)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.RowSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)" Storyboard.TargetName="DeviceSwitchButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Row)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.Column)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.RowSpan)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeviceDetails">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Height" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="100"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="Icon">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="100"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <!-- THIS IS THE HEADER FOR THE DEVICE, CONTAINING THE NAME-->
+            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5">
+                <TextBlock x:Uid="Header"  Margin="0,0,0,0" Text="{Binding Name}" FontSize="{Binding HeaderFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            </Border>
+            <!-- THIS IS THE CONTENTS FOR THE DEVICE. IT CONTAINS BOTH AN ICON AND OPTIONALLY THE DEVICEDETAILS. 
+            DEPENDING ON THE DEVICEVIEW(ICON/WIDE/LARGE) THE CONTENTS IS SPANNED ACROSS ONE OR MORE COLUMNS/ROWS THROUGH STATETRIGGERS-->
+            <Grid Grid.Row="1" Padding="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+                <Button x:Name="DeviceSwitchButton" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Command="{Binding ButtonPressedCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Button.Content>
+                        <Grid>
+                            <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="50" Width="50" Stretch="Uniform" Visibility="{Binding VectorIconVisibility}">
+                                <Path Fill="{Binding IconForegroundColor}" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="newDocument" Stretch="Uniform"
+                                  Data="{Binding IconPathGeometry}">
+                                </Path>
+                            </Viewbox>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+                <ContentControl x:Name="DeviceDetails" Visibility="Collapsed" Grid.Row="0" Grid.Column="1" ContentTemplate="{StaticResource DeviceContent}" HorizontalContentAlignment="Stretch"/>
+            </Grid>
+        <!-- THIS IS THE FOOTER FOR THE DEVICE, CONTAINING THE PRIMARY DEVICE INFORMATION-->
+            <Border x:Name="PrimaryInfo" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Padding="0">
+                <TextBlock x:Uid="Footer"  Text="{Binding PrimaryDeviceInformation}" FontSize="{Binding FooterFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            </Border>
+
+            <FlyoutBase.AttachedFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem x:Name="mfSmall" Text="Icon" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfSmall, Path=Text}"/>
+                    <MenuFlyoutItem x:Name="mfWide" Text="Wide" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfWide, Path=Text}"/>
+                    <MenuFlyoutItem x:Name="mfLarge" Text="Large" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfLarge, Path=Text}"/>
+                    <MenuFlyoutSeparator Visibility="{Binding ResizeContextMenuVisibility}"/>
+                    <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="Move Up" Visibility="{Binding MoveUpDashboardVisibility}" Command="{Binding MoveUpDashboardCommand}"/>
+                    <MenuFlyoutItem Text="Move Down" Visibility="{Binding MoveDownDashboardVisibility}" Command="{Binding MoveDownDashboardCommand}"/>
+                </MenuFlyout>
+            </FlyoutBase.AttachedFlyout>
+            <Interactivity:Interaction.Behaviors>
+            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation, UpdateSourceTrigger=PropertyChanged}" Value="Wide">
+                <Core:GoToStateAction StateName="WideView" />
+            </Core:DataTriggerBehavior>
+            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation, UpdateSourceTrigger=PropertyChanged}" Value="Icon">
+                <Core:GoToStateAction StateName="IconView" />
+            </Core:DataTriggerBehavior>
+            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation, UpdateSourceTrigger=PropertyChanged}" Value="Large">
+                <Core:GoToStateAction StateName="LargeView" />
+            </Core:DataTriggerBehavior>
+
+            <Core:EventTriggerBehavior EventName="RightTapped">
+                    <local:OpenMenuFlyoutAction />
+                </Core:EventTriggerBehavior>
+                <Core:EventTriggerBehavior EventName="Holding">
+                    <local:OpenMenuFlyoutAction />
+                </Core:EventTriggerBehavior>
+            <Core:EventTriggerBehavior EventName="Loaded">
+                <Core:GoToStateAction StateName="IconView" />
+                <Core:InvokeCommandAction Command="{Binding DeviceLoaded}" CommandParameter="{Binding ElementName=rootGrid, Path=ActualWidth}"/>
+            </Core:EventTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+    </Grid>
+
+</UserControl>
