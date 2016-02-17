@@ -14,9 +14,14 @@ Public NotInheritable Class SplitView
     Inherits Page
 
     Dim app As App = CType(Application.Current, App)
-    Dim vm As TiczViewModel = app.myViewModel
+    'Dim vm As TiczViewModel = app.myViewModel
+
+    Public Sub New()
+        InitializeComponent()
+    End Sub
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
+        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
 
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame.CanGoBack Then
@@ -25,12 +30,13 @@ Public NotInheritable Class SplitView
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
         End If
 
-        Me.DataContext = vm
+        Me.DataContext = app.myViewModel
 
     End Sub
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
-        vm.StopRefresh()
+        app.myViewModel.StopRefresh()
+        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
     End Sub
 
     Private Sub AppBar_SizeChanged(sender As Object, e As SizeChangedEventArgs)
@@ -53,4 +59,5 @@ Public NotInheritable Class SplitView
         Panel.ItemWidth = e.NewSize.Width / amountOfColumns
         WriteToDebug("Panel Width = ", Panel.ItemWidth)
     End Sub
+
 End Class

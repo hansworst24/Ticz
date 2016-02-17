@@ -6,7 +6,7 @@
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MvvmLight": "5.2.0",
     "MvvmLightLibs": "5.2.0",
-    "Newtonsoft.Json": "7.0.1",
+    "Newtonsoft.Json": "8.0.2",
     "WinRTXamlToolkit.UWP": "1.9.4"
   },
   "frameworks": {

@@ -3,67 +3,25 @@ Imports Windows.UI.Core
 
 Module Modules
     Public Sub WriteToDebug(caller As String, content As String)
+#If DEBUG Then
         Debug.WriteLine(String.Format("Thread : {0,3} : {1,15} : {2,60} : {3}", Environment.CurrentManagedThreadId, Date.Now.TimeOfDay.ToString, caller, content))
+#End If
     End Sub
 
-
-    'Public Function ConstructDeviceGroups(devices As IEnumerable(Of Device)) As ObservableCollection(Of Group(Of Device))
-    '    'Go through each device, and map it to a seperate subcollection
-    '    Dim scenes, switches, weather, temps, utils, other As New ObservableCollection(Of Device)
-    '    For Each d In devices.ToList()
-    '        Select Case d.Type
-    '            Case "Scene"
-    '                scenes.Add(d)
-    '            Case "Group"
-    '                scenes.Add(d)
-    '            Case "Lighting Limitless/Applamp"
-    '                switches.Add(d)
-    '            Case "Light/Switch"
-    '                switches.Add(d)
-    '            Case "Lighting 2"
-    '                switches.Add(d)
-    '            Case "Temp + Humidity + Baro"
-    '                weather.Add(d)
-    '            Case "Wind"
-    '                weather.Add(d)
-    '            Case "UV"
-    '                weather.Add(d)
-    '            Case "Rain"
-    '                weather.Add(d)
-    '            Case "Temp"
-    '                temps.Add(d)
-    '            Case "Thermostat"
-    '                temps.Add(d)
-    '            Case "General"
-    '                utils.Add(d)
-    '            Case "Usage"
-    '                utils.Add(d)
-    '            Case "P1 Smart Meter"
-    '                utils.Add(d)
-    '            Case Else
-    '                other.Add(d)
-    '                WriteToDebug("Modules.ConstructDeviceGroups()", String.Format("{0} : {1}", d.Name, d.Type))
-    '        End Select
-    '    Next
-    '    Dim dglist2 As New ObservableCollection(Of Group(Of Device))
-
-    '    If Not scenes.Count = 0 Then dglist2.Add(New [Group](Of Device)("Scenes / Groups", scenes))
-    '    If Not switches.Count = 0 Then dglist2.Add(New [Group](Of Device)("Lights / Switches", switches))
-    '    If Not temps.Count = 0 Then dglist2.Add(New [Group](Of Device)("Temperature Sensors", temps))
-    '    If Not weather.Count = 0 Then dglist2.Add(New [Group](Of Device)("Weather Sensors", weather))
-    '    If Not utils.Count = 0 Then dglist2.Add(New [Group](Of Device)("Utility Sensors", utils))
-    '    If Not other.Count = 0 Then dglist2.Add(New [Group](Of Device)("Other Devices", other))
-
-    '    'Dim dglist As New List(Of Devices)
-    '    'If Not scenes.Count = 0 Then dglist.Add(New Devices With {.title = "Scenes / Groups", .result = scenes})
-    '    'If Not switches.Count = 0 Then dglist.Add(New Devices With {.title = "Lights / Switches", .result = switches})
-    '    'If Not temps.Count = 0 Then dglist.Add(New Devices With {.title = "Temperature Sensors", .result = temps})
-    '    'If Not weather.Count = 0 Then dglist.Add(New Devices With {.title = "Weather Sensors", .result = weather})
-    '    'If Not utils.Count = 0 Then dglist.Add(New Devices With {.title = "Utility Sensors", .result = utils})
-    '    'If Not other.Count = 0 Then dglist.Add(New Devices With {.title = "Other Devices", .result = other})
-    '    Return dglist2
-    'End Function
-
+    ''' <summary>
+    ''' CONVERTOR THAT CONVERTS A DATE TO A UNIX EPOCH INTEGER
+    ''' </summary>
+    ''' <param name="parDate"></param>
+    ''' <returns>INTEGER</returns>
+    ''' <remarks></remarks>
+    Public Function TimeToUnixSeconds(ByVal parDate As Date) As Long
+        If parDate.IsDaylightSavingTime = True Then
+            'parDate.AddHours(-1)
+        End If
+        Dim unixDate As New Date(1970, 1, 1)
+        Dim intSecondsDifference = (parDate - unixDate).TotalSeconds
+        Return Math.Round(intSecondsDifference)
+    End Function
 
 
     Public Async Function RunOnUIThread(p As DispatchedHandler) As Task

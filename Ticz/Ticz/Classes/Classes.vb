@@ -8,6 +8,127 @@ Imports GalaSoft.MvvmLight
 Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
 
+Public Class domoVersion
+    Inherits ViewModelBase
+    Public Property build_time As String
+    Public Property hash As String
+    Public Property haveupdate As Boolean
+    Public Property revision As Integer
+    Public Property status As String
+    Public Property title As String
+    Public Property version As String
+        Get
+            Return _version
+        End Get
+        Set(value As String)
+            _version = value
+            RaisePropertyChanged("version")
+        End Set
+    End Property
+    Private Property _version As String
+
+    Public Async Function Load() As Task(Of retvalue)
+        Dim ret As New retvalue
+        Dim url As String = DomoApi.getVersion()
+        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim config As domoVersion
+            Try
+                config = JsonConvert.DeserializeObject(Of domoVersion)(body)
+                version = config.version
+                build_time = config.build_time
+                ret.issuccess = True
+            Catch ex As Exception
+                ret.issuccess = False : ret.err = "Error parsing config"
+            End Try
+        End If
+        Return ret
+    End Function
+
+End Class
+
+
+
+Public Class domoConfig
+    Public Property TempScale As Double
+    Public Property TempSign As String
+    Public Property WindScale As Double
+    Public Property WindSign As String
+
+    Public Async Function Load() As Task(Of retvalue)
+        Dim ret As New retvalue
+        Dim url As String = DomoApi.getConfig()
+        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim config As domoConfig
+            Try
+                config = JsonConvert.DeserializeObject(Of domoConfig)(body)
+                TempScale = config.TempScale
+                TempSign = config.TempSign
+                WindScale = config.WindScale
+                WindSign = config.WindSign
+                ret.issuccess = True
+            Catch ex As Exception
+                ret.issuccess = False : ret.err = "Error parsing config"
+            End Try
+        End If
+        Return ret
+    End Function
+End Class
+
+
+Public Class domoSunRiseSet
+    Inherits ViewModelBase
+    Public Property Sunrise As String
+        Get
+            Return _Sunrise
+        End Get
+        Set(value As String)
+            _Sunrise = value
+            RaisePropertyChanged("Sunrise")
+        End Set
+    End Property
+    Private Property _Sunrise As String
+    Public Property Sunset As String
+        Get
+            Return _Sunset
+        End Get
+        Set(value As String)
+            _Sunset = value
+            RaisePropertyChanged("Sunset")
+        End Set
+    End Property
+    Private Property _Sunset As String
+
+    Public Async Function Load() As Task(Of retvalue)
+        Dim ret As New retvalue
+        Dim url As String = DomoApi.getSunRiseSet()
+        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim config As domoSunRiseSet
+            Try
+                config = JsonConvert.DeserializeObject(Of domoSunRiseSet)(body)
+                Await RunOnUIThread(Sub()
+                                        Sunrise = config.Sunrise
+                                        Sunset = config.Sunset
+
+                                    End Sub)
+                ret.issuccess = True
+            Catch ex As Exception
+                ret.issuccess = False : ret.err = "Error parsing config"
+            End Try
+        End If
+        Return ret
+    End Function
+
+End Class
+
+
+
+
 Public Class domoResponse
     Public Property message As String
     Public Property status As String
@@ -34,6 +155,44 @@ Public NotInheritable Class Constants
     Public Const LISTVIEW As String = "List View"
     Public Const RESIZEVIEW As String = "Resize View"
     Public Const DASHVIEW As String = "Dashboard View"
+
+    'constants for Device Types
+    Public Const LIGHTING_LIMITLESS As String = "Lighting Limitless/Applamp"
+    Public Const TEMP_HUMI_BARO As String = "Temp + Humidity + Baro"
+    Public Const LIGHTING_2 As String = "Lighting 2"
+    Public Const LIGHT_SWITCH As String = "Light/Switch"
+    Public Const GROUP As String = "Group"
+    Public Const SCENE As String = "Scene"
+    Public Const WIND As String = "Wind"
+    Public Const P1_SMART_METER As String = "P1 Smart Meter"
+    Public Const TYPE_RAIN As String = "Rain"
+
+    'Constants for Device SubTypes
+    Public Const P1_GAS As String = "Gas"
+    Public Const P1_ELECTRIC As String = "Energy"
+
+
+    'Constants for Device SwitchTypes
+    Public Const BLINDS As String = "Blinds"
+    Public Const BLINDS_INVERTED As String = "Blinds Inverted"
+    Public Const BLINDS_PERCENTAGE As String = "Blinds Percentage"
+    Public Const BLINDS_PERCENTAGE_INVERTED As String = "Blinds Percentage Inverted"
+    Public Const CONTACT As String = "Contact"
+    Public Const DIMMER As String = "Dimmer"
+    Public Const DOOR_LOCK As String = "Door Lock"
+    Public Const DOORBELL As String = "Doorbell"
+    Public Const DUSK_SENSOR As String = "Dusk Sensor"
+    Public Const MEDIA_PLAYER As String = "Media Player"
+    Public Const MOTION_SENSOR As String = "Motion Sensor"
+    Public Const ON_OFF As String = "On/Off"
+    Public Const PUSH_ON_BUTTON As String = "Push On Button"
+    Public Const PUSH_OFF_BUTTON As String = "Push Off Button"
+    Public Const SELECTOR As String = "Selector"
+    Public Const SMOKE_DETECTOR As String = "Smoke Detector"
+    Public Const VEN_BLINDS_EU As String = "Venetian Blinds EU"
+    Public Const VEN_BLINDS_US As String = "Venetian Blinds US"
+    Public Const X10_SIREN As String = "X10 Siren"
+    Public Const GENERAL As String = "General"
 End Class
 
 
@@ -44,7 +203,8 @@ Public NotInheritable Class TiczStorage
     Public Class RoomConfigurations
         Inherits List(Of RoomConfiguration)
 
-        Public Async Function LoadRoomConfigurations() As Task
+        Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
+            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "start")
             Me.Clear()
             Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
             Dim storageFile As Windows.Storage.StorageFile
@@ -53,7 +213,8 @@ Public NotInheritable Class TiczStorage
                 storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
             Catch ex As Exception
                 fileExists = False
-                Return
+                TiczViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"))
+                Return False
             End Try
             Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
             Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
@@ -63,7 +224,9 @@ Public NotInheritable Class TiczStorage
                 stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
             Catch ex As Exception
                 'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
+                TiczViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message))
                 stuffToLoad = New RoomConfigurations
+                Return False
             End Try
 
             stream.Dispose()
@@ -74,13 +237,16 @@ Public NotInheritable Class TiczStorage
             For Each r In TiczViewModel.DomoRooms.result
                 Dim retreivedRoomConfig = (From configs In Me Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
                 If retreivedRoomConfig Is Nothing Then
-                    Dim c = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = 4, .ShowRoom = True}
+                    Dim c = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ICONVIEW, .ShowRoom = True}
                     Me.Add(c)
                 End If
             Next
+            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "end")
+            Return True
         End Function
 
         Public Async Function SaveRoomConfigurations() As Task
+            WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "start")
             If TiczViewModel.DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
                 'We are running in 'Debug mode', therefore we won't save the roomconfigurations
                 Exit Function
@@ -89,9 +255,6 @@ Public NotInheritable Class TiczStorage
             Dim storageFile As Windows.Storage.StorageFile = Await storageFolder.CreateFileAsync("ticzconfig.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting)
             Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)
             Dim sessionOutputStream As IOutputStream = stream.GetOutputStreamAt(0)
-
-            Dim RoomConfigsToKeep As New List(Of TiczStorage.RoomConfiguration)
-
 
             For i As Integer = Me.Count - 1 To 0 Step -1
                 Dim rconfig As TiczStorage.RoomConfiguration = Me(i)
@@ -105,6 +268,8 @@ Public NotInheritable Class TiczStorage
             Await sessionOutputStream.FlushAsync()
             sessionOutputStream.Dispose()
             stream.Dispose()
+            WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "end")
+
         End Function
 
         Public Function GetRoomConfig(idx As Integer, name As String)
@@ -124,25 +289,7 @@ Public NotInheritable Class TiczStorage
         Public Property RoomIDX As Integer
         Public Property RoomName As String
         Public Property ShowRoom As Boolean
-        '    Get
-        '        Return _ShowRoom
-        '    End Get
-        '    Set(value As Boolean)
-        '        _ShowRoom = value
-        '        RaisePropertyChanged()
-        '    End Set
-        'End Property
-        'Private Property _ShowRoom As Boolean
         Public Property RoomView As String
-        '    Get
-        '        Return _RoomView
-        '    End Get
-        '    Set(value As String)
-        '        _RoomView = value
-        '        RaisePropertyChanged()
-        '    End Set
-        'End Property
-        'Private Property _RoomView As String
         Public Property DeviceConfigurations As DeviceConfigurations
 
         Public Sub New()
@@ -317,14 +464,6 @@ Public NotInheritable Class Domoticz
         Public Property idx As String
     End Class
 
-
-
-    Dim app As App = CType(Application.Current, App)
-    Dim vm As TiczViewModel = app.myViewModel
-
-
-
-
     Public Shared Async Function DownloadJSON(url As String) As Task(Of HttpResponseMessage)
 
         Using filter As New HttpBaseProtocolFilter
@@ -353,9 +492,6 @@ Public NotInheritable Class Domoticz
 
 End Class
 
-Public Class MyTestGrid
-    Inherits GridView
-End Class
 
 
 Public Class VariableGrid
@@ -398,9 +534,19 @@ Public NotInheritable Class DomoApi
     '   "title" : "SwitchLight"
     '}
 
-    Public Shared Function getAllDevicesForRoom(roomIDX As String)
+    Public Shared Function getAllDevicesForRoom(roomIDX As String, Optional UpdatesOnly As Boolean = False)
         'Using order=Name, ensures that the devices are returned in the order in which they are set in the WebUI
-        Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX)
+        WriteToDebug("DomoApi", TimeToUnixSeconds(TiczViewModel.LastRefresh).ToString)
+        If UpdatesOnly Then
+            Dim lastUpdateEpoch As Long = TimeToUnixSeconds(TiczViewModel.LastRefresh).ToString
+            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}&lastupdate={3}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX, lastUpdateEpoch)
+        Else
+            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX)
+        End If
+    End Function
+
+    Public Shared Function getAllScenesForRoom(roomIDX As String)
+        Return String.Format("http://{0}:{1}/json.htm?type=scenes&filter=all&used=true&order=Name&plan={2}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX)
     End Function
 
     Public Shared Function getAllDevices() As String
@@ -409,6 +555,23 @@ Public NotInheritable Class DomoApi
 
     Public Shared Function getAllScenes() As String
         Return String.Format("http://{0}:{1}/json.htm?type=scenes", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+
+    Public Shared Function getVersion() As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getversion", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getConfig() As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getconfig", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getauth() As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getauth", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getSunRiseSet() As String
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getSunRiseSet", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
     End Function
 
 

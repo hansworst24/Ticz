@@ -11,8 +11,6 @@
     mc:Ignorable="d" d:DesignHeight="2000"
     >
 
-
-
     <Grid x:Name="mainGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Margin="0,0,0,0">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -40,7 +38,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock x:Uid="Settings" Grid.Row="0" Grid.Column="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="10,10,10,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Center"/>
-        <ScrollViewer Grid.Row="1" Margin="10,0,10,20">
+        <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,0">
+            <local:ucToastMessage DataContext="{Binding Notify}"/>
+        </Border>
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -54,43 +55,51 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
                     <TextBlock    Margin="0,5,0,0" Text="IP Address"/>
-                    <TextBox      Text="{Binding TiczSettings.ServerIP, Mode=TwoWay}"/>
+                    <TextBox      Text="{Binding ServerIP, Mode=TwoWay}"/>
                     <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
-                    <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" />
+                    <TextBox      Text="{Binding ServerPort, Mode=TwoWay}" />
                     <TextBlock    Margin="0,5,0,0" Text="Username"/>
-                    <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}"/>
+                    <TextBox      Text="{Binding Username, Mode=TwoWay}"/>
                     <TextBlock    Margin="0,5,0,0" Text="Password"/>
-                    <PasswordBox  Password="{Binding TiczSettings.Password, Mode=TwoWay}"/>
-                    <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TiczSettings.TestConnectionCommand}"/>
-                    <TextBlock    Margin="0,5,0,0" Text="{Binding TiczSettings.TestConnectionResult}"/>
-                    <ProgressBar IsIndeterminate="{Binding TiczSettings.TestInProgress}" Background="Transparent"/>
+                    <PasswordBox  Password="{Binding Password, Mode=TwoWay}"/>
+                    <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TestConnectionCommand}"/>
+                    <TextBlock    Margin="0,5,0,0" Text="{Binding TestConnectionResult}"/>
+                    <ProgressBar IsIndeterminate="{Binding TestInProgress}" Background="Transparent"/>
                 </StackPanel>
                 <StackPanel x:Name="SecondSettings" Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
-                    <TextBlock    Text="Preferred Room" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Preferred Theme" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Select the Theme color you want to use for Ticz (requires a restart)." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="ThemeColor" Content="Dark" IsChecked="{Binding UseDarkTheme, Mode=TwoWay}" />
+                        <RadioButton GroupName="ThemeColor" Content="Light" IsChecked="{Binding UseLightTheme, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <TextBlock    Text="Preferred Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Select the room you want to load when Ticz starts." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox     x:Name="lbRoomToLoad" ItemsSource="{Binding TiczRoomConfigs}" SelectedItem="{Binding TiczSettings.PreferredRoom, Mode=TwoWay}">
+                    <ComboBox     x:Name="lbRoomToLoad" ItemsSource="{Binding TiczRoomConfigs}" SelectedItem="{Binding PreferredRoom, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding RoomName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-
-                    <TextBlock    Text="Auto Refresh in seconds" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Auto Refresh in seconds" Margin="0,20,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="After the selected amount of seconds, Ticz will automatically query the Domoticz server for updated values for all devices. Select 0 to disable Auto Refresh" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox     x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding TiczSettings.SecondsForRefreshChoices}" SelectedItem="{Binding TiczSettings.SecondsForRefresh, Mode=TwoWay}" />
-                    <TextBlock   Text="Minimum amount of columns" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <ComboBox     x:Name="lbSecondsAfterRefresh" ItemsSource="{Binding SecondsForRefreshChoices}" SelectedItem="{Binding SecondsForRefresh, Mode=TwoWay}" />
+                    <TextBlock  Text="GridView minimum amount of columns" Margin="0,20,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Ensures that devices are shown within the minimum amount of columns selected within the Grid View. Ticz automatically adds more columns when required. It provides a way to fine-tune the amount of devices on the screen." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding TiczSettings.NumberOfColumnsChoices}" SelectedItem="{Binding TiczSettings.MinimumNumberOfColumns, Mode=TwoWay}" />
+                    <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
                     <!--<TextBlock  Margin="0,10,0,0" Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox   x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
                     <TextBlock  Margin="0,10,0,0" Text="Show 'All Devices'" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Shows all devices within a last 'Room'" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox   x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />-->
+                    <TextBlock    Margin="0,10,0,0" Text="Show Last Seen Date/Time" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Show the Date and Time when the device was last seen by Domoticz. Only visible in Wide View of a device." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ToggleSwitch IsOn="{Binding ShowLastSeen, Mode=TwoWay}" />
                     <TextBlock  Margin="0,10,0,0" Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="cbShowMarquee" ItemsSource="{Binding TiczSettings.YesNoChoices}" SelectedItem="{Binding TiczSettings.ShowMarquee, Mode=TwoWay}" />
+                    <ToggleSwitch IsOn="{Binding ShowMarquee, Mode=TwoWay}" />
 
                     <!--<TextBlock    Margin="0,10,0,0" Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
@@ -110,7 +119,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="Room Configurations" Style="{ThemeResource  SubtitleTextBlockStyle}"/>
                     <TextBlock Grid.Row="1" Text="You can define for each room if the room is visible and in what layout it is presented." Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0">
+                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0" Visibility="Visible">
                         <ListView x:Name="lvRoomConfig" Margin="0" ItemsSource="{Binding TiczRoomConfigs}" ScrollViewer.VerticalScrollMode="Disabled" HorizontalAlignment="Stretch">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
@@ -151,22 +160,18 @@
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding RoomName}"/>
                                         <ToggleSwitch Grid.Column="1" Grid.Row="0" Margin="10,0,0,0" IsOn="{Binding ShowRoom, Mode=TwoWay}" HorizontalAlignment="Left"/>
-                                        <ComboBox Grid.Column="2" Grid.Row="0" Width="120" ItemsSource="{Binding ElementName=mainGrid, Path=DataContext.TiczSettings.RoomViewChoices}" SelectedValue="{Binding RoomView, Mode=TwoWay}"/>
+                                        <ComboBox Grid.Column="2" Grid.Row="0" Width="120" ItemsSource="{Binding ElementName=mainGrid, Path=DataContext.RoomViewChoices}" SelectedValue="{Binding RoomView, Mode=TwoWay}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-
                         </ListView>
                     </Grid>
                 </Grid>
-
             </Grid>
         </ScrollViewer>
     </Grid>
-
-
     <Page.BottomAppBar>
-        <CommandBar IsOpen="{Binding ShowBackButtonBar}" IsSticky="False" ClosedDisplayMode="Hidden">
+        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Hidden">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Name="Back" Icon="Back" Command="{Binding NavigateBackCommand}"/>

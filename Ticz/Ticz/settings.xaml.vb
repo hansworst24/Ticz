@@ -20,14 +20,16 @@ Partial Public Class AppSettings
     Const strUserPasswordKeyName As String = "strUserPassword"
     Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
     Const strShowMarqueeKeyName As String = "strShowMarquee"
-    Const strShowFavouritesKeyName As String = "strShowFavourites"
+    'Const strShowFavouritesKeyName As String = "strShowFavourites"
     Const strShowAllDevicesKeyName As String = "strShowAllDevices"
     Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
-    Const strUseBitmapIconsKeyName As String = "blUseBitmapIcons"
-    Const strSwitchIconBackgroundKeyName As String = "strSwitchIconBackground"
-    Const strcurrentRoomViewKeyName As String = "strcurrentRoomView"
-    Const strRoomConfigurationsKeyName As String = "strRoomConfigurations"
+    'Const strUseBitmapIconsKeyName As String = "blUseBitmapIcons"
+    'Const strSwitchIconBackgroundKeyName As String = "strSwitchIconBackground"
+    'Const strcurrentRoomViewKeyName As String = "strcurrentRoomView"
+    'Const strRoomConfigurationsKeyName As String = "strRoomConfigurations"
     Const strPreferredRoomIDXKeyName As String = "strPreferredRoomIDX"
+    Const strShowLastSeenKeyName As String = "strShowLastSeen"
+    Const strUseDarkThemeKeyName As String = "strUseDarkTheme"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -38,14 +40,16 @@ Partial Public Class AppSettings
     Const strTimeOutDefault = 5
     Const strMinimumNumberOfColumnsDefault = 2
     Const strShowMarqueeDefault = "False"
-    Const strShowFavouritesDefault = "True"
+    'Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = "False"
     Const strSecondsForRefreshDefault = 0
-    Const strUseBitmapIconsDefault = False
-    Const strSwitchIconBackgroundDefault = False
-    Const strcurrentRoomViewDefault = "Grid View"
-    Const strRoomConfigurationsDefault = ""
+    'Const strUseBitmapIconsDefault = False
+    'Const strSwitchIconBackgroundDefault = False
+    'Const strcurrentRoomViewDefault = "Grid View"
+    'Const strRoomConfigurationsDefault = ""
     Const strPreferredRoomIDXDefault = 0
+    Const strShowLastSeenDefault = False
+    Const strUseDarkThemeDefault = "True"
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -62,6 +66,8 @@ Partial Public Class AppSettings
     Const strSwitchIconBackgroundDefault = False
     Const strcurrentRoomViewDefault = "Grid View"
     Const strPreferredRoomIDXDefault = 0
+    Const strShowLastSeenDefault = False
+    Const strUseDarkThemeDefault = "True"
 #End If
 
     Const strConnectionStatusDefault = False
@@ -72,6 +78,18 @@ Partial Public Class AppSettings
     Public Sub New()
         settings = Windows.Storage.ApplicationData.Current.LocalSettings
     End Sub
+
+    Public ReadOnly Property Notify As ToastMessageViewModel
+        Get
+            Return TiczViewModel.Notify
+        End Get
+    End Property
+
+    Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
+        Get
+            Return TiczViewModel.TiczRoomConfigs
+        End Get
+    End Property
 
 
     Public Property TestInProgress As Boolean
@@ -186,36 +204,71 @@ Partial Public Class AppSettings
         End Get
     End Property
 
-    Public Property SwitchIconBackground As Boolean
+    'Public Property SwitchIconBackground As Boolean
+    '    Get
+    '        Return GetValueOrDefault(Of Boolean)(strSwitchIconBackgroundKeyName, strSwitchIconBackgroundDefault)
+    '    End Get
+    '    Set(value As Boolean)
+    '        If AddOrUpdateValue(strSwitchIconBackgroundKeyName, value) Then
+    '            Save()
+    '        End If
+    '    End Set
+    'End Property
+    Public Property UseDarkTheme As Boolean
         Get
-            Return GetValueOrDefault(Of Boolean)(strSwitchIconBackgroundKeyName, strSwitchIconBackgroundDefault)
+            Return GetValueOrDefault(Of Boolean)(strUseDarkThemeKeyName, strUseDarkThemeDefault)
         End Get
         Set(value As Boolean)
-            If AddOrUpdateValue(strSwitchIconBackgroundKeyName, value) Then
+            If AddOrUpdateValue(strUseDarkThemeKeyName, value) Then
                 Save()
             End If
         End Set
     End Property
-    Public Property UseBitmapIcons As Boolean
+
+    Public Property UseLightTheme As Boolean
         Get
-            Return GetValueOrDefault(Of Boolean)(strUseBitmapIconsKeyName, strUseBitmapIconsDefault)
+            Return Not UseDarkTheme
         End Get
         Set(value As Boolean)
-            If AddOrUpdateValue(strUseBitmapIconsKeyName, value) Then
+            If AddOrUpdateValue(strUseDarkThemeKeyName, Not value) Then
                 Save()
             End If
         End Set
     End Property
-    Public Property ShowFavourites As String
+
+
+    Public Property ShowLastSeen As Boolean
         Get
-            Return GetValueOrDefault(Of String)(strShowFavouritesKeyName, strShowFavouritesDefault)
+            Return GetValueOrDefault(Of Boolean)(strShowLastSeenKeyName, strShowLastSeenDefault)
         End Get
-        Set(value As String)
-            If AddOrUpdateValue(strShowFavouritesKeyName, value) Then
+        Set(value As Boolean)
+            If AddOrUpdateValue(strShowLastSeenKeyName, value) Then
                 Save()
             End If
         End Set
     End Property
+
+    'Public Property UseBitmapIcons As Boolean
+    '    Get
+    '        Return GetValueOrDefault(Of Boolean)(strUseBitmapIconsKeyName, strUseBitmapIconsDefault)
+    '    End Get
+    '    Set(value As Boolean)
+    '        If AddOrUpdateValue(strUseBitmapIconsKeyName, value) Then
+    '            Save()
+    '        End If
+    '    End Set
+    'End Property
+    'Public Property ShowFavourites As String
+    '    Get
+    '        Return GetValueOrDefault(Of String)(strShowFavouritesKeyName, strShowFavouritesDefault)
+    '    End Get
+    '    Set(value As String)
+    '        If AddOrUpdateValue(strShowFavouritesKeyName, value) Then
+    '            Save()
+    '        End If
+    '    End Set
+    'End Property
+
     Public Property ShowAllDevices As String
         Get
             Return GetValueOrDefault(Of String)(strShowAllDevicesKeyName, strShowAllDevicesDefault)
@@ -226,11 +279,11 @@ Partial Public Class AppSettings
             End If
         End Set
     End Property
-    Public Property ShowMarquee As String
+    Public Property ShowMarquee As Boolean
         Get
-            Return GetValueOrDefault(Of String)(strShowMarqueeKeyName, strShowMarqueeDefault)
+            Return GetValueOrDefault(Of Boolean)(strShowMarqueeKeyName, strShowMarqueeDefault)
         End Get
-        Set(value As String)
+        Set(value As Boolean)
             If AddOrUpdateValue(strShowMarqueeKeyName, value) Then
                 Save()
             End If
@@ -282,19 +335,16 @@ Partial Public Class AppSettings
         End Set
     End Property
 
-
-
-
-    Public Property currentRoomView As String
-        Get
-            Return GetValueOrDefault(Of String)(strcurrentRoomViewKeyName, strcurrentRoomViewDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strcurrentRoomViewKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
+    'Public Property currentRoomView As String
+    '    Get
+    '        Return GetValueOrDefault(Of String)(strcurrentRoomViewKeyName, strcurrentRoomViewDefault)
+    '    End Get
+    '    Set(value As String)
+    '        If AddOrUpdateValue(strcurrentRoomViewKeyName, value) Then
+    '            Save()
+    '        End If
+    '    End Set
+    'End Property
     Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
     Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
         Get
@@ -384,10 +434,12 @@ End Class
 Public NotInheritable Class AppSettingsPage
     Inherits Page
 
-    Dim app As App = CType(Application.Current, App)
+    ' Dim app As App = CType(Application.Current, App)
 
-    Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
-        Me.DataContext = app.myViewModel
+    Protected Overrides Async Sub OnNavigatedTo(e As NavigationEventArgs)
+
+        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf SaveSettingsAndGoBack
+
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame.CanGoBack Then
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
@@ -398,19 +450,40 @@ Public NotInheritable Class AppSettingsPage
         If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) Then
             Dim sBar As StatusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView()
             If Not sBar Is Nothing Then
-                sBar.HideAsync()
+                Await sBar.HideAsync()
             End If
         End If
-
+        TiczViewModel.currentRoom.GridViewVisibility = "Collapsed"
     End Sub
 
 
-    Protected Overrides Async Sub OnNavigatedFrom(e As NavigationEventArgs)
-        Await Task.Run(Function() TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations())
+    Public Async Sub SaveSettingsAndGoBack(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+        WriteToDebug("App.SaveSettingsAndGoBack", "executed")
+        e.Handled = True
+        Await TiczViewModel.Notify.Update(False, "saving settings, please wait...", 0)
+        Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+
+        'Clear the contents of the screen, as we'll reload everything
+        TiczViewModel.currentRoom.GroupedRoomDevices.Clear()
+        TiczViewModel.currentRoom.RoomDevices.Clear()
+
+        'Navigate Back
+        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+        If rootFrame Is Nothing Then Exit Sub
+        If rootFrame.CanGoBack Then
+            rootFrame.GoBack()
+        End If
+    End Sub
+
+
+    Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
+        WriteToDebug("AppSettingsPage.OnNavigatedFrom()", "removed SaveSettingsAndGoBack Handler")
+        RemoveHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf SaveSettingsAndGoBack
     End Sub
 
 
     Public Sub New()
         InitializeComponent()
+        Me.DataContext = TiczViewModel.TiczSettings
     End Sub
 End Class

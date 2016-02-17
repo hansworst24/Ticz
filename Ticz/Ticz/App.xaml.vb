@@ -31,9 +31,10 @@ NotInheritable Class App
         End If
 #End If
         'Add BackKeyHandler for HardwareButtons
-        AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
+        'AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
 
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+
 
         ' Do not repeat app initialization when the Window already has content,
         ' just ensure that the window is active
@@ -41,16 +42,16 @@ NotInheritable Class App
         If rootFrame Is Nothing Then
             ' Create a Frame to act as the navigation context and navigate to the first page
             rootFrame = New Frame()
-
+            If TiczViewModel.TiczSettings.UseDarkTheme Then rootFrame.RequestedTheme = ElementTheme.Dark Else rootFrame.RequestedTheme = ElementTheme.Light
             AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
             If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
-                ' TODO: Load state from previously suspended application
+                    ' TODO: Load state from previously suspended application
+                End If
+                ' Place the frame in the current Window
+                Window.Current.Content = rootFrame
             End If
-            ' Place the frame in the current Window
-            Window.Current.Content = rootFrame
-        End If
-        If rootFrame.Content Is Nothing Then
+            If rootFrame.Content Is Nothing Then
             ' When the navigation stack isn't restored navigate to the first page,
             ' configuring the new page by passing required information as a navigation
             ' parameter
@@ -65,11 +66,14 @@ NotInheritable Class App
                 sBar.HideAsync()
             End If
         End If
-        If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) Then
-            TiczViewModel.ShowBackButtonBar = False
-        Else
-            TiczViewModel.ShowBackButtonBar = True
-        End If
+        'If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) Then
+        '    TiczViewModel.ShowBackButtonBar = False
+        'Else
+        '    TiczViewModel.ShowBackButtonBar = True
+        'End If
+
+        '        var service = FirstFloor.XamlSpy.Services.XamlSpyService.Current;
+        'service.Connect("[address]", [port], "[password]";
 
         'AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
         ' Ensure the current window is active
@@ -81,7 +85,7 @@ NotInheritable Class App
     End Sub
 
 
-    Private Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+    Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
         WriteToDebug("App.App_BackRequested", "executed")
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame Is Nothing Then Exit Sub
@@ -90,10 +94,6 @@ NotInheritable Class App
             rootFrame.GoBack()
         End If
     End Sub
-
-
-
-
 
     ''' <summary>
     ''' Invoked when Navigation to a certain page fails

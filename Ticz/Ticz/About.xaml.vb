@@ -11,6 +11,8 @@ Public NotInheritable Class AboutPage
     Dim app As App = CType(Application.Current, App)
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
+        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
+
         Me.DataContext = app.myViewModel
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame.CanGoBack Then
@@ -22,7 +24,7 @@ Public NotInheritable Class AboutPage
     End Sub
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
-
+        RemoveHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
     End Sub
 
 
