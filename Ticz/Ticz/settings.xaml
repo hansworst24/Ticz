@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"  
-    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d" d:DesignHeight="2000"
     >
 
@@ -88,28 +87,12 @@
                     <TextBlock  Text="GridView minimum amount of columns" Margin="0,20,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Ensures that devices are shown within the minimum amount of columns selected within the Grid View. Ticz automatically adds more columns when required. It provides a way to fine-tune the amount of devices on the screen." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ComboBox   x:Name="lbNumberColumns" ItemsSource="{Binding NumberOfColumnsChoices}" SelectedItem="{Binding MinimumNumberOfColumns, Mode=TwoWay}" />
-                    <!--<TextBlock  Margin="0,10,0,0" Text="Show Favourites" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock  Text="Shows Favourite devices as first 'Room' in the app" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="cbShowFavourites" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowFavourites, Mode=TwoWay}" />
-                    <TextBlock  Margin="0,10,0,0" Text="Show 'All Devices'" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock  Text="Shows all devices within a last 'Room'" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox   x:Name="cbShowAllDevices" ItemsSource="{Binding YesNoChoices}" SelectedItem="{Binding ShowAllDevices, Mode=TwoWay}" />-->
                     <TextBlock    Margin="0,10,0,0" Text="Show Last Seen Date/Time" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Show the Date and Time when the device was last seen by Domoticz. Only visible in Wide View of a device." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding ShowLastSeen, Mode=TwoWay}" />
                     <TextBlock  Margin="0,10,0,0" Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding ShowMarquee, Mode=TwoWay}" />
-
-                    <!--<TextBlock    Margin="0,10,0,0" Text="Use Bitmap Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock    Text="Use bitmap images, instead of vector images for the icons. Will improve responsiveness a bit on slower devices, with the cost of less crisp icons." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ToggleSwitch IsOn="{Binding UseBitmapIcons, Mode=TwoWay}" />
-                    <TextBlock    Margin="0,10,0,0" Text="Use Icon Background for on/off" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock    Text="By default, the icon itself will change from grey to the selected accent color when the device is switched on. When this setting is enabled, it will switch the icon background and keep the icon itself black. When using vector images, this setting has no effect." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ToggleSwitch IsOn="{Binding SwitchIconBackground, Mode=TwoWay}" />
-                    <TextBlock    Text="Select Room Layout" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock    Text="You can choose the layout of how the devices are represented in each Room. Icon View shows minimal information in a gridview, Grid View shows more information in a gridview, and List View shows all devices in a long list." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ComboBox     x:Name="cbPivotView" ItemsSource="{Binding RoomViewChoices}" SelectedItem="{Binding currentRoomView, Mode=TwoWay}" />-->
                 </StackPanel>
                 <Grid x:Name="ThirdSettings" Grid.Row="3" Grid.Column="0" Margin="0,0,0,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
@@ -179,4 +162,9 @@
             </CommandBar.Content>
         </CommandBar>
     </Page.BottomAppBar>
+    <!--<Interactivity:Interaction.Behaviors>
+        <Core:EventTriggerBehavior EventName="Loaded">
+            <Core:InvokeCommandAction Command="{Binding SettingsPageLoadedCommand}"/>
+        </Core:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>-->
 </Page>

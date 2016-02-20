@@ -14,7 +14,7 @@
 
     <Grid x:Name="griddieDashBoard" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsDashboardView" Source="{Binding currentRoom.RoomDevices}" IsSourceGrouped="False"/>
+            <CollectionViewSource x:Key="cvsDashboardView" Source="{Binding currentRoom.DashboardViewDevices}" IsSourceGrouped="False"/>
         </Grid.Resources>
         <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsDashboardView}}" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="None" Background="Transparent">
             <local:VariableGrid.ItemContainerStyle>

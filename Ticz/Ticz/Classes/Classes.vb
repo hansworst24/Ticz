@@ -7,6 +7,7 @@ Imports Newtonsoft.Json
 Imports GalaSoft.MvvmLight
 Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
+Imports GalaSoft.MvvmLight.Command
 
 Public Class domoVersion
     Inherits ViewModelBase
@@ -42,13 +43,13 @@ Public Class domoVersion
             Catch ex As Exception
                 ret.issuccess = False : ret.err = "Error parsing config"
             End Try
+        Else
+            Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz version information ({0})", response.ReasonPhrase), 0)
         End If
         Return ret
     End Function
 
 End Class
-
-
 
 Public Class domoConfig
     Public Property TempScale As Double
@@ -73,11 +74,13 @@ Public Class domoConfig
             Catch ex As Exception
                 ret.issuccess = False : ret.err = "Error parsing config"
             End Try
+        Else
+            ret.issuccess = False : ret.err = response.ReasonPhrase
         End If
+        If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz Config ({0})", ret.err), 0)
         Return ret
     End Function
 End Class
-
 
 Public Class domoSunRiseSet
     Inherits ViewModelBase
@@ -120,14 +123,14 @@ Public Class domoSunRiseSet
             Catch ex As Exception
                 ret.issuccess = False : ret.err = "Error parsing config"
             End Try
+        Else
+            ret.issuccess = False : ret.err = response.ReasonPhrase
         End If
+        If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 0)
         Return ret
     End Function
 
 End Class
-
-
-
 
 Public Class domoResponse
     Public Property message As String
@@ -158,13 +161,18 @@ Public NotInheritable Class Constants
 
     'constants for Device Types
     Public Const LIGHTING_LIMITLESS As String = "Lighting Limitless/Applamp"
+    Public Const TEMP As String = "Temp"
+    Public Const THERMOSTAT As String = "Thermostat"
     Public Const TEMP_HUMI_BARO As String = "Temp + Humidity + Baro"
     Public Const LIGHTING_2 As String = "Lighting 2"
     Public Const LIGHT_SWITCH As String = "Light/Switch"
     Public Const GROUP As String = "Group"
     Public Const SCENE As String = "Scene"
     Public Const WIND As String = "Wind"
+    Public Const GENERAL As String = "General"
+    Public Const USAGE As String = "Usage"
     Public Const P1_SMART_METER As String = "P1 Smart Meter"
+    Public Const UV As String = "UV"
     Public Const TYPE_RAIN As String = "Rain"
 
     'Constants for Device SubTypes
@@ -192,8 +200,22 @@ Public NotInheritable Class Constants
     Public Const VEN_BLINDS_EU As String = "Venetian Blinds EU"
     Public Const VEN_BLINDS_US As String = "Venetian Blinds US"
     Public Const X10_SIREN As String = "X10 Siren"
-    Public Const GENERAL As String = "General"
+    'Public Const GENERAL As String = "General"
+
+    'Constants for Group Names
+    Public Const GRP_GROUPS_SCENES As String = "Groups / Scenes"
+    Public Const GRP_LIGHTS_SWITCHES As String = "Lights / Switches"
+    Public Const GRP_WEATHER As String = "Weather Sensors"
+    Public Const GRP_TEMPERATURE As String = "Temperature Sensors"
+    Public Const GRP_UTILITY As String = "Utility Sensors"
+    Public Const GRP_OTHER As String = "Other Devices"
+
+
 End Class
+
+
+
+
 
 
 ''' <summary>
@@ -201,7 +223,7 @@ End Class
 ''' </summary>
 Public NotInheritable Class TiczStorage
     Public Class RoomConfigurations
-        Inherits List(Of RoomConfiguration)
+        Inherits ObservableCollection(Of RoomConfiguration)
 
         Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
             WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "start")
@@ -209,37 +231,35 @@ Public NotInheritable Class TiczStorage
             Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
             Dim storageFile As Windows.Storage.StorageFile
             Dim fileExists As Boolean = True
+            Dim stuffToLoad As New TiczStorage.RoomConfigurations
             Try
                 storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
             Catch ex As Exception
                 fileExists = False
                 TiczViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"))
-                Return False
             End Try
-            Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
-            Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
-            Dim serializer = New XmlSerializer((New TiczStorage.RoomConfigurations).GetType())
-            Dim stuffToLoad As TiczStorage.RoomConfigurations
-            Try
-                stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
-            Catch ex As Exception
-                'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
-                TiczViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message))
-                stuffToLoad = New RoomConfigurations
-                Return False
-            End Try
+            If fileExists Then
+                Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
+                Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
+                Dim serializer = New XmlSerializer((New TiczStorage.RoomConfigurations).GetType())
+                Try
+                    stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
+                Catch ex As Exception
+                    'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
+                    TiczViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message))
+                End Try
+                stream.Dispose()
+            End If
 
-            stream.Dispose()
-            For Each s In stuffToLoad
-                Me.Add(s)
-            Next
+            TiczViewModel.EnabledRooms.Clear()
 
-            For Each r In TiczViewModel.DomoRooms.result
-                Dim retreivedRoomConfig = (From configs In Me Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
+            For Each r In TiczViewModel.DomoRooms.result.OrderBy(Function(x) x.Order)
+                Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
                 If retreivedRoomConfig Is Nothing Then
-                    Dim c = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ICONVIEW, .ShowRoom = True}
-                    Me.Add(c)
+                    retreivedRoomConfig = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ICONVIEW, .ShowRoom = True}
                 End If
+                Me.Add(retreivedRoomConfig)
+                If retreivedRoomConfig.ShowRoom Then TiczViewModel.EnabledRooms.Add(retreivedRoomConfig)
             Next
             WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "end")
             Return True
@@ -272,7 +292,7 @@ Public NotInheritable Class TiczStorage
 
         End Function
 
-        Public Function GetRoomConfig(idx As Integer, name As String)
+        Public Function GetRoomConfig(idx As Integer, name As String) As RoomConfiguration
             Dim c = (From config In Me Where config.RoomIDX = idx And config.RoomName = name Select config).FirstOrDefault()
             If c Is Nothing Then
                 c = New RoomConfiguration With {.RoomIDX = idx, .RoomName = name, .RoomView = Constants.ICONVIEW, .ShowRoom = True}
@@ -290,6 +310,16 @@ Public NotInheritable Class TiczStorage
         Public Property RoomName As String
         Public Property ShowRoom As Boolean
         Public Property RoomView As String
+            Get
+                Return _RoomView
+            End Get
+            Set(value As String)
+                _RoomView = value
+                RaisePropertyChanged("RoomView")
+                'WriteToDebug("--------------Roomview----------------", _RoomView)
+            End Set
+        End Property
+        Private Property _RoomView As String
         Public Property DeviceConfigurations As DeviceConfigurations
 
         Public Sub New()
@@ -417,35 +447,22 @@ Public NotInheritable Class Domoticz
 
         Public Async Function Load() As Task(Of retvalue)
             WriteToDebug("DomoPlans.Load", "executed")
+            Me.result.Clear()
             Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(DomoApi.getPlans)
             If response.IsSuccessStatusCode Then
                 Dim body As String = Await response.Content.ReadAsStringAsync()
                 Dim deserialized = JsonConvert.DeserializeObject(Of Plans)(body)
                 Await ClearPlans()
-                If deserialized.result.Any(Function(x) x.Name = "Ticz") Then
-                    'We found a RoomPlan called 'Ticz' on the Domoticz Server. This is used for debugging purposes, and allows to add individual devices to the 'Ticz' Room to see how the Ticz App (this) is handling it
-                    'We therefore skip loading any other rooms and will only load this room. We use a default RoomView for the Ticz Room as well, the ListView.
-                    Dim DomoPlan As Domoticz.Plan = (From d In deserialized.result Where d.Name = "Ticz" Select d).FirstOrDefault()
-                    Dim matchingRoomConfig As TiczStorage.RoomConfiguration = (From roomconfig In TiczViewModel.TiczRoomConfigs Where roomconfig.RoomIDX = DomoPlan.idx Select roomconfig).FirstOrDefault()
-                    If matchingRoomConfig Is Nothing Then
-                        matchingRoomConfig = New TiczStorage.RoomConfiguration With {.ShowRoom = True, .RoomIDX = DomoPlan.idx, .RoomName = DomoPlan.Name, .RoomView = Constants.LISTVIEW}
-                        TiczViewModel.TiczRoomConfigs.Add(matchingRoomConfig)
-                    Else
-                        matchingRoomConfig.RoomView = Constants.LISTVIEW
-                    End If
-                    Await AddPlan(DomoPlan)
-                Else
-                    For Each r In deserialized.result
-                        Dim matchingRoomConfig As TiczStorage.RoomConfiguration = (From roomconfig In TiczViewModel.TiczRoomConfigs Where roomconfig.RoomIDX = r.idx Select roomconfig).FirstOrDefault()
-                        If matchingRoomConfig Is Nothing Then
-                            matchingRoomConfig = New TiczStorage.RoomConfiguration With {.ShowRoom = True, .RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ICONVIEW}
-                            TiczViewModel.TiczRoomConfigs.Add(matchingRoomConfig)
-                        End If
-                        If matchingRoomConfig.ShowRoom Then
-                            Await AddPlan(r)
-                        End If
-                    Next
-                End If
+                For Each p In deserialized.result.OrderBy(Function(x) x.Order)
+                    Me.result.Add(p)
+                Next
+
+                If TiczViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
+
+                'Re-order the Plans
+                For i As Integer = 0 To Me.result.Count - 1 Step 1
+                    Me.result(i).Order = i
+                Next
                 Me.status = deserialized.status
                 Me.title = deserialized.status
                 Return New retvalue With {.issuccess = True}
@@ -534,14 +551,15 @@ Public NotInheritable Class DomoApi
     '   "title" : "SwitchLight"
     '}
 
-    Public Shared Function getAllDevicesForRoom(roomIDX As String, Optional UpdatesOnly As Boolean = False)
-        'Using order=Name, ensures that the devices are returned in the order in which they are set in the WebUI
+    Public Shared Function getAllDevicesForRoom(roomIDX As String, Optional LoadAllUpdates As Boolean = False)
+        'By sending a lastupdate parameter with a unix epoch number, we'll only get the updated devices since that epoch
         WriteToDebug("DomoApi", TimeToUnixSeconds(TiczViewModel.LastRefresh).ToString)
-        If UpdatesOnly Then
+        If LoadAllUpdates Then
+            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX)
+        Else
             Dim lastUpdateEpoch As Long = TimeToUnixSeconds(TiczViewModel.LastRefresh).ToString
             Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}&lastupdate={3}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX, lastUpdateEpoch)
-        Else
-            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, roomIDX)
+
         End If
     End Function
 

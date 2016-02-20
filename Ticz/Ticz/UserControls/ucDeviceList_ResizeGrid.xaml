@@ -14,7 +14,7 @@
 
     <Grid x:Name="Griddie" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedRoomDevices}" IsSourceGrouped="True" />
+            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.ResizeViewDevices}" IsSourceGrouped="True" />
         </Grid.Resources>
         <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="None" CanReorderItems="True" CanDragItems="True" AllowDrop="True">
             <local:VariableGrid.GroupStyle>

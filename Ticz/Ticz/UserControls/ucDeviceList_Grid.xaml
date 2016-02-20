@@ -14,7 +14,7 @@
 
     <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedRoomDevices}" IsSourceGrouped="True" />
+            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GridViewDevices}" IsSourceGrouped="True" />
         </Grid.Resources>
         <GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" 
                   ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -22,7 +22,8 @@
                 <GroupStyle HidesIfEmpty="True">
                     <GroupStyle.Panel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20"  ItemHeight="{Binding currentRoom.ItemHeight}" ItemWidth="{Binding currentRoom.ItemWidth}"/>
+                            <StackPanel Orientation="Horizontal"/>
+                            <!--<ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20" ItemHeight="{Binding currentRoom.ItemHeight}" ItemWidth="{Binding currentRoom.ItemWidth}"/>-->
                         </ItemsPanelTemplate>
                     </GroupStyle.Panel>
                     <GroupStyle.HeaderTemplate>
@@ -36,6 +37,7 @@
             </GridView.GroupStyle>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
+                    <!--<StackPanel Orientation="Horizontal"/>-->
                     <ItemsWrapGrid Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>

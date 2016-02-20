@@ -11,7 +11,7 @@
 
     <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedRoomDevices}" IsSourceGrouped="True" />
+            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.ListViewDevices}" IsSourceGrouped="True" />
         </Grid.Resources>
         <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"
                           SelectionMode="None">

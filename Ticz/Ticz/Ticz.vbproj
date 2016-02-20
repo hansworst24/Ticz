@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
     <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -124,8 +124,8 @@
     </Compile>
     <Compile Include="Modules\Modules.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="settings.xaml.vb">
-      <DependentUpon>settings.xaml</DependentUpon>
+    <Compile Include="UserControls\ucAbout.xaml.vb">
+      <DependentUpon>ucAbout.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucDeviceList_Dashboard.xaml.vb">
       <DependentUpon>ucDeviceList_Dashboard.xaml</DependentUpon>
@@ -142,8 +142,29 @@
     <Compile Include="UserControls\ucDeviceList_Icon.xaml.vb">
       <DependentUpon>ucDeviceList_Icon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucDevice_Details.xaml.vb">
+      <DependentUpon>ucDevice_Details.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucDevice_Test.xaml.vb">
+      <DependentUpon>ucDevice_Test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucDevice_Dynamic.xaml.vb">
       <DependentUpon>ucDevice_Dynamic.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucDevice_Password.xaml.vb">
+      <DependentUpon>ucDevice_Password.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucGeneral_Settings.xaml.vb">
+      <DependentUpon>ucGeneral_Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucRoom_Settings.xaml.vb">
+      <DependentUpon>ucRoom_Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucServer_Settings.xaml.vb">
+      <DependentUpon>ucServer_Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucSplitviewPaneMenu.xaml.vb">
+      <DependentUpon>ucSplitviewPaneMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucToastMessage.xaml.vb">
       <DependentUpon>ucToastMessage.xaml</DependentUpon>
@@ -301,7 +322,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="settings.xaml">
+    <Page Include="UserControls\ucAbout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -325,9 +346,37 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\ucDevice_Details.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucDevice_Test.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\ucDevice_Dynamic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ucDevice_Password.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucGeneral_Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucRoom_Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucServer_Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucSplitviewPaneMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucToastMessage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,12 +1,7 @@
 ﻿' The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-Imports Newtonsoft.Json
-Imports Newtonsoft.Json.Linq
-Imports Ticz.AppSettings
-Imports Ticz.TiczViewModel
 Imports Windows.UI.Core
-Imports Windows.Web.Http
-Imports WinRTXamlToolkit.Controls
+
 ''' <summary>
 ''' An empty page that can be used on its own or navigated to within a Frame.
 ''' </summary>
@@ -21,33 +16,40 @@ Public NotInheritable Class SplitView
     End Sub
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
-        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
+        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
+        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
 
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
-        If rootFrame.CanGoBack Then
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-        Else
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-        End If
+        'If rootFrame.CanGoBack Then
+        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+        'Else
+        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+        'End If
 
         Me.DataContext = app.myViewModel
+    End Sub
+
+
+    Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+        WriteToDebug("App.BackButtonPressed", "executed")
+        If TiczViewModel.TiczMenu.ShowAbout = True Then
+            e.Handled = True
+            TiczViewModel.TiczMenu.ShowAbout = False
+            Exit Sub
+        End If
+        If TiczViewModel.TiczMenu.IsMenuOpen Then
+            e.Handled = True
+            Dim cmd = TiczViewModel.TiczMenu.SettingsMenuGoBack
+            cmd.Execute(Nothing)
+            If Not TiczViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+        End If
 
     End Sub
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
+        WriteToDebug("App.OnNavigatedFrom", "executed")
         app.myViewModel.StopRefresh()
-        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
-    End Sub
-
-    Private Sub AppBar_SizeChanged(sender As Object, e As SizeChangedEventArgs)
-
-    End Sub
-
-    Private Sub AppBar_Tapped(sender As Object, e As TappedRoutedEventArgs)
-        Dim a As AppBar = CType(sender, AppBar)
-        'If a.IsOpen Then vm.NotifiCationMargin = 36 Else vm.NotificationMargin = 0
-        WriteToDebug("AppBar.AppBar_Tapped()", a.ActualHeight)
-
+        'RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
     End Sub
 
     Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)

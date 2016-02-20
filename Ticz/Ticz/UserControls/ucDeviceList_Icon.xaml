@@ -11,7 +11,7 @@
 
     <Grid x:Name="gridRoomIconView" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedRoomDevices}"
+            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.IconViewDevices}"
                                   IsSourceGrouped="True" />
         </Grid.Resources>
         <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"

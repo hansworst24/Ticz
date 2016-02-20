@@ -5,429 +5,417 @@ Imports GalaSoft.MvvmLight.Command
 Imports Windows.Storage.Streams
 Imports Windows.UI.Core
 
-Partial Public Class AppSettings
-    Inherits ViewModelBase
+'Partial Public Class AppSettings
+'    Inherits ViewModelBase
 
-    Private app As App = CType(Application.Current, App)
-    Private vm As TiczViewModel = app.myViewModel
-
-
-    Dim settings As Windows.Storage.ApplicationDataContainer
-
-    Const strServerIPKeyName As String = "strServerIP"
-    Const strServerPortKeyName As String = "strServerPort"
-    Const strUsernameKeyName As String = "strUserName"
-    Const strUserPasswordKeyName As String = "strUserPassword"
-    Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
-    Const strShowMarqueeKeyName As String = "strShowMarquee"
-    'Const strShowFavouritesKeyName As String = "strShowFavourites"
-    Const strShowAllDevicesKeyName As String = "strShowAllDevices"
-    Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
-    'Const strUseBitmapIconsKeyName As String = "blUseBitmapIcons"
-    'Const strSwitchIconBackgroundKeyName As String = "strSwitchIconBackground"
-    'Const strcurrentRoomViewKeyName As String = "strcurrentRoomView"
-    'Const strRoomConfigurationsKeyName As String = "strRoomConfigurations"
-    Const strPreferredRoomIDXKeyName As String = "strPreferredRoomIDX"
-    Const strShowLastSeenKeyName As String = "strShowLastSeen"
-    Const strUseDarkThemeKeyName As String = "strUseDarkTheme"
-
-#If DEBUG Then
-    'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
-    Const strServerIPDefault = ""
-    Const strServerPortDefault = ""
-    Const strUsernameDefault = ""
-    Const strUserPasswordDefault = ""
-    Const strTimeOutDefault = 5
-    Const strMinimumNumberOfColumnsDefault = 2
-    Const strShowMarqueeDefault = "False"
-    'Const strShowFavouritesDefault = "True"
-    Const strShowAllDevicesDefault = "False"
-    Const strSecondsForRefreshDefault = 0
-    'Const strUseBitmapIconsDefault = False
-    'Const strSwitchIconBackgroundDefault = False
-    'Const strcurrentRoomViewDefault = "Grid View"
-    'Const strRoomConfigurationsDefault = ""
-    Const strPreferredRoomIDXDefault = 0
-    Const strShowLastSeenDefault = False
-    Const strUseDarkThemeDefault = "True"
-#Else
-    'PROD SETTINGS
-    Const strServerIPDefault = ""
-    Const strServerPortDefault = ""
-    Const strUsernameDefault = ""
-    Const strUserPasswordDefault = ""
-    Const strTimeOutDefault = 0
-    Const strMinimumNumberOfColumnsDefault = 1
-    Const strShowMarqueeDefault = "True"
-    Const strShowFavouritesDefault = "True"
-    Const strShowAllDevicesDefault = "True"
-    Const strSecondsForRefreshDefault = 10
-    Const strUseBitmapIconsDefault = False
-    Const strSwitchIconBackgroundDefault = False
-    Const strcurrentRoomViewDefault = "Grid View"
-    Const strPreferredRoomIDXDefault = 0
-    Const strShowLastSeenDefault = False
-    Const strUseDarkThemeDefault = "True"
-#End If
-
-    Const strConnectionStatusDefault = False
+'    Private app As App = CType(Application.Current, App)
+'    Private vm As TiczViewModel = app.myViewModel
 
 
-    Public Const strDashboardDevicesFileName As String = "dashboarddevices.xml"
+'    Dim settings As Windows.Storage.ApplicationDataContainer
 
-    Public Sub New()
-        settings = Windows.Storage.ApplicationData.Current.LocalSettings
-    End Sub
+'    Const strServerIPKeyName As String = "strServerIP"
+'    Const strServerPortKeyName As String = "strServerPort"
+'    Const strUsernameKeyName As String = "strUserName"
+'    Const strUserPasswordKeyName As String = "strUserPassword"
+'    Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
+'    Const strShowMarqueeKeyName As String = "strShowMarquee"
+'    Const strShowAllDevicesKeyName As String = "strShowAllDevices"
+'    Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
+'    Const strPreferredRoomIDXKeyName As String = "strPreferredRoomIDX"
+'    Const strShowLastSeenKeyName As String = "strShowLastSeen"
+'    Const strUseDarkThemeKeyName As String = "strUseDarkTheme"
 
-    Public ReadOnly Property Notify As ToastMessageViewModel
-        Get
-            Return TiczViewModel.Notify
-        End Get
-    End Property
+'#If DEBUG Then
+'    'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
+'    Const strServerIPDefault = ""
+'    Const strServerPortDefault = ""
+'    Const strUsernameDefault = ""
+'    Const strUserPasswordDefault = ""
+'    Const strTimeOutDefault = 5
+'    Const strMinimumNumberOfColumnsDefault = 2
+'    Const strShowMarqueeDefault = "False"
+'    'Const strShowFavouritesDefault = "True"
+'    Const strShowAllDevicesDefault = "False"
+'    Const strSecondsForRefreshDefault = 0
+'    'Const strUseBitmapIconsDefault = False
+'    'Const strSwitchIconBackgroundDefault = False
+'    'Const strcurrentRoomViewDefault = "Grid View"
+'    'Const strRoomConfigurationsDefault = ""
+'    Const strPreferredRoomIDXDefault = 0
+'    Const strShowLastSeenDefault = False
+'    Const strUseDarkThemeDefault = "True"
+'#Else
+'    'PROD SETTINGS
+'    Const strServerIPDefault = ""
+'    Const strServerPortDefault = ""
+'    Const strUsernameDefault = ""
+'    Const strUserPasswordDefault = ""
+'    Const strTimeOutDefault = 0
+'    Const strMinimumNumberOfColumnsDefault = 1
+'    Const strShowMarqueeDefault = "True"
+'    Const strShowFavouritesDefault = "True"
+'    Const strShowAllDevicesDefault = "True"
+'    Const strSecondsForRefreshDefault = 10
+'    Const strUseBitmapIconsDefault = False
+'    Const strSwitchIconBackgroundDefault = False
+'    Const strcurrentRoomViewDefault = "Grid View"
+'    Const strPreferredRoomIDXDefault = 0
+'    Const strShowLastSeenDefault = False
+'    Const strUseDarkThemeDefault = "True"
+'#End If
 
-    Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
-        Get
-            Return TiczViewModel.TiczRoomConfigs
-        End Get
-    End Property
-
-
-    Public Property TestInProgress As Boolean
-        Get
-            Return _TestInProgress
-        End Get
-        Set(value As Boolean)
-            _TestInProgress = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _TestInProgress As Boolean
-
-
-    Public ReadOnly Property NavigateBackCommand As RelayCommand
-        Get
-            Return New RelayCommand(Sub()
-                                        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
-                                        If rootFrame.CanGoBack Then rootFrame.GoBack()
-                                    End Sub)
-        End Get
-    End Property
-
-    Public ReadOnly Property TestConnectionCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        TestInProgress = True
-                                        TestConnectionResult = "Testing connection..."
-                                        WriteToDebug("TestConnectionCommand", ServerIP)
-                                        If ContainsValidIPDetails() Then
-                                            Dim response As retvalue = Await TiczViewModel.DomoRooms.Load()
-                                            If response.issuccess Then
-                                                TestConnectionResult = "Hurray !"
-                                            Else
-                                                TestConnectionResult = String.Format("Hmm..doesn't work : {0}", response.err)
-                                            End If
-                                        Else
-                                            TestConnectionResult = "Server IP/Port not valid !"
-                                        End If
-                                        TestInProgress = False
-                                    End Sub)
-        End Get
-    End Property
-
-    Public Property TestConnectionResult As String
-        Get
-            Return _TestConnectionResult
-        End Get
-        Set(value As String)
-            _TestConnectionResult = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _TestConnectionResult As String
-
-    'Checks if the Server IP and the Server Port are valid
-    Public Function ContainsValidIPDetails() As Boolean
-        Dim tmpIPAddress As Net.IPAddress
-        If Net.IPAddress.TryParse(TiczViewModel.TiczSettings.ServerIP, tmpIPAddress) Then
-
-            If ServerPort.Length > 0 AndAlso ServerPort.All(Function(x) Char.IsDigit(x)) AndAlso CType(ServerPort, Integer) <= 65535 Then
-                Return True
-            Else
-                Return False
-            End If
-        Else
-            Return False
-        End If
-    End Function
-
-
-    Public Function GetFullURL() As String
-        Return "http://" + TiczViewModel.TiczSettings.ServerIP + ":" + ServerPort
-    End Function
-
-    Public Function AddOrUpdateValue(Key As String, value As Object)
-        Dim valueChanged As Boolean = False
-
-        If value Is Nothing Then Return False
-        If settings.Values.ContainsKey(Key) Then
-            settings.Values(Key) = value
-            valueChanged = True
-
-        Else
-            settings.Values.Add(Key, value)
-            valueChanged = True
-        End If
-        Return valueChanged
-    End Function
-
-    Public Function GetValueOrDefault(Of T)(Key As String, defaultValue As T) As T
-
-        Dim value As T
-        ' If the key exists, retrieve the value.
-        If Not settings.Values(Key) Is Nothing Then
-            value = DirectCast(settings.Values(Key), T)
-        Else
-            ' Otherwise, use the default value.
-            value = defaultValue
-        End If
-        Return value
-    End Function
-
-    Public Sub Save()
-        'settings.Save()
-    End Sub
-
-    Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
-    Public ReadOnly Property YesNoChoices As List(Of String)
-        Get
-            Return _YesNoList
-        End Get
-    End Property
-
-    'Public Property SwitchIconBackground As Boolean
-    '    Get
-    '        Return GetValueOrDefault(Of Boolean)(strSwitchIconBackgroundKeyName, strSwitchIconBackgroundDefault)
-    '    End Get
-    '    Set(value As Boolean)
-    '        If AddOrUpdateValue(strSwitchIconBackgroundKeyName, value) Then
-    '            Save()
-    '        End If
-    '    End Set
-    'End Property
-    Public Property UseDarkTheme As Boolean
-        Get
-            Return GetValueOrDefault(Of Boolean)(strUseDarkThemeKeyName, strUseDarkThemeDefault)
-        End Get
-        Set(value As Boolean)
-            If AddOrUpdateValue(strUseDarkThemeKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-    Public Property UseLightTheme As Boolean
-        Get
-            Return Not UseDarkTheme
-        End Get
-        Set(value As Boolean)
-            If AddOrUpdateValue(strUseDarkThemeKeyName, Not value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-
-    Public Property ShowLastSeen As Boolean
-        Get
-            Return GetValueOrDefault(Of Boolean)(strShowLastSeenKeyName, strShowLastSeenDefault)
-        End Get
-        Set(value As Boolean)
-            If AddOrUpdateValue(strShowLastSeenKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-    'Public Property UseBitmapIcons As Boolean
-    '    Get
-    '        Return GetValueOrDefault(Of Boolean)(strUseBitmapIconsKeyName, strUseBitmapIconsDefault)
-    '    End Get
-    '    Set(value As Boolean)
-    '        If AddOrUpdateValue(strUseBitmapIconsKeyName, value) Then
-    '            Save()
-    '        End If
-    '    End Set
-    'End Property
-    'Public Property ShowFavourites As String
-    '    Get
-    '        Return GetValueOrDefault(Of String)(strShowFavouritesKeyName, strShowFavouritesDefault)
-    '    End Get
-    '    Set(value As String)
-    '        If AddOrUpdateValue(strShowFavouritesKeyName, value) Then
-    '            Save()
-    '        End If
-    '    End Set
-    'End Property
-
-    Public Property ShowAllDevices As String
-        Get
-            Return GetValueOrDefault(Of String)(strShowAllDevicesKeyName, strShowAllDevicesDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strShowAllDevicesKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-    Public Property ShowMarquee As Boolean
-        Get
-            Return GetValueOrDefault(Of Boolean)(strShowMarqueeKeyName, strShowMarqueeDefault)
-        End Get
-        Set(value As Boolean)
-            If AddOrUpdateValue(strShowMarqueeKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-    Private _RoomViews As List(Of String) = New List(Of String)({Constants.ICONVIEW, Constants.GRIDVIEW, Constants.LISTVIEW, Constants.RESIZEVIEW, Constants.DASHVIEW}).ToList
-    Public ReadOnly Property RoomViewChoices As List(Of String)
-        Get
-            Return _RoomViews
-        End Get
-    End Property
-
-    Public Property PreferredRoom As TiczStorage.RoomConfiguration
-        Get
-            If Not TiczViewModel.TiczRoomConfigs Is Nothing Then
-                Dim room = (From t In TiczViewModel.TiczRoomConfigs Where t.RoomIDX = PreferredRoomIDX Select t).FirstOrDefault
-                If Not room Is Nothing Then
-                    Return room
-                Else
-                    If TiczViewModel.TiczRoomConfigs.Count > 0 Then
-                        Return TiczViewModel.TiczRoomConfigs(0)
-                    Else
-                        Return Nothing
-                    End If
-                End If
-            Else
-                Return Nothing
-            End If
-
-        End Get
-        Set(value As TiczStorage.RoomConfiguration)
-            If Not value Is Nothing Then
-                PreferredRoomIDX = value.RoomIDX
-            End If
-        End Set
-    End Property
-    Private Property _PreferredRoom As TiczStorage.RoomConfiguration
-
-
-    Public Property PreferredRoomIDX As Integer
-        Get
-            Return GetValueOrDefault(Of Integer)(strPreferredRoomIDXKeyName, strPreferredRoomIDXDefault)
-        End Get
-        Set(value As Integer)
-            If AddOrUpdateValue(strPreferredRoomIDXKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-    'Public Property currentRoomView As String
-    '    Get
-    '        Return GetValueOrDefault(Of String)(strcurrentRoomViewKeyName, strcurrentRoomViewDefault)
-    '    End Get
-    '    Set(value As String)
-    '        If AddOrUpdateValue(strcurrentRoomViewKeyName, value) Then
-    '            Save()
-    '        End If
-    '    End Set
-    'End Property
-    Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
-    Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
-        Get
-            Return _SecondsForRefresh
-        End Get
-    End Property
-    Public Property SecondsForRefresh As Integer
-        Get
-            Return GetValueOrDefault(Of Integer)(strSecondsForRefreshKeyName, strSecondsForRefreshDefault)
-        End Get
-        Set(value As Integer)
-            If AddOrUpdateValue(strSecondsForRefreshKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-
-    Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).ToList
-    Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)
-        Get
-            Return _NumberOfColumns
-        End Get
-    End Property
-
-    Public Property MinimumNumberOfColumns As Integer
-        Get
-            Return GetValueOrDefault(Of Integer)(strMinimumNumberOfColumnsKeyName, strMinimumNumberOfColumnsDefault)
-        End Get
-        Set(value As Integer)
-            If AddOrUpdateValue(strMinimumNumberOfColumnsKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
-
-    Public Property ServerPort As String
-        Get
-            Return GetValueOrDefault(Of String)(strServerPortKeyName, strServerPortDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strServerPortKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
+'    Const strConnectionStatusDefault = False
 
 
 
-    Public Property ServerIP As String
-        Get
-            Return GetValueOrDefault(Of String)(strServerIPKeyName, strServerIPDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strServerIPKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
+'    Public Const strDashboardDevicesFileName As String = "dashboarddevices.xml"
 
-    Public Property Password As String
-        Get
-            Return GetValueOrDefault(Of String)(strUserPasswordKeyName, strUserPasswordDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strUserPasswordKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
+'    Public Sub New()
+'        settings = Windows.Storage.ApplicationData.Current.LocalSettings
+'    End Sub
 
-    Public Property Username As String
-        Get
-            Return GetValueOrDefault(Of String)(strUsernameKeyName, strUsernameDefault)
-        End Get
-        Set(value As String)
-            If AddOrUpdateValue(strUsernameKeyName, value) Then
-                Save()
-            End If
-        End Set
-    End Property
+'    Public ReadOnly Property Notify As ToastMessageViewModel
+'        Get
+'            Return TiczViewModel.Notify
+'        End Get
+'    End Property
 
-End Class
+'    Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
+'        Get
+'            Return TiczViewModel.TiczRoomConfigs
+'        End Get
+'    End Property
+
+
+'    Public Property TestInProgress As Boolean
+'        Get
+'            Return _TestInProgress
+'        End Get
+'        Set(value As Boolean)
+'            _TestInProgress = value
+'            RaisePropertyChanged()
+'        End Set
+'    End Property
+'    Private Property _TestInProgress As Boolean
+
+
+'    Public ReadOnly Property NavigateBackCommand As RelayCommand
+'        Get
+'            Return New RelayCommand(Sub()
+'                                        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+'                                        If rootFrame.CanGoBack Then rootFrame.GoBack()
+'                                    End Sub)
+'        End Get
+'    End Property
+
+'    Public ReadOnly Property TestConnectionCommand As RelayCommand
+'        Get
+'            Return New RelayCommand(Async Sub()
+'                                        TestInProgress = True
+'                                        TestConnectionResult = "Testing connection..."
+'                                        TiczViewModel.TiczRoomConfigs.Clear()
+'                                        TiczViewModel.DomoRooms.result.Clear()
+'                                        WriteToDebug("TestConnectionCommand", ServerIP)
+'                                        If ContainsValidIPDetails() Then
+'                                            Dim response As retvalue = Await TiczViewModel.DomoRooms.Load()
+'                                            If response.issuccess Then
+'                                                TestConnectionResult = "Hurray !"
+'                                                Dim LoadRoomsSuccess As retvalue = Await TiczViewModel.DomoRooms.Load()
+'                                                If LoadRoomsSuccess.issuccess Then
+'                                                    Dim loadRoomConfigsSuccess As Boolean = Await TiczViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+'                                                End If
+'                                                RaisePropertyChanged("PreferredRoom")
+'                                                TiczViewModel.currentRoom.SetRoomToLoad()
+
+'                                                Await TiczViewModel.currentRoom.LoadGroupedDevicesForRoom()
+'                                                TiczViewModel.Notify.Clear()
+'                                                TiczViewModel.TiczMenu.IsMenuOpen = False
+'                                                TiczViewModel.TiczMenu.SplitViewPaneCurrentContents = "Rooms"
+'                                            Else
+'                                                TestConnectionResult = String.Format("Hmm..doesn't work : {0}", response.err)
+'                                            End If
+'                                        Else
+'                                            TestConnectionResult = "Server IP/Port not valid !"
+'                                        End If
+'                                        TestInProgress = False
+'                                    End Sub)
+'        End Get
+'    End Property
+
+'    Public Property TestConnectionResult As String
+'        Get
+'            Return _TestConnectionResult
+'        End Get
+'        Set(value As String)
+'            _TestConnectionResult = value
+'            RaisePropertyChanged()
+'        End Set
+'    End Property
+'    Private Property _TestConnectionResult As String
+
+'    'Checks if the Server IP and the Server Port are valid
+'    Public Function ContainsValidIPDetails() As Boolean
+'        Dim tmpIPAddress As Net.IPAddress
+'        If Net.IPAddress.TryParse(TiczViewModel.TiczSettings.ServerIP, tmpIPAddress) Then
+
+'            If ServerPort.Length > 0 AndAlso ServerPort.All(Function(x) Char.IsDigit(x)) AndAlso CType(ServerPort, Integer) <= 65535 Then
+'                Return True
+'            Else
+'                Return False
+'            End If
+'        Else
+'            Return False
+'        End If
+'    End Function
+
+
+'    Public Function GetFullURL() As String
+'        Return "http://" + TiczViewModel.TiczSettings.ServerIP + ":" + ServerPort
+'    End Function
+
+'    Public Function AddOrUpdateValue(Key As String, value As Object)
+'        Dim valueChanged As Boolean = False
+
+'        If value Is Nothing Then Return False
+'        If settings.Values.ContainsKey(Key) Then
+'            settings.Values(Key) = value
+'            valueChanged = True
+
+'        Else
+'            settings.Values.Add(Key, value)
+'            valueChanged = True
+'        End If
+'        Return valueChanged
+'    End Function
+
+'    Public Function GetValueOrDefault(Of T)(Key As String, defaultValue As T) As T
+
+'        Dim value As T
+'        ' If the key exists, retrieve the value.
+'        If Not settings.Values(Key) Is Nothing Then
+'            value = DirectCast(settings.Values(Key), T)
+'        Else
+'            ' Otherwise, use the default value.
+'            value = defaultValue
+'        End If
+'        Return value
+'    End Function
+
+'    Public Sub Save()
+'        'settings.Save()
+'    End Sub
+
+'    Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
+'    Public ReadOnly Property YesNoChoices As List(Of String)
+'        Get
+'            Return _YesNoList
+'        End Get
+'    End Property
+
+'    'Public Property SwitchIconBackground As Boolean
+'    '    Get
+'    '        Return GetValueOrDefault(Of Boolean)(strSwitchIconBackgroundKeyName, strSwitchIconBackgroundDefault)
+'    '    End Get
+'    '    Set(value As Boolean)
+'    '        If AddOrUpdateValue(strSwitchIconBackgroundKeyName, value) Then
+'    '            Save()
+'    '        End If
+'    '    End Set
+'    'End Property
+'    Public Property UseDarkTheme As Boolean
+'        Get
+'            Return GetValueOrDefault(Of Boolean)(strUseDarkThemeKeyName, strUseDarkThemeDefault)
+'        End Get
+'        Set(value As Boolean)
+'            If AddOrUpdateValue(strUseDarkThemeKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Public Property UseLightTheme As Boolean
+'        Get
+'            Return Not UseDarkTheme
+'        End Get
+'        Set(value As Boolean)
+'            If AddOrUpdateValue(strUseDarkThemeKeyName, Not value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+
+'    Public Property ShowLastSeen As Boolean
+'        Get
+'            Return GetValueOrDefault(Of Boolean)(strShowLastSeenKeyName, strShowLastSeenDefault)
+'        End Get
+'        Set(value As Boolean)
+'            If AddOrUpdateValue(strShowLastSeenKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Public Property ShowAllDevices As String
+'        Get
+'            Return GetValueOrDefault(Of String)(strShowAllDevicesKeyName, strShowAllDevicesDefault)
+'        End Get
+'        Set(value As String)
+'            If AddOrUpdateValue(strShowAllDevicesKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+'    Public Property ShowMarquee As Boolean
+'        Get
+'            Return GetValueOrDefault(Of Boolean)(strShowMarqueeKeyName, strShowMarqueeDefault)
+'        End Get
+'        Set(value As Boolean)
+'            If AddOrUpdateValue(strShowMarqueeKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Private _RoomViews As List(Of String) = New List(Of String)({Constants.ICONVIEW, Constants.GRIDVIEW, Constants.LISTVIEW, Constants.RESIZEVIEW, Constants.DASHVIEW}).ToList
+'    Public ReadOnly Property RoomViewChoices As List(Of String)
+'        Get
+'            Return _RoomViews
+'        End Get
+'    End Property
+
+'    Public Property PreferredRoom As TiczStorage.RoomConfiguration
+'        Get
+'            If Not TiczViewModel.TiczRoomConfigs Is Nothing Then
+'                Dim room = (From t In TiczViewModel.TiczRoomConfigs Where t.RoomIDX = PreferredRoomIDX Select t).FirstOrDefault
+'                If Not room Is Nothing Then
+'                    Return room
+'                Else
+'                    If TiczViewModel.TiczRoomConfigs.Count > 0 Then
+'                        Return TiczViewModel.TiczRoomConfigs(0)
+'                    Else
+'                        Return Nothing
+'                    End If
+'                End If
+'            Else
+'                Return Nothing
+'            End If
+
+'        End Get
+'        Set(value As TiczStorage.RoomConfiguration)
+'            If Not value Is Nothing Then
+'                PreferredRoomIDX = value.RoomIDX
+'            End If
+'        End Set
+'    End Property
+'    Private Property _PreferredRoom As TiczStorage.RoomConfiguration
+
+
+'    Public Property PreferredRoomIDX As Integer
+'        Get
+'            Return GetValueOrDefault(Of Integer)(strPreferredRoomIDXKeyName, strPreferredRoomIDXDefault)
+'        End Get
+'        Set(value As Integer)
+'            If AddOrUpdateValue(strPreferredRoomIDXKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    'Public Property currentRoomView As String
+'    '    Get
+'    '        Return GetValueOrDefault(Of String)(strcurrentRoomViewKeyName, strcurrentRoomViewDefault)
+'    '    End Get
+'    '    Set(value As String)
+'    '        If AddOrUpdateValue(strcurrentRoomViewKeyName, value) Then
+'    '            Save()
+'    '        End If
+'    '    End Set
+'    'End Property
+'    Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
+'    Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
+'        Get
+'            Return _SecondsForRefresh
+'        End Get
+'    End Property
+'    Public Property SecondsForRefresh As Integer
+'        Get
+'            Return GetValueOrDefault(Of Integer)(strSecondsForRefreshKeyName, strSecondsForRefreshDefault)
+'        End Get
+'        Set(value As Integer)
+'            If AddOrUpdateValue(strSecondsForRefreshKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+
+'    Private _NumberOfColumns As List(Of Integer) = New List(Of Integer)({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).ToList
+'    Public ReadOnly Property NumberOfColumnsChoices As List(Of Integer)
+'        Get
+'            Return _NumberOfColumns
+'        End Get
+'    End Property
+
+'    Public Property MinimumNumberOfColumns As Integer
+'        Get
+'            Return GetValueOrDefault(Of Integer)(strMinimumNumberOfColumnsKeyName, strMinimumNumberOfColumnsDefault)
+'        End Get
+'        Set(value As Integer)
+'            If AddOrUpdateValue(strMinimumNumberOfColumnsKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Public Property ServerPort As String
+'        Get
+'            Return GetValueOrDefault(Of String)(strServerPortKeyName, strServerPortDefault)
+'        End Get
+'        Set(value As String)
+'            If AddOrUpdateValue(strServerPortKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+
+
+'    Public Property ServerIP As String
+'        Get
+'            Return GetValueOrDefault(Of String)(strServerIPKeyName, strServerIPDefault)
+'        End Get
+'        Set(value As String)
+'            If AddOrUpdateValue(strServerIPKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Public Property Password As String
+'        Get
+'            Return GetValueOrDefault(Of String)(strUserPasswordKeyName, strUserPasswordDefault)
+'        End Get
+'        Set(value As String)
+'            If AddOrUpdateValue(strUserPasswordKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'    Public Property Username As String
+'        Get
+'            Return GetValueOrDefault(Of String)(strUsernameKeyName, strUsernameDefault)
+'        End Get
+'        Set(value As String)
+'            If AddOrUpdateValue(strUsernameKeyName, value) Then
+'                Save()
+'            End If
+'        End Set
+'    End Property
+
+'End Class
 
 
 
