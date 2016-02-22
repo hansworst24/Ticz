@@ -1643,7 +1643,9 @@ Public Class Device
         End If
         Select Case Type
             Case Constants.GROUP
-                If Me.Status = Constants.OFF Or Me.Status = "Mixed" Then switchToState = Constants.ON Else switchToState = Constants.OFF
+                If forcedSwitchToState = "" Then
+                    If Me.Status = Constants.OFF Or Me.Status = "Mixed" Then switchToState = Constants.ON Else switchToState = Constants.OFF
+                End If
                 url = DomoApi.SwitchScene(Me.idx, switchToState, PassCode)
             Case Constants.SCENE
                 url = DomoApi.SwitchScene(Me.idx, Constants.[ON], PassCode)
