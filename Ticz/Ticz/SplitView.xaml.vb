@@ -32,17 +32,11 @@ Public NotInheritable Class SplitView
 
     Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
         WriteToDebug("App.BackButtonPressed", "executed")
-        If TiczViewModel.TiczMenu.ShowAbout = True Then
-            e.Handled = True
-            TiczViewModel.TiczMenu.ShowAbout = False
-            Exit Sub
-        End If
-        If TiczViewModel.TiczMenu.IsMenuOpen Then
-            e.Handled = True
-            Dim cmd = TiczViewModel.TiczMenu.SettingsMenuGoBack
-            cmd.Execute(Nothing)
-            If Not TiczViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-        End If
+
+        If TiczViewModel.TiczMenu.ShowSecurityPanel Then e.Handled = True : TiczViewModel.TiczMenu.ShowSecurityPanel = False : Exit Sub
+        If TiczViewModel.TiczMenu.ShowAbout Then e.Handled = True : TiczViewModel.TiczMenu.ShowAbout = False : Exit Sub
+        If TiczViewModel.TiczMenu.IsMenuOpen Then e.Handled = True : Dim cmd = TiczViewModel.TiczMenu.SettingsMenuGoBack : cmd.Execute(Nothing) : Exit Sub
+        If Not TiczViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
 
     End Sub
 

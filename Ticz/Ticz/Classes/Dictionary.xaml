@@ -7,6 +7,10 @@
     xmlns:WinRTExtensions="using:WinRTXamlToolkit.Controls.Extensions"
     xmlns:local="using:Ticz">
 
+    <Style TargetType="TextBlock" x:Key="LCDPanel">
+        <Setter Property="FontFamily" Value="ms-appx:///Fonts/LCD.TTF#LCD2"/>
+    </Style>
+
     <Style x:Key="DefaultGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />

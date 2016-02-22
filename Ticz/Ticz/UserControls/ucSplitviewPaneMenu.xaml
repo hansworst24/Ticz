@@ -166,30 +166,43 @@
                 </Grid>
             </ScrollViewer>
             <Grid Grid.Row="1" x:Name="PaneMenuOptions" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0,2,0,0">
-                <Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!--<Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Button Grid.Row="0" Command="{Binding TiczMenu.ShowSettingsMenu}" Style="{StaticResource MenuItemButton}">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="20" Glyph="&#xE115;" Margin="0,0,10,0"/>
-                            <TextBlock Text="settings" FontSize="20" VerticalAlignment="Bottom"/>
-                        </StackPanel>
-                    </Button.Content>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>-->
+                <Button Grid.Column="0" Command="{Binding TiczMenu.ShowSettingsMenu}" Style="{StaticResource MenuItemButton}" HorizontalAlignment="Center">
+                    <!--<Button.Content>-->
+                        <!--<StackPanel Orientation="Horizontal">-->
+                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="32" Glyph="&#xE115;" Margin="0,0,10,0"/>
+                            <!--<TextBlock Text="settings" FontSize="20" VerticalAlignment="Bottom"/>-->
+                        <!--</StackPanel>-->
+                    <!--</Button.Content>-->
                 </Button>
-                <Button Grid.Row="1" Command="{Binding TiczMenu.ReloadCommand}" Style="{StaticResource MenuItemButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="20" Glyph="&#xE117;" Margin="0,0,10,0"/>
-                        <TextBlock VerticalAlignment="Bottom" Text="reload" FontSize="20"/>
-                    </StackPanel>
+                <Button Grid.Column="1" Command="{Binding TiczMenu.ReloadCommand}" Style="{StaticResource MenuItemButton}" HorizontalAlignment="Center">
+                    <!--<StackPanel Orientation="Horizontal">-->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="32" Glyph="&#xE117;" Margin="0,0,10,0"/>
+                        <!--<TextBlock VerticalAlignment="Bottom" Text="reload" FontSize="20"/>-->
+                    <!--</StackPanel>-->
                 </Button>
-                <Button Grid.Row="2" Command="{Binding TiczMenu.ShowAboutCommand}" Style="{StaticResource MenuItemButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="20" Glyph="&#xE113;" Margin="0,0,10,0"/>
-                        <TextBlock VerticalAlignment="Bottom" Text="about" FontSize="20"/>
-                        </StackPanel>
+                <Button Grid.Column="2" Command="{Binding TiczMenu.ShowAboutCommand}" Style="{StaticResource MenuItemButton}" HorizontalAlignment="Center">
+                    <!--<StackPanel Orientation="Horizontal">-->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="32" Glyph="&#xE113;" Margin="0,0,10,0"/>
+                        <!--<TextBlock VerticalAlignment="Bottom" Text="about" FontSize="20"/>-->
+                        <!--</StackPanel>-->
+                </Button>
+                <Button Grid.Column="3" Command="{Binding TiczMenu.ShowSecurityPanelCommand}" Style="{StaticResource MenuItemButton}" HorizontalAlignment="Center">
+                    <!--<StackPanel Orientation="Horizontal">-->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="32" Glyph="&#xE1D0;" Margin="0,0,10,0"/>
+                        <!--<TextBlock VerticalAlignment="Bottom" Text="security panel" FontSize="20"/>-->
+                    <!--</StackPanel>-->
                 </Button>
             </Grid>
             

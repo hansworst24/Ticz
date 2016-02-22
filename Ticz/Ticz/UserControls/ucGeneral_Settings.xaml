@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="900"
     d:DesignWidth="400">
 
     <Grid>
@@ -33,6 +33,10 @@
                 <TextBlock  Margin="0,10,0,0" Text="Show marquee for Media Players" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock  Text="Uses the Data field of a Media Player to show a scrolling textfield which normally represents the 'Now Playing' information" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                 <ToggleSwitch IsOn="{Binding TiczSettings.ShowMarquee, Mode=TwoWay}" />
+                <TextBlock  Margin="0,10,0,0" Text="Sound Effects with Security Panel" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock  Text="Play cool SFX when using the Security Panel" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                <ToggleSwitch IsOn="{Binding TiczSettings.PlaySecPanelSFX, Mode=TwoWay}" />
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

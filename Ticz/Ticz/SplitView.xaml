@@ -80,6 +80,22 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="SecurityPanelState">
+                <VisualState x:Name="ShowSecurityPanel">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="SecurityPanelView">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="HideSecurityPanel">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="SecurityPanelView">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
             <VisualStateGroup x:Name="DeviceViewState">
                 <VisualState x:Name="ShowIconView">
                     <Storyboard>
@@ -258,6 +274,18 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </local:ucAbout>
+            <local:ucSecurityPanel x:Name="SecurityPanelView" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" DataContext="{Binding}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowSecurityPanel}" Value="True">
+                        <Core:GoToStateAction StateName="ShowSecurityPanel"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowSecurityPanel}" Value="False">
+                        <Core:GoToStateAction StateName="HideSecurityPanel"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </local:ucSecurityPanel>
+
+
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding currentRoom.RoomConfiguration.RoomView}" Value="Icon View">
                     <Core:GoToStateAction StateName="ShowIconView"/>

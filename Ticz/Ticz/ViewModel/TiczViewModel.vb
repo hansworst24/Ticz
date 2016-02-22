@@ -1,8 +1,12 @@
 ﻿Imports System.Threading
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
+Imports GalaSoft.MvvmLight.Threading
 Imports Newtonsoft.Json
 Imports Windows.ApplicationModel.Core
+Imports Windows.Security.Cryptography
+Imports Windows.Security.Cryptography.Core
+Imports Windows.Storage.Streams
 Imports Windows.UI
 Imports Windows.UI.Core
 Imports Windows.Web.Http
@@ -38,6 +42,324 @@ Public Class DevicesViewModel
 
 
 End Class
+
+
+Public Class SecurityPanelViewModel
+    Inherits ViewModelBase
+
+    Public Event PlayDigitSoundRequested As EventHandler
+    Public Event PlayArmRequested As EventHandler
+    Public Event PlayDisArmRequested As EventHandler
+    Public Event PlayWrongCodeRequested As EventHandler
+
+    Private CountDownTask As Task
+    Private cts As CancellationTokenSource
+    Private ct As CancellationToken
+
+
+    Public Property IsFadingIn As Boolean
+        Get
+            Return _IsFadingIn
+        End Get
+        Set(value As Boolean)
+            _IsFadingIn = value
+            RaisePropertyChanged("IsFadingIn")
+        End Set
+    End Property
+    Private Property _IsFadingIn As Boolean
+
+    Public Property DisplayText As String
+        Get
+            Return _DisplayText
+        End Get
+        Set(value As String)
+            _DisplayText = value
+            DispatcherHelper.CheckBeginInvokeOnUI(Sub()
+                                                      RaisePropertyChanged("DisplayText")
+                                                  End Sub)
+        End Set
+    End Property
+    Private Property _DisplayText As String
+
+    Public Property CodeInput As String
+        Get
+            Return _CodeInput
+        End Get
+        Set(value As String)
+            _CodeInput = value
+        End Set
+    End Property
+    Private Property _CodeInput As String
+
+    Public Property CodeHash As String
+
+    Public Property CurrentArmState As String
+
+    Public ReadOnly Property DigitKeyPressedSound As String
+        Get
+            Return DomoApi.getButtonPressedSound()
+        End Get
+    End Property
+
+    Public ReadOnly Property WrongCodeSound As String
+        Get
+            Return DomoApi.getWrongCodeSound()
+        End Get
+    End Property
+    Public ReadOnly Property DisarmSound As String
+        Get
+            Return DomoApi.getDisarmedSound()
+        End Get
+    End Property
+    Public ReadOnly Property ArmSound As String
+        Get
+            Return DomoApi.getArmSound()
+        End Get
+    End Property
+
+    Public Property AudioFile As String
+        Get
+            Return _AudioFile
+        End Get
+        Set(value As String)
+            _AudioFile = value
+            DispatcherHelper.CheckBeginInvokeOnUI(Sub()
+                                                      RaisePropertyChanged("AudioFile")
+                                                  End Sub)
+        End Set
+    End Property
+    Private Property _AudioFile As String
+
+
+    Public Async Function StopCountDown() As Task
+        If ct.CanBeCanceled Then
+            cts.Cancel()
+        End If
+    End Function
+
+
+
+    Public Async Function StartCountDown() As Task
+        Await TiczViewModel.DomoSettings.Load()
+        If TiczViewModel.DomoSettings.SecOnDelay > 0 Then
+            If CountDownTask Is Nothing OrElse CountDownTask.IsCompleted Then
+                cts = New CancellationTokenSource
+                ct = cts.Token
+                CountDownTask = Await Task.Factory.StartNew(Function() PerformCountDown(ct), ct)
+            End If
+        Else
+            Await RunOnUIThread(Sub()
+                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
+                                    DisplayText = CurrentArmState
+                                End Sub)
+        End If
+    End Function
+
+    Public Async Function PerformCountDown(ct As CancellationToken) As Task
+        For i As Integer = TiczViewModel.DomoSettings.SecOnDelay To 1 Step -1
+            If CodeInput = "" Then
+                DisplayText = String.Format("ARM DELAY : {0}", i)
+                Await RunOnUIThread(Sub()
+                                        If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                    End Sub)
+
+            End If
+            For j As Integer = 0 To 10
+                Await Task.Delay(100)
+                If ct.IsCancellationRequested Then Exit Function
+            Next
+            If ct.IsCancellationRequested Then Exit Function
+        Next
+        CodeInput = ""
+        DisplayText = CurrentArmState
+        Await RunOnUIThread(Sub()
+                                If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
+                            End Sub)
+    End Function
+
+    Public ReadOnly Property DigitPressedCommand As RelayCommand(Of Object)
+        Get
+            Return New RelayCommand(Of Object)(Async Sub(x)
+                                                   Dim btn As Button = TryCast(x, Button)
+                                                   If Not btn Is Nothing Then
+                                                       Await RunOnUIThread(Sub()
+                                                                               If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                                                           End Sub)
+                                                       Dim digit As Integer = btn.Content
+                                                       CodeInput = If(CodeInput = "", digit, CodeInput & digit)
+                                                       DisplayText = ""
+                                                       For Each d In CodeInput
+                                                           DisplayText += "?"
+                                                       Next
+                                                   End If
+                                               End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property CancelPressedCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        'Clear the contents of the Sec Panel Display and restore the current arm state when digits were pressed.
+                                        'If not digits were pressed, remove the secpanel from view
+                                        If CodeInput = "" Then
+                                            IsFadingIn = False
+                                            TiczViewModel.TiczMenu.ShowSecurityPanel = False
+                                        Else
+                                            CodeInput = ""
+                                            Await RunOnUIThread(Sub()
+                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                                                End Sub)
+                                            DisplayText = CurrentArmState
+                                        End If
+                                    End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property DisarmPressedCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_DISARM)
+                                        CodeInput = ""
+                                        If ret.issuccess Then
+                                            Await StopCountDown()
+                                            CurrentArmState = "DISARMED"
+                                            DisplayText = CurrentArmState
+
+                                            Await RunOnUIThread(Sub()
+                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDisArmRequested(Me, EventArgs.Empty)
+                                                                End Sub)
+                                        Else
+                                            DisplayText = ret.err
+                                            Await RunOnUIThread(Sub()
+                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                End Sub)
+                                            Await Task.Delay(2000)
+                                            If CodeInput = "" Then DisplayText = CurrentArmState
+                                        End If
+                                    End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property ArmHomePressedCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_ARMHOME)
+                                        CodeInput = ""
+                                        If ret.issuccess Then
+                                            CurrentArmState = "ARM HOME"
+                                            Await StartCountDown()
+                                        Else
+                                            DisplayText = ret.err
+                                            Await RunOnUIThread(Sub()
+                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                End Sub)
+                                            Await Task.Delay(2000)
+                                            If CodeInput = "" Then DisplayText = CurrentArmState
+                                        End If
+                                    End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property ArmAwayPressedCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_ARMAWAY)
+                                        CodeInput = ""
+                                        If ret.issuccess Then
+                                            CurrentArmState = "ARM AWAY"
+                                            Await StartCountDown()
+                                        Else
+                                            DisplayText = ret.err
+                                            Await RunOnUIThread(Sub()
+                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                End Sub)
+                                            Await Task.Delay(2000)
+                                            If CodeInput = "" Then DisplayText = CurrentArmState
+                                        End If
+                                    End Sub)
+        End Get
+    End Property
+
+    Public Sub CreateSecurityHash()
+        Dim codeBuffer As IBuffer = CryptographicBuffer.ConvertStringToBinary(CodeInput, BinaryStringEncoding.Utf8)
+        Dim alg As HashAlgorithmProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5)
+        Dim buffHash As IBuffer = alg.HashData(codeBuffer)
+        If Not buffHash.Length = alg.HashLength Then
+            Throw New Exception("There was an error creating the hash")
+        Else
+            CodeHash = CryptographicBuffer.EncodeToHexString(buffHash)
+            WriteToDebug("SecurityPanel.CreateSecurityHash()", String.Format("Created a MD5 hash from {0} : {1}", CodeInput, CodeHash))
+        End If
+
+    End Sub
+
+    Public Async Function SetSecurityStatus(status As Integer) As Task(Of retvalue)
+        CreateSecurityHash()
+        Dim ret As New retvalue
+        Dim url As String = DomoApi.setSecurityStatus(status, CodeHash)
+        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim result As Domoticz.Response
+            Try
+                result = JsonConvert.DeserializeObject(Of Domoticz.Response)(body)
+                If result.status = "OK" Then
+                    ret.issuccess = 1
+                Else
+                    ret.issuccess = 0
+                    ret.err = result.message
+                End If
+            Catch ex As Exception
+                ret.issuccess = False : ret.err = "Error parsing security response"
+            End Try
+        Else
+            Await TiczViewModel.Notify.Update(True, String.Format("Error setting Security Status ({0})", response.ReasonPhrase), 0)
+        End If
+        Return ret
+    End Function
+
+    Public Async Function GetSecurityStatus() As Task(Of retvalue)
+        Dim ret As New retvalue
+        Dim url As String = DomoApi.getSecurityStatus()
+        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If response.IsSuccessStatusCode Then
+            Dim body As String = Await response.Content.ReadAsStringAsync()
+            Dim result As Domoticz.Response
+            Try
+                result = JsonConvert.DeserializeObject(Of Domoticz.Response)(body)
+                If result.status = "OK" Then
+                    Select Case result.secstatus
+                        Case Constants.SEC_ARMAWAY : CurrentArmState = Constants.SEC_ARMAWAY_STATUS : DisplayText = Constants.SEC_ARMAWAY_STATUS
+                        Case Constants.SEC_ARMHOME : CurrentArmState = Constants.SEC_ARMHOME_STATUS : DisplayText = Constants.SEC_ARMHOME_STATUS
+                        Case Constants.SEC_DISARM : CurrentArmState = Constants.SEC_DISARM_STATUS : DisplayText = Constants.SEC_DISARM_STATUS
+                    End Select
+                    ret.issuccess = 1
+                Else
+                    ret.issuccess = 0
+                    ret.err = result.message
+
+                End If
+            Catch ex As Exception
+                ret.issuccess = False : ret.err = "Error parsing security response"
+            End Try
+        Else
+            Await TiczViewModel.Notify.Update(True, String.Format("Error getting Security Status ({0})", response.ReasonPhrase), 0)
+        End If
+        Return ret
+    End Function
+
+
+    Public Sub New()
+
+    End Sub
+
+
+End Class
+
+
+
+
+
 
 
 
@@ -1348,9 +1670,9 @@ Public Class Device
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
-                Dim domoRes As domoResponse
+                Dim domoRes As Domoticz.Response
                 Try
-                    domoRes = JsonConvert.DeserializeObject(Of domoResponse)(Await response.Content.ReadAsStringAsync())
+                    domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
                     If domoRes.status <> "OK" Then
                         Await TiczViewModel.Notify.Update(True, domoRes.message)
                         Return New retvalue With {.err = "Error switching device", .issuccess = 0}
@@ -1991,6 +2313,7 @@ Partial Public Class TiczSettings
     Const strPreferredRoomIDXKeyName As String = "strPreferredRoomIDX"
     Const strShowLastSeenKeyName As String = "strShowLastSeen"
     Const strUseDarkThemeKeyName As String = "strUseDarkTheme"
+    Const strPlaySecPanelSFXKeyName As String = "strPlaySecPanelSFX"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -2011,6 +2334,7 @@ Partial Public Class TiczSettings
     Const strPreferredRoomIDXDefault = 0
     Const strShowLastSeenDefault = False
     Const strUseDarkThemeDefault = "True"
+    Const strPlaySecPanelSFXDefault = False
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -2029,6 +2353,7 @@ Partial Public Class TiczSettings
     Const strPreferredRoomIDXDefault = 0
     Const strShowLastSeenDefault = False
     Const strUseDarkThemeDefault = "True"
+    Const strPlaySecPanelSFXDefault = False
 #End If
 
     Const strConnectionStatusDefault = False
@@ -2201,6 +2526,16 @@ Partial Public Class TiczSettings
         End Set
     End Property
 
+    Public Property PlaySecPanelSFX As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strPlaySecPanelSFXKeyName, strPlaySecPanelSFXDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strPlaySecPanelSFXKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
 
     Public Property ShowLastSeen As Boolean
         Get
@@ -2370,6 +2705,20 @@ Public Class TiczMenuSettings
         ActiveMenuContents = "Rooms"
     End Sub
 
+
+    Public Property ShowSecurityPanel As Boolean
+        Get
+            Return _ShowSecurityPanel
+        End Get
+        Set(value As Boolean)
+            _ShowSecurityPanel = value
+            TiczViewModel.DomoSecPanel.IsFadingIn = value
+            RaisePropertyChanged("ShowSecurityPanel")
+        End Set
+    End Property
+    Private Property _ShowSecurityPanel As Boolean
+
+
     Public Property ShowAbout As Boolean
         Get
             Return _ShowAbout
@@ -2416,12 +2765,22 @@ Public Class TiczMenuSettings
     End Property
 
 
+    Public ReadOnly Property ShowSecurityPanelCommand As RelayCommand
+        Get
+            Return New RelayCommand(Sub()
+                                        WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
+                                        IsMenuOpen = False
+                                        ShowSecurityPanel = Not ShowSecurityPanel
+                                    End Sub)
+        End Get
+    End Property
+
     Public ReadOnly Property ShowAboutCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
                                         WriteToDebug("TiczMenuSettings.ShowAboutCommand()", "executed")
                                         ShowAbout = Not ShowAbout
-                                        If ShowAbout Then IsMenuOpen = False
+                                        If ShowAbout Then IsMenuOpen = False : ShowSecurityPanel = False
                                     End Sub)
         End Get
     End Property
@@ -2431,6 +2790,7 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Sub()
                                         If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
                                         IsMenuOpen = Not IsMenuOpen
+                                        ShowAbout = False
                                         If IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
                                         WriteToDebug("TiczMenuSettings.OpenMenuCommand()", IsMenuOpen)
                                     End Sub)
@@ -2444,19 +2804,24 @@ Public Class TiczMenuSettings
 
                                         If ActiveMenuContents = "Rooms Configuration" Then
                                             Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                            ActiveMenuContents = "Settings"
+                                            Exit Sub
                                         End If
                                         If ActiveMenuContents = "General" Then
                                             TiczViewModel.TiczSettings.Save()
+                                            ActiveMenuContents = "Settings"
+                                            Exit Sub
                                         End If
-                                        If ActiveMenuContents = "Server Settings" Then
+                                        If ActiveMenuContents = "Server settings" Then
                                             TiczViewModel.TiczSettings.Save()
+                                            ActiveMenuContents = "Settings"
+                                            Exit Sub
                                         End If
                                         If ActiveMenuContents = "Settings" Then
                                             Await TiczViewModel.TiczRoomConfigs.LoadRoomConfigurations()
                                             ActiveMenuContents = "Rooms"
                                             Exit Sub
                                         End If
-                                        ActiveMenuContents = "Settings"
                                     End Sub)
         End Get
     End Property
@@ -2498,10 +2863,12 @@ End Class
 Public Class TiczViewModel
     Inherits ViewModelBase
 
-    Public Shared Property DomoConfig As New domoConfig
-    Public Shared Property DomoSunRiseSet As New domoSunRiseSet
-    Public Shared Property DomoVersion As New domoVersion
+    Public Shared Property DomoConfig As New Domoticz.Config
+    Public Shared Property DomoSunRiseSet As New Domoticz.SunRiseSet
+    Public Shared Property DomoVersion As New Domoticz.Version
     Public Shared Property DomoRooms As New Domoticz.Plans
+    Public Shared Property DomoSettings As New Domoticz.Settings
+    Public Shared Property DomoSecPanel As New SecurityPanelViewModel
     Public Shared Property EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
     Public Shared Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
     Public Shared Property TiczSettings As New TiczSettings
@@ -2557,8 +2924,9 @@ Public Class TiczViewModel
             Return New RelayCommand(Of Object)(Async Sub(x)
                                                    Dim s = TryCast(x, TiczStorage.RoomConfiguration)
                                                    If Not s Is Nothing Then
-                                                       TiczMenu.ShowAbout = False
-                                                       TiczMenu.IsMenuOpen = False
+                                                       If TiczMenu.ShowAbout Then TiczMenu.ShowAbout = False
+                                                       If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
+                                                       If TiczMenu.ShowSecurityPanel Then TiczMenu.ShowSecurityPanel = False
                                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
                                                        Dim sWatch = Stopwatch.StartNew()
                                                        Me.StopRefresh()
@@ -2628,6 +2996,7 @@ Public Class TiczViewModel
                                     End Sub)
         End Get
     End Property
+
 
     Public ReadOnly Property RefreshCommand As RelayCommand
         Get
@@ -2790,6 +3159,9 @@ Public Class TiczViewModel
         Await Notify.Update(False, "Loading Domoticz configuration...", 0)
         If Not (Await DomoConfig.Load()).issuccess Then Exit Function
 
+        Await Notify.Update(False, "Loading Domoticz settings...", 0)
+        If Not (Await DomoSettings.Load()).issuccess Then Exit Function
+
         'Load Domoticz Sunrise/set Info from Domoticz
         Await Notify.Update(False, "Loading Domoticz Sunrise/Set...", 0)
         If Not (Await DomoSunRiseSet.Load()).issuccess Then Exit Function
@@ -2810,6 +3182,11 @@ Public Class TiczViewModel
             Exit Function
         End If
 
+        'TODO : MOVE SECPANEL STUFF TO RIGHT PLACE
+        Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0)
+        Await TiczViewModel.DomoSecPanel.GetSecurityStatus()
+
+
         'Load the Room Configurations from Storage
         Dim isSuccess As Boolean
         Await Notify.Update(False, "Loading Ticz Room configuration...", 0)
@@ -2828,7 +3205,15 @@ Public Class TiczViewModel
         'If Not TiczRooms.Count = 0 Then currentRoom = TiczRooms(0)
         TiczViewModel.LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
-        Notify.Clear()
+
+        If TiczViewModel.DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
+            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposed, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 6)
+        Else
+            Notify.Clear()
+        End If
+
+
+
 
     End Function
 End Class

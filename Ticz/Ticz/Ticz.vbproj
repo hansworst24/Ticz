@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -104,6 +104,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Fonts\LCD.TTF" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="project.json" />
   </ItemGroup>
@@ -159,6 +160,9 @@
     </Compile>
     <Compile Include="UserControls\ucRoom_Settings.xaml.vb">
       <DependentUpon>ucRoom_Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucSecurityPanel.xaml.vb">
+      <DependentUpon>ucSecurityPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucServer_Settings.xaml.vb">
       <DependentUpon>ucServer_Settings.xaml</DependentUpon>
@@ -367,6 +371,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucRoom_Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucSecurityPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

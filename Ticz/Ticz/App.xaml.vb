@@ -1,4 +1,5 @@
-﻿''' <summary>
+﻿Imports GalaSoft.MvvmLight.Threading
+''' <summary>
 ''' Provides application-specific behavior to supplement the default Application class.
 ''' </summary>
 NotInheritable Class App
@@ -46,12 +47,12 @@ NotInheritable Class App
             AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
             If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
-                    ' TODO: Load state from previously suspended application
-                End If
-                ' Place the frame in the current Window
-                Window.Current.Content = rootFrame
+                ' TODO: Load state from previously suspended application
             End If
-            If rootFrame.Content Is Nothing Then
+            ' Place the frame in the current Window
+            Window.Current.Content = rootFrame
+        End If
+        If rootFrame.Content Is Nothing Then
             ' When the navigation stack isn't restored navigate to the first page,
             ' configuring the new page by passing required information as a navigation
             ' parameter
@@ -77,6 +78,7 @@ NotInheritable Class App
 
         'AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
         ' Ensure the current window is active
+        DispatcherHelper.Initialize()
         Window.Current.Activate()
     End Sub
 

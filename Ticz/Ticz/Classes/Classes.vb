@@ -8,135 +8,10 @@ Imports GalaSoft.MvvmLight
 Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
 Imports GalaSoft.MvvmLight.Command
+Imports System.Text
+Imports Windows.Security.Cryptography.Core
+Imports Windows.Security.Cryptography
 
-Public Class domoVersion
-    Inherits ViewModelBase
-    Public Property build_time As String
-    Public Property hash As String
-    Public Property haveupdate As Boolean
-    Public Property revision As Integer
-    Public Property status As String
-    Public Property title As String
-    Public Property version As String
-        Get
-            Return _version
-        End Get
-        Set(value As String)
-            _version = value
-            RaisePropertyChanged("version")
-        End Set
-    End Property
-    Private Property _version As String
-
-    Public Async Function Load() As Task(Of retvalue)
-        Dim ret As New retvalue
-        Dim url As String = DomoApi.getVersion()
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
-        If response.IsSuccessStatusCode Then
-            Dim body As String = Await response.Content.ReadAsStringAsync()
-            Dim config As domoVersion
-            Try
-                config = JsonConvert.DeserializeObject(Of domoVersion)(body)
-                version = config.version
-                build_time = config.build_time
-                ret.issuccess = True
-            Catch ex As Exception
-                ret.issuccess = False : ret.err = "Error parsing config"
-            End Try
-        Else
-            Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz version information ({0})", response.ReasonPhrase), 0)
-        End If
-        Return ret
-    End Function
-
-End Class
-
-Public Class domoConfig
-    Public Property TempScale As Double
-    Public Property TempSign As String
-    Public Property WindScale As Double
-    Public Property WindSign As String
-
-    Public Async Function Load() As Task(Of retvalue)
-        Dim ret As New retvalue
-        Dim url As String = DomoApi.getConfig()
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
-        If response.IsSuccessStatusCode Then
-            Dim body As String = Await response.Content.ReadAsStringAsync()
-            Dim config As domoConfig
-            Try
-                config = JsonConvert.DeserializeObject(Of domoConfig)(body)
-                TempScale = config.TempScale
-                TempSign = config.TempSign
-                WindScale = config.WindScale
-                WindSign = config.WindSign
-                ret.issuccess = True
-            Catch ex As Exception
-                ret.issuccess = False : ret.err = "Error parsing config"
-            End Try
-        Else
-            ret.issuccess = False : ret.err = response.ReasonPhrase
-        End If
-        If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz Config ({0})", ret.err), 0)
-        Return ret
-    End Function
-End Class
-
-Public Class domoSunRiseSet
-    Inherits ViewModelBase
-    Public Property Sunrise As String
-        Get
-            Return _Sunrise
-        End Get
-        Set(value As String)
-            _Sunrise = value
-            RaisePropertyChanged("Sunrise")
-        End Set
-    End Property
-    Private Property _Sunrise As String
-    Public Property Sunset As String
-        Get
-            Return _Sunset
-        End Get
-        Set(value As String)
-            _Sunset = value
-            RaisePropertyChanged("Sunset")
-        End Set
-    End Property
-    Private Property _Sunset As String
-
-    Public Async Function Load() As Task(Of retvalue)
-        Dim ret As New retvalue
-        Dim url As String = DomoApi.getSunRiseSet()
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
-        If response.IsSuccessStatusCode Then
-            Dim body As String = Await response.Content.ReadAsStringAsync()
-            Dim config As domoSunRiseSet
-            Try
-                config = JsonConvert.DeserializeObject(Of domoSunRiseSet)(body)
-                Await RunOnUIThread(Sub()
-                                        Sunrise = config.Sunrise
-                                        Sunset = config.Sunset
-
-                                    End Sub)
-                ret.issuccess = True
-            Catch ex As Exception
-                ret.issuccess = False : ret.err = "Error parsing config"
-            End Try
-        Else
-            ret.issuccess = False : ret.err = response.ReasonPhrase
-        End If
-        If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 0)
-        Return ret
-    End Function
-
-End Class
-
-Public Class domoResponse
-    Public Property message As String
-    Public Property status As String
-    Public Property title As String
-End Class
 
 Public Class retvalue
     Public Property issuccess As Boolean
@@ -144,6 +19,18 @@ Public Class retvalue
 End Class
 
 Public NotInheritable Class Constants
+
+    'constants for security panel
+
+    Public Const SEC_DISARM As Integer = 0
+    Public Const SEC_ARMHOME As Integer = 1
+    Public Const SEC_ARMAWAY As Integer = 2
+
+    Public Const SEC_DISARM_STATUS As String = "DISARMED"
+    Public Const SEC_ARMHOME_STATUS As String = "ARM HOME"
+    Public Const SEC_ARMAWAY_STATUS As String = "ARM AWAY"
+
+
     Public Const VISIBLE As String = "Visible"
     Public Const COLLAPSED As String = "Collapsed"
     Public Const WIDE As String = "Wide"
@@ -328,6 +215,7 @@ Public NotInheritable Class TiczStorage
     End Class
 
 
+
     Public Class DeviceConfiguration
         Public Property DeviceIDX As Integer
         Public Property DeviceName As String
@@ -415,7 +303,168 @@ Public NotInheritable Class TiczStorage
 
 End Class
 
+
 Public NotInheritable Class Domoticz
+    Public Class Settings
+        Public Property SecOnDelay As Integer
+        Public Property SecPassword As String
+
+
+        Public Async Function Load() As Task(Of retvalue)
+            Dim ret As New retvalue
+            Dim url As String = DomoApi.getSettings()
+            Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+            If response.IsSuccessStatusCode Then
+                Dim body As String = Await response.Content.ReadAsStringAsync()
+                Dim DoSettings As Domoticz.Settings
+                Try
+                    DoSettings = JsonConvert.DeserializeObject(Of Domoticz.Settings)(body)
+                    SecOnDelay = DoSettings.SecOnDelay
+                    SecPassword = DoSettings.SecPassword
+                    ret.issuccess = True
+                Catch ex As Exception
+                    ret.issuccess = False : ret.err = "Error parsing settings"
+                End Try
+            Else
+                Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz settings ({0})", response.ReasonPhrase), 0)
+            End If
+            Return ret
+        End Function
+    End Class
+
+    Public Class Version
+        Inherits ViewModelBase
+        Public Property build_time As String
+        Public Property hash As String
+        Public Property haveupdate As Boolean
+        Public Property revision As Integer
+        Public Property status As String
+        Public Property title As String
+        Public Property version As String
+            Get
+                Return _version
+            End Get
+            Set(value As String)
+                _version = value
+                RaisePropertyChanged("version")
+            End Set
+        End Property
+        Private Property _version As String
+
+        Public Async Function Load() As Task(Of retvalue)
+            Dim ret As New retvalue
+            Dim url As String = DomoApi.getVersion()
+            Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+            If response.IsSuccessStatusCode Then
+                Dim body As String = Await response.Content.ReadAsStringAsync()
+                Dim doversion As Domoticz.Version
+                Try
+                    doversion = JsonConvert.DeserializeObject(Of Domoticz.Version)(body)
+                    version = doversion.version
+                    build_time = doversion.build_time
+                    ret.issuccess = True
+                Catch ex As Exception
+                    ret.issuccess = False : ret.err = "Error parsing config"
+                End Try
+            Else
+                Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz version information ({0})", response.ReasonPhrase), 0)
+            End If
+            Return ret
+        End Function
+
+    End Class
+
+    Public Class Config
+        Public Property TempScale As Double
+        Public Property TempSign As String
+        Public Property WindScale As Double
+        Public Property WindSign As String
+
+        Public Async Function Load() As Task(Of retvalue)
+            Dim ret As New retvalue
+            Dim url As String = DomoApi.getConfig()
+            Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+            If response.IsSuccessStatusCode Then
+                Dim body As String = Await response.Content.ReadAsStringAsync()
+                Dim config As Domoticz.Config
+                Try
+                    config = JsonConvert.DeserializeObject(Of Domoticz.Config)(body)
+                    TempScale = config.TempScale
+                    TempSign = config.TempSign
+                    WindScale = config.WindScale
+                    WindSign = config.WindSign
+                    ret.issuccess = True
+                Catch ex As Exception
+                    ret.issuccess = False : ret.err = "Error parsing config"
+                End Try
+            Else
+                ret.issuccess = False : ret.err = response.ReasonPhrase
+            End If
+            If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz Config ({0})", ret.err), 0)
+            Return ret
+        End Function
+    End Class
+
+
+    Public Class Response
+        Public Property secstatus As Integer
+        Public Property message As String
+        Public Property status As String
+        Public Property title As String
+    End Class
+
+
+    Public Class SunRiseSet
+        Inherits ViewModelBase
+        Public Property Sunrise As String
+            Get
+                Return _Sunrise
+            End Get
+            Set(value As String)
+                _Sunrise = value
+                RaisePropertyChanged("Sunrise")
+            End Set
+        End Property
+        Private Property _Sunrise As String
+        Public Property Sunset As String
+            Get
+                Return _Sunset
+            End Get
+            Set(value As String)
+                _Sunset = value
+                RaisePropertyChanged("Sunset")
+            End Set
+        End Property
+        Private Property _Sunset As String
+
+        Public Async Function Load() As Task(Of retvalue)
+            Dim ret As New retvalue
+            Dim url As String = DomoApi.getSunRiseSet()
+            Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+            If response.IsSuccessStatusCode Then
+                Dim body As String = Await response.Content.ReadAsStringAsync()
+                Dim sunriseset As Domoticz.SunRiseSet
+                Try
+                    sunriseset = JsonConvert.DeserializeObject(Of Domoticz.SunRiseSet)(body)
+                    Await RunOnUIThread(Sub()
+                                            Sunrise = sunriseset.Sunrise
+                                            Sunset = sunriseset.Sunset
+
+                                        End Sub)
+                    ret.issuccess = True
+                Catch ex As Exception
+                    ret.issuccess = False : ret.err = "Error parsing config"
+                End Try
+            Else
+                ret.issuccess = False : ret.err = response.ReasonPhrase
+            End If
+            If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 0)
+            Return ret
+        End Function
+
+    End Class
+
+
     Public Class Plans
         Public Property result As ObservableCollection(Of Plan)
         Public Property status As String
@@ -453,11 +502,16 @@ Public NotInheritable Class Domoticz
                 Dim body As String = Await response.Content.ReadAsStringAsync()
                 Dim deserialized = JsonConvert.DeserializeObject(Of Plans)(body)
                 Await ClearPlans()
-                For Each p In deserialized.result.OrderBy(Function(x) x.Order)
-                    Me.result.Add(p)
-                Next
 
-                If TiczViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
+                'Check if there exists a "Ticz" room in Domoticz. If so, ignore all other rooms
+                If deserialized.result.Any(Function(x) x.Name = "Ticz") Then
+                    Me.result.Add(deserialized.result.Where(Function(x) x.Name = "Ticz").FirstOrDefault)
+                Else
+                    For Each p In deserialized.result.OrderBy(Function(x) x.Order)
+                        Me.result.Add(p)
+                    Next
+                    If TiczViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
+                End If
 
                 'Re-order the Plans
                 For i As Integer = 0 To Me.result.Count - 1 Step 1
@@ -551,6 +605,35 @@ Public NotInheritable Class DomoApi
     '   "title" : "SwitchLight"
     '}
 
+    Public Shared Function getSecurityStatus()
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getsecstatus", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function setSecurityStatus(status As Integer, HashCode As String)
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=setsecstatus&secstatus={2}&seccode={3}", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort, status, HashCode)
+    End Function
+
+    Public Shared Function getButtonPressedSound()
+        Return String.Format("http://{0}:{1}/secpanel/media/key.mp3", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getWrongCodeSound()
+        Return String.Format("http://{0}:{1}/secpanel/media/wrongcode.mp3", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getArmSound()
+        Return String.Format("http://{0}:{1}/secpanel/media/arm.mp3", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getDisarmedSound()
+        Return String.Format("http://{0}:{1}/secpanel/media/disarm.mp3", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+
+
+
+
+
     Public Shared Function getAllDevicesForRoom(roomIDX As String, Optional LoadAllUpdates As Boolean = False)
         'By sending a lastupdate parameter with a unix epoch number, we'll only get the updated devices since that epoch
         WriteToDebug("DomoApi", TimeToUnixSeconds(TiczViewModel.LastRefresh).ToString)
@@ -582,6 +665,10 @@ Public NotInheritable Class DomoApi
 
     Public Shared Function getConfig() As String
         Return String.Format("http://{0}:{1}/json.htm?type=command&param=getconfig", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Shared Function getSettings() As String
+        Return String.Format("http://{0}:{1}/json.htm?type=settings", TiczViewModel.TiczSettings.ServerIP, TiczViewModel.TiczSettings.ServerPort)
     End Function
 
     Public Shared Function getauth() As String
