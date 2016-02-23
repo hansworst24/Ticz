@@ -1,4 +1,5 @@
-﻿Imports System.Threading
+﻿Imports System.Text.RegularExpressions
+Imports System.Threading
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports GalaSoft.MvvmLight.Threading
@@ -2449,14 +2450,11 @@ Partial Public Class TiczSettings
 
     'Checks if the Server IP and the Server Port are valid
     Public Function ContainsValidIPDetails() As Boolean
-        Dim tmpIPAddress As Net.IPAddress
-        If Net.IPAddress.TryParse(TiczViewModel.TiczSettings.ServerIP, tmpIPAddress) Then
+        Dim ValidHostnameRegex As New Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
+        Dim ValidIpAddressRegex As New Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
 
-            If ServerPort.Length > 0 AndAlso ServerPort.All(Function(x) Char.IsDigit(x)) AndAlso CType(ServerPort, Integer) <= 65535 Then
-                Return True
-            Else
-                Return False
-            End If
+        If ValidHostnameRegex.IsMatch(TiczViewModel.TiczSettings.ServerIP) Or ValidIpAddressRegex.IsMatch(TiczViewModel.TiczSettings.ServerIP) Then
+            Return True
         Else
             Return False
         End If
