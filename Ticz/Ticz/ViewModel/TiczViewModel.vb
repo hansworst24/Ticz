@@ -157,18 +157,30 @@ Public Class SecurityPanelViewModel
     End Function
 
     Public Async Function PerformCountDown(ct As CancellationToken) As Task
-        For i As Integer = TiczViewModel.DomoSettings.SecOnDelay To 1 Step -1
+        For i As Integer = 0 To TiczViewModel.DomoSettings.SecOnDelay Step 1
             If CodeInput = "" Then
-                DisplayText = String.Format("ARM DELAY : {0}", i)
+                DisplayText = String.Format("ARM DELAY : {0}", TiczViewModel.DomoSettings.SecOnDelay - i)
                 Await RunOnUIThread(Sub()
                                         If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
                                     End Sub)
 
             End If
-            For j As Integer = 0 To 10
-                Await Task.Delay(100)
+            'Wait for 1 seconds in blocks of 250ms in order to respond to cancel requests in the meantime
+            For j As Integer = 0 To 3
+                Task.Delay(250).Wait()
                 If ct.IsCancellationRequested Then Exit Function
             Next
+            'When phones suspend, this task gets suspended as well. So we need to build in checks to verify if during suspend the
+            'Security Panel Delay is finished, or if the timer should be re-tuned to the actual amount of seconds remaining
+            If Date.Now > TimestampLastSet.AddSeconds(TiczViewModel.DomoSettings.SecOnDelay) Then Exit For
+            ' For after app resume (i.e. phones). Check if during suspend the timer has reduced, if so 
+            If Date.Now < TimestampLastSet.AddSeconds(TiczViewModel.DomoSettings.SecOnDelay) And
+            TimestampLastSet.AddSeconds(i + 1) < Date.Now Then
+                Dim secDifference As Integer
+                secDifference = (Date.Now - TimestampLastSet.AddSeconds(i + 1)).Seconds
+                'If time has drifted more than a second, retune
+                If secDifference > 1 Then i += secDifference
+            End If
             If ct.IsCancellationRequested Then Exit Function
         Next
         CodeInput = ""
