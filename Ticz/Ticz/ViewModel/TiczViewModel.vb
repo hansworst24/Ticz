@@ -58,6 +58,10 @@ Public Class SecurityPanelViewModel
     Private ct As CancellationToken
 
 
+
+    Public Property TimestampLastSet As DateTime
+
+
     Public Property IsFadingIn As Boolean
         Get
             Return _IsFadingIn
@@ -98,23 +102,23 @@ Public Class SecurityPanelViewModel
 
     Public ReadOnly Property DigitKeyPressedSound As String
         Get
-            Return DomoApi.getButtonPressedSound()
+            Return (New DomoApi).getButtonPressedSound()
         End Get
     End Property
 
     Public ReadOnly Property WrongCodeSound As String
         Get
-            Return DomoApi.getWrongCodeSound()
+            Return (New DomoApi).getWrongCodeSound()
         End Get
     End Property
     Public ReadOnly Property DisarmSound As String
         Get
-            Return DomoApi.getDisarmedSound()
+            Return (New DomoApi).getDisarmedSound()
         End Get
     End Property
     Public ReadOnly Property ArmSound As String
         Get
-            Return DomoApi.getArmSound()
+            Return (New DomoApi).getArmSound()
         End Get
     End Property
 
@@ -141,8 +145,9 @@ Public Class SecurityPanelViewModel
 
 
     Public Async Function StartCountDown() As Task
-        Await TiczViewModel.DomoSettings.Load()
-        If TiczViewModel.DomoSettings.SecOnDelay > 0 Then
+        Dim app As App = CType(Application.Current, App)
+        Await App.myViewModel.DomoSettings.Load()
+        If App.myViewModel.DomoSettings.SecOnDelay > 0 Then
             If CountDownTask Is Nothing OrElse CountDownTask.IsCompleted Then
                 cts = New CancellationTokenSource
                 ct = cts.Token
@@ -150,18 +155,19 @@ Public Class SecurityPanelViewModel
             End If
         Else
             Await RunOnUIThread(Sub()
-                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
+                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
                                     DisplayText = CurrentArmState
                                 End Sub)
         End If
     End Function
 
     Public Async Function PerformCountDown(ct As CancellationToken) As Task
-        For i As Integer = 0 To TiczViewModel.DomoSettings.SecOnDelay Step 1
+        Dim app As App = CType(Application.Current, App)
+        For i As Integer = 0 To App.myViewModel.DomoSettings.SecOnDelay Step 1
             If CodeInput = "" Then
-                DisplayText = String.Format("ARM DELAY : {0}", TiczViewModel.DomoSettings.SecOnDelay - i)
+                DisplayText = String.Format("ARM DELAY : {0}", App.myViewModel.DomoSettings.SecOnDelay - i)
                 Await RunOnUIThread(Sub()
-                                        If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                        If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
                                     End Sub)
 
             End If
@@ -172,9 +178,9 @@ Public Class SecurityPanelViewModel
             Next
             'When phones suspend, this task gets suspended as well. So we need to build in checks to verify if during suspend the
             'Security Panel Delay is finished, or if the timer should be re-tuned to the actual amount of seconds remaining
-            If Date.Now > TimestampLastSet.AddSeconds(TiczViewModel.DomoSettings.SecOnDelay) Then Exit For
+            If Date.Now > TimestampLastSet.AddSeconds(App.myViewModel.DomoSettings.SecOnDelay) Then Exit For
             ' For after app resume (i.e. phones). Check if during suspend the timer has reduced, if so 
-            If Date.Now < TimestampLastSet.AddSeconds(TiczViewModel.DomoSettings.SecOnDelay) And
+            If Date.Now < TimestampLastSet.AddSeconds(App.myViewModel.DomoSettings.SecOnDelay) And
             TimestampLastSet.AddSeconds(i + 1) < Date.Now Then
                 Dim secDifference As Integer
                 secDifference = (Date.Now - TimestampLastSet.AddSeconds(i + 1)).Seconds
@@ -186,7 +192,7 @@ Public Class SecurityPanelViewModel
         CodeInput = ""
         DisplayText = CurrentArmState
         Await RunOnUIThread(Sub()
-                                If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
+                                If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
                             End Sub)
     End Function
 
@@ -196,7 +202,8 @@ Public Class SecurityPanelViewModel
                                                    Dim btn As Button = TryCast(x, Button)
                                                    If Not btn Is Nothing Then
                                                        Await RunOnUIThread(Sub()
-                                                                               If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                                                               Dim app As App = CType(Application.Current, App)
+                                                                               If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
                                                                            End Sub)
                                                        Dim digit As Integer = btn.Content
                                                        CodeInput = If(CodeInput = "", digit, CodeInput & digit)
@@ -214,13 +221,14 @@ Public Class SecurityPanelViewModel
             Return New RelayCommand(Async Sub()
                                         'Clear the contents of the Sec Panel Display and restore the current arm state when digits were pressed.
                                         'If not digits were pressed, remove the secpanel from view
+                                        Dim app As App = CType(Application.Current, App)
                                         If CodeInput = "" Then
                                             IsFadingIn = False
-                                            TiczViewModel.TiczMenu.ShowSecurityPanel = False
+                                            App.myViewModel.TiczMenu.ShowSecurityPanel = False
                                         Else
                                             CodeInput = ""
                                             Await RunOnUIThread(Sub()
-                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
                                                                 End Sub)
                                             DisplayText = CurrentArmState
                                         End If
@@ -231,20 +239,21 @@ Public Class SecurityPanelViewModel
     Public ReadOnly Property DisarmPressedCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_DISARM)
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_DISARM)
                                         CodeInput = ""
+                                        Dim app As App = CType(Application.Current, App)
                                         If ret.issuccess Then
                                             Await StopCountDown()
                                             CurrentArmState = "DISARMED"
                                             DisplayText = CurrentArmState
 
                                             Await RunOnUIThread(Sub()
-                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDisArmRequested(Me, EventArgs.Empty)
+                                                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDisArmRequested(Me, EventArgs.Empty)
                                                                 End Sub)
                                         Else
                                             DisplayText = ret.err
                                             Await RunOnUIThread(Sub()
-                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
                                                                 End Sub)
                                             Await Task.Delay(2000)
                                             If CodeInput = "" Then DisplayText = CurrentArmState
@@ -256,15 +265,17 @@ Public Class SecurityPanelViewModel
     Public ReadOnly Property ArmHomePressedCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_ARMHOME)
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_ARMHOME)
+                                        Dim app As App = CType(Application.Current, App)
                                         CodeInput = ""
                                         If ret.issuccess Then
                                             CurrentArmState = "ARM HOME"
+                                            TimestampLastSet = Date.Now()
                                             Await StartCountDown()
                                         Else
                                             DisplayText = ret.err
                                             Await RunOnUIThread(Sub()
-                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
                                                                 End Sub)
                                             Await Task.Delay(2000)
                                             If CodeInput = "" Then DisplayText = CurrentArmState
@@ -276,15 +287,17 @@ Public Class SecurityPanelViewModel
     Public ReadOnly Property ArmAwayPressedCommand As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SEC_ARMAWAY)
+                                        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_ARMAWAY)
+                                        Dim app As App = CType(Application.Current, App)
                                         CodeInput = ""
                                         If ret.issuccess Then
                                             CurrentArmState = "ARM AWAY"
+                                            TimestampLastSet = Date.Now()
                                             Await StartCountDown()
                                         Else
                                             DisplayText = ret.err
                                             Await RunOnUIThread(Sub()
-                                                                    If TiczViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+                                                                    If App.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
                                                                 End Sub)
                                             Await Task.Delay(2000)
                                             If CodeInput = "" Then DisplayText = CurrentArmState
@@ -298,7 +311,7 @@ Public Class SecurityPanelViewModel
         Dim alg As HashAlgorithmProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5)
         Dim buffHash As IBuffer = alg.HashData(codeBuffer)
         If Not buffHash.Length = alg.HashLength Then
-            Throw New Exception("There was an error creating the hash")
+            Throw New Exception("There was an Error creating the hash")
         Else
             CodeHash = CryptographicBuffer.EncodeToHexString(buffHash)
             WriteToDebug("SecurityPanel.CreateSecurityHash()", String.Format("Created a MD5 hash from {0} : {1}", CodeInput, CodeHash))
@@ -309,8 +322,8 @@ Public Class SecurityPanelViewModel
     Public Async Function SetSecurityStatus(status As Integer) As Task(Of retvalue)
         CreateSecurityHash()
         Dim ret As New retvalue
-        Dim url As String = DomoApi.setSecurityStatus(status, CodeHash)
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        Dim url As String = (New DomoApi).setSecurityStatus(status, CodeHash)
+        Dim response As HttpResponseMessage = Await (New Domoticz).DownloadJSON(url)
         If response.IsSuccessStatusCode Then
             Dim body As String = Await response.Content.ReadAsStringAsync()
             Dim result As Domoticz.Response
@@ -326,15 +339,15 @@ Public Class SecurityPanelViewModel
                 ret.issuccess = False : ret.err = "Error parsing security response"
             End Try
         Else
-            Await TiczViewModel.Notify.Update(True, String.Format("Error setting Security Status ({0})", response.ReasonPhrase), 0)
+            'Await TiczViewModel.Notify.Update(True, String.Format("Error setting Security Status ({0})", response.ReasonPhrase), 0)
         End If
         Return ret
     End Function
 
     Public Async Function GetSecurityStatus() As Task(Of retvalue)
         Dim ret As New retvalue
-        Dim url As String = DomoApi.getSecurityStatus()
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        Dim url As String = (New DomoApi).getSecurityStatus()
+        Dim response As HttpResponseMessage = Await (New Domoticz).DownloadJSON(url)
         If response.IsSuccessStatusCode Then
             Dim body As String = Await response.Content.ReadAsStringAsync()
             Dim result As Domoticz.Response
@@ -342,9 +355,9 @@ Public Class SecurityPanelViewModel
                 result = JsonConvert.DeserializeObject(Of Domoticz.Response)(body)
                 If result.status = "OK" Then
                     Select Case result.secstatus
-                        Case Constants.SEC_ARMAWAY : CurrentArmState = Constants.SEC_ARMAWAY_STATUS : DisplayText = Constants.SEC_ARMAWAY_STATUS
-                        Case Constants.SEC_ARMHOME : CurrentArmState = Constants.SEC_ARMHOME_STATUS : DisplayText = Constants.SEC_ARMHOME_STATUS
-                        Case Constants.SEC_DISARM : CurrentArmState = Constants.SEC_DISARM_STATUS : DisplayText = Constants.SEC_DISARM_STATUS
+                        Case Constants.SECPANEL.SEC_ARMAWAY : CurrentArmState = Constants.SECPANEL.SEC_ARMAWAY_STATUS : DisplayText = Constants.SECPANEL.SEC_ARMAWAY_STATUS
+                        Case Constants.SECPANEL.SEC_ARMHOME : CurrentArmState = Constants.SECPANEL.SEC_ARMHOME_STATUS : DisplayText = Constants.SECPANEL.SEC_ARMHOME_STATUS
+                        Case Constants.SECPANEL.SEC_DISARM : CurrentArmState = Constants.SECPANEL.SEC_DISARM_STATUS : DisplayText = Constants.SECPANEL.SEC_DISARM_STATUS
                     End Select
                     ret.issuccess = 1
                 Else
@@ -356,7 +369,7 @@ Public Class SecurityPanelViewModel
                 ret.issuccess = False : ret.err = "Error parsing security response"
             End Try
         Else
-            Await TiczViewModel.Notify.Update(True, String.Format("Error getting Security Status ({0})", response.ReasonPhrase), 0)
+            'Await TiczViewModel.Notify.Update(True, String.Format("Error getting Security Status ({0})", response.ReasonPhrase), 0)
         End If
         Return ret
     End Function
@@ -368,13 +381,6 @@ Public Class SecurityPanelViewModel
 
 
 End Class
-
-
-
-
-
-
-
 
 Public Class Devices
     Inherits ViewModelBase
@@ -462,7 +468,7 @@ Public Class Device
     Public Property CameraIdz As Integer
     Public Property Chill As String
         Get
-            Return String.Format("Chill: {0} {1}", _Chill, TiczViewModel.DomoConfig.TempSign)
+            Return String.Format("Chill: {0} {1}", _Chill, app.myViewModel.DomoConfig.TempSign)
         End Get
         Set(value As String)
             _Chill = value
@@ -532,7 +538,7 @@ Public Class Device
     Public Property Description As String
     Public Property DewPoint As String
         Get
-            Return String.Format("Dewpoint: {0} {1}", _DewPoint, TiczViewModel.DomoConfig.TempSign)
+            Return String.Format("Dewpoint: {0} {1}", _DewPoint, app.myViewModel.DomoConfig.TempSign)
         End Get
         Set(value As String)
             _DewPoint = value
@@ -556,7 +562,7 @@ Public Class Device
     Public Property Favorite As Integer
     Public Property Gust As String
         Get
-            Return String.Format("Gust: {0} {1}", _Gust, TiczViewModel.DomoConfig.WindSign)
+            Return String.Format("Gust: {0} {1}", _Gust, app.myViewModel.DomoConfig.WindSign)
         End Get
         Set(value As String)
             _Gust = value
@@ -634,7 +640,7 @@ Public Class Device
     Public Property SignalLevel As String
     Public Property Speed As String
         Get
-            Return String.Format("Speed: {0} {1}", _Speed, TiczViewModel.DomoConfig.WindSign)
+            Return String.Format("Speed: {0} {1}", _Speed, app.myViewModel.DomoConfig.WindSign)
         End Get
         Set(value As String)
             _Speed = value
@@ -659,7 +665,7 @@ Public Class Device
     Public Property SwitchTypeVal As Integer
     Public Property Temp As String
         Get
-            Return String.Format("Temp: {0} {1} ", _Temp, TiczViewModel.DomoConfig.TempSign)
+            Return String.Format("Temp: {0} {1} ", _Temp, app.myViewModel.DomoConfig.TempSign)
         End Get
         Set(value As String)
             _Temp = value
@@ -700,8 +706,20 @@ Public Class Device
 #End Region
 #Region "ViewModel Properties"
 
+    Public Property GraphList As ObservableCollection(Of Domoticz.DeviceGraphContainer)
+        Get
+            Return _GraphList
+        End Get
+        Set(value As ObservableCollection(Of Domoticz.DeviceGraphContainer))
+            _GraphList = value
+            RaisePropertyChanged("GraphList")
+        End Set
+    End Property
+    Private Property _GraphList As ObservableCollection(Of Domoticz.DeviceGraphContainer)
+
+
     Private app As App = CType(Application.Current, App)
-    Private vm As TiczViewModel = app.myViewModel
+    ' Private vm As TiczViewModel = app.myViewModel
 
     Public Property CanBeSwitched As Boolean
 
@@ -723,11 +741,11 @@ Public Class Device
     Public ReadOnly Property ColumnSpan As Integer
         Get
             Select Case DeviceRepresentation
-                Case Constants.ICON
+                Case Constants.DEVICEVIEWS.ICON
                     Return 1
-                Case Constants.WIDE
+                Case Constants.DEVICEVIEWS.WIDE
                     Return 2
-                Case Constants.LARGE
+                Case Constants.DEVICEVIEWS.LARGE
                     Return 2
                 Case Else
                     Return 1
@@ -738,11 +756,11 @@ Public Class Device
     Public ReadOnly Property RowSpan As Integer
         Get
             Select Case DeviceRepresentation
-                Case Constants.ICON
+                Case Constants.DEVICEVIEWS.ICON
                     Return 1
-                Case Constants.WIDE
+                Case Constants.DEVICEVIEWS.WIDE
                     Return 1
-                Case Constants.LARGE
+                Case Constants.DEVICEVIEWS.LARGE
                     Return 2
                 Case Else
                     Return 1
@@ -1196,8 +1214,8 @@ Public Class Device
     Public ReadOnly Property DataFieldChanged As RelayCommand(Of Object)
         Get
             Return New RelayCommand(Of Object)(Sub(x)
-                                                   If Me.SwitchType <> Constants.MEDIA_PLAYER Then Exit Sub
-                                                   If Not TiczViewModel.TiczSettings.ShowMarquee Then MarqueeStart = False : Exit Sub
+                                                   If Me.SwitchType <> Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER Then Exit Sub
+                                                   If Not app.myViewModel.TiczSettings.ShowMarquee Then MarqueeStart = False : Exit Sub
                                                    Dim CanvasLength, TextLength As Integer
                                                    Dim MarqueeCanvas As Canvas = TryCast(x, Canvas)
                                                    If Not MarqueeCanvas Is Nothing Then
@@ -1249,13 +1267,13 @@ Public Class Device
                                                        'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
                                                        Dim myIndex As Integer
                                                        Dim myGroupIndex As Integer
-                                                       If TiczViewModel.currentRoom.RoomConfiguration.RoomView = Constants.DASHVIEW Then
-                                                           myIndex = TiczViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                                           TiczViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
+                                                       If app.myViewModel.currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
+                                                           myIndex = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+                                                           app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
                                                        Else
-                                                           For Each g In TiczViewModel.currentRoom.GetActiveGroupedDeviceList
+                                                           For Each g In app.myViewModel.currentRoom.GetActiveGroupedDeviceList
                                                                If g.Contains(Me) Then
-                                                                   myGroupIndex = TiczViewModel.currentRoom.GetActiveGroupedDeviceList.IndexOf(g)
+                                                                   myGroupIndex = app.myViewModel.currentRoom.GetActiveGroupedDeviceList.IndexOf(g)
                                                                    myIndex = g.IndexOf(Me)
                                                                    g.Remove(Me)
                                                                End If
@@ -1263,40 +1281,39 @@ Public Class Device
                                                        End If
                                                        'Secondly change the DeviceRepresentation to the one selected
                                                        Select Case newSizeRequested
-                                                           Case Constants.WIDE
-                                                               DeviceRepresentation = Constants.WIDE
-                                                           Case Constants.ICON
-                                                               DeviceRepresentation = Constants.ICON
-                                                           Case Constants.LARGE
-                                                               DeviceRepresentation = Constants.LARGE
+                                                           Case Constants.DEVICEVIEWS.WIDE
+                                                               DeviceRepresentation = Constants.DEVICEVIEWS.WIDE
+                                                           Case Constants.DEVICEVIEWS.ICON
+                                                               DeviceRepresentation = Constants.DEVICEVIEWS.ICON
+                                                           Case Constants.DEVICEVIEWS.LARGE
+                                                               DeviceRepresentation = Constants.DEVICEVIEWS.LARGE
                                                        End Select
                                                        'Save the DeviceRepresentation to storage
-                                                       Dim devConfig = (From d In TiczViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
+                                                       Dim devConfig = (From d In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
                                                        If Not devConfig Is Nothing Then
                                                            devConfig.ColumnSpan = Me.ColumnSpan
                                                            devConfig.RowSpan = Me.RowSpan
                                                            devConfig.DeviceRepresentation = DeviceRepresentation
                                                        End If
-                                                       Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                                       Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
                                                        'Re-initialize the deviceviewmodel
-                                                       Await Me.Initialize(TiczViewModel.currentRoom.RoomConfiguration.RoomView)
+                                                       Await Me.Initialize(app.myViewModel.currentRoom.RoomConfiguration.RoomView)
 
                                                        're-insert the device back into the view
-                                                       If TiczViewModel.currentRoom.RoomConfiguration.RoomView = Constants.DASHVIEW Then
-                                                           TiczViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex, Me)
+                                                       If app.myViewModel.currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
+                                                           app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex, Me)
                                                        Else
-                                                           TiczViewModel.currentRoom.GetActiveGroupedDeviceList(myGroupIndex).Insert(myIndex, Me)
+                                                           app.myViewModel.currentRoom.GetActiveGroupedDeviceList(myGroupIndex).Insert(myIndex, Me)
                                                        End If
                                                    End If
                                                End Sub)
         End Get
     End Property
 
-
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Await SwitchGroup(Constants.[ON])
+                                        Await SwitchGroup(Constants.DEVICE.STATUS.ON)
                                     End Sub)
         End Get
     End Property
@@ -1304,11 +1321,10 @@ Public Class Device
     Public ReadOnly Property GroupSwitchOff As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Await SwitchGroup(Constants.[OFF])
+                                        Await SwitchGroup(Constants.DEVICE.STATUS.OFF)
                                     End Sub)
         End Get
     End Property
-
 
     Public ReadOnly Property SelectorSelectionChanged As RelayCommand(Of Object)
         Get
@@ -1322,6 +1338,7 @@ Public Class Device
                                                        Dim SwitchToState As String = (combobox.SelectedIndex * 10).ToString
                                                        If [Protected] Then
                                                            SwitchingToState = SwitchToState
+                                                           Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                                            vm.selectedDevice = Me
                                                            vm.ShowDevicePassword = True
                                                            Exit Sub
@@ -1337,13 +1354,14 @@ Public Class Device
     Public ReadOnly Property SliderValueChanged As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        If Me.SwitchType = Constants.DIMMER Then
+                                        If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Then
                                             'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent
                                             Dim ValueToSend As Integer = Math.Round((MaxDimLevel / 100) * LevelInt)
                                             WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
                                             Dim SwitchToState As String = (ValueToSend).ToString
                                             If [Protected] Then
                                                 SwitchingToState = SwitchToState
+                                                Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                                 vm.selectedDevice = Me
                                                 vm.ShowDevicePassword = True
                                                 Exit Sub
@@ -1361,15 +1379,16 @@ Public Class Device
                                         WriteToDebug("Device.OpenButtonCommand()", "executed")
                                         Dim switchToState As String
                                         Select Case SwitchType
-                                            Case Constants.BLINDS
-                                                switchToState = Constants.[OFF]
-                                            Case Constants.BLINDS_INVERTED
-                                                switchToState = Constants.[ON]
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                switchToState = Constants.DEVICE.STATUS.OFF
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                                                switchToState = Constants.DEVICE.STATUS.ON
                                             Case Else
-                                                switchToState = Constants.[OFF]
+                                                switchToState = Constants.DEVICE.STATUS.OFF
                                         End Select
                                         If [Protected] Then
                                             SwitchingToState = switchToState
+                                            Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                             vm.selectedDevice = Me
                                             vm.ShowDevicePassword = True
                                             Exit Sub
@@ -1386,15 +1405,16 @@ Public Class Device
                                         WriteToDebug("Device.CloseButtonCommand()", "executed")
                                         Dim switchToState As String
                                         Select Case SwitchType
-                                            Case Constants.BLINDS
-                                                switchToState = Constants.[ON]
-                                            Case Constants.BLINDS_INVERTED
-                                                switchToState = Constants.[OFF]
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                switchToState = Constants.DEVICE.STATUS.ON
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                                                switchToState = Constants.DEVICE.STATUS.OFF
                                             Case Else
-                                                switchToState = Constants.[ON]
+                                                switchToState = Constants.DEVICE.STATUS.ON
                                         End Select
                                         If [Protected] Then
                                             SwitchingToState = switchToState
+                                            Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                             vm.selectedDevice = Me
                                             vm.ShowDevicePassword = True
                                             Exit Sub
@@ -1405,11 +1425,24 @@ Public Class Device
         End Get
     End Property
 
+    Public ReadOnly Property ShowDeviceGraph As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        WriteToDebug("Device.ShowDeviceGraphs()", "executed")
+                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                                        '                                        app.myViewModel.selectedDevice = Me
+                                        Await app.myViewModel.LoadGraphData(Me)
+                                        '                                        app.myViewModel.Notify.Clear()
+
+                                    End Sub)
+        End Get
+    End Property
 
     Public ReadOnly Property ShowDeviceDetails As RelayCommand
         Get
             Return New RelayCommand(Sub()
                                         WriteToDebug("Device.ShowDeviceDetails()", "executed")
+                                        Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                         vm.selectedDevice = Me
                                         vm.ShowDeviceDetails = True
                                         WriteToDebug(vm.selectedDevice.Name, "should be there")
@@ -1425,6 +1458,7 @@ Public Class Device
                                             'Exit the Sub if the device is password protected. Show the password context menu, and let that handle the switch
                                             If [Protected] Then
                                                 SwitchingToState = ""
+                                                Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
                                                 vm.selectedDevice = Me
                                                 vm.ShowDevicePassword = True
                                                 Exit Sub
@@ -1441,12 +1475,16 @@ Public Class Device
     End Property
 #End Region
 
+
+
+
+
     Public Async Function LoadStatus() As Task(Of Device)
         Dim response As HttpResponseMessage
         If Type = "Group" Or Type = "Scene" Then
-            response = Await Task.Run(Function() Domoticz.DownloadJSON(DomoApi.getAllScenes()))
+            response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
         Else
-            response = Await Task.Run(Function() Domoticz.DownloadJSON(DomoApi.getDeviceStatus(Me.idx)))
+            response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getDeviceStatus(Me.idx)))
         End If
 
         If response.IsSuccessStatusCode Then
@@ -1456,11 +1494,11 @@ Public Class Device
             If Not myDevice Is Nothing Then
                 Return myDevice
             Else
-                Await TiczViewModel.Notify.Update(True, "couldn't get device's status", 2)
+                Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2)
                 Return Nothing
             End If
         Else
-            Await TiczViewModel.Notify.Update(True, "couldn't get device's status", 2)
+            Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2)
             Return Nothing
         End If
     End Function
@@ -1477,7 +1515,7 @@ Public Class Device
             'Set properties which raise propertychanged events on the UI thread
             Await RunOnUIThread(Sub()
                                     Level = d.Level
-                                    If (SwitchType = Constants.DIMMER Or SwitchType = Constants.SELECTOR) AndAlso MaxDimLevel <> 0 Then
+                                    If (SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Or SwitchType = Constants.DEVICE.SWITCHTYPE.SELECTOR) AndAlso MaxDimLevel <> 0 Then
                                         LevelInt = Math.Floor((100 / MaxDimLevel) * d.LevelInt)
                                     End If
                                     Status = d.Status
@@ -1491,51 +1529,51 @@ Public Class Device
                                     If Status = "" Then Status = Data
                                     ' Set if the Device can be switched or not
                                     Select Case Type
-                                        Case Constants.P1_SMART_METER
+                                        Case Constants.DEVICE.TYPE.P1_SMART_METER
                                             CanBeSwitched = False
                                             Select Case SubType
-                                                Case Constants.P1_GAS
+                                                Case Constants.DEVICE.SUBTYPE.P1_GAS
                                                     PrimaryInformation = CounterToday
                                                     SecondaryInformation = Usage
                                                     TertiaryInformation = UsageDeliv
-                                                Case Constants.P1_ELECTRIC
+                                                Case Constants.DEVICE.SUBTYPE.P1_ELECTRIC
                                                     PrimaryInformation = Usage
                                                     SecondaryInformation = EnergyUsage
                                                     TertiaryInformation = EnergyReturn
                                             End Select
-                                        Case Constants.LIGHTING_LIMITLESS
+                                        Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                                             CanBeSwitched = True
                                             PrimaryInformation = Status
-                                        Case Constants.LIGHTING_2
+                                        Case Constants.DEVICE.TYPE.LIGHTING_2
                                             CanBeSwitched = True
                                             PrimaryInformation = Status
-                                        Case Constants.SCENE
+                                        Case Constants.DEVICE.TYPE.SCENE
                                             StatusVisibility = Constants.VISIBLE
-                                            DeviceType = Constants.SCENE
+                                            DeviceType = Constants.DEVICE.TYPE.SCENE
                                             CanBeSwitched = True
                                             PrimaryInformation = Status
-                                        Case Constants.GROUP
+                                        Case Constants.DEVICE.TYPE.GROUP
                                             GroupVisibility = Constants.VISIBLE
-                                            DeviceType = Constants.GROUP
+                                            DeviceType = Constants.DEVICE.TYPE.GROUP
                                             CanBeSwitched = True
                                             PrimaryInformation = Status
-                                        Case Constants.WIND
-                                            DeviceType = Constants.WIND
+                                        Case Constants.DEVICE.TYPE.WIND
+                                            DeviceType = Constants.DEVICE.TYPE.WIND
                                             CanBeSwitched = False
                                             PrimaryInformation = DirectionStr
                                             SecondaryInformation = SpeedGust
                                             TertiaryInformation = TempChill
-                                        Case Constants.TYPE_RAIN
-                                            DeviceType = Constants.TYPE_RAIN
+                                        Case Constants.DEVICE.TYPE.RAIN
+                                            DeviceType = Constants.DEVICE.TYPE.RAIN
                                             CanBeSwitched = False
                                             PrimaryInformation = Rain
-                                        Case Constants.TEMP_HUMI_BARO
-                                            DeviceType = Constants.TEMP_HUMI_BARO
+                                        Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+                                            DeviceType = Constants.DEVICE.TYPE.TEMP_HUMI_BARO
                                             CanBeSwitched = False
                                             PrimaryInformation = Temp
                                             SecondaryInformation = Humidity
                                             TertiaryInformation = Barometer
-                                        Case Constants.LIGHT_SWITCH
+                                        Case Constants.DEVICE.TYPE.LIGHT_SWITCH
                                             CanBeSwitched = True
                                             PrimaryInformation = Status
                                         Case Else
@@ -1545,44 +1583,44 @@ Public Class Device
                                             PrimaryInformation = Status
                                     End Select
                                     'Only update/set the 4th Information Line with the LastUpdate date when the user chose this in the Settings page
-                                    If TiczViewModel.TiczSettings.ShowLastSeen Then QuaternaryInformation = LastUpdate Else QuaternaryInformation = ""
+                                    If app.myViewModel.TiczSettings.ShowLastSeen Then QuaternaryInformation = LastUpdate Else QuaternaryInformation = ""
 
                                     'Set the Status for the switch (On or Off, which is used for Icon indication
                                     If CanBeSwitched Then
                                         Select Case SwitchType
-                                            Case Constants.ON_OFF
+                                            Case Constants.DEVICE.SWITCHTYPE.ON_OFF
                                                 StatusVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.ON_OFF
-                                                If Status = Constants.[ON] Then isOn = True Else isOn = False
-                                            Case Constants.DOOR_LOCK
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.ON_OFF
+                                                If Status = Constants.DEVICE.STATUS.ON Then isOn = True Else isOn = False
+                                            Case Constants.DEVICE.SWITCHTYPE.DOOR_LOCK
                                                 StatusVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.DOOR_LOCK
-                                                If Status = Constants.OPEN Then isOn = True Else isOn = False
-                                            Case Constants.CONTACT
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.DOOR_LOCK
+                                                If Status = Constants.DEVICE.STATUS.OPEN Then isOn = True Else isOn = False
+                                            Case Constants.DEVICE.SWITCHTYPE.CONTACT
                                                 StatusVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.CONTACT
-                                                If Status = Constants.OPEN Then isOn = True Else isOn = False
-                                            Case Constants.BLINDS
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.CONTACT
+                                                If Status = Constants.DEVICE.STATUS.OPEN Then isOn = True Else isOn = False
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
                                                 BlindsVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.BLINDS
-                                                If Status = Constants.OPEN Then isOn = False Else isOn = True
-                                            Case Constants.BLINDS_INVERTED
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                If Status = Constants.DEVICE.STATUS.OPEN Then isOn = False Else isOn = True
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
                                                 BlindsVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.BLINDS
-                                                If Status = Constants.OPEN Then isOn = True Else isOn = False
-                                            Case Constants.DIMMER
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                If Status = Constants.DEVICE.STATUS.OPEN Then isOn = True Else isOn = False
+                                            Case Constants.DEVICE.SWITCHTYPE.DIMMER
 
                                                 DimmerVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.DIMMER
-                                                If Status = Constants.[OFF] Then isOn = False Else isOn = True
-                                            Case Constants.MEDIA_PLAYER
-                                                DeviceType = Constants.MEDIA_PLAYER
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.DIMMER
+                                                If Status = Constants.DEVICE.STATUS.OFF Then isOn = False Else isOn = True
+                                            Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
                                                 SecondaryInformation = Data
-                                                If Status = Constants.[OFF] Then isOn = False Else isOn = True
-                                            Case Constants.SELECTOR
+                                                If Status = Constants.DEVICE.STATUS.OFF Then isOn = False Else isOn = True
+                                            Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                                                 SelectorVisibility = Constants.VISIBLE
-                                                DeviceType = Constants.SELECTOR
-                                                If Status = Constants.[OFF] Then isOn = False Else isOn = True
+                                                DeviceType = Constants.DEVICE.SWITCHTYPE.SELECTOR
+                                                If Status = Constants.DEVICE.STATUS.OFF Then isOn = False Else isOn = True
                                                 If Not LevelNamesList.Count = 0 Then
                                                     If LevelInt Mod 10 > 0 Then
                                                         'Dimmer Level not set to a 10-value, therefore illegal
@@ -1594,13 +1632,13 @@ Public Class Device
                                                 End If
                                             Case Else
                                                 Select Case Type
-                                                    Case Constants.GROUP
-                                                        If Status = Constants.[OFF] Then isOn = False Else isOn = True
-                                                    Case Constants.SCENE
-                                                        If Status = Constants.[OFF] Then isOn = False Else isOn = True
+                                                    Case Constants.DEVICE.TYPE.GROUP
+                                                        If Status = Constants.DEVICE.STATUS.OFF Then isOn = False Else isOn = True
+                                                    Case Constants.DEVICE.TYPE.SCENE
+                                                        If Status = Constants.DEVICE.STATUS.OFF Then isOn = False Else isOn = True
                                                     Case Else
                                                         StatusVisibility = Constants.VISIBLE
-                                                        DeviceType = Constants.GENERAL
+                                                        DeviceType = Constants.DEVICE.TYPE.GENERAL
                                                 End Select
                                         End Select
 
@@ -1616,6 +1654,7 @@ Public Class Device
         WriteToDebug("Device.SwitchGroup()", "executed")
         If [Protected] Then
             SwitchingToState = ToStatus
+            Dim vm As TiczViewModel = CType(Application.Current, App).myViewModel
             vm.selectedDevice = Me
             vm.ShowDevicePassword = False
             Exit Function
@@ -1627,11 +1666,11 @@ Public Class Device
 
     Public Async Function SetMoveUpDownVisibility() As Task
         Await RunOnUIThread(Sub()
-                                Select Case TiczViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+                                Select Case app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
                                     Case 0
                                         Me.MoveUpDashboardVisibility = Constants.COLLAPSED
                                         Me.MoveDownDashboardVisibility = Constants.VISIBLE
-                                    Case TiczViewModel.currentRoom.GetActiveDeviceList.Count - 1
+                                    Case app.myViewModel.currentRoom.GetActiveDeviceList.Count - 1
                                         Me.MoveUpDashboardVisibility = Constants.VISIBLE
                                         Me.MoveDownDashboardVisibility = Constants.COLLAPSED
                                     Case Else
@@ -1652,36 +1691,36 @@ Public Class Device
         If Not forcedSwitchToState = "" Then
             switchToState = forcedSwitchToState
         Else
-            If Me.isOn Then switchToState = Constants.[OFF] Else switchToState = Constants.[ON]
+            If Me.isOn Then switchToState = Constants.DEVICE.STATUS.OFF Else switchToState = Constants.DEVICE.STATUS.ON
         End If
         Select Case Type
-            Case Constants.GROUP
+            Case Constants.DEVICE.TYPE.GROUP
                 If forcedSwitchToState = "" Then
-                    If Me.Status = Constants.OFF Or Me.Status = "Mixed" Then switchToState = Constants.ON Else switchToState = Constants.OFF
+                    If Me.Status = Constants.DEVICE.STATUS.OFF Or Me.Status = "Mixed" Then switchToState = Constants.DEVICE.STATUS.ON Else switchToState = Constants.DEVICE.STATUS.OFF
                 End If
-                url = DomoApi.SwitchScene(Me.idx, switchToState, PassCode)
-            Case Constants.SCENE
-                url = DomoApi.SwitchScene(Me.idx, Constants.[ON], PassCode)
+                url = (New DomoApi).SwitchScene(Me.idx, switchToState, PassCode)
+            Case Constants.DEVICE.TYPE.SCENE
+                url = (New DomoApi).SwitchScene(Me.idx, Constants.DEVICE.STATUS.ON, PassCode)
         End Select
         Select Case SwitchType
             Case Nothing
                 Exit Select
-            Case Constants.PUSH_ON_BUTTON
-                url = DomoApi.SwitchLight(Me.idx, Constants.[ON], PassCode)
-            Case Constants.PUSH_OFF_BUTTON
-                url = DomoApi.SwitchLight(Me.idx, Constants.[OFF], PassCode)
-            Case Constants.DIMMER
-                url = DomoApi.setDimmer(idx, switchToState)
-            Case Constants.SELECTOR
-                url = DomoApi.setDimmer(idx, switchToState)
+            Case Constants.DEVICE.SWITCHTYPE.PUSH_ON_BUTTON
+                url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.ON, PassCode)
+            Case Constants.DEVICE.SWITCHTYPE.PUSH_OFF_BUTTON
+                url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.OFF, PassCode)
+            Case Constants.DEVICE.SWITCHTYPE.DIMMER
+                url = (New DomoApi).setDimmer(idx, switchToState)
+            Case Constants.DEVICE.SWITCHTYPE.SELECTOR
+                url = (New DomoApi).setDimmer(idx, switchToState)
             Case Else
-                url = DomoApi.SwitchLight(Me.idx, switchToState, PassCode)
+                url = (New DomoApi).SwitchLight(Me.idx, switchToState, PassCode)
         End Select
 
 
-        Dim response As HttpResponseMessage = Await Task.Run(Function() Domoticz.DownloadJSON(url))
+        Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
         If Not response.IsSuccessStatusCode Then
-            Await TiczViewModel.Notify.Update(True, "Error switching device")
+            Await app.myViewModel.Notify.Update(True, "Error switching device")
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
@@ -1689,15 +1728,15 @@ Public Class Device
                 Try
                     domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
                     If domoRes.status <> "OK" Then
-                        Await TiczViewModel.Notify.Update(True, domoRes.message)
+                        Await app.myViewModel.Notify.Update(True, domoRes.message)
                         Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                     Else
-                        Await TiczViewModel.Notify.Update(False, "Device switched")
+                        Await app.myViewModel.Notify.Update(False, "Device switched")
                     End If
                     Await Me.Update()
                     Return New retvalue With {.issuccess = 1}
                 Catch ex As Exception
-                    TiczViewModel.Notify.Update(True, "Server sent empty response")
+                    app.myViewModel.Notify.Update(True, "Server sent empty response")
                     Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
                 End Try
             End If
@@ -1723,15 +1762,15 @@ Public Class Device
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.MoveUpDashboardCommand()", "executed")
-                                        TiczViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
-                                        Dim myIndex As Integer = TiczViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+                                        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
+                                        Dim myIndex As Integer = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
                                         If Not myIndex = 0 Then
-                                            TiczViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
-                                            TiczViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
+                                            app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
+                                            app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
                                         End If
-                                        Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
                                         Await Me.SetMoveUpDownVisibility()
-                                        Await TiczViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
+                                        Await app.myViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
                                     End Sub)
 
         End Get
@@ -1741,15 +1780,15 @@ Public Class Device
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.MoveDownDashboardCommand()", "executed")
-                                        TiczViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
-                                        Dim myIndex As Integer = TiczViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                        If Not myIndex = TiczViewModel.currentRoom.GetActiveDeviceList.Count - 1 Then
-                                            TiczViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
-                                            TiczViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex + 1, Me)
+                                        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
+                                        Dim myIndex As Integer = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+                                        If Not myIndex = app.myViewModel.currentRoom.GetActiveDeviceList.Count - 1 Then
+                                            app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
+                                            app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex + 1, Me)
                                         End If
-                                        Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
                                         Await Me.SetMoveUpDownVisibility()
-                                        Await TiczViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
+                                        Await app.myViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
                                     End Sub)
 
         End Get
@@ -1785,17 +1824,17 @@ Public Class Device
     ''' </summary>
     Public Async Function Initialize(Optional RoomView As String = "") As Task
         'Retrieve the DeviceConfiguration for this device 
-        Dim devConfig As TiczStorage.DeviceConfiguration = (From dev In TiczViewModel.currentRoom.RoomConfiguration.DeviceConfigurations
+        Dim devConfig As TiczStorage.DeviceConfiguration = (From dev In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations
                                                             Where dev.DeviceIDX = idx And dev.DeviceName = Name Select dev).FirstOrDefault
         If devConfig Is Nothing Then
             Dim newDevConfig As TiczStorage.DeviceConfiguration = (New TiczStorage.DeviceConfiguration With {.ColumnSpan = 1,
                                                                    .RowSpan = 1, .DeviceIDX = idx, .DeviceName = Name,
-                                                                   .DeviceRepresentation = Constants.ICON, .DeviceOrder = 9999})
-            TiczViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.Add(newDevConfig)
+                                                                   .DeviceRepresentation = Constants.DEVICEVIEWS.ICON, .DeviceOrder = 9999})
+            app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.Add(newDevConfig)
             devConfig = newDevConfig
         End If
         If devConfig.DeviceRepresentation = "" Then
-            devConfig.DeviceRepresentation = Constants.ICON
+            devConfig.DeviceRepresentation = Constants.DEVICEVIEWS.ICON
         End If
         DeviceOrder = devConfig.DeviceOrder
 
@@ -1810,21 +1849,21 @@ Public Class Device
         End If
 
         Select Case RoomView
-            Case Constants.ICONVIEW
-                DeviceRepresentation = Constants.ICON
+            Case Constants.ROOMVIEW.ICONVIEW
+                DeviceRepresentation = Constants.DEVICEVIEWS.ICON
                 ResizeContextMenuVisibility = Constants.COLLAPSED
-            Case Constants.GRIDVIEW
-                DeviceRepresentation = Constants.WIDE
-                ResizeContextMenuVisibility = Constants.COLLAPSED
-                DetailsVisibility = Constants.VISIBLE
-            Case Constants.LISTVIEW
-                DeviceRepresentation = Constants.WIDE
+            Case Constants.ROOMVIEW.GRIDVIEW
+                DeviceRepresentation = Constants.DEVICEVIEWS.WIDE
                 ResizeContextMenuVisibility = Constants.COLLAPSED
                 DetailsVisibility = Constants.VISIBLE
-            Case Constants.RESIZEVIEW
+            Case Constants.ROOMVIEW.LISTVIEW
+                DeviceRepresentation = Constants.DEVICEVIEWS.WIDE
+                ResizeContextMenuVisibility = Constants.COLLAPSED
+                DetailsVisibility = Constants.VISIBLE
+            Case Constants.ROOMVIEW.RESIZEVIEW
                 DeviceRepresentation = devConfig.DeviceRepresentation
                 ResizeContextMenuVisibility = Constants.VISIBLE
-            Case Constants.DASHVIEW
+            Case Constants.ROOMVIEW.DASHVIEW
                 DeviceRepresentation = devConfig.DeviceRepresentation
                 ResizeContextMenuVisibility = Constants.VISIBLE
                 MoveUpDashboardVisibility = Constants.VISIBLE
@@ -1871,6 +1910,8 @@ End Class
 
 Public Class RoomViewModel
     Inherits ViewModelBase
+
+    Private app As App = CType(Application.Current, App)
 
     Public Const constAllDevices As String = "All Devices"
     Public Const constDashboard As String = "Dashboard"
@@ -1994,7 +2035,7 @@ Public Class RoomViewModel
                                                        WriteToDebug("Room.GridViewSizeChangedCommand()", "executed")
                                                        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
                                                        Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 360)
-                                                       If amountOfColumns < TiczViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = TiczViewModel.TiczSettings.MinimumNumberOfColumns
+                                                       If amountOfColumns < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = app.myViewModel.TiczSettings.MinimumNumberOfColumns
                                                        Panel.ItemWidth = gv.ActualWidth / amountOfColumns
                                                        WriteToDebug("Panel Width = ", Panel.ItemWidth)
                                                    End If
@@ -2021,8 +2062,8 @@ Public Class RoomViewModel
     Public Sub Initialize()
         Dim iWidth As Integer = 120
         Dim iMargin As Integer = 4
-        If Me.RoomConfiguration.RoomView = Constants.DASHVIEW Or Me.RoomConfiguration.RoomView = Constants.RESIZEVIEW Then iWidth = 120 : iMargin = 0
-        If Me.RoomConfiguration.RoomView = Constants.GRIDVIEW Then iWidth = 180 : iMargin = 4
+        If Me.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Or Me.RoomConfiguration.RoomView = Constants.ROOMVIEW.RESIZEVIEW Then iWidth = 120 : iMargin = 0
+        If Me.RoomConfiguration.RoomView = Constants.ROOMVIEW.GRIDVIEW Then iWidth = 180 : iMargin = 4
         Dim completeItems = Math.Floor(ApplicationView.GetForCurrentView.VisibleBounds.Width / iWidth)
         Dim remainder = ApplicationView.GetForCurrentView.VisibleBounds.Width - (completeItems * iWidth) - (completeItems * iMargin)
         ItemWidth = (iWidth + Math.Floor(remainder / completeItems))
@@ -2033,26 +2074,26 @@ Public Class RoomViewModel
         Dim RoomToLoad As Domoticz.Plan
         If idx = 0 Then
             ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
-            Dim TiczRoom As Domoticz.Plan = (From r In TiczViewModel.DomoRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
+            Dim TiczRoom As Domoticz.Plan = (From r In app.myViewModel.DomoRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
             If Not TiczRoom Is Nothing Then
                 RoomToLoad = TiczRoom
             Else
-                Dim PreferredRoom As Domoticz.Plan = (From r In TiczViewModel.DomoRooms.result Where r.idx = TiczViewModel.TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
+                Dim PreferredRoom As Domoticz.Plan = (From r In app.myViewModel.DomoRooms.result Where r.idx = app.myViewModel.TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
                 If Not PreferredRoom Is Nothing Then
                     RoomToLoad = PreferredRoom
-                    TiczViewModel.TiczSettings.PreferredRoom = TiczViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
+                    app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
                 Else
-                    RoomToLoad = TiczViewModel.DomoRooms.result(0)
-                    TiczViewModel.TiczSettings.PreferredRoom = TiczViewModel.TiczRoomConfigs.GetRoomConfig(TiczViewModel.DomoRooms.result(0).idx, TiczViewModel.DomoRooms.result(0).Name)
+                    RoomToLoad = app.myViewModel.DomoRooms.result(0)
+                    app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(app.myViewModel.DomoRooms.result(0).idx, app.myViewModel.DomoRooms.result(0).Name)
                 End If
             End If
         Else
-            RoomToLoad = (From r In TiczViewModel.DomoRooms.result Where r.idx = idx Select r).FirstOrDefault()
+            RoomToLoad = (From r In app.myViewModel.DomoRooms.result Where r.idx = idx Select r).FirstOrDefault()
         End If
         RoomIDX = RoomToLoad.idx
         RoomName = RoomToLoad.Name
         RoomConfiguration.RoomView = ""
-        Dim tmpRoomConfiguration = TiczViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
+        Dim tmpRoomConfiguration = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
         RoomConfiguration.RoomIDX = tmpRoomConfiguration.RoomIDX
         RoomConfiguration.RoomName = tmpRoomConfiguration.RoomName
         RoomConfiguration.ShowRoom = tmpRoomConfiguration.ShowRoom
@@ -2063,18 +2104,18 @@ Public Class RoomViewModel
 
     Public Function GetActiveGroupedDeviceList() As DeviceGroup(Of DevicesViewModel)
         Select Case RoomConfiguration.RoomView
-            Case Constants.DASHVIEW : Return Nothing
-            Case Constants.ICONVIEW : Return IconViewDevices
-            Case Constants.LISTVIEW : Return ListViewDevices
-            Case Constants.GRIDVIEW : Return GridViewDevices
-            Case Constants.RESIZEVIEW : Return ResizeViewDevices
+            Case Constants.ROOMVIEW.DASHVIEW : Return Nothing
+            Case Constants.ROOMVIEW.ICONVIEW : Return IconViewDevices
+            Case Constants.ROOMVIEW.LISTVIEW : Return ListViewDevices
+            Case Constants.ROOMVIEW.GRIDVIEW : Return GridViewDevices
+            Case Constants.ROOMVIEW.RESIZEVIEW : Return ResizeViewDevices
             Case Else : Return Nothing
         End Select
     End Function
 
     Public Function GetActiveDeviceList() As DevicesViewModel
         Select Case RoomConfiguration.RoomView
-            Case Constants.DASHVIEW : Return DashboardViewDevices
+            Case Constants.ROOMVIEW.DASHVIEW : Return DashboardViewDevices
             Case Else : Return Nothing
         End Select
     End Function
@@ -2082,10 +2123,10 @@ Public Class RoomViewModel
 
     Public Async Function GetDevicesForRoom(RoomView As String) As Task(Of DevicesViewModel)
         Dim ret As New DevicesViewModel
-        Dim url As String = DomoApi.getAllDevicesForRoom(RoomIDX, True)
+        Dim url As String = (New DomoApi).getAllDevicesForRoom(RoomIDX, True)
         'Hack to change the URL used when the Room is a "All Devices" room, with a static IDX of 12321
-        If Me.RoomIDX = 12321 Then url = DomoApi.getAllDevices()
-        Dim response As HttpResponseMessage = Await Domoticz.DownloadJSON(url)
+        If Me.RoomIDX = 12321 Then url = (New DomoApi).getAllDevices()
+        Dim response As HttpResponseMessage = Await (New Domoticz).DownloadJSON(url)
         Dim devicelist As New List(Of Device)
         If response.IsSuccessStatusCode Then
             Dim body As String = Await response.Content.ReadAsStringAsync()
@@ -2106,7 +2147,7 @@ Public Class RoomViewModel
     ''' </summary>
     ''' <returns></returns>
     Public Async Function LoadDevices() As Task
-        If Me.RoomConfiguration.RoomView <> Constants.DASHVIEW Then
+        If Me.RoomConfiguration.RoomView <> Constants.ROOMVIEW.DASHVIEW Then
             Await LoadGroupedDevicesForRoom()
         Else
             Await LoadDevicesForRoom()
@@ -2120,10 +2161,10 @@ Public Class RoomViewModel
     ''' <returns></returns>
     Public Async Function LoadDevicesForRoom() As Task
         Me.GetActiveDeviceList.Clear()
-        Await TiczViewModel.Notify.Update(False, "loading devices for room...")
+        Await app.myViewModel.Notify.Update(False, "loading devices for room...")
         Dim devicesToAdd = (Await Task.Run(Function() GetDevicesForRoom(Me.RoomConfiguration.RoomView))).OrderBy(Function(x) x.DeviceOrder)
 
-        Await TiczViewModel.Notify.Update(False, "adding devices to view...")
+        Await app.myViewModel.Notify.Update(False, "adding devices to view...")
         Await Task.Delay(200)
         For i As Integer = 0 To devicesToAdd.Count - 1
             Select Case i
@@ -2159,28 +2200,28 @@ Public Class RoomViewModel
         Dim roomDevices = Await GetDevicesForRoom(Me.RoomConfiguration.RoomView)
 
         'Create groups for the Room. Empty groups will be filtered out by the GroupStyle in XAML
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_GROUPS_SCENES))
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_LIGHTS_SWITCHES))
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_WEATHER))
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_TEMPERATURE))
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_UTILITY))
-        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.GRP_OTHER))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_GROUPS_SCENES))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_WEATHER))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_TEMPERATURE))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_UTILITY))
+        Me.GetActiveGroupedDeviceList.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_OTHER))
 
         'Go through each device, and map it to its seperate subcollection
         For Each d In roomDevices
             Select Case d.Type
-                Case Constants.SCENE, Constants.GROUP
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
-                Case Constants.LIGHTING_LIMITLESS, Constants.LIGHT_SWITCH, Constants.LIGHTING_2
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
-                Case Constants.TEMP_HUMI_BARO, Constants.WIND, Constants.UV, Constants.TYPE_RAIN
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_WEATHER).FirstOrDefault().Add(d)
-                Case Constants.TEMP, Constants.THERMOSTAT
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_TEMPERATURE).FirstOrDefault().Add(d)
-                Case Constants.GENERAL, Constants.USAGE, Constants.P1_SMART_METER
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_UTILITY).FirstOrDefault().Add(d)
+                Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
+                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_2
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
+                Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)
+                Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.THERMOSTAT
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
+                Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
                 Case Else
-                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.GRP_OTHER).FirstOrDefault().Add(d)
+                    Me.GetActiveGroupedDeviceList.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)
                     WriteToDebug("RoomViewModel.LoadGroupedDevicesForRoom()", String.Format("{0} : {1}", d.Name, d.Type))
             End Select
         Next
@@ -2381,15 +2422,9 @@ Partial Public Class TiczSettings
         settings = Windows.Storage.ApplicationData.Current.LocalSettings
     End Sub
 
-    Public ReadOnly Property Notify As ToastMessageViewModel
-        Get
-            Return TiczViewModel.Notify
-        End Get
-    End Property
-
     Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
         Get
-            Return TiczViewModel.TiczRoomConfigs
+            Return app.myViewModel.TiczRoomConfigs
         End Get
     End Property
 
@@ -2420,24 +2455,24 @@ Partial Public Class TiczSettings
             Return New RelayCommand(Async Sub()
                                         TestInProgress = True
                                         TestConnectionResult = "Testing connection..."
-                                        TiczViewModel.TiczRoomConfigs.Clear()
-                                        TiczViewModel.DomoRooms.result.Clear()
+                                        app.myViewModel.TiczRoomConfigs.Clear()
+                                        app.myViewModel.DomoRooms.result.Clear()
                                         WriteToDebug("TestConnectionCommand", ServerIP)
                                         If ContainsValidIPDetails() Then
-                                            Dim response As retvalue = Await TiczViewModel.DomoRooms.Load()
+                                            Dim response As retvalue = Await app.myViewModel.DomoRooms.Load()
                                             If response.issuccess Then
                                                 TestConnectionResult = "Hurray !"
-                                                Dim LoadRoomsSuccess As retvalue = Await TiczViewModel.DomoRooms.Load()
+                                                Dim LoadRoomsSuccess As retvalue = Await app.myViewModel.DomoRooms.Load()
                                                 If LoadRoomsSuccess.issuccess Then
-                                                    Dim loadRoomConfigsSuccess As Boolean = Await TiczViewModel.TiczRoomConfigs.LoadRoomConfigurations()
-                                                    Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                                    Dim loadRoomConfigsSuccess As Boolean = Await app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+                                                    Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
                                                 End If
                                                 RaisePropertyChanged("PreferredRoom")
-                                                TiczViewModel.currentRoom.SetRoomToLoad()
-                                                Await TiczViewModel.currentRoom.LoadDevices()
-                                                TiczViewModel.Notify.Clear()
-                                                TiczViewModel.TiczMenu.IsMenuOpen = False
-                                                TiczViewModel.TiczMenu.ActiveMenuContents = "Rooms"
+                                                app.myViewModel.currentRoom.SetRoomToLoad()
+                                                Await app.myViewModel.currentRoom.LoadDevices()
+                                                app.myViewModel.Notify.Clear()
+                                                app.myViewModel.TiczMenu.IsMenuOpen = False
+                                                app.myViewModel.TiczMenu.ActiveMenuContents = "Rooms"
                                             Else
                                                 TestConnectionResult = String.Format("Hmm..doesn't work : {0}", response.err)
                                             End If
@@ -2465,7 +2500,7 @@ Partial Public Class TiczSettings
         Dim ValidHostnameRegex As New Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
         Dim ValidIpAddressRegex As New Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
 
-        If ValidHostnameRegex.IsMatch(TiczViewModel.TiczSettings.ServerIP) Or ValidIpAddressRegex.IsMatch(TiczViewModel.TiczSettings.ServerIP) Then
+        If ValidHostnameRegex.IsMatch(app.myViewModel.TiczSettings.ServerIP) Or ValidIpAddressRegex.IsMatch(app.myViewModel.TiczSettings.ServerIP) Then
             Return True
         Else
             Return False
@@ -2474,7 +2509,7 @@ Partial Public Class TiczSettings
 
 
     Public Function GetFullURL() As String
-        Return "http://" + TiczViewModel.TiczSettings.ServerIP + ":" + ServerPort
+        Return "http://" + app.myViewModel.TiczSettings.ServerIP + ":" + ServerPort
     End Function
 
     Public Function AddOrUpdateValue(Key As String, value As Object)
@@ -2581,7 +2616,8 @@ Partial Public Class TiczSettings
         End Set
     End Property
 
-    Private _RoomViews As List(Of String) = New List(Of String)({Constants.ICONVIEW, Constants.GRIDVIEW, Constants.LISTVIEW, Constants.RESIZEVIEW, Constants.DASHVIEW}).ToList
+    Private _RoomViews As List(Of String) = New List(Of String)({Constants.ROOMVIEW.ICONVIEW, Constants.ROOMVIEW.GRIDVIEW, Constants.ROOMVIEW.LISTVIEW,
+                                                                Constants.ROOMVIEW.RESIZEVIEW, Constants.ROOMVIEW.DASHVIEW}).ToList
     Public ReadOnly Property RoomViewChoices As List(Of String)
         Get
             Return _RoomViews
@@ -2713,6 +2749,8 @@ End Class
 Public Class TiczMenuSettings
     Inherits ViewModelBase
 
+    Private app As App = CType(Application.Current, App)
+
     Public Sub New()
         ActiveMenuContents = "Rooms"
     End Sub
@@ -2724,12 +2762,11 @@ Public Class TiczMenuSettings
         End Get
         Set(value As Boolean)
             _ShowSecurityPanel = value
-            TiczViewModel.DomoSecPanel.IsFadingIn = value
+            app.myViewModel.DomoSecPanel.IsFadingIn = value
             RaisePropertyChanged("ShowSecurityPanel")
         End Set
     End Property
     Private Property _ShowSecurityPanel As Boolean
-
 
     Public Property ShowAbout As Boolean
         Get
@@ -2741,6 +2778,17 @@ Public Class TiczMenuSettings
         End Set
     End Property
     Private Property _ShowAbout As Boolean
+
+    Public Property ShowBackButton As Boolean
+        Get
+            Return _ShowBackButton
+        End Get
+        Set(value As Boolean)
+            _ShowBackButton = value
+            RaisePropertyChanged("ShowBackButton")
+        End Set
+    End Property
+    Private Property _ShowBackButton As Boolean
 
 
     Public Property IsMenuOpen As Boolean
@@ -2770,7 +2818,8 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("TiczMenuSettings.ReloadCommand()", "executed")
                                         IsMenuOpen = False
-                                        Await TiczViewModel.Load()
+                                        Dim app As App = CType(Application.Current, App)
+                                        Await app.myViewModel.Load()
 
                                     End Sub)
         End Get
@@ -2783,6 +2832,7 @@ Public Class TiczMenuSettings
                                         WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
                                         IsMenuOpen = False
                                         ShowSecurityPanel = Not ShowSecurityPanel
+                                        If ShowSecurityPanel Then ShowBackButton = True
                                     End Sub)
         End Get
     End Property
@@ -2792,7 +2842,7 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Sub()
                                         WriteToDebug("TiczMenuSettings.ShowAboutCommand()", "executed")
                                         ShowAbout = Not ShowAbout
-                                        If ShowAbout Then IsMenuOpen = False : ShowSecurityPanel = False
+                                        If ShowAbout Then IsMenuOpen = False : ShowSecurityPanel = False : ShowBackButton = True
                                     End Sub)
         End Get
     End Property
@@ -2803,7 +2853,7 @@ Public Class TiczMenuSettings
                                         If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
                                         IsMenuOpen = Not IsMenuOpen
                                         ShowAbout = False
-                                        If IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                                        If IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible : ShowBackButton = True
                                         WriteToDebug("TiczMenuSettings.OpenMenuCommand()", IsMenuOpen)
                                     End Sub)
         End Get
@@ -2812,25 +2862,25 @@ Public Class TiczMenuSettings
     Public ReadOnly Property SettingsMenuGoBack As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        If ActiveMenuContents = "Rooms" Then IsMenuOpen = False : Exit Sub
+                                        If ActiveMenuContents = "Rooms" Then IsMenuOpen = False : ShowBackButton = False : Exit Sub
 
                                         If ActiveMenuContents = "Rooms Configuration" Then
-                                            Await TiczViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                            Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
                                             ActiveMenuContents = "Settings"
                                             Exit Sub
                                         End If
                                         If ActiveMenuContents = "General" Then
-                                            TiczViewModel.TiczSettings.Save()
+                                            app.myViewModel.TiczSettings.Save()
                                             ActiveMenuContents = "Settings"
                                             Exit Sub
                                         End If
                                         If ActiveMenuContents = "Server settings" Then
-                                            TiczViewModel.TiczSettings.Save()
+                                            app.myViewModel.TiczSettings.Save()
                                             ActiveMenuContents = "Settings"
                                             Exit Sub
                                         End If
                                         If ActiveMenuContents = "Settings" Then
-                                            Await TiczViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+                                            Await app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
                                             ActiveMenuContents = "Rooms"
                                             Exit Sub
                                         End If
@@ -2871,29 +2921,112 @@ Public Class TiczMenuSettings
     End Property
 End Class
 
+Public Class GraphListViewModel
+    Inherits ViewModelBase
+    Implements IDisposable
+
+    Public Property graphDataList As ObservableCollection(Of Domoticz.DeviceGraphContainer)
+    Public Property deviceName As String
+        Get
+            Return _deviceName
+        End Get
+        Set(value As String)
+            _deviceName = value
+            RaisePropertyChanged("deviceName")
+        End Set
+    End Property
+    Private Property _deviceName As String
+    Public Property deviceIDX As Integer
+    Public Property deviceType As String
+    Public Property deviceSubType As String
+
+    Public Sub New()
+        graphDataList = New ObservableCollection(Of Domoticz.DeviceGraphContainer)
+    End Sub
+
+#Region "IDisposable Support"
+    Private disposedValue As Boolean ' To detect redundant calls
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(disposing As Boolean)
+        If Not disposedValue Then
+            If disposing Then
+                ' TODO: dispose managed state (managed objects).
+                If Not graphDataList Is Nothing Then
+                    For Each g In graphDataList
+                        g.Dispose()
+                    Next
+                    'graphDataList.Clear()
+                    graphDataList = Nothing
+                End If
+            End If
+
+            ' TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.
+            ' TODO: set large fields to null.
+        End If
+        disposedValue = True
+    End Sub
+
+    ' TODO: override Finalize() only if Dispose(disposing As Boolean) above has code to free unmanaged resources.
+    'Protected Overrides Sub Finalize()
+    '    ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+    '    Dispose(False)
+    '    MyBase.Finalize()
+    'End Sub
+
+    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+        Dispose(True)
+        ' TODO: uncomment the following line if Finalize() is overridden above.
+        ' GC.SuppressFinalize(Me)
+    End Sub
+#End Region
+
+End Class
+
 
 Public Class TiczViewModel
     Inherits ViewModelBase
 
-    Public Shared Property DomoConfig As New Domoticz.Config
-    Public Shared Property DomoSunRiseSet As New Domoticz.SunRiseSet
-    Public Shared Property DomoVersion As New Domoticz.Version
-    Public Shared Property DomoRooms As New Domoticz.Plans
-    Public Shared Property DomoSettings As New Domoticz.Settings
-    Public Shared Property DomoSecPanel As New SecurityPanelViewModel
-    Public Shared Property EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
-    Public Shared Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
-    Public Shared Property TiczSettings As New TiczSettings
-    Public Shared Property TiczMenu As New TiczMenuSettings
-    Public Shared Property Notify As New ToastMessageViewModel
-    Public Shared Property myDevices As New Devices
-    Public Shared Property currentRoom As RoomViewModel
-    Public Shared Property LastRefresh As DateTime
+    Public Property GraphList As GraphListViewModel
+        Get
+            Return _GraphList
+        End Get
+        Set(value As GraphListViewModel)
+            _GraphList = value
+            RaisePropertyChanged("GraphList")
+        End Set
+    End Property
+    Private Property _GraphList As GraphListViewModel
+
+    Public Property DomoConfig As New Domoticz.Config
+    Public Property DomoSunRiseSet As New Domoticz.SunRiseSet
+    Public Property DomoVersion As New Domoticz.Version
+    Public Property DomoRooms As New Domoticz.Plans
+    Public Property DomoSettings As New Domoticz.Settings
+    Public Property DomoSecPanel As New SecurityPanelViewModel
+    Public Property EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
+    Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
+    Public Property TiczSettings As New TiczSettings
+    Public Property TiczMenu As New TiczMenuSettings
+    Public Property Notify As New ToastMessageViewModel
+    Public Property currentRoom As RoomViewModel
+        Get
+            Return _currentRoom
+        End Get
+        Set(value As RoomViewModel)
+            _currentRoom = value
+            RaisePropertyChanged("currentRoom")
+        End Set
+    End Property
+    Private Property _currentRoom As RoomViewModel
+    Public Property LastRefresh As DateTime
 
     'Properties used for the background refresher
-    Public Shared Property TiczRefresher As Task
-    Public Shared ct As CancellationToken
-    Public Shared tokenSource As New CancellationTokenSource()
+    Public Property TiczRefresher As Task
+    Public ct As CancellationToken
+    Public tokenSource As New CancellationTokenSource()
 
 
     Public Property selectedDevice As Device
@@ -2907,6 +3040,17 @@ Public Class TiczViewModel
     End Property
     Private _selectedDevice As Device
 
+
+    Public Property ShowDeviceGraph As Boolean
+        Get
+            Return _ShowDeviceGraph
+        End Get
+        Set(value As Boolean)
+            _ShowDeviceGraph = value
+            RaisePropertyChanged("ShowDeviceGraph")
+        End Set
+    End Property
+    Private Property _ShowDeviceGraph As Boolean
 
     Public Property ShowDeviceDetails As Boolean
         Get
@@ -2931,6 +3075,28 @@ Public Class TiczViewModel
     Private Property _ShowDevicePassword As Boolean
 
 
+    Public ReadOnly Property GoBackCommand As RelayCommand(Of Object)
+        Get
+            Return New RelayCommand(Of Object)(Async Sub(x)
+                                                   WriteToDebug("App.GoBackCommand", "executed")
+                                                   Dim a = x
+
+
+                                                   'If App.myViewModel.ShowDeviceGraph Then
+                                                   '    e.Handled = True
+                                                   '    App.myViewModel.GraphList.Dispose()
+                                                   '    App.myViewModel.ShowDeviceGraph = False
+                                                   '    Exit Sub
+                                                   'End If
+                                                   'If App.myViewModel.TiczMenu.ShowSecurityPanel Then e.Handled = True : App.myViewModel.TiczMenu.ShowSecurityPanel = False : Exit Sub
+                                                   'If App.myViewModel.TiczMenu.ShowAbout Then e.Handled = True : App.myViewModel.TiczMenu.ShowAbout = False : Exit Sub
+                                                   'If App.myViewModel.TiczMenu.IsMenuOpen Then e.Handled = True : Dim cmd = App.myViewModel.TiczMenu.SettingsMenuGoBack : cmd.Execute(Nothing) : Exit Sub
+                                                   'If Not App.myViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                                               End Sub)
+
+        End Get
+    End Property
+
     Public ReadOnly Property RoomChangedCommand As RelayCommand(Of Object)
         Get
             Return New RelayCommand(Of Object)(Async Sub(x)
@@ -2942,10 +3108,10 @@ Public Class TiczViewModel
                                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
                                                        Dim sWatch = Stopwatch.StartNew()
                                                        Me.StopRefresh()
-                                                       Await TiczViewModel.Notify.Update(False, "Loading...")
+                                                       Await Notify.Update(False, "Loading...")
                                                        currentRoom.SetRoomToLoad(s.RoomIDX)
                                                        Await currentRoom.LoadDevices()
-                                                       TiczViewModel.Notify.Clear()
+                                                       Notify.Clear()
                                                        sWatch.Stop()
                                                        WriteToDebug("TiczViewModel.RoomChangedCommand()", String.Format("Room Change took {0} ms", sWatch.ElapsedMilliseconds))
                                                        Me.StartRefresh()
@@ -3019,13 +3185,93 @@ Public Class TiczViewModel
     End Property
 
     Public Sub New()
+        GraphList = New GraphListViewModel
         ShowDeviceDetails = False
         ShowDevicePassword = False
         currentRoom = New RoomViewModel With {.ItemHeight = 120}
         EnabledRooms = New ObservableCollection(Of TiczStorage.RoomConfiguration)
     End Sub
 
-    Public Shared Async Sub StartRefresh()
+    Public Async Function LoadGraphData(ByVal d As Device) As Task
+        GraphList = New GraphListViewModel
+        ShowDeviceGraph = True
+        Await Notify.Update(False, "Loading graphs, please wait...", 0)
+
+        'GraphList.deviceIDX = d.idx
+        GraphList.deviceName = d.Name
+        'GraphList.deviceType = d.Type
+        'GraphList.deviceSubType = d.SubType
+        Dim GraphsToAdd As New List(Of Domoticz.DeviceGraphContainer)
+
+        Select Case d.Type
+            Case Constants.DEVICE.TYPE.WIND
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphWindDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "wind")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphWindMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "wind")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphWindYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "wind")))
+            Case Constants.DEVICE.TYPE.RAIN
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphRainDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Application.Current.Resources("FastGraphRainWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphRainMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphRainYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "rain")))
+
+            Case Constants.DEVICE.TYPE.THERMOSTAT
+                Select Case d.SubType
+                    Case Constants.DEVICE.SUBTYPE.SETPOINT
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "temp")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "temp")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "temp")))
+                End Select
+            Case Constants.DEVICE.TYPE.LIGHT_SWITCH
+                Select Case d.SubType
+                    Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
+                End Select
+            Case Constants.DEVICE.TYPE.LIGHTING_2
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
+            Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "temp")))
+            Case Constants.DEVICE.TYPE.USAGE
+                Select Case d.SubType
+                    Case Constants.DEVICE.SUBTYPE.ELECTRIC
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                End Select
+            Case Else
+                Select Case d.SubType
+                    Case Constants.DEVICE.SUBTYPE.PERCENTAGE
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphPercentageDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "Percentage")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphPercentageMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "Percentage")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphPercentageYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "Percentage")))
+                    Case Constants.DEVICE.SUBTYPE.P1_ELECTRIC
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                    Case Constants.DEVICE.SUBTYPE.P1_GAS
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Application.Current.Resources("FastGraphGasDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Application.Current.Resources("FastGraphGasWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Application.Current.Resources("FastGraphGasMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("FastGraphGasYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                    Case Else
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate), ""))
+                End Select
+        End Select
+
+
+        For Each g In GraphsToAdd
+            Await Task.Run(Function() g.Load(d))
+            GraphList.graphDataList.Add(g)
+        Next
+
+        Notify.Clear()
+    End Function
+
+
+
+    Public Async Sub StartRefresh()
         WriteToDebug("TiczViewModel.StartRefresh()", "")
         If TiczRefresher Is Nothing OrElse TiczRefresher.IsCompleted Then
             If TiczSettings.SecondsForRefresh > 0 Then
@@ -3058,7 +3304,7 @@ Public Class TiczViewModel
         WriteToDebug("TiczViewModel.StopRefresh()", "")
     End Sub
 
-    Public Shared Async Function PerformAutoRefresh(ct As CancellationToken) As Task
+    Public Async Function PerformAutoRefresh(ct As CancellationToken) As Task
         Dim refreshperiod As Integer = TiczSettings.SecondsForRefresh
         While Not ct.IsCancellationRequested
             WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
@@ -3076,15 +3322,15 @@ Public Class TiczViewModel
 
     End Function
 
-    Public Shared Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
+    Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
         Await Notify.Update(False, "refreshing...", 0)
         Dim sWatch = Stopwatch.StartNew()
 
         'Refresh the Sunset/Rise values
-        Await TiczViewModel.DomoSunRiseSet.Load()
+        Await DomoSunRiseSet.Load()
 
         'Get all devices for this room that have been updated since the LastRefresh (Domoticz will tell you which ones)
-        Dim dev_response = Await Task.Run(Function() Domoticz.DownloadJSON(DomoApi.getAllDevicesForRoom(TiczViewModel.currentRoom.RoomIDX, LoadAllUpdates)))
+        Dim dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(currentRoom.RoomIDX, LoadAllUpdates)))
         If dev_response.IsSuccessStatusCode Then
             Dim refreshedDevices = JsonConvert.DeserializeObject(Of Devices)(Await dev_response.Content.ReadAsStringAsync)
             For Each d In refreshedDevices.result
@@ -3092,7 +3338,7 @@ Public Class TiczViewModel
             Next
             If Not refreshedDevices Is Nothing AndAlso refreshedDevices.result.Count > 0 Then
                 WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", refreshedDevices.result.Count))
-                If currentRoom.RoomConfiguration.RoomView = Constants.DASHVIEW Then
+                If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
                     For Each d In refreshedDevices.result
                         Dim deviceToUpdate = (From devs In currentRoom.GetActiveDeviceList Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
                         If Not deviceToUpdate Is Nothing Then
@@ -3113,11 +3359,11 @@ Public Class TiczViewModel
         End If
 
         'Get all scenes
-        Dim grp_response = Await Task.Run(Function() Domoticz.DownloadJSON(DomoApi.getAllScenesForRoom(TiczViewModel.currentRoom.RoomIDX)))
+        Dim grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(currentRoom.RoomIDX)))
         If grp_response.IsSuccessStatusCode Then
             Dim refreshedScenes = JsonConvert.DeserializeObject(Of Devices)(Await grp_response.Content.ReadAsStringAsync)
             If Not refreshedScenes Is Nothing Then
-                If currentRoom.RoomConfiguration.RoomView = Constants.RESIZEVIEW Or currentRoom.RoomConfiguration.RoomView = Constants.DASHVIEW Then
+                If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.RESIZEVIEW Or currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
                     For Each device In currentRoom.GetActiveDeviceList.Where(Function(x) x.Type = "Group" Or x.Type = "Scene").ToList()
                         Dim updatedDevice = (From d In refreshedScenes.result Where d.idx = device.idx And d.Name = device.Name Select d).FirstOrDefault()
                         If Not updatedDevice Is Nothing Then
@@ -3150,15 +3396,15 @@ Public Class TiczViewModel
             End If
             Notify.Clear()
         End If
-        TiczViewModel.LastRefresh = Date.Now.ToUniversalTime
+        LastRefresh = Date.Now.ToUniversalTime
     End Function
 
     ''' <summary>
     ''' Performs initial loading of all Data for Ticz. Ensures all data is cleared before reloading
     ''' </summary>
     ''' <returns></returns>
-    Public Shared Async Function Load() As Task
-        If Not TiczViewModel.TiczSettings.ContainsValidIPDetails Then
+    Public Async Function Load() As Task
+        If Not TiczSettings.ContainsValidIPDetails Then
             Await Notify.Update(True, "IP/Port settings not valid", 0)
             TiczMenu.ActiveMenuContents = "Server settings"
             Await Task.Delay(500)
@@ -3196,7 +3442,7 @@ Public Class TiczViewModel
 
         'TODO : MOVE SECPANEL STUFF TO RIGHT PLACE
         Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0)
-        Await TiczViewModel.DomoSecPanel.GetSecurityStatus()
+        Await DomoSecPanel.GetSecurityStatus()
 
 
         'Load the Room Configurations from Storage
@@ -3205,6 +3451,7 @@ Public Class TiczViewModel
         isSuccess = Await TiczRoomConfigs.LoadRoomConfigurations()
         'Wait for 2 seconds to let any notification stay
         If Not isSuccess Then Await Task.Delay(2000)
+
 
         currentRoom.SetRoomToLoad()
 
@@ -3215,17 +3462,13 @@ Public Class TiczViewModel
         Await Notify.Update(False, "Saving Ticz Room configuration...", 0)
         Await TiczRoomConfigs.SaveRoomConfigurations()
         'If Not TiczRooms.Count = 0 Then currentRoom = TiczRooms(0)
-        TiczViewModel.LastRefresh = Date.Now.ToUniversalTime
+        LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
 
-        If TiczViewModel.DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
+        If DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
             Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposed, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 6)
         Else
             Notify.Clear()
         End If
-
-
-
-
     End Function
 End Class

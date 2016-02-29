@@ -3,14 +3,16 @@
 Public NotInheritable Class ucSecurityPanel
     Inherits UserControl
 
+    Private app As App = CType(Application.Current, App)
     Public Sub New()
 
         ' This call is required by the designer.
         InitializeComponent()
-        AddHandler TiczViewModel.DomoSecPanel.PlayDigitSoundRequested, AddressOf PlayDigitSound
-        AddHandler TiczViewModel.DomoSecPanel.PlayArmRequested, AddressOf PlayArm
-        AddHandler TiczViewModel.DomoSecPanel.PlayDisarmRequested, AddressOf PlayDisarm
-        AddHandler TiczViewModel.DomoSecPanel.PlayWrongCodeRequested, AddressOf PlayWrongCode
+
+        AddHandler app.myViewModel.DomoSecPanel.PlayDigitSoundRequested, AddressOf PlayDigitSound
+        AddHandler app.myViewModel.DomoSecPanel.PlayArmRequested, AddressOf PlayArm
+        AddHandler app.myViewModel.DomoSecPanel.PlayDisArmRequested, AddressOf PlayDisarm
+        AddHandler app.myViewModel.DomoSecPanel.PlayWrongCodeRequested, AddressOf PlayWrongCode
         ' Add any initialization after the InitializeComponent() call.
 
     End Sub

@@ -21,7 +21,6 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="LoadingView">
-                    
                 </VisualState>
                 <VisualState x:Name="IconView">
                     <Storyboard>
@@ -193,9 +192,8 @@
                 <Button.Content>
                     <!--<Grid>-->
                         <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="50" Width="50" Stretch="Uniform">
-                        <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}">
-                            </Path>
-                        </Viewbox>
+                        <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}"/>
+                    </Viewbox>
                     <!--</Grid>-->
                 </Button.Content>
             </Button>
@@ -275,12 +273,12 @@
         <!-- THIS IS THE FLYOUT MENU FOR THE DEVICE-->
         <FlyoutBase.AttachedFlyout>
             <MenuFlyout>
+                <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
+                <MenuFlyoutItem x:Name="mfShowGraphs" Text="Show Graph" Command="{Binding ShowDeviceGraph}"/>
+                <MenuFlyoutSeparator Visibility="{Binding ResizeContextMenuVisibility}"/>
                 <MenuFlyoutItem x:Name="mfSmall" Text="Icon" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfSmall, Path=Text}"/>
                 <MenuFlyoutItem x:Name="mfWide" Text="Wide" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfWide, Path=Text}"/>
                 <MenuFlyoutItem x:Name="mfLarge" Text="Large" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfLarge, Path=Text}"/>
-                <MenuFlyoutSeparator Visibility="{Binding ResizeContextMenuVisibility}"/>
-                <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
-                <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Move Up" Visibility="{Binding MoveUpDashboardVisibility}" Command="{Binding MoveUpDashboardCommand}"/>
                 <MenuFlyoutItem Text="Move Down" Visibility="{Binding MoveDownDashboardVisibility}" Command="{Binding MoveDownDashboardCommand}"/>
             </MenuFlyout>

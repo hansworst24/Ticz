@@ -8,7 +8,7 @@ Imports Windows.UI.Core
 Public NotInheritable Class SplitView
     Inherits Page
 
-    Dim app As App = CType(Application.Current, App)
+    Private app As App = CType(Application.Current, App)
     'Dim vm As TiczViewModel = app.myViewModel
 
     Public Sub New()
@@ -31,14 +31,23 @@ Public NotInheritable Class SplitView
 
 
     Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+
+        'Dim a = app.myViewModel.GoBackCommand
+        'a.Execute(e)
+        'e.Handled = True
         WriteToDebug("App.BackButtonPressed", "executed")
-
-        If TiczViewModel.TiczMenu.ShowSecurityPanel Then e.Handled = True : TiczViewModel.TiczMenu.ShowSecurityPanel = False : Exit Sub
-        If TiczViewModel.TiczMenu.ShowAbout Then e.Handled = True : TiczViewModel.TiczMenu.ShowAbout = False : Exit Sub
-        If TiczViewModel.TiczMenu.IsMenuOpen Then e.Handled = True : Dim cmd = TiczViewModel.TiczMenu.SettingsMenuGoBack : cmd.Execute(Nothing) : Exit Sub
-        If Not TiczViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-
+        If app.myViewModel.ShowDeviceGraph Then
+            e.Handled = True
+            app.myViewModel.GraphList.Dispose()
+            app.myViewModel.ShowDeviceGraph = False
+            Exit Sub
+        End If
+        If app.myViewModel.TiczMenu.ShowSecurityPanel Then e.Handled = True : app.myViewModel.TiczMenu.ShowSecurityPanel = False : Exit Sub
+        If app.myViewModel.TiczMenu.ShowAbout Then e.Handled = True : app.myViewModel.TiczMenu.ShowAbout = False : Exit Sub
+        If app.myViewModel.TiczMenu.IsMenuOpen Then e.Handled = True : Dim cmd = app.myViewModel.TiczMenu.SettingsMenuGoBack : cmd.Execute(Nothing) : Exit Sub
+        If Not app.myViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
     End Sub
+
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
         WriteToDebug("App.OnNavigatedFrom", "executed")
@@ -51,7 +60,7 @@ Public NotInheritable Class SplitView
         Dim gv As GridView = CType(sender, GridView)
         Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
         Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
-        If amountOfColumns < TiczViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = TiczViewModel.TiczSettings.MinimumNumberOfColumns
+        If amountOfColumns < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = app.myViewModel.TiczSettings.MinimumNumberOfColumns
         Panel.ItemWidth = e.NewSize.Width / amountOfColumns
         WriteToDebug("Panel Width = ", Panel.ItemWidth)
     End Sub

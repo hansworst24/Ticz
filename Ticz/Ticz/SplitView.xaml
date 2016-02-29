@@ -12,6 +12,22 @@
     
     <Grid>
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="BackButtonStates">
+                <VisualState x:Name="ShowBackButton">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AppBarBackButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="HideBackButton">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AppBarBackButton">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
             <VisualStateGroup x:Name="AboutStates">
                 <VisualState x:Name="ShowAbout">
                     <Storyboard>
@@ -76,6 +92,22 @@
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DevicePassword">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="DeviceGraphsState">
+                <VisualState x:Name="ShowDeviceGraphs">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="GraphsList">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="HideDeviceGraphs">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="GraphsList">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -285,6 +317,16 @@
                 </Interactivity:Interaction.Behaviors>
             </local:ucSecurityPanel>
 
+            <local:ucDevice_GraphsList x:Name="GraphsList" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding ShowDeviceGraph}" Value="True">
+                        <Core:GoToStateAction StateName="ShowDeviceGraphs"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding ShowDeviceGraph}" Value="False">
+                        <Core:GoToStateAction StateName="HideDeviceGraphs"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </local:ucDevice_GraphsList>
 
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding currentRoom.RoomConfiguration.RoomView}" Value="Icon View">
@@ -308,16 +350,31 @@
             <local:ucToastMessage DataContext="{Binding Notify}"/>
         </Border>
     </Grid>
-   
+
     <Page.BottomAppBar>
-        <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" HorizontalContentAlignment="Stretch" Width="{Binding ElementName=RootSplitView, Path=ActualWidth}">
+    <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" HorizontalContentAlignment="Stretch" Width="{Binding ElementName=RootSplitView, Path=ActualWidth}">
             <CommandBar.Content>
                 <Grid HorizontalAlignment="Stretch">
-                    <AppBarButton Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" Height="48" Command="{Binding TiczMenu.OpenMenuCommand}">
-                        <AppBarButton.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
-                        </AppBarButton.Icon>
-                    </AppBarButton>
+                    <StackPanel Orientation="Horizontal">
+                        <AppBarButton Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" Height="48" Command="{Binding TiczMenu.OpenMenuCommand}">
+                            <AppBarButton.Icon>
+                                <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                        <!--<AppBarButton x:Name="AppBarBackButton" Width="48" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" Height="48" Command="{Binding GoBackCommand}">
+                            <AppBarButton.Icon>
+                                <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE112;"/>
+                            </AppBarButton.Icon>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowBackButton}" Value="True">
+                                    <Core:GoToStateAction StateName="ShowBackButton"/>
+                                </Core:DataTriggerBehavior>
+                                <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowBackButton}" Value="False">
+                                    <Core:GoToStateAction StateName="HideBackButton"/>
+                                </Core:DataTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </AppBarButton>-->
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <AppBarButton Name="abbRefresh" Icon="Refresh" HorizontalAlignment="Right" VerticalAlignment="Center" Height="48" Width="48" Command="{Binding RefreshCommand}"/>
                     </StackPanel>

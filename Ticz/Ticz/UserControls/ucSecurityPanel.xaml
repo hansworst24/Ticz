@@ -13,7 +13,7 @@
     d:DesignHeight="700"
     d:DesignWidth="700">
 
-    <Grid x:Name="rootGrid" Opacity="0">
+    <Grid x:Name="rootGrid" Opacity="1">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SecPanelState">
                 <VisualState x:Name="FadeIn">
@@ -30,8 +30,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Rectangle x:Name="BackDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Opacity="0.9"/>
-        <Grid x:Name="SecPanel" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="4">
+        <Rectangle x:Name="BackDrop2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8" Canvas.ZIndex="90"/>
+        <Rectangle x:Name="BackDrop1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundAltMediumLowBrush}" Canvas.ZIndex="91"/>
+        <Grid x:Name="SecPanel" Canvas.ZIndex="100" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>

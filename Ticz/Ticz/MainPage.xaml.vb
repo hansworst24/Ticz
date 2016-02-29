@@ -1,8 +1,6 @@
 ﻿' The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-Imports Newtonsoft.Json
-Imports Newtonsoft.Json.Linq
-Imports Ticz.AppSettings
+
 Imports Ticz.TiczViewModel
 Imports Windows.UI.Core
 Imports Windows.Web.Http
@@ -13,8 +11,8 @@ Imports WinRTXamlToolkit.Controls
 Public NotInheritable Class MainPage
     Inherits Page
 
-    Dim app As App = CType(Application.Current, App)
-    Dim vm As TiczViewModel = App.myViewModel
+    Private app As App = CType(Application.Current, App)
+    Private vm As TiczViewModel = app.myViewModel
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
 
@@ -47,7 +45,7 @@ Public NotInheritable Class MainPage
         Dim gv As GridView = CType(sender, GridView)
         Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
         Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
-        If amountOfColumns < TiczViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = TiczViewModel.TiczSettings.MinimumNumberOfColumns
+        If amountOfColumns < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = app.myViewModel.TiczSettings.MinimumNumberOfColumns
         Panel.ItemWidth = e.NewSize.Width / amountOfColumns
         WriteToDebug("Panel Width = ", Panel.ItemWidth)
     End Sub

@@ -8,7 +8,7 @@ Public NotInheritable Class AboutPage
     Inherits Page
 
 
-    Dim app As App = CType(Application.Current, App)
+    Private app As App = CType(Application.Current, App)
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
         AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested

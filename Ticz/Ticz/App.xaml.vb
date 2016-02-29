@@ -43,7 +43,7 @@ NotInheritable Class App
         If rootFrame Is Nothing Then
             ' Create a Frame to act as the navigation context and navigate to the first page
             rootFrame = New Frame()
-            If TiczViewModel.TiczSettings.UseDarkTheme Then rootFrame.RequestedTheme = ElementTheme.Dark Else rootFrame.RequestedTheme = ElementTheme.Light
+            If myViewModel.TiczSettings.UseDarkTheme Then rootFrame.RequestedTheme = ElementTheme.Dark Else rootFrame.RequestedTheme = ElementTheme.Light
             AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
             If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
@@ -88,7 +88,7 @@ NotInheritable Class App
 
 
     Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-        If TiczViewModel.TiczMenu.IsMenuOpen Then TiczViewModel.TiczMenu.IsMenuOpen = False
+        If myViewModel.TiczMenu.IsMenuOpen Then myViewModel.TiczMenu.IsMenuOpen = False
         WriteToDebug("App.App_BackRequested", "executed")
         Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         If rootFrame Is Nothing Then Exit Sub
