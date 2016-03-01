@@ -18,7 +18,7 @@
           VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1" >
         <Grid.Resources>
         </Grid.Resources>
-        <VisualStateManager.VisualStateGroups>
+        <!--<VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="LoadingView">
                 </VisualState>
@@ -167,7 +167,7 @@
                     </Storyboard>
                     </VisualState>
                 </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
+            </VisualStateManager.VisualStateGroups>-->
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -175,100 +175,32 @@
             </Grid.RowDefinitions>
             <!-- THIS IS THE HEADER FOR THE DEVICE, CONTAINING THE NAME-->
             <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5">
-                <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{Binding Name}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{Binding Name}" FontSize="{Binding HeaderFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
             </Border>
             <!-- THIS IS THE CONTENTS FOR THE DEVICE. IT CONTAINS BOTH AN ICON AND OPTIONALLY THE DEVICEDETAILS. 
             DEPENDING ON THE DEVICEVIEW(ICON/WIDE/LARGE) THE CONTENTS IS SPANNED ACROSS ONE OR MORE COLUMNS/ROWS THROUGH STATETRIGGERS-->
-            <Grid x:Name="DeviceContents" Grid.Row="1" Padding="0" Visibility="Visible">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button x:Name="DeviceSwitchButton" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Command="{Binding ButtonPressedCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{Binding ButtonColumnSpan}" Grid.RowSpan="{Binding ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Command="{Binding ButtonPressedCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
-                    <!--<Grid>-->
-                        <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="50" Width="50" Stretch="Uniform">
+                    <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="{Binding ButtonSize}" Width="{Binding ButtonSize}" Stretch="Uniform">
                         <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}"/>
                     </Viewbox>
-                    <!--</Grid>-->
                 </Button.Content>
             </Button>
-            <Grid x:Name="DeviceDetails" Grid.Row="0" Grid.Column="1" Visibility="Collapsed" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Stretch" >
-                <Grid.Resources>
-                    <Storyboard x:Name="MarqueeOn">
-                        <DoubleAnimation Storyboard.TargetName="SecondInfoText" Storyboard.TargetProperty="(Canvas.Left)" 
-                                                Duration="0:0:10" From="0" AutoReverse="True" 
-                                                To="{Binding MarqueeLength}" RepeatBehavior="Forever" />
-                    </Storyboard>
-                </Grid.Resources>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Canvas x:Name="MarqueeCanvas" Grid.Row="0" Visibility="Visible" Margin="0" HorizontalAlignment="Stretch" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True" Height="22">
-                    <TextBlock Name="SecondInfoText" Text="{Binding SecondaryInformation}" Foreground="#FF808080" FontSize="12" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SizeChanged">
-                                <Core:InvokeCommandAction Command="{Binding DataFieldChanged}" CommandParameter="{Binding ElementName=MarqueeCanvas}"/>
-                            </Core:EventTriggerBehavior>
-                            <Core:DataTriggerBehavior Binding="{Binding MarqueeStart}" Value="True">
-                                <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}"  ControlStoryboardOption="Play"/>
-                            </Core:DataTriggerBehavior>
-                            <Core:DataTriggerBehavior Binding="{Binding MarqueeStart}" Value="False">
-                                <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}"  ControlStoryboardOption="Stop"/>
-                            </Core:DataTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </TextBlock>
-                </Canvas>
-                <TextBlock x:Name="ThirdInfoText" Grid.Row="1" Text="{Binding TertiaryInformation}"   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
-                <TextBlock x:Name="FourthInfoText" Grid.Row="2" Text="{Binding QuaternaryInformation}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
-                
-                <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{Binding GroupVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="ButtonOn" Margin="0,0,10,0" Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
-                    <Button x:Name="ButtonOff" Margin="10,0,0,0" Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
-                </Grid>
-                <Border Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="{Binding DimmerVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Slider x:Name="PercentageSlider" VerticalAlignment="Center" Minimum="1" Maximum="100"  Margin="20,-10,20,-10" Value="{Binding LevelInt, Mode=TwoWay}" StepFrequency="1">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="PointerCaptureLost" SourceObject="{Binding ElementName=PercentageSlider}">
-                                <Core:InvokeCommandAction Command="{Binding SliderValueChanged}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </Slider>
-                </Border>
-                <Border Grid.Row="0" Grid.RowSpan="2" Padding="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="{Binding SelectorVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <ComboBox Grid.Row="1" x:Name="cbSelector" HorizontalAlignment="Stretch" VerticalAlignment="Center" DropDownClosed="cbSelector_DropDownClosed"  ItemsSource="{Binding LevelNamesList}" SelectedIndex="{Binding LevelNameIndex, Mode=TwoWay}" Style="{StaticResource RoundedComboBoxStyle}" >
-                        <!--<Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="DropDownClosed" >
-                                <Core:InvokeCommandAction Command="{Binding SelectorSelectionChanged}" CommandParameter="{Binding ElementName=cbSelector}" />
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>-->
-                    </ComboBox>
-                </Border>
-                <Border Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="{Binding BlindsVisibility}" Style="{StaticResource DeviceBorderLess}">
-                    <Grid  VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
-                        <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
-                    </Grid>
-                </Border>
-            </Grid>
+            <ContentControl x:Name="DeviceDetails" Grid.Row="{Binding ContentRow}" Grid.Column="{Binding ContentColumn}" Grid.ColumnSpan="{Binding ContentColumnSpan}" ContentTemplate="{Binding DeviceContentTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Grid>
+   
         <!-- THIS IS THE FOOTER FOR THE DEVICE, CONTAINING THE PRIMARY DEVICE INFORMATION-->
             <Border x:Name="PrimaryInfo" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Padding="0">
-                <TextBlock x:Name="Footer"  Text="{Binding PrimaryInformation}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            <TextBlock x:Name="Footer"  Text="{Binding FooterText}" FontSize="{Binding FooterFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
             </Border>
         <!-- THIS IS THE FLYOUT MENU FOR THE DEVICE-->
         <FlyoutBase.AttachedFlyout>
@@ -284,26 +216,20 @@
             </MenuFlyout>
         </FlyoutBase.AttachedFlyout>
         <Interactivity:Interaction.Behaviors>
-            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation}" Value="Wide">
-                <Core:GoToStateAction StateName="WideView" />
-            </Core:DataTriggerBehavior>
-            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation}" Value="Icon">
-                <Core:GoToStateAction StateName="IconView" />
-            </Core:DataTriggerBehavior>
-            <Core:DataTriggerBehavior Binding="{Binding DeviceRepresentation}" Value="Large">
-                <Core:GoToStateAction StateName="LargeView" />
-            </Core:DataTriggerBehavior>
            <Core:EventTriggerBehavior EventName="RightTapped">
                 <local:OpenMenuFlyoutAction />
             </Core:EventTriggerBehavior>
             <Core:EventTriggerBehavior EventName="Holding">
                 <local:OpenMenuFlyoutAction />
             </Core:EventTriggerBehavior>
-            <Core:EventTriggerBehavior EventName="Loaded">
-                <Core:GoToStateAction StateName="IconView" />
+            <!--<Core:EventTriggerBehavior EventName="Loaded">
                 <Core:InvokeCommandAction Command="{Binding DeviceLoaded}"/>
-            </Core:EventTriggerBehavior>
+            </Core:EventTriggerBehavior>-->
         </Interactivity:Interaction.Behaviors>
     </Grid>
-
+    <!--<Interactivity:Interaction.Behaviors>
+        <Core:EventTriggerBehavior EventName="Unloaded">
+            <Core:InvokeCommandAction Command="{Binding DeviceUnloaded}"/>
+        </Core:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>-->
 </UserControl>

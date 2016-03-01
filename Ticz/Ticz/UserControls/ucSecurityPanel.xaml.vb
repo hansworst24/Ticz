@@ -3,7 +3,7 @@
 Public NotInheritable Class ucSecurityPanel
     Inherits UserControl
 
-    Private app As App = CType(Application.Current, App)
+    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
     Public Sub New()
 
         ' This call is required by the designer.

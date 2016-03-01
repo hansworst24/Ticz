@@ -2,8 +2,8 @@
 ''' <summary>
 ''' Provides application-specific behavior to supplement the default Application class.
 ''' </summary>
-NotInheritable Class App
-    Inherits Application
+NotInheritable Class Application
+    Inherits Windows.UI.Xaml.Application
 
     Public myViewModel As New TiczViewModel
 

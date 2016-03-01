@@ -231,7 +231,7 @@ Public NotInheritable Class TiczStorage
     Public Class RoomConfigurations
         Inherits ObservableCollection(Of RoomConfiguration)
 
-        Private app As App = CType(Application.Current, App)
+        Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
 
         Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
@@ -343,12 +343,12 @@ Public NotInheritable Class TiczStorage
         Public Property DeviceName As String
         Public Property DeviceOrder As Integer
         Public Property DeviceRepresentation As String
-        Public Property ColumnSpan As Integer
-        Public Property RowSpan As Integer
+        'Public Property ColumnSpan As Integer
+        'Public Property RowSpan As Integer
 
         Public Sub New()
-            ColumnSpan = 1
-            RowSpan = 1
+            'ColumnSpan = 1
+            'RowSpan = 1
         End Sub
     End Class
 
@@ -361,7 +361,7 @@ Public NotInheritable Class TiczStorage
         Public Function GetDeviceConfigurationForDevice(idx As Integer, name As String) As DeviceConfiguration
             Dim d As DeviceConfiguration = (From deviceconfigs In Me Where deviceconfigs.DeviceIDX = idx And deviceconfigs.DeviceName = name Select deviceconfigs).FirstOrDefault()
             If d Is Nothing Then
-                d = New DeviceConfiguration With {.ColumnSpan = 1, .DeviceIDX = idx, .DeviceName = name, .RowSpan = 1, .DeviceRepresentation = "Icon", .DeviceOrder = Me.Count}
+                d = New DeviceConfiguration With {.DeviceIDX = idx, .DeviceName = name, .DeviceRepresentation = "Icon", .DeviceOrder = Me.Count}
                 Me.Add(d)
             End If
             Return d
@@ -403,23 +403,23 @@ Public NotInheritable Class TiczStorage
             End If
         End Sub
 
-        Public Function RowSpan(idx As Integer, name As String)
-            Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
-            If Not dc Is Nothing Then
-                Return dc.RowSpan
-            Else
-                Return 1
-            End If
-        End Function
+        'Public Function RowSpan(idx As Integer, name As String)
+        '    Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+        '    If Not dc Is Nothing Then
+        '        Return dc.RowSpan
+        '    Else
+        '        Return 1
+        '    End If
+        'End Function
 
-        Public Function ColumnSpan(idx As Integer, name As String)
-            Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
-            If Not dc Is Nothing Then
-                Return dc.ColumnSpan
-            Else
-                Return 1
-            End If
-        End Function
+        'Public Function ColumnSpan(idx As Integer, name As String)
+        '    Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
+        '    If Not dc Is Nothing Then
+        '        Return dc.ColumnSpan
+        '    Else
+        '        Return 1
+        '    End If
+        'End Function
     End Class
 
 
@@ -428,7 +428,7 @@ End Class
 
 Public NotInheritable Class Domoticz
 
-    Private app As App = CType(Application.Current, App)
+    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
     Public Class Settings
         Public Property SecOnDelay As Integer
@@ -638,7 +638,7 @@ Public NotInheritable Class Domoticz
 
         End Sub
 
-        Public Async Function Load(d As Device) As Task
+        Public Async Function Load(d As DeviceViewModel) As Task
             If Not url = "" Then
                 Dim ret As New retvalue
                 Dim zut As New DeviceGraphContainer
@@ -760,7 +760,7 @@ Public NotInheritable Class Domoticz
         Public Property status As String
         Public Property title As String
 
-        Private app As App = CType(Application.Current, App)
+        Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
         Public Sub New()
             result = New ObservableCollection(Of Plan)
@@ -828,8 +828,8 @@ Public NotInheritable Class Domoticz
     Public Async Function DownloadJSON(url As String) As Task(Of HttpResponseMessage)
 
         Using filter As New HttpBaseProtocolFilter
-            If Not App.myViewModel.TiczSettings.Password = "" AndAlso Not App.myViewModel.TiczSettings.Username = "" Then
-                filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = App.myViewModel.TiczSettings.Password, .UserName = App.myViewModel.TiczSettings.Username}
+            If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
+                filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
             End If
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
             filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
@@ -860,12 +860,12 @@ Public Class VariableGrid
 
     Protected Overrides Sub PrepareContainerForItemOverride(element As DependencyObject, item As Object)
         MyBase.PrepareContainerForItemOverride(element, item)
-        Dim tile = TryCast(item, Device)
+        Dim tile = TryCast(item, DeviceViewModel)
         If Not tile Is Nothing Then
             Dim griditem = TryCast(element, GridViewItem)
             If Not griditem Is Nothing Then
-                VariableSizedWrapGrid.SetColumnSpan(griditem, tile.ColumnSpan)
-                VariableSizedWrapGrid.SetRowSpan(griditem, tile.RowSpan)
+                VariableSizedWrapGrid.SetColumnSpan(griditem, tile.DeviceColumnSpan)
+                VariableSizedWrapGrid.SetRowSpan(griditem, tile.DeviceRowSpan)
             End If
         End If
     End Sub
@@ -895,12 +895,16 @@ Public NotInheritable Class DomoApi
     '   "title" : "SwitchLight"
     '}
 
-    Private app As App = CType(Application.Current, App)
+    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
     Public Function getSecurityStatus()
         Return String.Format("http://{0}:{1}/json.htm?type=command&param=getsecstatus", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
     End Function
 
+
+    Public Function setSetpoint(idx As Integer, setpointvalue As Double)
+        Return String.Format("http://{0}:{1}/json.htm?type=command&param=setsetpoint&idx={2}&setpoint={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, setpointvalue)
+    End Function
     Public Function setSecurityStatus(status As Integer, HashCode As String)
         Return String.Format("http://{0}:{1}/json.htm?type=command&param=setsecstatus&secstatus={2}&seccode={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, status, HashCode)
     End Function

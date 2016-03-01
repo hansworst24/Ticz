@@ -11,7 +11,7 @@ Imports WinRTXamlToolkit.Controls
 Public NotInheritable Class MainPage
     Inherits Page
 
-    Private app As App = CType(Application.Current, App)
+    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
     Private vm As TiczViewModel = app.myViewModel
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)

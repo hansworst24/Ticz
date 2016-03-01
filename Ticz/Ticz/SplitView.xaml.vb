@@ -8,7 +8,7 @@ Imports Windows.UI.Core
 Public NotInheritable Class SplitView
     Inherits Page
 
-    Private app As App = CType(Application.Current, App)
+    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
     'Dim vm As TiczViewModel = app.myViewModel
 
     Public Sub New()
