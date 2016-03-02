@@ -211,6 +211,7 @@
                 <MenuFlyoutItem x:Name="mfSmall" Text="Icon" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfSmall, Path=Text}"/>
                 <MenuFlyoutItem x:Name="mfWide" Text="Wide" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfWide, Path=Text}"/>
                 <MenuFlyoutItem x:Name="mfLarge" Text="Large" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfLarge, Path=Text}"/>
+                <MenuFlyoutSeparator Visibility="{Binding MoveUpDashboardVisibility}"/>
                 <MenuFlyoutItem Text="Move Up" Visibility="{Binding MoveUpDashboardVisibility}" Command="{Binding MoveUpDashboardCommand}"/>
                 <MenuFlyoutItem Text="Move Down" Visibility="{Binding MoveDownDashboardVisibility}" Command="{Binding MoveDownDashboardCommand}"/>
             </MenuFlyout>

@@ -255,7 +255,7 @@
                 <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Wind speed in m/s" LabelFormat="#.0 m/s"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="{Binding WindGraphHeader}" LabelFormat="{Binding WindYScale}"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:FastLineSeries Label="Speed" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="sp">
                 <SyncFusion:FastLineSeries.Trendlines>
@@ -272,7 +272,7 @@
                 <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Wind speed in m/s" LabelFormat="#.0 m/s"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="{Binding WindGraphHeader}" LabelFormat="{Binding WindYScale}"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:SplineSeries Label="Speed" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="sp"/>
             <SyncFusion:SplineSeries Label="Gust" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="gu"/>
@@ -284,7 +284,7 @@
                 <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Wind speed in m/s" LabelFormat="#.0 m/s"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="{Binding WindGraphHeader}" LabelFormat="{Binding WindYScale}"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:SplineSeries Label="Speed" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="sp"/>
             <SyncFusion:SplineSeries Label="Gust"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="gu"/>
@@ -552,17 +552,17 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button Margin="0,0,10,0"  Height="32" Width="32" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" HorizontalAlignment="Stretch" Command="{Binding SetPointUpCommand}">
+                    <Button Margin="0,0,20,0"  Height="28" Width="36" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" HorizontalAlignment="Stretch" Command="{Binding SetPointUpCommand}">
                         <Button.Content>
-                            <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets" FontSize="20"/>
+                            <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
                         </Button.Content>
                     </Button>
-                    <Button Margin="0,0,0,0"  Height="32" Width="32" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" HorizontalAlignment="Stretch" Command="{Binding SetPointDownCommand}">
+                    <Button Margin="0,0,0,0"  Height="28" Width="36" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" HorizontalAlignment="Stretch" Command="{Binding SetPointDownCommand}">
                         <Button.Content>
-                            <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets" FontSize="20"/>
+                            <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
                         </Button.Content>
                     </Button>
-                    <Button Margin="10,0,0,0"  Height="32" Width="48" MaxWidth="200" Padding="0" Grid.Column="2" Style="{StaticResource DeviceButton}" Content="SET" FontSize="20" HorizontalAlignment="Stretch" Command="{Binding SetSetPointCommand}"/>
+                    <Button Margin="20,0,0,0"  Height="28" Width="48" MaxWidth="200" Padding="0" Grid.Column="2" Style="{StaticResource DeviceButton}" VerticalContentAlignment="Center" Content="SET" FontSize="20" HorizontalAlignment="Stretch" Command="{Binding SetSetPointCommand}"/>
                 </Grid>
             </Border>
             <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>

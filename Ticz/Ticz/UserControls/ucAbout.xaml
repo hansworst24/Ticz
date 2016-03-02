@@ -21,7 +21,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Image Grid.Row="0" HorizontalAlignment="Right" Height="150" VerticalAlignment="Bottom" Source="/Assets/Square150x150Logo.scale-100.png"/>
+            <Image Grid.Row="0" HorizontalAlignment="Right" Height="150" VerticalAlignment="Bottom" Source="/Images/TiczLogo.png"/>
         </Grid>
         <ScrollViewer x:Name="scrolly" VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="00,0,10,0">
             <Grid Margin="10,40,10,0">

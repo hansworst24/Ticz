@@ -29,6 +29,10 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                    <TextBlock    Text="Only show Favorites" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Enabling this setting will cause only 'Starred' devices to show up, in other words, the ones that are shown on the Dashboard Page in Domoticz." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ToggleSwitch IsOn="{Binding TiczSettings.OnlyShowFavourites, Mode=TwoWay}"/>
+
                     <TextBlock    Text="Add 'All Devices' Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Add a Room which contains All Devices" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{Binding TiczSettings.ShowAllDevices, Mode=TwoWay}"/>

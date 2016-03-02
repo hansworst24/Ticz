@@ -605,6 +605,24 @@ Public NotInheritable Class Domoticz
         Public Property devicename As String
         Public Property title As String
         Public Property devicetype As String
+        Public ReadOnly Property WindGraphHeader As String
+            Get
+                Return String.Format("Wind Speed in {0}", WindSign)
+            End Get
+        End Property
+
+        Public ReadOnly Property WindSign As String
+            Get
+                Dim app As Application = CType(Application.Current, Application)
+                Return app.myViewModel.DomoConfig.WindSign
+            End Get
+        End Property
+
+        Public ReadOnly Property WindYScale As String
+            Get
+                Return String.Format("#.0 {0}", WindSign)
+            End Get
+        End Property
         Public Property subtype As String
 
 
@@ -803,12 +821,14 @@ Public NotInheritable Class Domoticz
                     If app.myViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
                 End If
 
+
                 'Re-order the Plans
                 For i As Integer = 0 To Me.result.Count - 1 Step 1
                     Me.result(i).Order = i
                 Next
                 Me.status = deserialized.status
                 Me.title = deserialized.status
+                deserialized = Nothing
                 Return New retvalue With {.issuccess = True}
             Else
                 WriteToDebug("Plans.Load()", response.ReasonPhrase)

@@ -189,6 +189,11 @@ Public Class DeviceViewModel
             Return _Device.Description
         End Get
     End Property
+    Public ReadOnly Property DeviceModel As DeviceModel
+        Get
+            Return _Device
+        End Get
+    End Property
     Public ReadOnly Property DeviceContentTemplate As DataTemplate
         Get
             Select Case DeviceRepresentation
@@ -285,7 +290,10 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property FooterText As String
         Get
+            Dim app As Application = CType(Application.Current, Application)
             Select Case Type
+                Case Constants.DEVICE.TYPE.RAIN : Return RainRainRate
+                Case Constants.DEVICE.TYPE.WIND : Return String.Format("{0}{1} | {2} {3}", Direction, DirectionStr, Speed, WindSign)
                 Case Constants.DEVICE.TYPE.THERMOSTAT : Return String.Format("{0:0.0}", CType(Data, Double))
                 Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
                     Dim a As Application = CType(Windows.UI.Xaml.Application.Current, Application)
@@ -304,6 +312,14 @@ Public Class DeviceViewModel
     Public ReadOnly Property GasUsage As String
         Get
             Return String.Format("Usage: {0} | Today: {1}", _Device.Counter, _Device.CounterToday)
+        End Get
+    End Property
+    Public ReadOnly Property GraphsMenuItemVisibility As String
+        Get
+            Select Case Type
+                Case Constants.DEVICE.TYPE.P1_SMART_METER : Return Constants.VISIBLE
+                Case Else : Return Constants.COLLAPSED
+            End Select
         End Get
     End Property
     Public Property Gust As String
@@ -506,6 +522,22 @@ Public Class DeviceViewModel
             Return _Device.MaxDimLevel
         End Get
     End Property
+    Public ReadOnly Property MoveUpDashboardVisibility As String
+        Get
+            Select Case RoomView
+                Case Constants.ROOMVIEW.DASHVIEW : Return Constants.VISIBLE
+                Case Else : Return Constants.COLLAPSED
+            End Select
+        End Get
+    End Property
+    Public ReadOnly Property MoveDownDashboardVisibility As String
+        Get
+            Select Case RoomView
+                Case Constants.ROOMVIEW.DASHVIEW : Return Constants.VISIBLE
+                Case Else : Return Constants.COLLAPSED
+            End Select
+        End Get
+    End Property
     Public ReadOnly Property Name As String
         Get
             Return _Device.Name
@@ -542,7 +574,7 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property RainRainRate As String
         Get
-            Return String.Format("{0} | {1} ", _Device.Rain, _Device.RainRate)
+            Return String.Format("{0} mm | {1} mm/h", _Device.Rain, _Device.RainRate)
         End Get
     End Property
     Public Property RainRate As String
@@ -554,7 +586,14 @@ Public Class DeviceViewModel
             RaisePropertyChanged("RainRate")
         End Set
     End Property
-    Public Property ResizeContextMenuVisibility As String
+    Public ReadOnly Property ResizeContextMenuVisibility As String
+        Get
+            Select Case RoomView
+                Case Constants.ROOMVIEW.DASHVIEW, Constants.ROOMVIEW.RESIZEVIEW : Return Constants.VISIBLE
+                Case Else : Return Constants.COLLAPSED
+            End Select
+        End Get
+    End Property
     Public Property RoomView As String
     Public Property Speed As String
         Get
@@ -629,6 +668,12 @@ Public Class DeviceViewModel
             RaisePropertyChanged("UsageDeliv")
         End Set
     End Property
+    Public ReadOnly Property WindSign As String
+        Get
+            Dim app As Application = CType(Application.Current, Application)
+            Return app.myViewModel.DomoConfig.WindSign
+        End Get
+    End Property
     Public ReadOnly Property idx As String
         Get
             Return _Device.idx
@@ -662,26 +707,6 @@ Public Class DeviceViewModel
             End Select
         End Get
     End Property
-    Public Property MoveUpDashboardVisibility As String
-        Get
-            Return _MoveUpDashboardVisibility
-        End Get
-        Set(value As String)
-            _MoveUpDashboardVisibility = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _MoveUpDashboardVisibility As String
-    Public Property MoveDownDashboardVisibility As String
-        Get
-            Return _MoveDownDashboardVisibility
-        End Get
-        Set(value As String)
-            _MoveDownDashboardVisibility = value
-            RaisePropertyChanged()
-        End Set
-    End Property
-    Private Property _MoveDownDashboardVisibility As String
     Public Property DeviceRepresentation As String
         Get
             Select Case RoomView
@@ -873,6 +898,7 @@ Public Class DeviceViewModel
     Public ReadOnly Property SetPointUpCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
+                                        'For the moment we assume that a SetPoint only handles temperature changes. We allow the temp to be set in half degrees increments
                                         Data = CType(Data, Double) + 0.5
                                     End Sub)
         End Get
@@ -880,6 +906,7 @@ Public Class DeviceViewModel
     Public ReadOnly Property SetPointDownCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
+                                        'For the moment we assume that a SetPoint only handles temperature changes. We allow the temp to be set in half degrees increments
                                         Data = CType(Data, Double) - 0.5
                                     End Sub)
         End Get
@@ -998,15 +1025,6 @@ Public Class DeviceViewModel
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.ButtonPressedCommand()", "executed")
                                         If Me.CanBeSwitched Then
-                                            'Exit the Sub if the device is password protected. Show the password context menu, and let that handle the switch
-                                            If [Protected] Then
-                                                SwitchingToState = ""
-                                                Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                                vm.selectedDevice = Me
-                                                vm.ShowDevicePassword = True
-                                                Exit Sub
-                                            End If
-                                            'Else, Execute the switch
                                             Dim ret As retvalue = Await SwitchDevice()
                                         Else
                                             'Only get the status of the device if it can't be switched
@@ -1038,8 +1056,6 @@ Public Class DeviceViewModel
                                             app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
                                         End If
                                         Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-                                        Await Me.SetMoveUpDownVisibility()
-                                        Await app.myViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
                                     End Sub)
 
         End Get
@@ -1057,8 +1073,6 @@ Public Class DeviceViewModel
                                             app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex + 1, Me)
                                         End If
                                         Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-                                        Await Me.SetMoveUpDownVisibility()
-                                        Await app.myViewModel.currentRoom.GetActiveDeviceList(myIndex).SetMoveUpDownVisibility()
                                     End Sub)
 
         End Get
@@ -1077,7 +1091,6 @@ Public Class DeviceViewModel
 
         If response.IsSuccessStatusCode Then
             Dim deserialized = JsonConvert.DeserializeObject(Of DevicesModel)(Await response.Content.ReadAsStringAsync)
-            'Dim myDevice As Device = (From dev In deserialized.result Where dev.idx = idx Select dev).FirstOrDefault()
             Dim myDevice As DeviceModel = (From dev In deserialized.result Where dev.idx = idx Select dev).FirstOrDefault()
             If Not myDevice Is Nothing Then
                 Return myDevice
@@ -1091,6 +1104,13 @@ Public Class DeviceViewModel
         End If
     End Function
 
+    ''' <summary>
+    ''' Handles the update of properties for DeviceViewModel, based on a received update of a DeviceModel. If no updated
+    ''' DeviceModel has been sent, the DeviceViewModel will request one. If there are certain values of a device that do not
+    ''' seem to get updated during a refresh, they are very likely not included here.
+    ''' </summary>
+    ''' <param name="d">A DeviceModel containing updated values for the device</param>
+    ''' <returns></returns>
     Public Async Function Update(Optional d As DeviceModel = Nothing) As Task
         'If we haven't sent an updated device to this function, retrieve the device's latest status from the server
         If d Is Nothing Then
@@ -1098,12 +1118,15 @@ Public Class DeviceViewModel
         End If
 
         If Not d Is Nothing Then
-            'Set properties which raise propertychanged events on the UI thread
             Level = d.Level
             If (SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Or SwitchType = Constants.DEVICE.SWITCHTYPE.SELECTOR) AndAlso MaxDimLevel <> 0 Then
                 LevelInt = Math.Floor((100 / MaxDimLevel) * d.LevelInt)
             End If
             LastUpdate = d.LastUpdate
+            Direction = d.Direction
+            DirectionStr = d.DirectionStr
+            Speed = d.Speed
+            Gust = d.Gust
             Data = d.Data
             Status = d.Status
             Counter = d.Counter
@@ -1117,76 +1140,67 @@ Public Class DeviceViewModel
     End Function
 
     Public Async Function SwitchGroup(ToStatus As String) As Task
-        WriteToDebug("Device.SwitchGroup()", "executed")
-        If [Protected] Then
-            SwitchingToState = ToStatus
-            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-            vm.selectedDevice = Me
-            vm.ShowDevicePassword = False
-            Exit Function
-        Else
-            Await SwitchDevice(ToStatus)
-        End If
+        Await SwitchDevice(ToStatus)
     End Function
 
-    Public Async Function SetMoveUpDownVisibility() As Task
-        Await RunOnUIThread(Sub()
-                                Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-                                Select Case app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                    Case 0
-                                        Me.MoveUpDashboardVisibility = Constants.COLLAPSED
-                                        Me.MoveDownDashboardVisibility = Constants.VISIBLE
-                                    Case app.myViewModel.currentRoom.GetActiveDeviceList.Count - 1
-                                        Me.MoveUpDashboardVisibility = Constants.VISIBLE
-                                        Me.MoveDownDashboardVisibility = Constants.COLLAPSED
-                                    Case Else
-                                        Me.MoveUpDashboardVisibility = Constants.VISIBLE
-                                        Me.MoveDownDashboardVisibility = Constants.VISIBLE
-                                End Select
-                            End Sub)
-
-
-    End Function
 
     Public Async Function SwitchDevice(Optional forcedSwitchToState As String = "") As Task(Of retvalue)
         Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-        'Identify what kind of device we are and in what state we're in in order to perform the switch
-        Dim url, switchToState As String
-        If Not forcedSwitchToState = "" Then
-            switchToState = forcedSwitchToState
-        Else
-            If Me.isOn Then switchToState = Constants.DEVICE.STATUS.OFF Else switchToState = Constants.DEVICE.STATUS.ON
+
+        If Not forcedSwitchToState = "" Then SwitchingToState = forcedSwitchToState
+        'Check if the device is password protected. If so, show the password prompt box and exit
+        If [Protected] And PassCode = "" Then
+            app.myViewModel.selectedDevice = Me
+            app.myViewModel.ShowDevicePassword = True
+            Exit Function
         End If
+
+        'Identify what kind of device we are and in what state we're in in order to perform the switch
+        Dim url As String
         Select Case Type
             Case Constants.DEVICE.TYPE.THERMOSTAT
-                url = (New DomoApi).setSetpoint(Me.idx, switchToState)
+                url = (New DomoApi).setSetpoint(Me.idx, forcedSwitchToState)
             Case Constants.DEVICE.TYPE.GROUP
-                If forcedSwitchToState = "" Then
-                    If Me.Status = Constants.DEVICE.STATUS.OFF Or Me.Status = "Mixed" Then switchToState = Constants.DEVICE.STATUS.ON Else switchToState = Constants.DEVICE.STATUS.OFF
+                If SwitchingToState = "" Then
+                    If Me.Status = Constants.DEVICE.STATUS.OFF Or Me.Status = "Mixed" Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
                 End If
-                url = (New DomoApi).SwitchScene(Me.idx, switchToState, PassCode)
+                url = (New DomoApi).SwitchScene(Me.idx, SwitchingToState, PassCode)
             Case Constants.DEVICE.TYPE.SCENE
                 url = (New DomoApi).SwitchScene(Me.idx, Constants.DEVICE.STATUS.ON, PassCode)
-        End Select
-        Select Case SwitchType
-            Case Nothing
-                Exit Select
-            Case Constants.DEVICE.SWITCHTYPE.PUSH_ON_BUTTON
-                url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.ON, PassCode)
-            Case Constants.DEVICE.SWITCHTYPE.PUSH_OFF_BUTTON
-                url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.OFF, PassCode)
-            Case Constants.DEVICE.SWITCHTYPE.DIMMER
-                url = (New DomoApi).setDimmer(idx, switchToState)
-            Case Constants.DEVICE.SWITCHTYPE.SELECTOR
-                url = (New DomoApi).setDimmer(idx, switchToState)
             Case Else
-                url = (New DomoApi).SwitchLight(Me.idx, switchToState, PassCode)
+                Select Case SwitchType
+                    Case Nothing
+                        Exit Select
+                    Case Constants.DEVICE.SWITCHTYPE.PUSH_ON_BUTTON
+                        url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.ON, PassCode)
+                    Case Constants.DEVICE.SWITCHTYPE.PUSH_OFF_BUTTON
+                        url = (New DomoApi).SwitchLight(Me.idx, Constants.DEVICE.STATUS.OFF, PassCode)
+                    Case Constants.DEVICE.SWITCHTYPE.DIMMER
+                        If SwitchingToState = "" Then
+                            If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
+                            url = (New DomoApi).setDimmer(idx, SwitchingToState)
+                        End If
+                    Case Constants.DEVICE.SWITCHTYPE.SELECTOR
+                        If SwitchingToState = "" Then
+                            If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
+                        End If
+                        url = (New DomoApi).setDimmer(idx, SwitchingToState)
+                    Case Else
+                        If SwitchingToState = "" Then
+                            If Me.isOn Then SwitchingToState = Constants.DEVICE.STATUS.OFF Else SwitchingToState = Constants.DEVICE.STATUS.ON
+                        End If
+                        url = (New DomoApi).SwitchLight(Me.idx, SwitchingToState, PassCode)
+                End Select
         End Select
 
+        If url = "" Then
+            Await app.myViewModel.Notify.Update(True, "Don't know how to switch :(", 4)
+            Exit Function
+        End If
 
         Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
         If Not response.IsSuccessStatusCode Then
-            Await App.myViewModel.Notify.Update(True, "Error switching device")
+            Await app.myViewModel.Notify.Update(True, "Error switching device")
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
@@ -1194,15 +1208,17 @@ Public Class DeviceViewModel
                 Try
                     domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
                     If domoRes.status <> "OK" Then
-                        Await App.myViewModel.Notify.Update(True, domoRes.message)
+                        Await app.myViewModel.Notify.Update(True, domoRes.message)
                         Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                     Else
-                        Await App.myViewModel.Notify.Update(False, "Device switched")
+                        Await app.myViewModel.Notify.Update(False, "Device switched")
                     End If
                     Await Me.Update()
+                    domoRes = Nothing
+                    SwitchingToState = ""
                     Return New retvalue With {.issuccess = 1}
                 Catch ex As Exception
-                    App.myViewModel.Notify.Update(True, "Server sent empty response")
+                    app.myViewModel.Notify.Update(True, "Server sent empty response")
                     Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
                 End Try
             End If

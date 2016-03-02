@@ -1,4 +1,4 @@
-﻿
+﻿'Returned JSON result from Domoticz for a list of devices
 Public Class DevicesModel
     Public Property result As List(Of DeviceModel)
     Public Property status As String

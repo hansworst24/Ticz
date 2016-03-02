@@ -227,6 +227,9 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,48">
+            <local:ucToastMessage DataContext="{Binding Notify}"/>
+        </Border>
         <local:ucSplitviewPaneMenu Width="300" Margin="0,0,0,49" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True"  Canvas.ZIndex="100" HorizontalAlignment="Left">
             <local:ucSplitviewPaneMenu.RenderTransform>
                 <TranslateTransform x:Name="MenuTranslate" X="-300"/>
@@ -346,9 +349,7 @@
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Grid>
-        <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,48">
-            <local:ucToastMessage DataContext="{Binding Notify}"/>
-        </Border>
+
     </Grid>
 
     <Page.BottomAppBar>

@@ -16,10 +16,11 @@ Public NotInheritable Class SplitView
     End Sub
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
-        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
-        AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
-
-        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+        '        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
+        If e.NavigationMode = NavigationMode.New Then
+            AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
+        End If
+        '        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         'If rootFrame.CanGoBack Then
         'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
         'Else

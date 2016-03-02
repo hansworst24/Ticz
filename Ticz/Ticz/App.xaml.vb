@@ -32,7 +32,7 @@ NotInheritable Class Application
         End If
 #End If
         'Add BackKeyHandler for HardwareButtons
-        AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
+        'AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
 
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
 
@@ -87,18 +87,18 @@ NotInheritable Class Application
     End Sub
 
 
-    Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-        If myViewModel.TiczMenu.IsMenuOpen Then myViewModel.TiczMenu.IsMenuOpen = False
-        WriteToDebug("App.App_BackRequested", "executed")
-        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
-        If rootFrame Is Nothing Then Exit Sub
-        If rootFrame.CanGoBack AndAlso e.Handled = False Then
-            e.Handled = True
-            rootFrame.GoBack()
+    'Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+    '    If myViewModel.TiczMenu.IsMenuOpen Then myViewModel.TiczMenu.IsMenuOpen = False
+    '    WriteToDebug("App.App_BackRequested", "executed")
+    '    Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
+    '    If rootFrame Is Nothing Then Exit Sub
+    '    If rootFrame.CanGoBack AndAlso e.Handled = False Then
+    '        e.Handled = True
+    '        rootFrame.GoBack()
 
-        End If
+    '    End If
 
-    End Sub
+    'End Sub
 
     ''' <summary>
     ''' Invoked when Navigation to a certain page fails
