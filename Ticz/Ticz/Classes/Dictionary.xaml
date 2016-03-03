@@ -297,7 +297,7 @@
                 <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm" Minimum="0"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:ColumnSeries Label="Rain" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="mm" />
         </SyncFusion:SfChart>
@@ -309,7 +309,7 @@
                 <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm" Minimum="0"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:ColumnSeries Label="Rain" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="mm" />
         </SyncFusion:SfChart>
@@ -320,7 +320,7 @@
                 <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm" Minimum="0"  FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:SplineSeries Label="Rain" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="mm"/>
         </SyncFusion:SfChart>
@@ -331,7 +331,7 @@
                 <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
-                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm"  FontSize="12" />
+                <SyncFusion:NumericalAxis Header="Rain in mm" LabelFormat="#.0 mm" Minimum="0" FontSize="12" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:SplineSeries Label="Rain" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="mm"/>
         </SyncFusion:SfChart>
