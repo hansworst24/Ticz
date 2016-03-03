@@ -1258,7 +1258,11 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("TiczMenuSettings.ReloadCommand()", "executed")
                                         IsMenuOpen = False
+                                        ShowSecurityPanel = False
                                         Dim app As Application = CType(Xaml.Application.Current, Application)
+                                        app.myViewModel.ShowDeviceGraph = False
+                                        app.myViewModel.ShowDeviceDetails = False
+                                        app.myViewModel.ShowDevicePassword = False
                                         Await app.myViewModel.Load()
 
                                     End Sub)
