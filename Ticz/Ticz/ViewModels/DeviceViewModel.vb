@@ -460,7 +460,8 @@ Public Class DeviceViewModel
     End Property
     Public Property LastUpdate As String
         Get
-            Return _Device.LastUpdate
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+            If vm.TiczSettings.ShowLastSeen Then Return _Device.LastUpdate Else Return ""
         End Get
         Set(value As String)
             _Device.LastUpdate = value
