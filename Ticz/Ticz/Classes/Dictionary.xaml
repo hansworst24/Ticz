@@ -601,9 +601,7 @@
             <TextBlock x:Name="FourthInfoText" Grid.Row="2" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
         </Grid>
     </DataTemplate>
-    
-
-
+ 
     <Style TargetType="TextBlock" x:Key="LCDPanel">
         <Setter Property="FontFamily" Value="ms-appx:///Fonts/LCD.TTF#LCD2"/>
     </Style>

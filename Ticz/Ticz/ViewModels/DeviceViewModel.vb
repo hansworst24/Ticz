@@ -999,10 +999,12 @@ Public Class DeviceViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.ShowDeviceGraphs()", "executed")
-                                        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
                                         SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
                                         '                                        app.myViewModel.selectedDevice = Me
-                                        Await app.myViewModel.LoadGraphData(Me)
+                                        Await vm.LoadGraphData(Me)
+                                        vm.TiczMenu.ShowSecurityPanel = False
+                                        vm.ShowBackButton = True
                                         '                                        app.myViewModel.Notify.Clear()
 
                                     End Sub)
@@ -1016,6 +1018,7 @@ Public Class DeviceViewModel
                                         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
                                         vm.selectedDevice = Me
                                         vm.ShowDeviceDetails = True
+                                        vm.ShowBackButton = True
                                         WriteToDebug(vm.selectedDevice.Name, "should be there")
                                     End Sub)
         End Get
@@ -1049,14 +1052,14 @@ Public Class DeviceViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.MoveUpDashboardCommand()", "executed")
-                                        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-                                        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
-                                        Dim myIndex As Integer = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+                                        vm.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
+                                        Dim myIndex As Integer = vm.currentRoom.GetActiveDeviceList.IndexOf(Me)
                                         If Not myIndex = 0 Then
-                                            app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
-                                            app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
+                                            vm.currentRoom.GetActiveDeviceList.Remove(Me)
+                                            vm.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
                                         End If
-                                        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                        Await vm.TiczRoomConfigs.SaveRoomConfigurations()
                                     End Sub)
 
         End Get

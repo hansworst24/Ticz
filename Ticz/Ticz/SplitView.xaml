@@ -10,24 +10,8 @@
     xmlns:WinRTExtensions="using:WinRTXamlToolkit.Controls.Extensions"
     mc:Ignorable="d">
     
-    <Grid>
+    <Grid x:Name="rootGrid">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="BackButtonStates">
-                <VisualState x:Name="ShowBackButton">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AppBarBackButton">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideBackButton">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AppBarBackButton">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
             <VisualStateGroup x:Name="AboutStates">
                 <VisualState x:Name="ShowAbout">
                     <Storyboard>
@@ -244,7 +228,7 @@
             </Interactivity:Interaction.Behaviors>
         </local:ucSplitviewPaneMenu>
 
-        <Grid x:Name="rootGrid" Margin="0,0,0,49" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0">
+        <Grid x:Name="mainGrid" Margin="0,0,0,49" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -362,19 +346,11 @@
                                 <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
                             </AppBarButton.Icon>
                         </AppBarButton>
-                        <!--<AppBarButton x:Name="AppBarBackButton" Width="48" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" Height="48" Command="{Binding GoBackCommand}">
+                        <AppBarButton x:Name="AppBarBackButton" Width="48" HorizontalAlignment="Left" Visibility="{Binding BackButtonVisibility}" VerticalAlignment="Center" Height="48" Command="{Binding GoBackCommand}">
                             <AppBarButton.Icon>
                                 <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE112;"/>
                             </AppBarButton.Icon>
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowBackButton}" Value="True">
-                                    <Core:GoToStateAction StateName="ShowBackButton"/>
-                                </Core:DataTriggerBehavior>
-                                <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowBackButton}" Value="False">
-                                    <Core:GoToStateAction StateName="HideBackButton"/>
-                                </Core:DataTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </AppBarButton>-->
+                        </AppBarButton>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <AppBarButton Name="abbRefresh" Icon="Refresh" HorizontalAlignment="Right" VerticalAlignment="Center" Height="48" Width="48" Command="{Binding RefreshCommand}"/>

@@ -191,9 +191,11 @@ Public Class SecurityPanelViewModel
                                         'Clear the contents of the Sec Panel Display and restore the current arm state when digits were pressed.
                                         'If not digits were pressed, remove the secpanel from view
                                         Dim app As Application = CType(Xaml.Application.Current, Application)
+
                                         If CodeInput = "" Then
                                             IsFadingIn = False
                                             app.myViewModel.TiczMenu.ShowSecurityPanel = False
+                                            app.myViewModel.ShowBackButton = False
                                         Else
                                             CodeInput = ""
                                             Await RunOnUIThread(Sub()
@@ -1275,6 +1277,9 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Sub()
                                         WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
                                         IsMenuOpen = False
+                                        app.myViewModel.ShowDeviceGraph = False
+                                        app.myViewModel.ShowDeviceDetails = False
+                                        app.myViewModel.ShowDevicePassword = False
                                         ShowSecurityPanel = Not ShowSecurityPanel
                                         If ShowSecurityPanel Then ShowBackButton = True
                                     End Sub)
@@ -1297,7 +1302,13 @@ Public Class TiczMenuSettings
                                         If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
                                         IsMenuOpen = Not IsMenuOpen
                                         ShowAbout = False
-                                        If IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible : ShowBackButton = True
+                                        If IsMenuOpen Then
+                                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                                            app.myViewModel.ShowBackButton = True
+                                        Else
+                                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                                            app.myViewModel.ShowBackButton = False
+                                        End If
                                         WriteToDebug("TiczMenuSettings.OpenMenuCommand()", IsMenuOpen)
                                     End Sub)
         End Get
@@ -1496,6 +1507,46 @@ Public Class TiczViewModel
     End Property
     Private Property _ShowDeviceGraph As Boolean
 
+    Public ReadOnly Property CanGoBack As Boolean
+        Get
+            If Not ShowDeviceDetails And Not ShowDeviceGraph And Not ShowDevicePassword And Not TiczMenu.ShowSecurityPanel And Not TiczMenu.ShowAbout And Not TiczMenu.IsMenuOpen Then
+                Return False
+            Else
+                Return True
+            End If
+        End Get
+    End Property
+
+    Public Property ShowBackButton As Boolean
+        Get
+            If Not Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons") Then
+                If CanGoBack Then
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                    Return True
+                Else
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                    Return False
+                End If
+            Else
+                Return False
+            End If
+        End Get
+        Set(value As Boolean)
+            _ShowBackButton = value
+            RaisePropertyChanged("ShowBackButton")
+            RaisePropertyChanged("BackButtonVisibility")
+        End Set
+    End Property
+    Private Property _ShowBackButton As Boolean
+
+    Public ReadOnly Property BackButtonVisibility As String
+        Get
+            If ShowBackButton Then Return Constants.VISIBLE Else Return Constants.COLLAPSED
+        End Get
+    End Property
+
+
+
     Public Property ShowDeviceDetails As Boolean
         Get
             Return _ShowDeviceDetails
@@ -1521,21 +1572,34 @@ Public Class TiczViewModel
 
     Public ReadOnly Property GoBackCommand As RelayCommand(Of Object)
         Get
-            Return New RelayCommand(Of Object)(Async Sub(x)
+            Return New RelayCommand(Of Object)(Sub(x)
                                                    WriteToDebug("App.GoBackCommand", "executed")
-                                                   Dim a = x
+
+                                                   If ShowDeviceGraph Then
+                                                       ShowDeviceGraph = False
+                                                   ElseIf ShowDeviceDetails Then
+                                                       ShowDeviceDetails = False
+                                                   ElseIf TiczMenu.ShowAbout Then
+                                                       TiczMenu.ShowAbout = False
+                                                   ElseIf TiczMenu.ShowSecurityPanel Then
+                                                       TiczMenu.ShowSecurityPanel = False
+                                                   ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms" Then
+                                                       TiczMenu.IsMenuOpen = False
+                                                   ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms Configuration" Then
+                                                       TiczMenu.ActiveMenuContents = "Settings"
+                                                   ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "General" Then
+                                                       TiczMenu.ActiveMenuContents = "Settings"
+                                                   ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Server settings" Then
+                                                       TiczMenu.ActiveMenuContents = "Settings"
+                                                   ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Settings" Then
+                                                       TiczMenu.ActiveMenuContents = "Rooms"
+                                                   End If
 
 
-                                                   'If App.myViewModel.ShowDeviceGraph Then
-                                                   '    e.Handled = True
-                                                   '    App.myViewModel.GraphList.Dispose()
-                                                   '    App.myViewModel.ShowDeviceGraph = False
-                                                   '    Exit Sub
-                                                   'End If
-                                                   'If App.myViewModel.TiczMenu.ShowSecurityPanel Then e.Handled = True : App.myViewModel.TiczMenu.ShowSecurityPanel = False : Exit Sub
-                                                   'If App.myViewModel.TiczMenu.ShowAbout Then e.Handled = True : App.myViewModel.TiczMenu.ShowAbout = False : Exit Sub
-                                                   'If App.myViewModel.TiczMenu.IsMenuOpen Then e.Handled = True : Dim cmd = App.myViewModel.TiczMenu.SettingsMenuGoBack : cmd.Execute(Nothing) : Exit Sub
-                                                   'If Not App.myViewModel.TiczMenu.IsMenuOpen Then SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                                                   ShowBackButton = False
+
+
+
                                                End Sub)
 
         End Get
@@ -1552,6 +1616,7 @@ Public Class TiczViewModel
                                                        If ShowDevicePassword Then ShowDevicePassword = False
                                                        If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
                                                        If TiczMenu.ShowSecurityPanel Then TiczMenu.ShowSecurityPanel = False
+                                                       ShowBackButton = False
                                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
                                                        Dim sWatch = Stopwatch.StartNew()
                                                        Me.StopRefresh()
