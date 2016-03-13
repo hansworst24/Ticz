@@ -2018,7 +2018,7 @@ Public Class TiczViewModel
         StartRefresh()
 
         If DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
-            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposed, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 6)
+            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposes, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 10)
         Else
             Notify.Clear()
         End If
