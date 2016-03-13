@@ -566,6 +566,9 @@ Public Class RoomViewModel
             Dim deserialized = JsonConvert.DeserializeObject(Of DevicesModel)(body)
             devicelist = deserialized.result.ToList()
             For Each d In devicelist
+#If DEBUG Then
+                WriteToDebug(String.Format("{0}     {1}     {2}     {3}", d.Name, d.Image, d.TypeImg, d.CustomImage), "")
+#End If
                 Dim DevToAdd As New DeviceViewModel(d, RoomView)
                 If app.myViewModel.TiczSettings.OnlyShowFavourites Then
                     If d.Favorite = 1 Then ret.Add(DevToAdd)
@@ -1822,20 +1825,27 @@ Public Class TiczViewModel
     End Sub
 
     Public Async Function PerformAutoRefresh(ct As CancellationToken) As Task
-        Dim refreshperiod As Integer = TiczSettings.SecondsForRefresh
         Try
             While Not ct.IsCancellationRequested
                 WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
                 Dim i As Integer = 0
                 WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
-                While i < refreshperiod * 1000
-                    Await Task.Delay(100)
-                    i += 100
-                    If ct.IsCancellationRequested Then WriteToDebug("TiczViewModel.PerformAutoRefresh", "cancelling") : Exit While
-                End While
+                If TiczSettings.SecondsForRefresh = 0 Then
+                    While i < 5 * 1000
+                        Await Task.Delay(100)
+                        i += 100
+                        If ct.IsCancellationRequested Then WriteToDebug("TiczViewModel.PerformAutoRefresh", "cancelling") : Exit While
+                    End While
+                Else
+                    While i < TiczSettings.SecondsForRefresh * 1000
+                        Await Task.Delay(100)
+                        i += 100
+                        If ct.IsCancellationRequested Then WriteToDebug("TiczViewModel.PerformAutoRefresh", "cancelling") : Exit While
+                    End While
+                End If
                 If ct.IsCancellationRequested Then Exit While
                 WriteToDebug("TiczViewModel.PerformAutoRefresh", "refreshing")
-                Await Refresh(False)
+                If TiczSettings.SecondsForRefresh > 0 Then Await Refresh(False)
             End While
         Catch ex As Exception
             Notify.Update(True, "AutoRefresh crashed :(", 4)
