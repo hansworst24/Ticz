@@ -165,6 +165,7 @@ Public NotInheritable Class Constants
             Public Const TEMP As String = "Temp"
             Public Const THERMOSTAT As String = "Thermostat"
             Public Const TEMP_HUMI_BARO As String = "Temp + Humidity + Baro"
+            Public Const TEMP_HUMI As String = "Temp + Humidity"
             Public Const LIGHTING_2 As String = "Lighting 2"
             Public Const LIGHT_SWITCH As String = "Light/Switch"
             Public Const GROUP As String = "Group"

@@ -1740,7 +1740,7 @@ Public Class TiczViewModel
                 End Select
             Case Constants.DEVICE.TYPE.LIGHTING_2
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
-            Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+            Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.TEMP_HUMI, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "temp")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "temp")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "temp")))
