@@ -295,9 +295,15 @@ Public Class DeviceViewModel
                 Case Constants.DEVICE.TYPE.RAIN : Return RainRainRate
                 Case Constants.DEVICE.TYPE.WIND : Return String.Format("{0}{1} | {2} {3}", Direction, DirectionStr, Speed, WindSign)
                 Case Constants.DEVICE.TYPE.THERMOSTAT : Return String.Format("{0:0.0}", CType(Data, Double))
-                Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+                Case Constants.DEVICE.TYPE.TEMP
                     Dim a As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-                    Return String.Format("{0} {1}", Temp, a.myViewModel.DomoConfig.TempSign)
+                    Return String.Format("{0}{1}", Temp, a.myViewModel.DomoConfig.TempSign)
+                Case Constants.DEVICE.TYPE.TEMP_HUMI
+                    Dim a As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+                    Return String.Format("{0}{1} | {2}{3}", Temp, a.myViewModel.DomoConfig.TempSign, Humidity, "%")
+                Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+                    Dim a As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+                    Return String.Format("{0}{1} | {2}{3} | {4}{5}", Temp, a.myViewModel.DomoConfig.TempSign, Humidity, "%", Barometer, "hPa")
                 Case Constants.DEVICE.TYPE.WIND
                     Return String.Format("{0} {1}", Direction, DirectionStr)
             End Select

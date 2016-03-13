@@ -195,6 +195,62 @@
         
     </DataTemplate>
 
+    <DataTemplate x:Key="YAxisPercentagePostfix">
+        <TextBlock FontSize="12" VerticalAlignment="Top" Text="%"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FastGraphTempHuDay">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:FastLineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="te">
+                <SyncFusion:FastLineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:FastLineSeries.YAxis>
+            </SyncFusion:FastLineSeries>
+            <SyncFusion:FastLineSeries Label="Humidity" Interior="{ThemeResource SystemControlForegroundBaseHighBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="hu">
+                <SyncFusion:FastLineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Humidity in %"  ShowGridLines="False" OpposedPosition="True" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" FontSize="12" PostfixLabelTemplate="{StaticResource YAxisPercentagePostfix}" />
+                </SyncFusion:FastLineSeries.YAxis>
+            </SyncFusion:FastLineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphTempHuMonth">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="te">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+            <SyncFusion:SplineSeries Label="Humidity" Interior="{ThemeResource SystemControlForegroundBaseHighBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="hu">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Humidity in %" ShowGridLines="False" OpposedPosition="True" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" FontSize="12" PostfixLabelTemplate="{StaticResource YAxisPercentagePostfix}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphTempHuYear">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="te">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+            <SyncFusion:SplineSeries Label="Humidity" Interior="{ThemeResource SystemControlForegroundBaseHighBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="hu">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Humidity in %"  ShowGridLines="False" OpposedPosition="True" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" FontSize="12" PostfixLabelTemplate="{StaticResource YAxisPercentagePostfix}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+
     <DataTemplate x:Key="FastGraphTemperatureDay">
         
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
@@ -213,7 +269,6 @@
         
     </DataTemplate>
     <DataTemplate x:Key="FastGraphTemperatureMonth">
-        
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
                 <SyncFusion:SfChart.PrimaryAxis>
                     <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
@@ -222,16 +277,9 @@
                     <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="ta"/>
-                <!--<SyncFusion:FastLineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="ta">
-                    <SyncFusion:FastLineSeries.Trendlines>
-                        <SyncFusion:Trendline Type="Polynomial" Stroke="Gray"  PolynomialOrder="4"/>
-                    </SyncFusion:FastLineSeries.Trendlines>
-                </SyncFusion:FastLineSeries>-->
             </SyncFusion:SfChart>
-        
     </DataTemplate>
     <DataTemplate x:Key="FastGraphTemperatureYear">
-        
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
                 <SyncFusion:SfChart.PrimaryAxis>
                     <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" FontSize="12"/>
@@ -240,13 +288,7 @@
                     <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="ta"/>
-                <!--<SyncFusion:FastLineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="ta">
-                    <SyncFusion:FastLineSeries.Trendlines>
-                        <SyncFusion:Trendline Type="Polynomial" Stroke="Gray"  PolynomialOrder="4"/>
-                    </SyncFusion:FastLineSeries.Trendlines>
-                </SyncFusion:FastLineSeries>-->
             </SyncFusion:SfChart>
-        
     </DataTemplate>
 
     <DataTemplate x:Key="FastGraphWindDay">
