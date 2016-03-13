@@ -32,7 +32,7 @@
         </VisualStateManager.VisualStateGroups>
         <Rectangle x:Name="BackDrop2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8" Canvas.ZIndex="90"/>
         <Rectangle x:Name="BackDrop1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundAltMediumLowBrush}" Canvas.ZIndex="91"/>
-        <Grid x:Name="SecPanel" Canvas.ZIndex="100" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="4">
+        <Grid x:Name="SecPanel" Canvas.ZIndex="100" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -46,8 +46,8 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Row="0" Margin="0,0,0,20" Height="50" Grid.ColumnSpan="4" MaxWidth="280" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="5" HorizontalAlignment="Stretch">
-                <TextBlock Text="{Binding DomoSecPanel.DisplayText}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource LCDPanel}"  FontSize="32"/>
+            <Border Grid.Row="0" Margin="0,0,0,10" Height="50" Grid.ColumnSpan="4" MaxWidth="280" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="5" HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding DomoSecPanel.DisplayText}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource LCDPanel}"  FontSize="38" Margin="0,5,0,0"/>
             </Border>
             <Button x:Name="Button1" Grid.Row="1" Grid.Column="0" Margin="0,0,10,10"  Content="1" Width="50" Height="50">
                 <Interactivity:Interaction.Behaviors>
@@ -112,7 +112,7 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button0" Grid.Row="4" Grid.Column="1" Content="0" Width="50" Height="50">
+            <Button x:Name="Button0" Grid.Row="4" Grid.Column="1" Content="0" VerticalAlignment="Top" Width="50" Height="50">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button0}"/>
@@ -140,7 +140,7 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button Grid.Row="4" Grid.Column="3" Margin="0,0,0,10" Content="CANCEL" Width="100" Height="50">
+            <Button Grid.Row="4" Grid.Column="3" Margin="0,0,0,0" Content="CANCEL" Width="100" Height="50">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.CancelPressedCommand}" />

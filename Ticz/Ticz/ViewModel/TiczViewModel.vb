@@ -178,7 +178,7 @@ Public Class SecurityPanelViewModel
                                                        CodeInput = If(CodeInput = "", digit, CodeInput & digit)
                                                        DisplayText = ""
                                                        For Each d In CodeInput
-                                                           DisplayText += "?"
+                                                           DisplayText += "#"
                                                        Next
                                                    End If
                                                End Sub)

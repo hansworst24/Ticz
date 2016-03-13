@@ -645,7 +645,7 @@
     </DataTemplate>
  
     <Style TargetType="TextBlock" x:Key="LCDPanel">
-        <Setter Property="FontFamily" Value="ms-appx:///Fonts/LCD.TTF#LCD2"/>
+        <Setter Property="FontFamily" Value="ms-appx:///Fonts/TickingTimebombBB.ttf#Ticking Timebomb BB"/>
     </Style>
 
     <Style x:Key="DefaultGridViewItemStyle" TargetType="GridViewItem">
