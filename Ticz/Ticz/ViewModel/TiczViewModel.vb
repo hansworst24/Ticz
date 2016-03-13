@@ -801,6 +801,7 @@ Partial Public Class TiczSettings
     Const strUseDarkThemeKeyName As String = "strUseDarkTheme"
     Const strPlaySecPanelSFXKeyName As String = "strPlaySecPanelSFX"
     Const strOnlyShowFavouritesKeyName As String = "strOnlyShowFavourites"
+    Const strUseBitmapIconsKeyName As String = "strUseBitmapIcons"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -814,7 +815,7 @@ Partial Public Class TiczSettings
     'Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = "False"
     Const strSecondsForRefreshDefault = 0
-    'Const strUseBitmapIconsDefault = False
+    Const strUseBitmapIconsDefault = False
     'Const strSwitchIconBackgroundDefault = False
     'Const strcurrentRoomViewDefault = "Grid View"
     'Const strRoomConfigurationsDefault = ""
@@ -995,6 +996,20 @@ Partial Public Class TiczSettings
             End If
         End Set
     End Property
+
+
+    Public Property UseDomoticzIcons As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strUseBitmapIconsKeyName, strUseBitmapIconsDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strUseBitmapIconsKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
+
 
     Public Property UseDarkTheme As Boolean
         Get

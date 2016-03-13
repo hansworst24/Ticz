@@ -190,9 +190,13 @@
             </Grid.RowDefinitions>
             <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{Binding ButtonColumnSpan}" Grid.RowSpan="{Binding ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Command="{Binding ButtonPressedCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
-                    <Viewbox x:Name="Icon" CacheMode="BitmapCache" Height="{Binding ButtonSize}" Width="{Binding ButtonSize}" Stretch="Uniform">
-                        <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}"/>
-                    </Viewbox>
+                    <Grid>
+                        <Viewbox x:Name="Icon" Visibility="{Binding PathIconVisibility}" CacheMode="BitmapCache" Height="{Binding ButtonSize}" Width="{Binding ButtonSize}" Stretch="Uniform">
+                            <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}"/>
+                        </Viewbox>
+                        <Image Source="{Binding BitmapIconURI}" Visibility="{Binding BitmapIconVisibility}" Height="48" Width="48" Stretch="Uniform">
+                        </Image>
+                    </Grid>
                 </Button.Content>
             </Button>
             <ContentControl x:Name="DeviceDetails" Grid.Row="{Binding ContentRow}" Grid.Column="{Binding ContentColumn}" Grid.ColumnSpan="{Binding ContentColumnSpan}" ContentTemplate="{Binding DeviceContentTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>

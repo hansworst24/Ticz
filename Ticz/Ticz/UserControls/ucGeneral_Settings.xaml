@@ -36,6 +36,9 @@
                 <TextBlock  Margin="0,10,0,0" Text="Sound Effects with Security Panel" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock  Text="Play cool SFX when using the Security Panel" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                 <ToggleSwitch IsOn="{Binding TiczSettings.PlaySecPanelSFX, Mode=TwoWay}" />
+                <TextBlock  Margin="0,10,0,0" Text="Use Domoticz Icons" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock  Text="Ticz will (try to) use hardcoded Domoticz Icons to show your devices. If no icon is shown for your device, let me know and I'll to add it !" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                <ToggleSwitch IsOn="{Binding TiczSettings.UseDomoticzIcons, Mode=TwoWay}" />
 
             </StackPanel>
         </ScrollViewer>
