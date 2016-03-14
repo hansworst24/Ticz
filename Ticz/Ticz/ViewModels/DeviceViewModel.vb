@@ -205,6 +205,7 @@ Public Class DeviceViewModel
                         Case Constants.DEVICE.TYPE.WIND : Return CType(Application.Current.Resources("DeviceWideWindView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.RAIN : Return CType(Application.Current.Resources("DeviceWideRainView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.GROUP : Return CType(Application.Current.Resources("DeviceWideGroupView"), DataTemplate)
+                        Case Constants.DEVICE.TYPE.SCENE : Return CType(Application.Current.Resources("DeviceWideSceneView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.LIGHTING_2
                             Select Case SwitchType
                                 Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)

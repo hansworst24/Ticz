@@ -514,6 +514,18 @@
             <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
             </Grid>
     </DataTemplate>
+    <DataTemplate x:Key="DeviceWideSceneView">
+        <Grid Margin="20,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="SecondInfoText" Grid.Row="0" Text="" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="ThirdInfoText" Grid.Row="1" Text=""   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="FourthInfoText" Grid.Row="2" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
+        </Grid>
+    </DataTemplate>
     <DataTemplate x:Key="DeviceWideSliderView">
         <Grid Margin="20,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
