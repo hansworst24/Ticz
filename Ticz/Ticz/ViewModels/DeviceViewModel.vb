@@ -683,15 +683,17 @@ Public Class DeviceViewModel
             Return _Device.Status
         End Get
         Set(value As String)
-            _Device.Status = value
-            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
-            If vm.TiczSettings.UseDomoticzIcons Then
-                RaisePropertyChanged("BitmapIconURI")
-            Else
-                RaisePropertyChanged("IconForegroundColor")
+            If value <> _Device.Status Then
+                _Device.Status = value
+                Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                If vm.TiczSettings.UseDomoticzIcons Then
+                    RaisePropertyChanged("BitmapIconURI")
+                Else
+                    RaisePropertyChanged("IconForegroundColor")
+                End If
+                RaisePropertyChanged("Status")
+                RaisePropertyChanged("FooterText")
             End If
-            RaisePropertyChanged("Status")
-            RaisePropertyChanged("FooterText")
         End Set
     End Property
     Public ReadOnly Property SubType As String
