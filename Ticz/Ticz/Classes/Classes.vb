@@ -7,104 +7,6 @@ Imports Newtonsoft.Json
 Imports GalaSoft.MvvmLight
 Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
-Imports GalaSoft.MvvmLight.Command
-Imports System.Text
-Imports Windows.Security.Cryptography.Core
-Imports Windows.Security.Cryptography
-Imports Ticz
-
-
-'Public Class DeviceGraphTemplateSelector
-'    Inherits DataTemplateSelector
-'    Protected Overrides Function SelectTemplateCore(ByVal item As Object, ByVal container As DependencyObject) As DataTemplate
-'        Dim element As FrameworkElement
-'        element = TryCast(container, FrameworkElement)
-
-'        If element IsNot Nothing AndAlso item IsNot Nothing AndAlso TypeOf item Is Domoticz.DeviceGraphContainer Then
-'            Dim GraphData As Domoticz.DeviceGraphContainer = TryCast(item, Domoticz.DeviceGraphContainer)
-'            If Not GraphData Is Nothing Then
-'                If Not GraphData.devicetype Is Nothing Then
-'                    Select Case GraphData.devicetype
-'                        Case Constants.LIGHTING_2
-'                            Return TryCast(Application.Current.Resources("FastGraph"), DataTemplate)
-'                        Case Constants.TEMP, Constants.TEMP_HUMI_BARO
-'                            Select Case GraphData.range
-'                                Case "day"
-'                                    Return TryCast(Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate)
-'                                Case "month"
-'                                    Return TryCast(Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate)
-'                                Case "year"
-'                                    Return TryCast(Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate)
-'                            End Select
-'                        Case Constants.USAGE
-'                            Select Case GraphData.subtype
-'                                Case Constants.ELECTRIC
-'                                    Select Case GraphData.range
-'                                        Case "day"
-'                                            Return TryCast(Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate)
-'                                        Case "month"
-'                                            Return TryCast(Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate)
-'                                        Case "year"
-'                                            Return TryCast(Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate)
-'                                    End Select
-'                            End Select
-'                    End Select
-'                End If
-
-'                If Not GraphData.subtype Is Nothing Then
-'                    Select Case GraphData.subtype
-'                        Case "Percentage"
-'                            Select Case GraphData.range
-'                                Case "day"
-'                                    Return TryCast(Application.Current.Resources("FastGraphPercentageDay"), DataTemplate)
-'                                Case "month"
-'                                    Return TryCast(Application.Current.Resources("FastGraphPercentageMonth"), DataTemplate)
-'                                Case "year"
-'                                    Return TryCast(Application.Current.Resources("FastGraphPercentageYear"), DataTemplate)
-'                                Case Else
-'                                    Return TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate)
-'                            End Select
-'                        Case Constants.P1_ELECTRIC
-'                            Select Case GraphData.range
-'                                Case "day"
-'                                    Return TryCast(Application.Current.Resources("FastGraphEnergyDay"), DataTemplate)
-'                                Case "week"
-'                                    Return TryCast(Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate)
-'                                Case "month"
-'                                    Return TryCast(Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate)
-'                                Case "year"
-'                                    Return TryCast(Application.Current.Resources("FastGraphEnergyYear"), DataTemplate)
-'                                Case Else
-'                                    Return TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate)
-'                            End Select
-'                        Case Constants.P1_GAS
-'                            Select Case GraphData.range
-'                                Case "day"
-'                                    Return TryCast(Application.Current.Resources("FastGraphGasDay"), DataTemplate)
-'                                Case "week"
-'                                    Return TryCast(Application.Current.Resources("FastGraphGasWeek"), DataTemplate)
-'                                Case "month"
-'                                    Return TryCast(Application.Current.Resources("FastGraphGasMonth"), DataTemplate)
-'                                Case "year"
-'                                    Return TryCast(Application.Current.Resources("FastGraphGasYear"), DataTemplate)
-'                                Case Else
-'                                    Return TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate)
-'                            End Select
-'                            'Return TryCast(Application.Current.Resources("GraphGasDay"), DataTemplate)
-'                            Return TryCast(Application.Current.Resources("FastGraphGasDay"), DataTemplate)
-'                        Case Else : Return TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate)
-'                    End Select
-'                End If
-'                Return TryCast(Application.Current.Resources("NoGraphAvailable"), DataTemplate)
-'            End If
-'        Else
-'            Return TryCast(Application.Current.Resources("FastGraphEnergyDay"), DataTemplate)
-'        End If
-'    End Function
-
-'End Class
-
-
 
 Public Class retvalue
     Public Property issuccess As Boolean
@@ -858,6 +760,8 @@ Public NotInheritable Class Domoticz
         Using filter As New HttpBaseProtocolFilter
             If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
                 filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
+                filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
+                WriteToDebug(filter.ServerCredential.UserName, filter.ServerCredential.Password)
             End If
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
             filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache

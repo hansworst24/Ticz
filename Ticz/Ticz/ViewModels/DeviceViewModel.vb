@@ -1257,10 +1257,8 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.SWITCHTYPE.DIMMER
                         If SwitchingToState = "" Then
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
-                            url = (New DomoApi).setDimmer(idx, SwitchingToState)
-                        Else
-                            url = (New DomoApi).setDimmer(idx, SwitchingToState)
                         End If
+                        url = (New DomoApi).setDimmer(idx, SwitchingToState)
                     Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                         If SwitchingToState = "" Then
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
