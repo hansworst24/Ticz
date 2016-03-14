@@ -104,7 +104,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Fonts\LCD.TTF" />
+    <Content Include="Fonts\TickingTimebombBB.ttf" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="project.json" />
   </ItemGroup>
@@ -114,9 +114,8 @@
     </Compile>
     <Compile Include="Classes\Classes.vb" />
     <Compile Include="Classes\convertors.vb" />
-    <Compile Include="About.xaml.vb">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Models\DeviceModel.vb" />
+    <Compile Include="Models\DevicesModel.vb" />
     <Compile Include="SplitView.xaml.vb">
       <DependentUpon>SplitView.xaml</DependentUpon>
     </Compile>
@@ -146,6 +145,9 @@
     <Compile Include="UserControls\ucDevice_Details.xaml.vb">
       <DependentUpon>ucDevice_Details.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucDevice_GraphsList.xaml.vb">
+      <DependentUpon>ucDevice_GraphsList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucDevice_Test.xaml.vb">
       <DependentUpon>ucDevice_Test.xaml</DependentUpon>
     </Compile>
@@ -173,6 +175,8 @@
     <Compile Include="UserControls\ucToastMessage.xaml.vb">
       <DependentUpon>ucToastMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\DevicesViewModel.vb" />
+    <Compile Include="ViewModels\DeviceViewModel.vb" />
     <Compile Include="ViewModel\TiczViewModel.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -222,80 +226,81 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <Content Include="Images\battery.png" />
-    <Content Include="Images\blinds.png" />
-    <Content Include="Images\blinds_128.png" />
-    <Content Include="Images\blinds_64.png" />
-    <Content Include="Images\counter.png" />
-    <Content Include="Images\counter_128.png" />
-    <Content Include="Images\counter_64.png" />
-    <Content Include="Images\current.png" />
-    <Content Include="Images\current_128.png" />
-    <Content Include="Images\current_64.png" />
-    <Content Include="Images\dimmer.png" />
-    <Content Include="Images\dimmer_128.png" />
-    <Content Include="Images\dimmer_64.png" />
-    <Content Include="Images\doorbell.png" />
-    <Content Include="Images\doorbell_128.png" />
-    <Content Include="Images\doorbell_64.png" />
-    <Content Include="Images\doorlock.png" />
-    <Content Include="Images\doorlock_128.png" />
-    <Content Include="Images\doorlock_64.png" />
+    <None Include="Images\battery.png" />
+    <None Include="Images\blinds.png" />
+    <None Include="Images\blinds_128.png" />
+    <None Include="Images\blinds_64.png" />
+    <None Include="Images\counter.png" />
+    <None Include="Images\counter_128.png" />
+    <None Include="Images\counter_64.png" />
+    <None Include="Images\current.png" />
+    <None Include="Images\current_128.png" />
+    <None Include="Images\current_64.png" />
+    <None Include="Images\dimmer.png" />
+    <None Include="Images\dimmer_128.png" />
+    <None Include="Images\dimmer_64.png" />
+    <None Include="Images\doorbell.png" />
+    <None Include="Images\doorbell_128.png" />
+    <None Include="Images\doorbell_64.png" />
+    <None Include="Images\doorlock.png" />
+    <None Include="Images\doorlock_128.png" />
+    <None Include="Images\doorlock_64.png" />
     <Content Include="Images\email.png" />
-    <Content Include="Images\error.png" />
+    <None Include="Images\error.png" />
     <Content Include="Images\forum.png" />
     <Content Include="Images\github.png" />
-    <Content Include="Images\group.png" />
-    <Content Include="Images\group_128.png" />
-    <Content Include="Images\group_64.png" />
-    <Content Include="Images\info.png" />
-    <Content Include="Images\info_64.png" />
-    <Content Include="Images\lightbulb.png" />
-    <Content Include="Images\lightbulb_128.png" />
-    <Content Include="Images\lightbulb_64.png" />
-    <Content Include="Images\magnet.png" />
-    <Content Include="Images\magnet_128.png" />
-    <Content Include="Images\magnet_64.png" />
-    <Content Include="Images\media.png" />
-    <Content Include="Images\media_128.png" />
-    <Content Include="Images\media_64.png" />
-    <Content Include="Images\music.png" />
-    <Content Include="Images\music_128.png" />
-    <Content Include="Images\music_64.png" />
-    <Content Include="Images\off.png" />
-    <Content Include="Images\off_128.png" />
-    <Content Include="Images\off_64.png" />
-    <Content Include="Images\on.png" />
-    <Content Include="Images\on_128.png" />
-    <Content Include="Images\on_64.png" />
-    <Content Include="Images\percentage.png" />
-    <Content Include="Images\percentage_128.png" />
-    <Content Include="Images\percentage_64.png" />
-    <Content Include="Images\power.png" />
-    <Content Include="Images\rain.png" />
-    <Content Include="Images\rain_128.png" />
-    <Content Include="Images\rain_64.png" />
-    <Content Include="Images\scene.png" />
-    <Content Include="Images\scene_128.png" />
-    <Content Include="Images\scene_64.png" />
-    <Content Include="Images\setpoint.png" />
-    <Content Include="Images\setpoint_128.png" />
-    <Content Include="Images\setpoint_64.png" />
-    <Content Include="Images\temperature.png" />
-    <Content Include="Images\temperature_128.png" />
-    <Content Include="Images\temperature_64.png" />
-    <Content Include="Images\unknown.png" />
-    <Content Include="Images\unknown_128.png" />
-    <Content Include="Images\unknown_64.png" />
-    <Content Include="Images\uvi.png" />
-    <Content Include="Images\uvi_128.png" />
-    <Content Include="Images\uvi_64.png" />
-    <Content Include="Images\visibility.png" />
-    <Content Include="Images\visibility_128.png" />
-    <Content Include="Images\visibility_64.png" />
-    <Content Include="Images\wind.png" />
-    <Content Include="Images\wind_128.png" />
-    <Content Include="Images\wind_64.png" />
+    <None Include="Images\group.png" />
+    <None Include="Images\group_128.png" />
+    <None Include="Images\group_64.png" />
+    <None Include="Images\info.png" />
+    <None Include="Images\info_64.png" />
+    <None Include="Images\lightbulb.png" />
+    <None Include="Images\lightbulb_128.png" />
+    <None Include="Images\lightbulb_64.png" />
+    <None Include="Images\magnet.png" />
+    <None Include="Images\magnet_128.png" />
+    <None Include="Images\magnet_64.png" />
+    <None Include="Images\media.png" />
+    <None Include="Images\media_128.png" />
+    <None Include="Images\media_64.png" />
+    <None Include="Images\music.png" />
+    <None Include="Images\music_128.png" />
+    <None Include="Images\music_64.png" />
+    <None Include="Images\off.png" />
+    <None Include="Images\off_128.png" />
+    <None Include="Images\off_64.png" />
+    <None Include="Images\on.png" />
+    <None Include="Images\on_128.png" />
+    <None Include="Images\on_64.png" />
+    <None Include="Images\percentage.png" />
+    <None Include="Images\percentage_128.png" />
+    <None Include="Images\percentage_64.png" />
+    <None Include="Images\power.png" />
+    <None Include="Images\rain.png" />
+    <None Include="Images\rain_128.png" />
+    <None Include="Images\rain_64.png" />
+    <None Include="Images\scene.png" />
+    <None Include="Images\scene_128.png" />
+    <None Include="Images\scene_64.png" />
+    <None Include="Images\setpoint.png" />
+    <None Include="Images\setpoint_128.png" />
+    <None Include="Images\setpoint_64.png" />
+    <Content Include="Images\TiczLogo.png" />
+    <None Include="Images\temperature.png" />
+    <None Include="Images\temperature_128.png" />
+    <None Include="Images\temperature_64.png" />
+    <None Include="Images\unknown.png" />
+    <None Include="Images\unknown_128.png" />
+    <None Include="Images\unknown_64.png" />
+    <None Include="Images\uvi.png" />
+    <None Include="Images\uvi_128.png" />
+    <None Include="Images\uvi_64.png" />
+    <None Include="Images\visibility.png" />
+    <None Include="Images\visibility_128.png" />
+    <None Include="Images\visibility_64.png" />
+    <None Include="Images\wind.png" />
+    <None Include="Images\wind_128.png" />
+    <None Include="Images\wind_64.png" />
     <Content Include="My Project\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -313,10 +318,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
-    <Page Include="About.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="SplitView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -351,6 +352,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucDevice_Details.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucDevice_GraphsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -429,6 +434,13 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Syncfusion.SfChart.Universal, Version=13.4451.0.53, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for Universal\8.1\Syncfusion.SfChart.Universal.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
