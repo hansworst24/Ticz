@@ -567,7 +567,7 @@ Public Class RoomViewModel
             devicelist = deserialized.result.ToList()
             For Each d In devicelist
 #If DEBUG Then
-                WriteToDebug(String.Format("{0}     {1}     {2}     {3}", d.Name, d.Image, d.TypeImg, d.CustomImage), "")
+                WriteToDebug(String.Format("{0} |{1} | {2} | {3} | {4} | {5}", d.Name, d.Type, d.SubType, d.Image, d.TypeImg, d.CustomImage), "")
 #End If
                 Dim DevToAdd As New DeviceViewModel(d, RoomView)
                 If app.myViewModel.TiczSettings.OnlyShowFavourites Then
@@ -635,13 +635,15 @@ Public Class RoomViewModel
             Select Case d.Type
                 Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_2
+                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
                 Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)
                 Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.THERMOSTAT
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER
+                Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER,
+                     Constants.DEVICE.TYPE.LUX, Constants.DEVICE.TYPE.AIR_QUALITY, Constants.DEVICE.TYPE.RFXMETER,
+                     Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
                 Case Else
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)

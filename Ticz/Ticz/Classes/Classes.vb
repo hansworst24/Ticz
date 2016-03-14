@@ -161,6 +161,8 @@ Public NotInheritable Class Constants
 
         Public NotInheritable Class TYPE
             'constants for Device Types
+            Public Const AIR_QUALITY As String = "Air Quality"
+            Public Const CURRENT As String = "Current"
             Public Const LIGHTING_LIMITLESS As String = "Lighting Limitless/Applamp"
             Public Const TEMP As String = "Temp"
             Public Const THERMOSTAT As String = "Thermostat"
@@ -168,13 +170,18 @@ Public NotInheritable Class Constants
             Public Const TEMP_HUMI As String = "Temp + Humidity"
             Public Const LIGHTING_2 As String = "Lighting 2"
             Public Const LIGHT_SWITCH As String = "Light/Switch"
+            Public Const LUX As String = "Lux"
             Public Const GROUP As String = "Group"
+            Public Const HUMIDITY As String = "Humidity"
+            Public Const RFXMETER As String = "RFXMeter"
             Public Const SCENE As String = "Scene"
+            Public Const SECURITY As String = "Security"
             Public Const WIND As String = "Wind"
             Public Const GENERAL As String = "General"
             Public Const USAGE As String = "Usage"
             Public Const P1_SMART_METER As String = "P1 Smart Meter"
             Public Const UV As String = "UV"
+            Public Const WATERFLOW As String = "Waterflow"
             Public Const RAIN As String = "Rain"
 
         End Class
