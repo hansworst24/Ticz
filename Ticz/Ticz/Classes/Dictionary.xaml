@@ -12,7 +12,7 @@
     <DataTemplate x:Key="NoGraphAvailable">
         <Grid>
             <Border Grid.Row="0"  HorizontalAlignment="Stretch">
-                <TextBlock Text="Graphs for this device aren't supported (yet?)" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock TextWrapping="WrapWholeWords" Text="Graphs for this device aren't supported yet. Please contact me so I can add it ! ( need sample data for the graph :)" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             </Border>
         </Grid>
     </DataTemplate>
