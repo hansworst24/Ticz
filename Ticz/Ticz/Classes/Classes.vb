@@ -155,7 +155,7 @@ Public NotInheritable Class TiczStorage
                 storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
             Catch ex As Exception
                 fileExists = False
-                app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"))
+                app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"), 0)
             End Try
             If fileExists Then
                 Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
@@ -165,7 +165,7 @@ Public NotInheritable Class TiczStorage
                     stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
                 Catch ex As Exception
                     'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
-                    app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message))
+                    app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message), 2)
                 End Try
                 stream.Dispose()
             End If
@@ -362,7 +362,9 @@ Public NotInheritable Class Domoticz
                     ret.issuccess = False : ret.err = "Error parsing settings"
                 End Try
             Else
-                'Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz settings ({0})", response.ReasonPhrase), 0)
+                ret.err = response.ReasonPhrase
+                Dim app As Application = CType(Application.Current, Application)
+                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Domoticz settings ({0})", ret.err), 2, False, 0)
             End If
             Return ret
         End Function
@@ -402,7 +404,9 @@ Public NotInheritable Class Domoticz
                     ret.issuccess = False : ret.err = "Error parsing config"
                 End Try
             Else
-                'Await App.myViewModel.Notify.Update(True, String.Format("Error loading Domoticz version information ({0})", response.ReasonPhrase), 0)
+                ret.err = response.ReasonPhrase
+                Dim app As Application = CType(Application.Current, Application)
+                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Domoticz version information ({0})", ret.err), 2, False, 0)
             End If
             Return ret
         End Function
@@ -433,8 +437,9 @@ Public NotInheritable Class Domoticz
                 End Try
             Else
                 ret.issuccess = False : ret.err = response.ReasonPhrase
+                Dim app As Application = CType(Application.Current, Application)
+                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Domoticz Config ({0})", ret.err), 2, False, 0)
             End If
-            'If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Domoticz Config ({0})", ret.err), 2)
             Return ret
         End Function
     End Class
@@ -677,8 +682,10 @@ Public NotInheritable Class Domoticz
                 End Try
             Else
                 ret.issuccess = False : ret.err = response.ReasonPhrase
+                ret.issuccess = False : ret.err = response.ReasonPhrase
+                Dim app As Application = CType(Application.Current, Application)
+                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 2, False, 0)
             End If
-            'If Not ret.issuccess Then Await TiczViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 2)
             Return ret
         End Function
 
@@ -857,13 +864,10 @@ Public NotInheritable Class DomoApi
         Return String.Format("http://{0}:{1}/secpanel/media/disarm.mp3", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
     End Function
 
-
-    'TODO : USE THIS :)
     Public Function getLightLog(idx As Integer)
         Return String.Format("http://{0}:{1}/json.htm?type=lightlog&idx={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx.ToString)
     End Function
 
-    'TODO : USE THIS :)
     Public Function getGraph(idx As Integer, range As String, sensor As String)
         Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&idx={3}&range={4}",
                              app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort,

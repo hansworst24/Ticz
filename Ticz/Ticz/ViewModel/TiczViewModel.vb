@@ -566,19 +566,16 @@ Public Class RoomViewModel
             Dim deserialized = JsonConvert.DeserializeObject(Of DevicesModel)(body)
             devicelist = deserialized.result.ToList()
             For Each d In devicelist
-#If DEBUG Then
-                WriteToDebug(String.Format("{0} |{1} | {2} | {3} | {4} | {5}", d.Name, d.Type, d.SubType, d.Image, d.TypeImg, d.CustomImage), "")
-#End If
                 Dim DevToAdd As New DeviceViewModel(d, RoomView)
                 If app.myViewModel.TiczSettings.OnlyShowFavourites Then
                     If d.Favorite = 1 Then ret.Add(DevToAdd)
                 Else
                     ret.Add(DevToAdd)
                 End If
-
-
             Next
             deserialized = Nothing
+        Else
+            Await app.myViewModel.Notify.Update(True, String.Format("Connection error {0}", response.ReasonPhrase), 2, False, 4)
         End If
         Return ret
     End Function
@@ -589,7 +586,7 @@ Public Class RoomViewModel
     ''' </summary>
     ''' <returns></returns>
     Public Async Function LoadDevices() As Task
-        Await app.myViewModel.Notify.Update(False, "loading devices...")
+        Await app.myViewModel.Notify.Update(False, "loading devices...", 0)
         If Not DashboardViewDevices Is Nothing Then DashboardViewDevices.Clear()
         If Not IconViewDevices Is Nothing Then IconViewDevices.Clear()
         If Not GridViewDevices Is Nothing Then GridViewDevices.Clear()
@@ -696,6 +693,18 @@ Public Class ToastMessageViewModel
         End Set
     End Property
     Private Property _msg As String
+
+
+    ''' <summary>
+    ''' 'More important messages can override less important ones, but not the other way around. This way we can ensure that i.e. error messages are not accidentally cleared so that the user
+    ''' will never see them
+    ''' - 0 = STATUS (loading stuff)
+    ''' - 1 = NOTIFICATION (i.e. device switched)
+    ''' - 2 = ERROR (i.e. connection error)
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property msg_Priority As Integer
+
     Public ReadOnly Property IconPathGeometry As String
         Get
             Select Case isError
@@ -736,44 +745,71 @@ Public Class ToastMessageViewModel
     Public cts As New CancellationTokenSource
     Public ct As CancellationToken = cts.Token
 
-    Private Async Function ShowMessage(message As String, err As Boolean, intSeconds As Integer, ct As CancellationToken) As Task
+    Private Async Function ShowMessage(err As Boolean, message As String, priority As Integer, intSeconds As Integer, ct As CancellationToken) As Task
         Dim timeWaited As Integer
         While Not ct.IsCancellationRequested
-            Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                             isGoing = False
-                                                                                                             msg = message
-                                                                                                             isError = err
-                                                                                                         End Sub)
+            Await RunOnUIThread(Sub()
+                                    isGoing = False
+                                    msg = message
+                                    isError = err
+                                    msg_Priority = priority
+                                End Sub)
             If intSeconds > 0 Then
                 If intSeconds * 1000 > timeWaited Then
                     timeWaited += 100
                     Await Task.Delay(100)
                 Else
-                    cts.Cancel()
+                    'Messages that are shown for a limited amount of time should always be cleared (hence forcing them with True parameter)
+                    cts.Cancel(True)
+                    msg_Priority = 0
                 End If
             End If
         End While
-        Await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Sub()
-                                                                                                         isGoing = True
-                                                                                                     End Sub)
+        Await RunOnUIThread(Sub()
+                                isGoing = True
+                            End Sub)
     End Function
 
 
-    Public Sub Clear()
-        If ct.CanBeCanceled Then
+    ''' <summary>
+    ''' Clears any Notifications
+    ''' </summary>
+    ''' <param name="forceClear">When forceClear is set to True, Clear will also remove any messages with msg_Priority 2 (error)</param>
+    Public Sub Clear(Optional forceClear As Boolean = False)
+        If ct.CanBeCanceled And (msg_Priority < 2 Or forceClear = True) Then
             cts.Cancel()
+            msg_Priority = 0
         End If
     End Sub
 
-    Public Async Function Update(err As Boolean, message As String, Optional seconds As Integer = 2) As Task
+    ''' <summary>
+    ''' Updates the Notification with a new message
+    ''' </summary>
+    ''' <param name="err">True/False if the message is an Error Message</param>
+    ''' <param name="message">Text of the Message</param>
+    ''' <param name="priority">Sets the priority of the message. 0 for Status updates, 1 for Notifications, 2 for Error Messages</param>
+    ''' <param name="ForceUpdate">Boolean to force an update, even if the priority of the message is lower than the current active one</param>
+    ''' <param name="seconds">Amount of seconds to show the message before it disappears</param>
+    ''' <returns></returns>
+    Public Async Function Update(err As Boolean, message As String, priority As Integer, Optional ForceUpdate As Boolean = False, Optional seconds As Integer = 2) As Task
         WriteToDebug("ToasMessageViewModel.Update()", "executed")
         If ct.CanBeCanceled Then
-            cts.Cancel()
-        End If
-        cts = New CancellationTokenSource
-        ct = cts.Token
-        popupTask = Await Task.Factory.StartNew(Function() ShowMessage(message, err, seconds, ct), ct)
+            If (priority >= msg_Priority Or ForceUpdate = True) Then
+                cts.Cancel()
+                If priority > msg_Priority Then
+                    Await Task.Delay(300)
+                End If
 
+            Else
+                Exit Function
+            End If
+        End If
+
+        If (priority >= msg_Priority Or ForceUpdate = True) Then
+            cts = New CancellationTokenSource
+            ct = cts.Token
+            popupTask = Await Task.Factory.StartNew(Function() ShowMessage(err, message, priority, seconds, ct), ct)
+        End If
     End Function
 
     Public Sub New()
@@ -893,6 +929,7 @@ Partial Public Class TiczSettings
                                         TestConnectionResult = "Testing connection..."
                                         app.myViewModel.TiczRoomConfigs.Clear()
                                         app.myViewModel.DomoRooms.result.Clear()
+                                        app.myViewModel.Notify.Clear(True)
                                         WriteToDebug("TestConnectionCommand", ServerIP)
                                         If ContainsValidIPDetails() Then
                                             Dim response As retvalue = Await app.myViewModel.DomoRooms.Load()
@@ -1592,7 +1629,7 @@ Public Class TiczViewModel
 
     Public ReadOnly Property GoBackCommand As RelayCommand(Of Object)
         Get
-            Return New RelayCommand(Of Object)(Sub(x)
+            Return New RelayCommand(Of Object)(Async Sub(x)
                                                    WriteToDebug("App.GoBackCommand", "executed")
 
                                                    If ShowDeviceGraph Then
@@ -1606,12 +1643,14 @@ Public Class TiczViewModel
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms" Then
                                                        TiczMenu.IsMenuOpen = False
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms Configuration" Then
+                                                       Await TiczRoomConfigs.SaveRoomConfigurations()
                                                        TiczMenu.ActiveMenuContents = "Settings"
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "General" Then
                                                        TiczMenu.ActiveMenuContents = "Settings"
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Server settings" Then
                                                        TiczMenu.ActiveMenuContents = "Settings"
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Settings" Then
+                                                       Await TiczRoomConfigs.LoadRoomConfigurations()
                                                        TiczMenu.ActiveMenuContents = "Rooms"
                                                    End If
 
@@ -1640,7 +1679,7 @@ Public Class TiczViewModel
                                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
                                                        Dim sWatch = Stopwatch.StartNew()
                                                        Me.StopRefresh()
-                                                       Await Notify.Update(False, "Loading...")
+                                                       Await Notify.Update(False, "Loading...", 0, True, 0)
                                                        currentRoom.SetRoomToLoad(s.RoomIDX)
                                                        Await currentRoom.LoadDevices()
                                                        Notify.Clear()
@@ -1873,7 +1912,6 @@ Public Class TiczViewModel
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
         Await Notify.Update(False, "refreshing...", 0)
         Dim sWatch = Stopwatch.StartNew()
-
         'Refresh the Sunset/Rise values
         Await DomoSunRiseSet.Load()
 
@@ -1974,49 +2012,49 @@ Public Class TiczViewModel
     ''' <returns></returns>
     Public Async Function Load() As Task
         If Not TiczSettings.ContainsValidIPDetails Then
-            Await Notify.Update(True, "IP/Port settings not valid", 0)
+            Await Notify.Update(True, "IP/Port settings not valid", 2, False, 0)
             TiczMenu.ActiveMenuContents = "Server settings"
             Await Task.Delay(500)
             TiczMenu.IsMenuOpen = True
             Exit Function
         End If
-        Await Notify.Update(False, "Loading...", 0)
+        Await Notify.Update(False, "Loading...", 0, True, 0)
 
         'Load Domoticz General Config from Domoticz
-        Await Notify.Update(False, "Loading Domoticz configuration...", 0)
+        Await Notify.Update(False, "Loading Domoticz configuration...", 0, False, 0)
         If Not (Await DomoConfig.Load()).issuccess Then Exit Function
 
-        Await Notify.Update(False, "Loading Domoticz settings...", 0)
+        Await Notify.Update(False, "Loading Domoticz settings...", 0, False, 0)
         If Not (Await DomoSettings.Load()).issuccess Then Exit Function
 
         'Load Domoticz Sunrise/set Info from Domoticz
-        Await Notify.Update(False, "Loading Domoticz Sunrise/Set...", 0)
+        Await Notify.Update(False, "Loading Domoticz Sunrise/Set...", 0, False, 0)
         If Not (Await DomoSunRiseSet.Load()).issuccess Then Exit Function
 
         'Load Version Information from Domoticz
-        Await Notify.Update(False, "Loading Domoticz version info...", 0)
+        Await Notify.Update(False, "Loading Domoticz version info...", 0, False, 0)
         If Not (Await DomoVersion.Load()).issuccess Then Exit Function
 
         'Load the Room/Floorplans from the Domoticz Server
         Await Notify.Update(False, "Loading Domoticz rooms...", 0)
         Dim result As retvalue = Await DomoRooms.Load()
         If Not result.issuccess Then
-            Await Notify.Update(True, "Connection Error, couldn't load Rooms..", 0)
+            Await Notify.Update(True, "Connection Error, couldn't load Rooms..", 2, False, 0)
             Exit Function
         End If
         If DomoRooms.result.Count = 0 Then
-            Await Notify.Update(True, "No roomplans are configured on the Domoticz Server. Create one or more roomplans in Domoticz in order to see something here :)", 0)
+            Await Notify.Update(True, "No roomplans are configured on the Domoticz Server. Create one or more roomplans in Domoticz in order to see something here :)", 2, False, 0)
             Exit Function
         End If
 
         'TODO : MOVE SECPANEL STUFF TO RIGHT PLACE
-        Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0)
+        Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0, False, 0)
         Await DomoSecPanel.GetSecurityStatus()
 
 
         'Load the Room Configurations from Storage
         Dim isSuccess As Boolean
-        Await Notify.Update(False, "Loading Ticz Room configuration...", 0)
+        Await Notify.Update(False, "Loading Ticz Room configuration...", 0, False, 0)
         isSuccess = Await TiczRoomConfigs.LoadRoomConfigurations()
         'Wait for 2 seconds to let any notification stay
         If Not isSuccess Then Await Task.Delay(2000)
@@ -2024,18 +2062,18 @@ Public Class TiczViewModel
 
         currentRoom.SetRoomToLoad()
 
-        Await Notify.Update(False, "Loading Devices for preferred room...", 0)
+        Await Notify.Update(False, "Loading Devices for preferred room...", 0, False, 0)
         Await currentRoom.LoadDevices()
 
         'Save the (potentially refreshhed) roomconfigurations again
-        Await Notify.Update(False, "Saving Ticz Room configuration...", 0)
+        Await Notify.Update(False, "Saving Ticz Room configuration...", 0, False, 0)
         Await TiczRoomConfigs.SaveRoomConfigurations()
         'If Not TiczRooms.Count = 0 Then currentRoom = TiczRooms(0)
         LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
 
         If DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
-            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposes, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 10)
+            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposes, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 1, False, 10)
         Else
             Notify.Clear()
         End If

@@ -392,7 +392,7 @@ Public Class DeviceViewModel
             If _Device.CustomImage = 0 Then
                 Dim FileName As String
                 Select Case _Device.TypeImg
-                    Case "Alert" : FileName = "Alert48_0.png" 'TODO IMPLEMENT MULTIPLE ALERT LEVELS
+                    Case "Alert" : FileName = "Alert48_0.png" 'TODO : Change Icon based on Alert Level
                     Case "air" : FileName = "air48.png"
                     Case "blinds" : If isOn Then FileName = "blinds48.png" Else FileName = "blindsopen48.png"
                     Case "counter" : FileName = "Counter48.png"
@@ -1279,7 +1279,7 @@ Public Class DeviceViewModel
 
         Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
         If Not response.IsSuccessStatusCode Then
-            Await app.myViewModel.Notify.Update(True, "Error switching device")
+            Await app.myViewModel.Notify.Update(True, "Error switching device", 2)
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
@@ -1287,17 +1287,17 @@ Public Class DeviceViewModel
                 Try
                     domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
                     If domoRes.status <> "OK" Then
-                        Await app.myViewModel.Notify.Update(True, domoRes.message)
+                        Await app.myViewModel.Notify.Update(True, domoRes.message, 2)
                         Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                     Else
-                        Await app.myViewModel.Notify.Update(False, "Device switched")
+                        Await app.myViewModel.Notify.Update(False, "Device switched", 1)
                     End If
                     Await Me.Update()
                     domoRes = Nothing
                     SwitchingToState = ""
                     Return New retvalue With {.issuccess = 1}
                 Catch ex As Exception
-                    app.myViewModel.Notify.Update(True, "Server sent empty response")
+                    app.myViewModel.Notify.Update(True, "Server sent empty response", 2)
                     Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
                 End Try
             End If
