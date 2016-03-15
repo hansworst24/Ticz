@@ -327,9 +327,16 @@ Public Class SecurityPanelViewModel
                 result = JsonConvert.DeserializeObject(Of Domoticz.Response)(body)
                 If result.status = "OK" Then
                     Select Case result.secstatus
-                        Case Constants.SECPANEL.SEC_ARMAWAY : CurrentArmState = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper
-                        Case Constants.SECPANEL.SEC_ARMHOME : CurrentArmState = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper
-                        Case Constants.SECPANEL.SEC_DISARM : CurrentArmState = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper
+                        'Update the current ARMSTATE, but only update the Display when the user isn't busy with entering a PIN
+                        Case Constants.SECPANEL.SEC_ARMAWAY
+                            CurrentArmState = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper
+                            If CodeInput = "" Then DisplayText = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper
+                        Case Constants.SECPANEL.SEC_ARMHOME
+                            CurrentArmState = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper
+                            If CodeInput = "" Then DisplayText = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper
+                        Case Constants.SECPANEL.SEC_DISARM
+                            CurrentArmState = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper
+                            If CodeInput = "" Then DisplayText = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper
                     End Select
                     ret.issuccess = 1
                 Else
