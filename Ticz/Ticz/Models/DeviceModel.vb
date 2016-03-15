@@ -1,4 +1,5 @@
-﻿'Returned JSON result from Domoticz for a single device
+﻿'Returned JSON result from Domoticz for a single device. Domoticz only returns, apart from a standard set of properties, only those properties relevant for the specific device
+'Therefore it could be that some devices return properties that aren't included here yet. These will have to be added when people encounter them (i.e. missing status or values)
 Public Class DeviceModel
     Public Property AddjMulti As Double
     Public Property AddjMulti2 As Double
@@ -6,6 +7,7 @@ Public Class DeviceModel
     Public Property AddjValue2 As Double
     Public Property Barometer As String
     Public Property BatteryLevel As Integer
+    Public Property CameraIdx As String
     Public Property CameraIdz As Integer
     Public Property Chill As String
     Public Property Counter As String
@@ -30,6 +32,7 @@ Public Class DeviceModel
     Public Property Humidity As String
     Public Property HumidityStatus As String
     Public Property ID As String
+    Public Property idx As String
     Public Property Image As String
     Public Property IsSubDevice As Boolean
     Public Property LastUpdate As String
@@ -64,6 +67,6 @@ Public Class DeviceModel
     Public Property UsedByCamera As Boolean
     Public Property XOffset As String
     Public Property YOffset As String
-    Public Property idx As String
-    Public Property CameraIdx As String
+
+
 End Class

@@ -1,4 +1,5 @@
-﻿Imports GalaSoft.MvvmLight
+﻿Imports System.Reflection
+Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
 Imports Windows.UI.Core
@@ -241,6 +242,18 @@ Public Class DeviceViewModel
             RaisePropertyChanged("DeviceOrder")
         End Set
     End Property
+
+    Public ReadOnly Property DeviceProperties As List(Of KeyValuePair(Of String, String))
+        Get
+            Dim properties As PropertyInfo() = _Device.GetType().GetProperties()
+            Dim returnprops As New List(Of KeyValuePair(Of String, String))
+            For Each pi As PropertyInfo In properties
+                Dim v As String = TryCast(pi.GetValue(DeviceModel, Nothing), String)
+                returnprops.Add(New KeyValuePair(Of String, String)(pi.Name, v))
+            Next
+            Return returnprops
+        End Get
+    End Property
     Public Property DewPoint As String
         Get
             Return _Device.DewPoint
@@ -433,41 +446,51 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property IconPathGeometry As String
         Get
-            Select Case _Device.TypeImg
-                Case Constants.DEVICE.TYPEIMG.ALERT : Return Constants.ICONPATH.ALERT
-                Case Constants.DEVICE.TYPEIMG.AIR : Return Constants.ICONPATH.AIR
-                Case Constants.DEVICE.TYPEIMG.BLINDS : Return Constants.ICONPATH.BLINDS
-                Case Constants.DEVICE.TYPEIMG.CONTACT : Return Constants.ICONPATH.CONTACT
-                Case Constants.DEVICE.TYPEIMG.COUNTER : Return Constants.ICONPATH.COUNTER
-                Case Constants.DEVICE.TYPEIMG.CURRENT : Return Constants.ICONPATH.CURRENT
-                Case Constants.DEVICE.TYPEIMG.DIMMER : Return Constants.ICONPATH.DIMMER
-                Case Constants.DEVICE.TYPEIMG.DOOR : Return Constants.ICONPATH.DOOR
-                Case Constants.DEVICE.TYPEIMG.DOORBELL : Return Constants.ICONPATH.DOORBELL
-                Case Constants.DEVICE.TYPEIMG.ERROR : Return Constants.ICONPATH.ERROR
-                Case Constants.DEVICE.TYPEIMG.GAUGE : Return Constants.ICONPATH.GAUGE
-                Case Constants.DEVICE.TYPEIMG.GROUP : Return Constants.ICONPATH.GROUP
-                Case Constants.DEVICE.TYPEIMG.HARDWARE : Return Constants.ICONPATH.HARDWARE
-                Case Constants.DEVICE.TYPEIMG.INFO : Return Constants.ICONPATH.INFO
-                Case Constants.DEVICE.TYPEIMG.LEAF : Return Constants.ICONPATH.LEAF
-                Case Constants.DEVICE.TYPEIMG.LIGHTBULB : Return Constants.ICONPATH.LIGHTBULB
-                Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.SPEAKER
-                Case Constants.DEVICE.TYPEIMG.LUX : Return Constants.ICONPATH.LUX
-                Case Constants.DEVICE.TYPEIMG.MEDIA : Return Constants.ICONPATH.MEDIA
-                Case Constants.DEVICE.TYPEIMG.MOISTURE : Return Constants.ICONPATH.MOISTURE
-                Case Constants.DEVICE.TYPEIMG.OVERRIDE_MINI : Return Constants.ICONPATH.OVERRIDE_MINI
-                Case Constants.DEVICE.TYPEIMG.PUSH : Return Constants.ICONPATH.PUSH
-                Case Constants.DEVICE.TYPEIMG.PUSHOFF : Return Constants.ICONPATH.PUSHOFF
-                Case Constants.DEVICE.TYPEIMG.RAIN : Return Constants.ICONPATH.RAIN
-                Case Constants.DEVICE.TYPEIMG.SCENE : Return Constants.ICONPATH.SCENE
-                Case Constants.DEVICE.TYPEIMG.SECURITY : Return Constants.ICONPATH.SECURITY
-                Case Constants.DEVICE.TYPEIMG.SPEAKER : Return Constants.ICONPATH.SPEAKER
-                Case Constants.DEVICE.TYPEIMG.TEMPERATURE : Return Constants.ICONPATH.TEMPERATURE
-                Case Constants.DEVICE.TYPEIMG.TEXT : Return Constants.ICONPATH.TEXT
-                Case Constants.DEVICE.TYPEIMG.UV : Return Constants.ICONPATH.UV
-                Case Constants.DEVICE.TYPEIMG.VISIBILITY : Return Constants.ICONPATH.VISIBILITY
-                Case Constants.DEVICE.TYPEIMG.WIND : Return Constants.ICONPATH.WIND
-                Case Else : Return Constants.ICONPATH.UNKNOWN
-            End Select
+            If _Device.CustomImage = 0 Then
+                Select Case _Device.TypeImg
+                    Case Constants.DEVICE.TYPEIMG.ALERT : Return Constants.ICONPATH.ALERT
+                    Case Constants.DEVICE.TYPEIMG.AIR : Return Constants.ICONPATH.AIR
+                    Case Constants.DEVICE.TYPEIMG.BLINDS : Return Constants.ICONPATH.BLINDS
+                    Case Constants.DEVICE.TYPEIMG.CONTACT : Return Constants.ICONPATH.CONTACT
+                    Case Constants.DEVICE.TYPEIMG.COUNTER : Return Constants.ICONPATH.COUNTER
+                    Case Constants.DEVICE.TYPEIMG.CURRENT : Return Constants.ICONPATH.CURRENT
+                    Case Constants.DEVICE.TYPEIMG.DIMMER : Return Constants.ICONPATH.DIMMER
+                    Case Constants.DEVICE.TYPEIMG.DOOR : Return Constants.ICONPATH.DOOR
+                    Case Constants.DEVICE.TYPEIMG.DOORBELL : Return Constants.ICONPATH.DOORBELL
+                    Case Constants.DEVICE.TYPEIMG.ERROR : Return Constants.ICONPATH.ERROR
+                    Case Constants.DEVICE.TYPEIMG.GAUGE : Return Constants.ICONPATH.GAUGE
+                    Case Constants.DEVICE.TYPEIMG.GROUP : Return Constants.ICONPATH.GROUP
+                    Case Constants.DEVICE.TYPEIMG.HARDWARE : Return Constants.ICONPATH.HARDWARE
+                    Case Constants.DEVICE.TYPEIMG.INFO : Return Constants.ICONPATH.INFO
+                    Case Constants.DEVICE.TYPEIMG.LEAF : Return Constants.ICONPATH.LEAF
+                    Case Constants.DEVICE.TYPEIMG.LIGHTBULB : Return Constants.ICONPATH.LIGHTBULB
+                    Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.SPEAKER
+                    Case Constants.DEVICE.TYPEIMG.LUX : Return Constants.ICONPATH.LUX
+                    Case Constants.DEVICE.TYPEIMG.MEDIA : Return Constants.ICONPATH.MEDIA
+                    Case Constants.DEVICE.TYPEIMG.MOISTURE : Return Constants.ICONPATH.MOISTURE
+                    Case Constants.DEVICE.TYPEIMG.OVERRIDE_MINI : Return Constants.ICONPATH.OVERRIDE_MINI
+                    Case Constants.DEVICE.TYPEIMG.PUSH : Return Constants.ICONPATH.PUSH
+                    Case Constants.DEVICE.TYPEIMG.PUSHOFF : Return Constants.ICONPATH.PUSHOFF
+                    Case Constants.DEVICE.TYPEIMG.RAIN : Return Constants.ICONPATH.RAIN
+                    Case Constants.DEVICE.TYPEIMG.SCENE : Return Constants.ICONPATH.SCENE
+                    Case Constants.DEVICE.TYPEIMG.SECURITY : Return Constants.ICONPATH.SECURITY
+                    Case Constants.DEVICE.TYPEIMG.SPEAKER : Return Constants.ICONPATH.SPEAKER
+                    Case Constants.DEVICE.TYPEIMG.TEMPERATURE : Return Constants.ICONPATH.TEMPERATURE
+                    Case Constants.DEVICE.TYPEIMG.TEXT : Return Constants.ICONPATH.TEXT
+                    Case Constants.DEVICE.TYPEIMG.UV : Return Constants.ICONPATH.UV
+                    Case Constants.DEVICE.TYPEIMG.VISIBILITY : Return Constants.ICONPATH.VISIBILITY
+                    Case Constants.DEVICE.TYPEIMG.WIND : Return Constants.ICONPATH.WIND
+                    Case Else : Return Constants.ICONPATH.UNKNOWN
+                End Select
+            Else
+                Select Case _Device.Image
+                    Case Constants.DEVICE.IMAGE.ALARM : Return Constants.ICONPATH.ALARM
+                    Case Constants.DEVICE.IMAGE.HEATING : Return Constants.ICONPATH.TEMPERATURE
+                    Case Constants.DEVICE.IMAGE.PHONE : Return Constants.ICONPATH.PHONE
+                    Case Constants.DEVICE.IMAGE.WALLSOCKET : Return Constants.ICONPATH.WALLSOCKET
+                    Case Else : Return Constants.ICONPATH.UNKNOWN
+                End Select
+            End If
         End Get
     End Property
     Public Property isMixed As Boolean
@@ -1079,6 +1102,7 @@ Public Class DeviceViewModel
                                         WriteToDebug("Device.ShowDeviceDetails()", "executed")
                                         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
                                         vm.selectedDevice = Me
+                                        Dim a = Me.DeviceProperties
                                         vm.ShowDeviceDetails = True
                                         vm.ShowBackButton = True
                                         WriteToDebug(vm.selectedDevice.Name, "should be there")

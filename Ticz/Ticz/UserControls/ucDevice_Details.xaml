@@ -12,12 +12,41 @@
     <Grid>
         <Rectangle x:Name="BackDrop2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8" Canvas.ZIndex="90"/>
         <Rectangle x:Name="BackDrop1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundAltMediumLowBrush}" Canvas.ZIndex="91"/>
-        <Grid HorizontalAlignment="Center" Canvas.ZIndex="100"  VerticalAlignment="Center">
+        <Grid HorizontalAlignment="Stretch" Canvas.ZIndex="100"  VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" MaxHeight="300" Style="{StaticResource DeviceBorder}"  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Height="40" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding selectedDevice.DeviceModel.Name}" FontSize="24" Style="{ThemeResource BaseTextBlockStyle}"/>
+            </Border>
+            <ListView Grid.Row="1" ItemsSource="{Binding selectedDevice.DeviceProperties}" HorizontalAlignment="Center">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Height" Value="20"/>
+                        <Setter Property="MinHeight" Value="10"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <!--<Setter Property="IsHitTestVisible" Value="False"/>-->
+                        <!--<Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter ContentMargin="0" SelectionCheckMarkVisualEnabled="False" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>-->
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <TextBlock Text="{Binding Key}" Width="150" FontWeight="Bold"  FontSize="12"                           Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock Text="{Binding Value}" Width="150" TextWrapping="NoWrap"      FontSize="12"                      Style="{StaticResource BodyTextBlockStyle}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <!--<Border Grid.Row="1">
                 <ScrollViewer>
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -163,10 +192,10 @@
                         <TextBlock Grid.Row="43" Grid.Column="1" Text="{Binding selectedDevice.DeviceModel.idx}"/>
                     </Grid>
                 </ScrollViewer>
-            </Border>
-            <Button Grid.Row="1" Margin="0,10,0,0" Height="40" Content="Close" Width="100" 
+            </Border>-->
+            <!--<Button Grid.Row="1" Margin="0,10,0,0" Height="40" Content="Close" Width="100" 
                     HorizontalAlignment="Right" Style="{StaticResource DeviceButton}" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                    Command="{Binding HideDeviceDetails}"/>
+                    Command="{Binding HideDeviceDetails}"/>-->
         </Grid>
     </Grid>
 </UserControl>
