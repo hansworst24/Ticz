@@ -327,9 +327,9 @@ Public Class SecurityPanelViewModel
                 result = JsonConvert.DeserializeObject(Of Domoticz.Response)(body)
                 If result.status = "OK" Then
                     Select Case result.secstatus
-                        Case Constants.SECPANEL.SEC_ARMAWAY : CurrentArmState = Constants.SECPANEL.SEC_ARMAWAY_STATUS : DisplayText = Constants.SECPANEL.SEC_ARMAWAY_STATUS
-                        Case Constants.SECPANEL.SEC_ARMHOME : CurrentArmState = Constants.SECPANEL.SEC_ARMHOME_STATUS : DisplayText = Constants.SECPANEL.SEC_ARMHOME_STATUS
-                        Case Constants.SECPANEL.SEC_DISARM : CurrentArmState = Constants.SECPANEL.SEC_DISARM_STATUS : DisplayText = Constants.SECPANEL.SEC_DISARM_STATUS
+                        Case Constants.SECPANEL.SEC_ARMAWAY : CurrentArmState = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_ARMAWAY_STATUS.ToUpper
+                        Case Constants.SECPANEL.SEC_ARMHOME : CurrentArmState = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_ARMHOME_STATUS.ToUpper
+                        Case Constants.SECPANEL.SEC_DISARM : CurrentArmState = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper : DisplayText = Constants.SECPANEL.SEC_DISARM_STATUS.ToUpper
                     End Select
                     ret.issuccess = 1
                 Else
@@ -1914,6 +1914,8 @@ Public Class TiczViewModel
         Dim sWatch = Stopwatch.StartNew()
         'Refresh the Sunset/Rise values
         Await DomoSunRiseSet.Load()
+        'Refresh the Security Panel Status
+        Await DomoSecPanel.GetSecurityStatus
 
         'Get all devices for this room that have been updated since the LastRefresh (Domoticz will tell you which ones)
         Dim dev_response As New HttpResponseMessage

@@ -21,7 +21,8 @@ Public NotInheritable Class Constants
         Public Const SEC_ARMHOME As Integer = 1
         Public Const SEC_ARMAWAY As Integer = 2
 
-        Public Const SEC_DISARM_STATUS As String = "Normal"
+        Public Const SEC_NORMAL_STATUS As String = "Normal"
+        Public Const SEC_DISARM_STATUS As String = "Disarmed"
         Public Const SEC_ARMHOME_STATUS As String = "Arm Home"
         Public Const SEC_ARMAWAY_STATUS As String = "Arm Away"
     End Class
