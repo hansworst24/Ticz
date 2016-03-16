@@ -86,20 +86,6 @@ NotInheritable Class Application
         WriteToDebug("App.VisibleBoundsChanged", "executed")
     End Sub
 
-
-    'Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-    '    If myViewModel.TiczMenu.IsMenuOpen Then myViewModel.TiczMenu.IsMenuOpen = False
-    '    WriteToDebug("App.App_BackRequested", "executed")
-    '    Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
-    '    If rootFrame Is Nothing Then Exit Sub
-    '    If rootFrame.CanGoBack AndAlso e.Handled = False Then
-    '        e.Handled = True
-    '        rootFrame.GoBack()
-
-    '    End If
-
-    'End Sub
-
     ''' <summary>
     ''' Invoked when Navigation to a certain page fails
     ''' </summary>
