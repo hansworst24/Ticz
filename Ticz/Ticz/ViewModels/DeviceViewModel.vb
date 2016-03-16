@@ -495,6 +495,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.IMAGE.HARDDISK : Return Constants.ICONPATH.HARDDISK
                     Case Constants.DEVICE.IMAGE.HEATING : Return Constants.ICONPATH.TEMPERATURE
                     Case Constants.DEVICE.IMAGE.MEDIA : Return Constants.ICONPATH.MEDIA
+                    Case Constants.DEVICE.IMAGE.MOTION : Return Constants.ICONPATH.MOTION
                     Case Constants.DEVICE.IMAGE.LAPTOP : Return Constants.ICONPATH.LAPTOP
                     Case Constants.DEVICE.IMAGE.PHONE : Return Constants.ICONPATH.PHONE
                     Case Constants.DEVICE.IMAGE.PRINTER : Return Constants.ICONPATH.PRINTER
