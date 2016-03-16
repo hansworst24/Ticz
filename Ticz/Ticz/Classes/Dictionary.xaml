@@ -541,19 +541,26 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideGroupView">
-            <Grid  Margin="20,0,0,0" VerticalAlignment="Center">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonOn" Margin="0,0,10,0" Height="30" MinWidth="40" VerticalAlignment="Center" MaxWidth="200" Padding="0" Grid.Row="0" Grid.Column="0" Style="{StaticResource DeviceButton}"   Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
-                <Button x:Name="ButtonOff" Margin="10,0,0,0" Height="30" MinWidth="40" VerticalAlignment="Center" MaxWidth="200" Padding="0" Grid.Row="0" Grid.Column="1" Style="{StaticResource DeviceButton}"  Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="20,0,0,0" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Row="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Style="{StaticResource DeviceBorderLess}">
+                <Grid  VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="ButtonOn" Margin="0,0,10,0"  Height="30"  MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" Content="On" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOn}"/>
+                    <Button x:Name="ButtonOff" Margin="10,0,0,0"  Height="30" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" Content="Off" HorizontalAlignment="Stretch" Command="{Binding GroupSwitchOff}"/>
+                </Grid>
+            </Border>
             <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
-            </Grid>
+        </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideSceneView">
         <Grid Margin="20,0,0,0">
@@ -624,15 +631,42 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource DeviceButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
-                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MinWidth="40" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource DeviceButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
+                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30"  MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
+                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
                 </Grid>
             </Border>
             <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
         </Grid>
      </DataTemplate>
     <DataTemplate x:Key="DeviceWideSetPointView">
-        <Grid Grid.Column="1" Grid.Row="0"  Margin="0,0,0,0" VerticalAlignment="Center">
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="0,0,0,0" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Row="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Style="{StaticResource DeviceBorderLess}">
+                <Grid  VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="ButtonPlus" Width="44" Height="30" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointUpCommand}">
+                        <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button x:Name="ButtonMinus" Width="44"  Height="30" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointDownCommand}">
+                        <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button x:Name="ButtonSet" Width="52" Height="30" Padding="0" Grid.Column="2" Style="{StaticResource RoundedInnerButton}" Content="SET" VerticalContentAlignment="Center" FontSize="18" HorizontalAlignment="Center" Command="{Binding SetSetPointCommand}"/>
+                </Grid>
+            </Border>
+            <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
+        </Grid>
+        
+        <!--<Grid Grid.Column="1" Grid.Row="0"  Margin="0,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -661,7 +695,7 @@
                 </Grid>
             </Border>
             <TextBlock x:Name="FourthInfoText" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
-        </Grid>
+        </Grid>-->
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideMediaPlayerView">
         <Grid Margin="20,0,0,0" VerticalAlignment="Center">
@@ -872,6 +906,59 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="RoundedInnerButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="MinWidth" Value="40" />
+        <Setter Property="MinHeight" Value="25" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ButtonBackground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Storyboard.TargetName="ButtonBackground"
+                                                        From="Transparent" To="{ThemeResource SystemAccentColor}" AutoReverse="True" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="ButtonBackground" CornerRadius="10" BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" 
+                                            Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                            Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    
     <Style x:Key="DeviceButtonSimple" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
