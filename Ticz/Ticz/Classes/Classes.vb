@@ -856,7 +856,7 @@ Public NotInheritable Class Domoticz
                 If deserialized.result.Any(Function(x) x.Name = "Ticz") Then
                     Me.result.Add(deserialized.result.Where(Function(x) x.Name = "Ticz").FirstOrDefault)
                 Else
-                    For Each p In deserialized.result.OrderBy(Function(x) x.Order)
+                    For Each p In deserialized.result.OrderBy(Function(x) Int32.Parse(x.Order))
                         Me.result.Add(p)
                     Next
                     If app.myViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
