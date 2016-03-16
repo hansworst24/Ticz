@@ -291,6 +291,47 @@
             </SyncFusion:SfChart>
     </DataTemplate>
 
+    <DataTemplate x:Key="FastGraphLuxDay">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Lux" FontSize="12" Minimum="0" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:FastLineSeries Label="Lux" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="lux">
+                <SyncFusion:FastLineSeries.Trendlines>
+                    <SyncFusion:Trendline Type="Polynomial" Stroke="Gray"  PolynomialOrder="4"/>
+                </SyncFusion:FastLineSeries.Trendlines>
+            </SyncFusion:FastLineSeries>
+        </SyncFusion:SfChart>
+
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphLuxMonth">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Lux"  FontSize="12" Minimum="0" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:SplineSeries Label="Lux_Max" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="lux_max"/>
+            <SyncFusion:SplineSeries Label="Lux_Min" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="lux_min"/>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphLuxYear">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Lux"  FontSize="12" Minimum="0" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:SplineSeries Label="Lux_Max" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="lux_max"/>
+            <SyncFusion:SplineSeries Label="Lux_Min" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="lux_min"/>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+
     <DataTemplate x:Key="FastGraphWindDay">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>

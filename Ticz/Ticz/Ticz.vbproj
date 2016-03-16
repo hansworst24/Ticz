@@ -105,6 +105,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Fonts\TickingTimebombBB.ttf" />
+    <Content Include="test_data\lux_day.txt" />
+    <Content Include="test_data\lux_month.txt" />
+    <Content Include="test_data\lux_year.txt" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="project.json" />
   </ItemGroup>

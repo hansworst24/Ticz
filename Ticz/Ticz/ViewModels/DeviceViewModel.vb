@@ -485,9 +485,22 @@ Public Class DeviceViewModel
             Else
                 Select Case _Device.Image
                     Case Constants.DEVICE.IMAGE.ALARM : Return Constants.ICONPATH.ALARM
+                    Case Constants.DEVICE.IMAGE.AMPLIFIER : Return Constants.ICONPATH.AMPLIFIER
+                    Case Constants.DEVICE.IMAGE.CHRISTMASTREE : Return Constants.ICONPATH.CHRISTMASTREE
+                    Case Constants.DEVICE.IMAGE.COOLING : Return Constants.ICONPATH.COOLING
+                    Case Constants.DEVICE.IMAGE.DESKTOP : Return Constants.ICONPATH.DESKTOP
+                    Case Constants.DEVICE.IMAGE.FAN : Return Constants.ICONPATH.FAN
+                    Case Constants.DEVICE.IMAGE.FIREPLACE : Return Constants.ICONPATH.FIREPLACE
+                    Case Constants.DEVICE.IMAGE.GENERIC : Return Constants.ICONPATH.GENERIC
+                    Case Constants.DEVICE.IMAGE.HARDDISK : Return Constants.ICONPATH.HARDDISK
                     Case Constants.DEVICE.IMAGE.HEATING : Return Constants.ICONPATH.TEMPERATURE
+                    Case Constants.DEVICE.IMAGE.MEDIA : Return Constants.ICONPATH.MEDIA
+                    Case Constants.DEVICE.IMAGE.LAPTOP : Return Constants.ICONPATH.LAPTOP
                     Case Constants.DEVICE.IMAGE.PHONE : Return Constants.ICONPATH.PHONE
+                    Case Constants.DEVICE.IMAGE.PRINTER : Return Constants.ICONPATH.PRINTER
+                    Case Constants.DEVICE.IMAGE.TELEVISION : Return Constants.ICONPATH.TELEVISION
                     Case Constants.DEVICE.IMAGE.WALLSOCKET : Return Constants.ICONPATH.WALLSOCKET
+                    Case Constants.DEVICE.IMAGE.WATER : Return Constants.ICONPATH.MOISTURE
                     Case Else : Return Constants.ICONPATH.UNKNOWN
                 End Select
             End If

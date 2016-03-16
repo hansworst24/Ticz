@@ -593,7 +593,7 @@ Public Class RoomViewModel
     ''' </summary>
     ''' <returns></returns>
     Public Async Function LoadDevices() As Task
-        Await app.myViewModel.Notify.Update(False, "loading devices...", 0)
+        Await app.myViewModel.Notify.Update(False, "loading devices...", 1, False, 0)
         If Not DashboardViewDevices Is Nothing Then DashboardViewDevices.Clear()
         If Not IconViewDevices Is Nothing Then IconViewDevices.Clear()
         If Not GridViewDevices Is Nothing Then GridViewDevices.Clear()
@@ -1773,15 +1773,18 @@ Public Class TiczViewModel
     Public Async Function LoadGraphData(ByVal d As DeviceViewModel) As Task
         GraphList = New GraphListViewModel
         ShowDeviceGraph = True
-        Await Notify.Update(False, "Loading graphs, please wait...", 0)
-
-        'GraphList.deviceIDX = d.idx
+        Await Notify.Update(False, "Loading graphs, please wait...", 0, False, 0)
         GraphList.deviceName = d.Name
-        'GraphList.deviceType = d.Type
-        'GraphList.deviceSubType = d.SubType
         Dim GraphsToAdd As New List(Of Domoticz.DeviceGraphContainer)
 
         Select Case d.Type
+            Case Constants.DEVICE.TYPE.LUX
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter"), "ms-appx:///test_data/lux_day.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter"), "ms-appx:///test_data/lux_month.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter"), "ms-appx:///test_data/lux_year.txt"))
             Case Constants.DEVICE.TYPE.WIND
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWindDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "wind")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWindMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "wind")))
@@ -1804,7 +1807,7 @@ Public Class TiczViewModel
                     Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
                 End Select
-            Case Constants.DEVICE.TYPE.LIGHTING_2
+            Case Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
 
             Case Constants.DEVICE.TYPE.TEMP
@@ -1845,11 +1848,11 @@ Public Class TiczViewModel
 
 
         For Each g In GraphsToAdd
-            Await Task.Run(Function() g.Load(d))
+            Await Task.Run(Function() g.Load(d, g.datafile))
             GraphList.graphDataList.Add(g)
         Next
 
-        Notify.Clear()
+        Notify.Clear(True)
     End Function
 
 
@@ -1911,13 +1914,13 @@ Public Class TiczViewModel
                 If TiczSettings.SecondsForRefresh > 0 Then Await Refresh(False)
             End While
         Catch ex As Exception
-            Notify.Update(True, "AutoRefresh crashed :(", 4)
+            Notify.Update(True, "AutoRefresh crashed :(", 2, False, 4)
         End Try
 
     End Function
 
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
-        Await Notify.Update(False, "refreshing...", 0)
+        Await Notify.Update(False, "refreshing...", 0, False, 0)
         Dim sWatch = Stopwatch.StartNew()
         'Refresh the Sunset/Rise values
         Await DomoSunRiseSet.Load()
@@ -1959,7 +1962,7 @@ Public Class TiczViewModel
                 refreshedDevices = Nothing
             End If
         Else
-            Await Notify.Update(True, "couldn't load device status", 2)
+            Await Notify.Update(True, "couldn't load device status", 2, False, 2)
         End If
 
         'Get all scenes
@@ -1997,7 +2000,7 @@ Public Class TiczViewModel
                 refreshedScenes = Nothing
             End If
         Else
-            Await Notify.Update(True, "couldn't load scene/group status", 2)
+            Await Notify.Update(True, "couldn't load scene/group status", 2, False, 2)
         End If
 
 
