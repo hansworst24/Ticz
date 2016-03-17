@@ -46,101 +46,101 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Row="0" Margin="0,0,0,10" Height="50" Grid.ColumnSpan="4" MaxWidth="280" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="5" HorizontalAlignment="Stretch">
+            <Border Grid.Row="0" Margin="0,0,0,5" Height="50" Grid.ColumnSpan="4" MaxWidth="280" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="5" HorizontalAlignment="Stretch">
                 <TextBlock Text="{Binding DomoSecPanel.DisplayText}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource LCDPanel}"  FontSize="38" Margin="0,5,0,0"/>
             </Border>
-            <Button x:Name="Button1" Grid.Row="1" Grid.Column="0" Margin="0,0,10,10"  Content="1" Width="50" Height="50">
+            <Button x:Name="Button1" Grid.Row="1" Grid.Column="0" Margin="0,0,5,5"  Content="1" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button1}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button2" Grid.Row="1" Grid.Column="1" Margin="0,0,10,10" Content="2" Width="50" Height="50">
+            <Button x:Name="Button2" Grid.Row="1" Grid.Column="1" Margin="0,0,5,5" Content="2" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button2}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button3" Grid.Row="1" Grid.Column="2" Margin="0,0,0,10" Content="3" Width="50" Height="50">
+            <Button x:Name="Button3" Grid.Row="1" Grid.Column="2" Margin="0,0,0,5" Content="3" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button3}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button4" Grid.Row="2" Grid.Column="0" Margin="0,0,10,10" Content="4" Width="50" Height="50">
+            <Button x:Name="Button4" Grid.Row="2" Grid.Column="0" Margin="0,0,5,5" Content="4" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button4}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button5" Grid.Row="2" Grid.Column="1" Margin="0,0,10,10" Content="5" Width="50" Height="50">
+            <Button x:Name="Button5" Grid.Row="2" Grid.Column="1" Margin="0,0,5,5" Content="5" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button5}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button6" Grid.Row="2" Grid.Column="2" Margin="0,0,0,10" Content="6" Width="50" Height="50">
+            <Button x:Name="Button6" Grid.Row="2" Grid.Column="2" Margin="0,0,0,5" Content="6" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button6}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button7" Grid.Row="3" Grid.Column="0" Margin="0,0,10,10" Content="7" Width="50" Height="50">
+            <Button x:Name="Button7" Grid.Row="3" Grid.Column="0" Margin="0,0,5,5" Content="7" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button7}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button8" Grid.Row="3" Grid.Column="1" Margin="0,0,10,10" Content="8" Width="50" Height="50">
+            <Button x:Name="Button8" Grid.Row="3" Grid.Column="1" Margin="0,0,5,5" Content="8" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button8}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button9" Grid.Row="3" Grid.Column="2" Margin="0,0,10,10" Content="9" Width="50" Height="50">
+            <Button x:Name="Button9" Grid.Row="3" Grid.Column="2" Margin="0,0,5,5" Content="9" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button9}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button x:Name="Button0" Grid.Row="4" Grid.Column="1" Content="0" VerticalAlignment="Top" Width="50" Height="50">
+            <Button x:Name="Button0" Grid.Row="4" Grid.Column="1" Content="0" VerticalAlignment="Top" Width="48" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DigitPressedCommand}" CommandParameter="{Binding ElementName=Button0}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button Grid.Row="1" Grid.Column="3" Margin="0,0,0,10" Content="DISARM" Width="100" Height="50" Background="Green">
+            <Button Grid.Row="1" Grid.Column="3" Margin="0,0,0,5" Padding="4" Content="DISARM" Width="96" Height="48" Background="Green">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.DisarmPressedCommand}" />
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button Grid.Row="2" Grid.Column="3" Margin="0,0,0,10" Content="ARM HOME" Width="100" Height="50" Background="Red">
+            <Button Grid.Row="2" Grid.Column="3" Margin="0,0,0,5" Padding="4" Content="ARM HOME" Width="96" Height="48" Background="Red">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.ArmHomePressedCommand}" />
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button Grid.Row="3" Grid.Column="3" Margin="0,0,0,10" Content="ARM AWAY" Width="100" Height="50" Background="Red">
+            <Button Grid.Row="3" Grid.Column="3" Margin="0,0,0,5" Padding="4" Content="ARM AWAY" Width="96" Height="48" Background="Red">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.ArmAwayPressedCommand}" />
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <Button Grid.Row="4" Grid.Column="3" Margin="0,0,0,0" Content="CANCEL" Width="100" Height="50">
+            <Button Grid.Row="4" Grid.Column="3" Margin="0,0,0,0" Padding="4" Content="CANCEL" Width="96" Height="48">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="Tapped">
                         <Core:InvokeCommandAction Command="{Binding DomoSecPanel.CancelPressedCommand}" />

@@ -264,7 +264,7 @@ Public NotInheritable Class TiczStorage
                 storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
             Catch ex As Exception
                 fileExists = False
-                app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"), 0)
+                app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"), 0, False, 2)
             End Try
             If fileExists Then
                 Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
@@ -274,7 +274,7 @@ Public NotInheritable Class TiczStorage
                     stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
                 Catch ex As Exception
                     'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
-                    app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message), 2)
+                    app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message), 2, False, 2)
                 End Try
                 stream.Dispose()
             End If

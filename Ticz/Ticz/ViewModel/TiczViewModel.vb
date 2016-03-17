@@ -593,7 +593,7 @@ Public Class RoomViewModel
     ''' </summary>
     ''' <returns></returns>
     Public Async Function LoadDevices() As Task
-        Await app.myViewModel.Notify.Update(False, "loading devices...", 1, False, 0)
+        Await app.myViewModel.Notify.Update(False, "loading devices...", 0, False, 0)
         If Not DashboardViewDevices Is Nothing Then DashboardViewDevices.Clear()
         If Not IconViewDevices Is Nothing Then IconViewDevices.Clear()
         If Not GridViewDevices Is Nothing Then GridViewDevices.Clear()

@@ -1199,11 +1199,11 @@ Public Class DeviceViewModel
             If Not myDevice Is Nothing Then
                 Return myDevice
             Else
-                Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2)
+                Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2, False, 2)
                 Return Nothing
             End If
         Else
-            Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2)
+            Await app.myViewModel.Notify.Update(True, "couldn't get device's status", 2, False, 2)
             Return Nothing
         End If
     End Function
@@ -1298,13 +1298,13 @@ Public Class DeviceViewModel
         End Select
 
         If url = "" Then
-            Await app.myViewModel.Notify.Update(True, "Don't know how to switch :(", 4)
+            Await app.myViewModel.Notify.Update(True, "Don't know how to switch :(", 2, False, 2)
             Exit Function
         End If
 
         Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
         If Not response.IsSuccessStatusCode Then
-            Await app.myViewModel.Notify.Update(True, "Error switching device", 2)
+            Await app.myViewModel.Notify.Update(True, "Error switching device", 2, False, 2)
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
         Else
             If Not response.Content Is Nothing Then
@@ -1312,17 +1312,17 @@ Public Class DeviceViewModel
                 Try
                     domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
                     If domoRes.status <> "OK" Then
-                        Await app.myViewModel.Notify.Update(True, domoRes.message, 2)
+                        Await app.myViewModel.Notify.Update(True, domoRes.message, 2, False, 2)
                         Return New retvalue With {.err = "Error switching device", .issuccess = 0}
                     Else
-                        Await app.myViewModel.Notify.Update(False, "Device switched", 1)
+                        Await app.myViewModel.Notify.Update(False, "Device switched", 1, False, 2)
                     End If
                     Await Me.Update()
                     domoRes = Nothing
                     SwitchingToState = ""
                     Return New retvalue With {.issuccess = 1}
                 Catch ex As Exception
-                    app.myViewModel.Notify.Update(True, "Server sent empty response", 2)
+                    app.myViewModel.Notify.Update(True, "Server sent empty response", 2, False, 2)
                     Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
                 End Try
             End If

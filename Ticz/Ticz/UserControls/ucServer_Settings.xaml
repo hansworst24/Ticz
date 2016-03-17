@@ -16,7 +16,7 @@
             <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
             <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" />
             <TextBlock    Margin="0,5,0,0" Text="Username"/>
-            <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}"/>
+            <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
             <TextBlock    Margin="0,5,0,0" Text="Password"/>
             <PasswordBox  Password="{Binding TiczSettings.Password, Mode=TwoWay}"/>
             <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TiczSettings.TestConnectionCommand}"/>

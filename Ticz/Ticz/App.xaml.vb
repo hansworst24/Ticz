@@ -58,7 +58,7 @@ NotInheritable Class Application
             ' parameter
             rootFrame.Navigate(GetType(SplitView), e.Arguments)
         End If
-        ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow)
+        ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible)
         ApplicationView.PreferredLaunchViewSize = New Size(800, 480)
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize
         If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) Then

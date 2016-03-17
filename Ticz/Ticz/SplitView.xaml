@@ -211,10 +211,10 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,48">
+        <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,0">
             <local:ucToastMessage DataContext="{Binding Notify}"/>
         </Border>
-        <local:ucSplitviewPaneMenu Width="300" Margin="0,0,0,49" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True"  Canvas.ZIndex="100" HorizontalAlignment="Left">
+        <local:ucSplitviewPaneMenu Width="300" Margin="0,0,0,0" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True"  Canvas.ZIndex="100" HorizontalAlignment="Left">
             <local:ucSplitviewPaneMenu.RenderTransform>
                 <TranslateTransform x:Name="MenuTranslate" X="-300"/>
             </local:ucSplitviewPaneMenu.RenderTransform>
@@ -228,7 +228,7 @@
             </Interactivity:Interaction.Behaviors>
         </local:ucSplitviewPaneMenu>
 
-        <Grid x:Name="mainGrid" Margin="0,0,0,49" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0">
+        <Grid x:Name="mainGrid" Margin="0,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
