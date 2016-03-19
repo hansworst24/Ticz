@@ -522,6 +522,7 @@ Public Class RoomViewModel
                     RoomToLoad = PreferredRoom
                     app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
                 Else
+                    'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
                     RoomToLoad = app.myViewModel.DomoRooms.result(0)
                     app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(app.myViewModel.DomoRooms.result(0).idx, app.myViewModel.DomoRooms.result(0).Name)
                 End If
@@ -639,7 +640,7 @@ Public Class RoomViewModel
             Select Case d.Type
                 Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
+                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_1, Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
                 Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)

@@ -87,7 +87,7 @@ Public Class DeviceViewModel
     Public ReadOnly Property CanBeSwitched As Boolean
         Get
             Select Case Type
-                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHTING_2,
+                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHTING_1, Constants.DEVICE.TYPE.LIGHTING_2,
                      Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP, Constants.DEVICE.TYPE.LIGHT_SWITCH
                     Return True
             End Select
@@ -463,6 +463,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.HARDWARE : Return Constants.ICONPATH.HARDWARE
                     Case Constants.DEVICE.TYPEIMG.INFO : Return Constants.ICONPATH.INFO
                     Case Constants.DEVICE.TYPEIMG.LEAF : Return Constants.ICONPATH.LEAF
+                    Case Constants.DEVICE.TYPEIMG.LIGHT : Return Constants.ICONPATH.LIGHTBULB
                     Case Constants.DEVICE.TYPEIMG.LIGHTBULB : Return Constants.ICONPATH.LIGHTBULB
                     Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.SPEAKER
                     Case Constants.DEVICE.TYPEIMG.LUX : Return Constants.ICONPATH.LUX
@@ -499,6 +500,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.IMAGE.LAPTOP : Return Constants.ICONPATH.LAPTOP
                     Case Constants.DEVICE.IMAGE.PHONE : Return Constants.ICONPATH.PHONE
                     Case Constants.DEVICE.IMAGE.PRINTER : Return Constants.ICONPATH.PRINTER
+                    Case Constants.DEVICE.IMAGE.SPEAKER : Return Constants.ICONPATH.SPEAKER
                     Case Constants.DEVICE.IMAGE.TELEVISION : Return Constants.ICONPATH.TELEVISION
                     Case Constants.DEVICE.IMAGE.WALLSOCKET : Return Constants.ICONPATH.WALLSOCKET
                     Case Constants.DEVICE.IMAGE.WATER : Return Constants.ICONPATH.MOISTURE
