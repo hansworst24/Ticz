@@ -523,23 +523,27 @@ Public Class RoomViewModel
                     app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
                 Else
                     'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
-                    RoomToLoad = app.myViewModel.DomoRooms.result(0)
-                    app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(app.myViewModel.DomoRooms.result(0).idx, app.myViewModel.DomoRooms.result(0).Name)
+                    If Not app.myViewModel.DomoRooms.result.Count = 0 Then
+                        RoomToLoad = app.myViewModel.DomoRooms.result(0)
+                        app.myViewModel.TiczSettings.PreferredRoom = app.myViewModel.TiczRoomConfigs.GetRoomConfig(app.myViewModel.DomoRooms.result(0).idx, app.myViewModel.DomoRooms.result(0).Name)
+                    End If
                 End If
             End If
         Else
             RoomToLoad = (From r In app.myViewModel.DomoRooms.result Where r.idx = idx Select r).FirstOrDefault()
         End If
-        RoomIDX = RoomToLoad.idx
-        RoomName = RoomToLoad.Name
-        RoomConfiguration.RoomView = ""
-        Dim tmpRoomConfiguration = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
-        RoomConfiguration.RoomIDX = tmpRoomConfiguration.RoomIDX
-        RoomConfiguration.RoomName = tmpRoomConfiguration.RoomName
-        RoomConfiguration.ShowRoom = tmpRoomConfiguration.ShowRoom
-        RoomConfiguration.RoomView = tmpRoomConfiguration.RoomView
-        RoomConfiguration.DeviceConfigurations = tmpRoomConfiguration.DeviceConfigurations
-        Initialize()
+        If Not RoomToLoad Is Nothing Then
+            RoomIDX = RoomToLoad.idx
+            RoomName = RoomToLoad.Name
+            RoomConfiguration.RoomView = ""
+            Dim tmpRoomConfiguration = app.myViewModel.TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
+            RoomConfiguration.RoomIDX = tmpRoomConfiguration.RoomIDX
+            RoomConfiguration.RoomName = tmpRoomConfiguration.RoomName
+            RoomConfiguration.ShowRoom = tmpRoomConfiguration.ShowRoom
+            RoomConfiguration.RoomView = tmpRoomConfiguration.RoomView
+            RoomConfiguration.DeviceConfigurations = tmpRoomConfiguration.DeviceConfigurations
+            Initialize()
+        End If
     End Sub
 
     Public Function GetActiveGroupedDeviceList() As DeviceGroup(Of DevicesViewModel)
