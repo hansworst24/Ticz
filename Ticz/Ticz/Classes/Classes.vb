@@ -811,7 +811,7 @@ Public NotInheritable Class Domoticz
                 ret.issuccess = False : ret.err = response.ReasonPhrase
                 ret.issuccess = False : ret.err = response.ReasonPhrase
                 Dim app As Application = CType(Application.Current, Application)
-                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 2, False, 0)
+                Await app.myViewModel.Notify.Update(True, String.Format("Error loading Sunrise / Sunset info ({0})", ret.err), 2, False, 2)
             End If
             Return ret
         End Function

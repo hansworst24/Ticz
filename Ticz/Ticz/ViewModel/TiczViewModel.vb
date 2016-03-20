@@ -944,18 +944,20 @@ Partial Public Class TiczSettings
                                         app.myViewModel.Notify.Clear(True)
                                         WriteToDebug("TestConnectionCommand", ServerIP)
                                         If ContainsValidIPDetails() Then
-                                            Dim response As retvalue = Await app.myViewModel.DomoRooms.Load()
+                                            Dim response As retvalue = Await app.myViewModel.DomoConfig.Load()
                                             If response.issuccess Then
                                                 TestConnectionResult = "Hurray !"
-                                                Dim LoadRoomsSuccess As retvalue = Await app.myViewModel.DomoRooms.Load()
-                                                If LoadRoomsSuccess.issuccess Then
-                                                    Dim loadRoomConfigsSuccess As Boolean = Await app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
-                                                    Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-                                                End If
-                                                RaisePropertyChanged("PreferredRoom")
-                                                app.myViewModel.currentRoom.SetRoomToLoad()
-                                                Await app.myViewModel.currentRoom.LoadDevices()
-                                                app.myViewModel.Notify.Clear()
+                                                Await app.myViewModel.Load()
+                                                'Dim LoadRoomsSuccess As retvalue = Await app.myViewModel.DomoRooms.Load()
+                                                'If LoadRoomsSuccess.issuccess Then
+                                                '    Dim loadRoomConfigsSuccess As Boolean = Await app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+                                                '    Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+                                                'End If
+                                                'RaisePropertyChanged("PreferredRoom")
+                                                'app.myViewModel.currentRoom.SetRoomToLoad()
+                                                'Await app.myViewModel.currentRoom.LoadDevices()
+                                                'app.myViewModel.Notify.Clear()
+                                                app.myViewModel.TiczMenu.ShowBackButton = False
                                                 app.myViewModel.TiczMenu.IsMenuOpen = False
                                                 app.myViewModel.TiczMenu.ActiveMenuContents = "Rooms"
                                             Else
@@ -1927,87 +1929,53 @@ Public Class TiczViewModel
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
         Await Notify.Update(False, "refreshing...", 0, False, 0)
         Dim sWatch = Stopwatch.StartNew()
-        'Refresh the Sunset/Rise values
-        Await DomoSunRiseSet.Load()
-        'Refresh the Security Panel Status
-        Await DomoSecPanel.GetSecurityStatus
+        'Refresh the Sunset/Rise values, Exit refresh if getting this fails
+        If Not (Await DomoSunRiseSet.Load()).issuccess Then Exit Function
+        'Refresh the Security Panel Status, exit refresh if this fails
+        If Not (Await DomoSecPanel.GetSecurityStatus).issuccess Then Exit Function
 
         'Get all devices for this room that have been updated since the LastRefresh (Domoticz will tell you which ones)
-        Dim dev_response As New HttpResponseMessage
-        'Hack in case we're looking at the "All Devices" room, we need to download status for all devices
+        Dim dev_response, grp_response As New HttpResponseMessage
+        'Hack in case we're looking at the "All Devices" room, we need to download status for all devices regardless of the room
         If currentRoom.RoomIDX = 12321 Then
             dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevices()))
-        Else
-            dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(currentRoom.RoomIDX, LoadAllUpdates)))
-        End If
-
-        If dev_response.IsSuccessStatusCode Then
-            Dim refreshedDevices = JsonConvert.DeserializeObject(Of DevicesModel)(Await dev_response.Content.ReadAsStringAsync)
-            If Not refreshedDevices Is Nothing AndAlso refreshedDevices.result.Count > 0 Then
-                WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", refreshedDevices.result.Count))
-                If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                    For Each d In refreshedDevices.result
-                        Dim deviceToUpdate = (From devs In currentRoom.GetActiveDeviceList Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
-                        If Not deviceToUpdate Is Nothing Then
-                            Await RunOnUIThread(Async Sub()
-                                                    Await deviceToUpdate.Update(d)
-                                                End Sub)
-                        End If
-                    Next
-                Else
-                    For Each d In refreshedDevices.result
-                        Dim deviceToUpdate = currentRoom.GetActiveGroupedDeviceList.GetDevice(d.idx, d.Name)
-                        If Not deviceToUpdate Is Nothing Then
-                            Await RunOnUIThread(Async Sub()
-                                                    Await deviceToUpdate.Update(d)
-                                                End Sub)
-                        End If
-                    Next
-                End If
-                refreshedDevices = Nothing
-            End If
-        Else
-            Await Notify.Update(True, "couldn't load device status", 2, False, 2)
-        End If
-
-        'Get all scenes
-        Dim grp_response As New HttpResponseMessage
-        If currentRoom.RoomIDX = 12321 Then
             grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
         Else
+            dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(currentRoom.RoomIDX, LoadAllUpdates)))
             grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(currentRoom.RoomIDX)))
         End If
-        If grp_response.IsSuccessStatusCode Then
-            Dim refreshedScenes = JsonConvert.DeserializeObject(Of DevicesModel)(Await grp_response.Content.ReadAsStringAsync)
-            If Not refreshedScenes Is Nothing Then
-                If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                    For Each device In currentRoom.GetActiveDeviceList.Where(Function(x) x.Type = "Group" Or x.Type = "Scene").ToList()
-                        Dim updatedDevice = (From d In refreshedScenes.result Where d.idx = device.idx And d.Name = device.Name Select d).FirstOrDefault()
-                        If Not updatedDevice Is Nothing Then
-                            Await RunOnUIThread(Async Sub()
-                                                    Await device.Update(updatedDevice)
-                                                End Sub)
 
-                        End If
-                    Next
-                Else
-                    For Each dg In currentRoom.GetActiveGroupedDeviceList
-                        For Each device In dg.Where(Function(x) x.Type = "Group" Or x.Type = "Scene").ToList()
-                            Dim updatedDevice = (From d In refreshedScenes.result Where d.idx = device.idx And d.Name = device.Name Select d).FirstOrDefault()
-                            If Not updatedDevice Is Nothing Then
-                                Await RunOnUIThread(Async Sub()
-                                                        Await device.Update(updatedDevice)
-                                                    End Sub)
-                            End If
-                        Next
-                    Next
-                End If
-                refreshedScenes = Nothing
-            End If
-        Else
-            Await Notify.Update(True, "couldn't load scene/group status", 2, False, 2)
+
+        'Collect all updated groups/scenes and devices into a single list
+        Dim devicesToRefresh As New List(Of DeviceModel)
+        If dev_response.IsSuccessStatusCode Then
+            devicesToRefresh.AddRange((JsonConvert.DeserializeObject(Of DevicesModel)(Await dev_response.Content.ReadAsStringAsync)).result)
+        End If
+        If grp_response.IsSuccessStatusCode Then
+            devicesToRefresh.AddRange((JsonConvert.DeserializeObject(Of DevicesModel)(Await grp_response.Content.ReadAsStringAsync)).result)
         End If
 
+        'Iterate through the list of updated devices, find the matching device in the room and update it
+        If devicesToRefresh.Count > 0 Then
+            WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", devicesToRefresh.Count))
+            For Each d In devicesToRefresh
+                Dim deviceToUpdate As DeviceViewModel
+                If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
+                    deviceToUpdate = (From devs In currentRoom.GetActiveDeviceList Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
+                Else
+                    deviceToUpdate = currentRoom.GetActiveGroupedDeviceList.GetDevice(d.idx, d.Name)
+                End If
+                If Not deviceToUpdate Is Nothing Then
+                    Await RunOnUIThread(Async Sub()
+                                            Await deviceToUpdate.Update(d)
+                                        End Sub)
+                End If
+            Next
+        Else
+            If Not grp_response.IsSuccessStatusCode Or Not dev_response.IsSuccessStatusCode Then
+                Await Notify.Update(True, "couldn't load refreshed devices", 2, False, 2)
+            End If
+        End If
 
         'Clear the Notification
         sWatch.Stop()
