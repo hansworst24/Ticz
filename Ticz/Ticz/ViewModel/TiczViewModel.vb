@@ -1921,13 +1921,13 @@ Public Class TiczViewModel
                 If TiczSettings.SecondsForRefresh > 0 Then Await Refresh(False)
             End While
         Catch ex As Exception
-            Notify.Update(True, "AutoRefresh crashed :(", 2, False, 4)
+            Notify.Update(True, "AutoRefresh task crashed :(", 2, False, 4)
         End Try
 
     End Function
 
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
-        Await Notify.Update(False, "refreshing...", 0, False, 0)
+        Await Notify.Update(False, "Refreshing...", 0, False, 0)
         Dim sWatch = Stopwatch.StartNew()
         'Refresh the Sunset/Rise values, Exit refresh if getting this fails
         If Not (Await DomoSunRiseSet.Load()).issuccess Then Exit Function
@@ -1973,7 +1973,7 @@ Public Class TiczViewModel
             Next
         Else
             If Not grp_response.IsSuccessStatusCode Or Not dev_response.IsSuccessStatusCode Then
-                Await Notify.Update(True, "couldn't load refreshed devices", 2, False, 2)
+                Await Notify.Update(True, "Error loading refreshed devices/groups...", 2, False, 2)
             End If
         End If
 
