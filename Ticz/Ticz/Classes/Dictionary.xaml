@@ -219,7 +219,7 @@
     <DataTemplate x:Key="FastGraphTempHuMonth">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>
-                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" FontSize="12"/>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="te">
                 <SyncFusion:SplineSeries.YAxis>
