@@ -199,6 +199,43 @@
         <TextBlock FontSize="12" VerticalAlignment="Top" Text="%"/>
     </DataTemplate>
 
+    <DataTemplate x:Key="FastGraphWeightDay">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:FastLineSeries Label="Weight" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v">
+                <SyncFusion:FastLineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Weight in kg" LabelFormat="#.0 kg;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:FastLineSeries.YAxis>
+            </SyncFusion:FastLineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphWeightMonth">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SplineSeries Label="Weight" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v_max">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Weight in kg " LabelFormat="#.0 kg;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+    <DataTemplate x:Key="FastGraphWeightYear">
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" IntervalType="Months" Interval="1" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v_max">
+                <SyncFusion:SplineSeries.YAxis>
+                    <SyncFusion:NumericalAxis Header="Weight in kg " LabelFormat="#.0 kg;"  FontSize="12" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                </SyncFusion:SplineSeries.YAxis>
+            </SyncFusion:SplineSeries>
+        </SyncFusion:SfChart>
+    </DataTemplate>
+
     <DataTemplate x:Key="FastGraphTempHuDay">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>

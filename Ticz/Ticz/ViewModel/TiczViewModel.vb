@@ -585,6 +585,9 @@ Public Class RoomViewModel
                     ret.Add(DevToAdd)
                 End If
             Next
+            'TEST : REMOVE INJECTION OF TEST DEVICE
+            'Dim testDevice As New DeviceModel With {.Type = "Weight", .TypeImg = "scale", .Data = "60.5 kg", .Name = "TestPersonWeight"}
+            'ret.Add(New DeviceViewModel(testDevice, RoomView))
             deserialized = Nothing
         Else
             Await app.myViewModel.Notify.Update(True, String.Format("Connection error {0}", response.ReasonPhrase), 2, False, 4)
@@ -652,7 +655,7 @@ Public Class RoomViewModel
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
                 Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER,
                      Constants.DEVICE.TYPE.LUX, Constants.DEVICE.TYPE.AIR_QUALITY, Constants.DEVICE.TYPE.RFXMETER,
-                     Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT
+                     Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT, Constants.DEVICE.TYPE.WEIGHT
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
                 Case Else
                     NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)
@@ -1789,9 +1792,18 @@ Public Class TiczViewModel
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                'TEST DATA FOR LUX
                 'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter"), "ms-appx:///test_data/lux_day.txt"))
                 'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter"), "ms-appx:///test_data/lux_month.txt"))
                 'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter"), "ms-appx:///test_data/lux_year.txt"))
+            Case Constants.DEVICE.TYPE.WEIGHT
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWeightDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWeightMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphWeightYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                'TEST DATA FOR WEIGHT
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWeightDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter"), "ms-appx:///test_data/weight_day.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWeightMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter"), "ms-appx:///test_data/weight_month.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphWeightYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter"), "ms-appx:///test_data/weight_year.txt"))
             Case Constants.DEVICE.TYPE.WIND
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWindDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "wind")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWindMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "wind")))

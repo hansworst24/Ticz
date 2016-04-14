@@ -90,8 +90,9 @@ Public Class DeviceViewModel
                 Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHTING_1, Constants.DEVICE.TYPE.LIGHTING_2,
                      Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP, Constants.DEVICE.TYPE.LIGHT_SWITCH
                     Return True
+                Case Else
+                    Return False
             End Select
-            Return False
         End Get
     End Property
     Public Property Chill As String
@@ -473,6 +474,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.PUSH : Return Constants.ICONPATH.PUSH
                     Case Constants.DEVICE.TYPEIMG.PUSHOFF : Return Constants.ICONPATH.PUSHOFF
                     Case Constants.DEVICE.TYPEIMG.RAIN : Return Constants.ICONPATH.RAIN
+                    Case Constants.DEVICE.TYPEIMG.SCALE : Return Constants.ICONPATH.SCALE
                     Case Constants.DEVICE.TYPEIMG.SCENE : Return Constants.ICONPATH.SCENE
                     Case Constants.DEVICE.TYPEIMG.SECURITY : Return Constants.ICONPATH.SECURITY
                     Case Constants.DEVICE.TYPEIMG.SPEAKER : Return Constants.ICONPATH.SPEAKER
