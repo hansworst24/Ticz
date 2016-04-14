@@ -108,6 +108,10 @@
     <Content Include="test_data\lux_day.txt" />
     <Content Include="test_data\lux_month.txt" />
     <Content Include="test_data\lux_year.txt" />
+    <Content Include="test_data\rfxmeter_day.txt" />
+    <Content Include="test_data\rfxmeter_month.txt" />
+    <Content Include="test_data\rfxmeter_week.txt" />
+    <Content Include="test_data\rfxmeter_year.txt" />
     <Content Include="test_data\weight_day.txt" />
     <Content Include="test_data\weight_month.txt" />
     <Content Include="test_data\weight_year.txt" />

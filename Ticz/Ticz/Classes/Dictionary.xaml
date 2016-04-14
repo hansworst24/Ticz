@@ -195,6 +195,60 @@
         
     </DataTemplate>
 
+    <DataTemplate x:Key="GraphWaterConsumptionDay">
+
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Water in Liter;" FontSize="12" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:ColumnSeries Label="Gas" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="liter" />
+        </SyncFusion:SfChart>
+
+    </DataTemplate>
+    <DataTemplate x:Key="GraphWaterConsumptionWeek">
+
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="1"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Water in Liter"  FontSize="12" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:ColumnSeries Label="Gas" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="liter" />
+        </SyncFusion:SfChart>
+
+    </DataTemplate>
+    <DataTemplate x:Key="GraphWaterConsumptionMonth">
+
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis  LabelFormat="MMM dd" IntervalType="Days" Interval="1" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Water in Liter" FontSize="12" Minimum="0" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="liter"/>
+        </SyncFusion:SfChart>
+
+    </DataTemplate>
+    <DataTemplate x:Key="GraphWaterConsumptionYear">
+
+        <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+            <SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
+            </SyncFusion:SfChart.PrimaryAxis>
+            <SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:NumericalAxis Header="Water in Liter" FontSize="12" Minimum="0" />
+            </SyncFusion:SfChart.SecondaryAxis>
+            <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="liter"/>
+        </SyncFusion:SfChart>
+
+    </DataTemplate>
+
+
     <DataTemplate x:Key="YAxisPercentagePostfix">
         <TextBlock FontSize="12" VerticalAlignment="Top" Text="%"/>
     </DataTemplate>

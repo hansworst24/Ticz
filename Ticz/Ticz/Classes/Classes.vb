@@ -577,6 +577,12 @@ Public NotInheritable Class Domoticz
                 Return [Date]
             End Get
         End Property
+        Public ReadOnly Property liter As Double    'Used to convert m3 to liter
+            Get
+                Return v * 1000
+            End Get
+        End Property
+
         Public Property lux As Double      'Used by Lux
         Public Property lux_min As Double  'Used by Lux
         Public Property lux_max As Double  'Used by Lux

@@ -246,12 +246,20 @@ Public Class DeviceViewModel
 
     Public ReadOnly Property DeviceProperties As List(Of KeyValuePair(Of String, String))
         Get
-            Dim properties As PropertyInfo() = _Device.GetType().GetProperties()
+            Dim dType As Type = _Device.GetType()
             Dim returnprops As New List(Of KeyValuePair(Of String, String))
-            For Each pi As PropertyInfo In properties
-                Dim v As String = TryCast(pi.GetValue(DeviceModel, Nothing), String)
-                returnprops.Add(New KeyValuePair(Of String, String)(pi.Name, v))
+            For Each prop In dType.GetProperties()
+                Dim v As String
+                If prop.PropertyType Is GetType(Integer) Then
+                    v = CType(prop.GetValue(DeviceModel), Integer)
+                ElseIf prop.PropertyType Is GetType(Double) Then
+                    v = CType(prop.GetValue(DeviceModel), Double)
+                Else
+                    v = TryCast(prop.GetValue(DeviceModel, Nothing), String)
+                End If
+                returnprops.Add(New KeyValuePair(Of String, String)(prop.Name, v))
             Next
+
             Return returnprops
         End Get
     End Property
@@ -733,6 +741,11 @@ Public Class DeviceViewModel
     Public ReadOnly Property SwitchType As String
         Get
             Return _Device.SwitchType
+        End Get
+    End Property
+    Public ReadOnly Property SwitchTypeVal As Integer
+        Get
+            Return _Device.SwitchTypeVal
         End Get
     End Property
     Public Property Temp As String

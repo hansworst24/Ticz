@@ -586,7 +586,7 @@ Public Class RoomViewModel
                 End If
             Next
             'TEST : REMOVE INJECTION OF TEST DEVICE
-            'Dim testDevice As New DeviceModel With {.Type = "Weight", .TypeImg = "scale", .Data = "60.5 kg", .Name = "TestPersonWeight"}
+            'Dim testDevice As New DeviceModel With {.Type = "RFXMeter", .TypeImg = "water", .SwitchTypeVal = 2, .Data = "0.030 m3", .Name = "RFXMetert"}
             'ret.Add(New DeviceViewModel(testDevice, RoomView))
             deserialized = Nothing
         Else
@@ -1788,6 +1788,33 @@ Public Class TiczViewModel
         Dim GraphsToAdd As New List(Of Domoticz.DeviceGraphContainer)
 
         Select Case d.Type
+            Case Constants.DEVICE.TYPE.RFXMETER
+                Select Case d.SwitchTypeVal
+                    Case 0 'ENERGY METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                    Case 1 'GAS METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphGasDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphGasWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphGasMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphGasYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                    Case 2 'WATER METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                    Case 3 'COUNTER METER
+                        'ASSUMPTION THAT COUNTER METER IS LIKE ON/OFF SWITCH
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
+                    Case 4 'ENERGY GENERATED METER
+                        'ASSUMPTION THAT ENERGY GENERATED IS THE SAME AS ENERGY METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                End Select
             Case Constants.DEVICE.TYPE.LUX
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
@@ -1860,11 +1887,13 @@ Public Class TiczViewModel
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphGasWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphGasMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphGasYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
-                    Case Else
-                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("NoGraphAvailable"), DataTemplate), ""))
                 End Select
         End Select
 
+        'Add an empty graph which tells the user to help getting their data in :)
+        If GraphsToAdd.Count = 0 Then
+            GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("NoGraphAvailable"), DataTemplate), ""))
+        End If
 
         For Each g In GraphsToAdd
             Await Task.Run(Function() g.Load(d, g.datafile))
