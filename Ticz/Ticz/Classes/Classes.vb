@@ -905,8 +905,12 @@ Public NotInheritable Class Domoticz
         Using filter As New HttpBaseProtocolFilter
             If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
                 filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
-                filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
-                WriteToDebug(filter.ServerCredential.UserName, filter.ServerCredential.Password)
+                Try
+                    'might fail on older W10 versions
+                    filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
+                Catch ex As Exception
+
+                End Try
             End If
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
             filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
