@@ -1,0 +1,42 @@
+﻿<UserControl
+    x:Class="Ticz.ucDevice_Graph"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Sync="using:Syncfusion.UI.Xaml.Charts"
+    mc:Ignorable="d"
+    d:DesignHeight="200"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <local:DeviceGraphTemplateSelector x:Key="myDeviceGraphTemplateSelector"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle x:Name="BackDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Opacity="0.9"/>
+        <ContentControl  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphGasDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+        <ContentControl Visibility="Collapsed"  DataContext="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphEnergyDay}"/>
+
+
+        <!--<ContentPresenter DataContext="{Binding DeviceGraph}" Content="{Binding}" ContentTemplate="{Binding GraphLayout}"/>-->
+        <!--<ContentControl Content="{Binding DeviceGraph}" ContentTemplate="{StaticResource FastGraphGasDay}"/>-->
+    </Grid>
+</UserControl>

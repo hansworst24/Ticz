@@ -1850,7 +1850,7 @@ Public Class TiczViewModel
                 End Select
             Case Constants.DEVICE.TYPE.LIGHT_SWITCH
                 Select Case d.SubType
-                    Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH
+                    Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH, Constants.DEVICE.SUBTYPE.SWITCH
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
                 End Select
             Case Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
