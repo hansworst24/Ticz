@@ -1853,7 +1853,7 @@ Public Class TiczViewModel
                     Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH, Constants.DEVICE.SUBTYPE.SWITCH
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
                 End Select
-            Case Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
+            Case Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.LIGHTING_1, Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(d.idx)))
 
             Case Constants.DEVICE.TYPE.TEMP
@@ -1864,6 +1864,13 @@ Public Class TiczViewModel
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "temp")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "temp")))
                 GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "temp")))
+            Case Constants.DEVICE.TYPE.GENERAL
+                Select Case d.SubType
+                    Case Constants.DEVICE.SUBTYPE.KWH
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                End Select
             Case Constants.DEVICE.TYPE.USAGE
                 Select Case d.SubType
                     Case Constants.DEVICE.SUBTYPE.ELECTRIC

@@ -206,6 +206,7 @@ Public NotInheritable Class Constants
         Public NotInheritable Class SUBTYPE
             'Constants for Device SubTypes
             Public Const ELECTRIC As String = "Electric"
+            Public Const KWH As String = "kWh"
             Public Const P1_GAS As String = "Gas"
             Public Const P1_ELECTRIC As String = "Energy"
             Public Const PERCENTAGE As String = "Percentage"
