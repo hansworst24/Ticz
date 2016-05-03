@@ -1867,13 +1867,22 @@ Public Class TiczViewModel
             Case Constants.DEVICE.TYPE.GENERAL
                 Select Case d.SubType
                     Case Constants.DEVICE.SUBTYPE.KWH
-                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
-                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
-                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("GeneralKWHDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_day.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("GeneralKWHWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("GeneralKWHMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("GeneralKWHYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_year.txt"))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("GeneralKWHDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter", 1)))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "week", TryCast(Xaml.Application.Current.Resources("GeneralKWHWeek"), DataTemplate), (New DomoApi).getGraph(d.idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("GeneralKWHMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("GeneralKWHYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))
                 End Select
             Case Constants.DEVICE.TYPE.USAGE
                 Select Case d.SubType
                     Case Constants.DEVICE.SUBTYPE.ELECTRIC
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter"), "ms-appx:///test_data/371_json_day.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter"), "ms-appx:///test_data/371_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter"), "ms-appx:///test_data/371_json_year.txt"))
+                        'TODO : REMOVE TESTDATA
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(d.idx, "day", "counter")))
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(d.idx, "month", "counter")))
                         GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(d.idx, d.Type, d.SubType, d.Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(d.idx, "year", "counter")))

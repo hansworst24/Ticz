@@ -1,0 +1,13 @@
+{
+   "ValueQuantity" : "",
+   "ValueUnits" : "",
+   "method" : 0,
+   "result" : [
+      {
+         "d" : "2016-04-19 09:00",
+         "v" : "0.000"
+      }
+   ],
+   "status" : "OK",
+   "title" : "Graph counter day"
+}

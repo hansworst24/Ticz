@@ -36,7 +36,7 @@
                     <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Usage in Watt" LabelFormat="0 W"  FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Usage in Watt" Minimum="0" LabelFormat="0 W"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:FastLineSeries Label="Usage_1" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="u"/>
             </SyncFusion:SfChart>
@@ -49,7 +49,7 @@
                     <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12" IntervalType="Days" Interval="2"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Usage in Watt" LabelFormat="0 W"  FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Usage in Watt"  Minimum="0" LabelFormat="0 W"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="u_min"/>
                 <SyncFusion:SplineSeries Label="Usage_2"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="u_max"/>
@@ -63,13 +63,79 @@
                     <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Usage in Watt" LabelFormat="0 W" FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Usage in Watt"  Minimum="0" LabelFormat="0 W" FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="u_min" />
                 <SyncFusion:SplineSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="u_max"/>
             </SyncFusion:SfChart>
         </Grid>
     </DataTemplate>
+
+<!-- GENERAL / KWH METER -->
+    <DataTemplate x:Key="GeneralKWHDay">
+        <Grid>
+            <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+                <SyncFusion:SfChart.PrimaryAxis>
+                    <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" Interval="1" FontSize="12"/>
+                </SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:SfChart.SecondaryAxis>
+                    <SyncFusion:NumericalAxis Header="Electric Usage in Watt" Minimum="0"  LabelFormat="0 W"  FontSize="12" />
+                </SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:FastLineSeries Label="Usage_1" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
+            </SyncFusion:SfChart>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="GeneralKWHWeek">
+        <Grid>
+            <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300" ScrollViewer.VerticalScrollMode="Disabled">
+                <SyncFusion:SfChart.PrimaryAxis>
+                    <SyncFusion:DateTimeAxis LabelFormat="ddd" FontSize="12" IntervalType="Days" Interval="1"/>
+                </SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:SfChart.SecondaryAxis>
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW"  FontSize="12" />
+                </SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:StackingColumnSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
+                <!--<SyncFusion:StackingColumnSeries Label="Usage_2"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>-->
+                <!--TODO : Looks like FastStackingColumnBitmapSeries causes big memory leaks -->
+                <!--<SyncFusion:FastStackingColumnBitmapSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
+                <SyncFusion:FastStackingColumnBitmapSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>-->
+            </SyncFusion:SfChart>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="GeneralKWHMonth">
+        <Grid>
+            <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+                <!--<SyncFusion:SfChart.Behaviors>
+                <SyncFusion:ChartZoomPanBehavior EnablePanning="True" />
+            </SyncFusion:SfChart.Behaviors>-->
+                <SyncFusion:SfChart.PrimaryAxis>
+                    <SyncFusion:DateTimeAxis  LabelFormat="MMM dd" IntervalType="Days" Interval="2" FontSize="12"/>
+                </SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:SfChart.SecondaryAxis>
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW" FontSize="12" />
+                </SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v" />
+            </SyncFusion:SfChart>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="GeneralKWHYear">
+        <Grid>
+            <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
+                <!--<SyncFusion:SfChart.Behaviors>
+                <SyncFusion:ChartZoomPanBehavior EnablePanning="True" />
+            </SyncFusion:SfChart.Behaviors>-->
+                <SyncFusion:SfChart.PrimaryAxis>
+                    <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
+                </SyncFusion:SfChart.PrimaryAxis>
+                <SyncFusion:SfChart.SecondaryAxis>
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW" FontSize="12" />
+                </SyncFusion:SfChart.SecondaryAxis>
+                <SyncFusion:SplineSeries  Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v" />
+            </SyncFusion:SfChart>
+        </Grid>
+    </DataTemplate>
+    
+
 
     <DataTemplate x:Key="FastGraphEnergyDay">
         <Grid>
@@ -78,7 +144,7 @@
                     <SyncFusion:DateTimeAxis LabelFormat="HH:mm" IntervalType="Hours" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Electric Usage in Watt" LabelFormat="0 W"  FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Electric Usage in Watt" Minimum="0"  LabelFormat="0 W"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:FastLineSeries Label="Usage_1" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
                 <SyncFusion:FastLineSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>
@@ -95,7 +161,7 @@
                     <SyncFusion:DateTimeAxis LabelFormat="ddd" FontSize="12" IntervalType="Days" Interval="1"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" LabelFormat="0 kW"  FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:StackingColumnSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
                 <SyncFusion:StackingColumnSeries Label="Usage_2"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>
@@ -115,7 +181,7 @@
                 <SyncFusion:DateTimeAxis  LabelFormat="MMM dd" IntervalType="Days" Interval="2" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" LabelFormat="0 kW" FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW" FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v" />
                 <SyncFusion:SplineSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>
@@ -132,7 +198,7 @@
                 <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
                 <SyncFusion:SfChart.SecondaryAxis>
-                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" LabelFormat="0 kW" FontSize="12" />
+                    <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW" FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:SplineSeries  Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v" />
                 <SyncFusion:SplineSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>

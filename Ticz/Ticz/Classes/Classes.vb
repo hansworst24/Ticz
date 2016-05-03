@@ -568,6 +568,7 @@ Public NotInheritable Class Domoticz
         Public Property title As String
     End Class
     Public Class GraphValue
+        Public Property c As Double
         Public Property c1 As Double
         Public Property c3 As Double
         Public Property ba As Integer
@@ -1011,10 +1012,16 @@ Public NotInheritable Class DomoApi
         Return String.Format("http://{0}:{1}/json.htm?type=lightlog&idx={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx.ToString)
     End Function
 
-    Public Function getGraph(idx As Integer, range As String, sensor As String)
-        Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&idx={3}&range={4}",
+    Public Function getGraph(idx As Integer, range As String, sensor As String, Optional method As Integer = 0)
+        If method > 0 Then
+            Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&method={3}&idx={4}&range={5}",
+                     app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort,
+                     sensor, method, idx.ToString, range)
+        Else
+            Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&idx={3}&range={4}",
                              app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort,
                              sensor, idx.ToString, range)
+        End If
     End Function
 
 

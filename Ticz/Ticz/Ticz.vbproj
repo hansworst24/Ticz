@@ -105,6 +105,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Fonts\TickingTimebombBB.ttf" />
+    <Content Include="test_data\371_json_day.txt" />
+    <Content Include="test_data\371_json_month.txt" />
+    <Content Include="test_data\371_json_year.txt" />
+    <Content Include="test_data\General_kWh_Graph Data_588_json_day.txt" />
+    <Content Include="test_data\General_kWh_Graph Data_588_json_month.txt" />
+    <Content Include="test_data\General_kWh_Graph Data_588_json_year.txt" />
     <Content Include="test_data\lux_day.txt" />
     <Content Include="test_data\lux_month.txt" />
     <Content Include="test_data\lux_year.txt" />
