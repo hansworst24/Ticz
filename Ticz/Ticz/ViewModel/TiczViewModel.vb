@@ -855,6 +855,8 @@ Partial Public Class TiczSettings
     Const strPlaySecPanelSFXKeyName As String = "strPlaySecPanelSFX"
     Const strOnlyShowFavouritesKeyName As String = "strOnlyShowFavourites"
     Const strUseBitmapIconsKeyName As String = "strUseBitmapIcons"
+    Const strUseHTTPSKeyName As String = "strUseHTTPS"
+    Const strIgnoreSSLErrorsKeyName As String = "strIgnoreSSLErrors"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -877,6 +879,8 @@ Partial Public Class TiczSettings
     Const strUseDarkThemeDefault = "True"
     Const strPlaySecPanelSFXDefault = False
     Const strOnlyShowFavouritesDefault As Boolean = False
+    Const strUseHTTPSDefault As Boolean = False
+    Const strIgnoreSSLErrorsDefault As Boolean = False
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -897,6 +901,8 @@ Partial Public Class TiczSettings
     Const strUseDarkThemeDefault = "True"
     Const strPlaySecPanelSFXDefault = False
     Const strOnlyShowFavouritesDefault As Boolean = False
+    Const strUseHTTPSDefault As Boolean = False
+    Const strIgnoreSSLErrorsDefault As Boolean = False
 #End If
 
     Const strConnectionStatusDefault = False
@@ -1039,6 +1045,29 @@ Partial Public Class TiczSettings
         Get
             Return _YesNoList
         End Get
+    End Property
+
+
+    Public Property IgnoreSSLErrors As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strIgnoreSSLErrorsKeyName, strIgnoreSSLErrorsDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strIgnoreSSLErrorsKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
+    Public Property UseHTTPS As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strUseHTTPSKeyName, strUseHTTPSDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strUseHTTPSKeyName, value) Then
+                Save()
+            End If
+        End Set
     End Property
 
 

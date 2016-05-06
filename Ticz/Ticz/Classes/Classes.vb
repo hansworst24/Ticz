@@ -8,6 +8,7 @@ Imports GalaSoft.MvvmLight
 Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
 Imports Windows.Storage
+Imports Windows.Security.Cryptography.Certificates
 
 Public Class retvalue
     Public Property issuccess As Boolean
@@ -916,6 +917,14 @@ Public NotInheritable Class Domoticz
             End If
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
             filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
+
+            'Ignore SSL Certificate issues
+            If app.myViewModel.TiczSettings.IgnoreSSLErrors Then
+                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted)
+                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName)
+            Else
+                filter.IgnorableServerCertificateErrors.Clear()
+            End If
             filter.AllowUI = False
             filter.UseProxy = False
             Using wc As New HttpClient(filter)
@@ -970,7 +979,7 @@ End Class
 
 Public NotInheritable Class DomoApi
     'Switch Command On/Off with passcode
-    'http://{0}:{1}/json.htm?type=command&param=switchlight&idx=95&switchcmd=Off&level=0&passcode=234 
+    '{0}/json.htm?type=command&param=switchlight&idx=95&switchcmd=Off&level=0&passcode=234 
     'returns when wrong code
     '    {
     '   "message" : "WRONG CODE",
@@ -980,46 +989,54 @@ Public NotInheritable Class DomoApi
 
     Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
+    Public Function Protocol()
+        If app.myViewModel.TiczSettings.UseHTTPS Then Return "https" Else Return "http"
+    End Function
+
+    Public Function ServerURL()
+        Return String.Format("{0}://{1}:{2}", If(app.myViewModel.TiczSettings.UseHTTPS, "https", "http"), app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+    End Function
+
     Public Function getSecurityStatus()
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getsecstatus", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=command&param=getsecstatus", ServerURL)
     End Function
 
 
     Public Function setSetpoint(idx As Integer, setpointvalue As Double)
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=setsetpoint&idx={2}&setpoint={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, setpointvalue)
+        Return String.Format("{0}/json.htm?type=command&param=setsetpoint&idx={1}&setpoint={2}", ServerURL, idx, setpointvalue)
     End Function
     Public Function setSecurityStatus(status As Integer, HashCode As String)
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=setsecstatus&secstatus={2}&seccode={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, status, HashCode)
+        Return String.Format("{0}/json.htm?type=command&param=setsecstatus&secstatus={1}&seccode={2}", ServerURL, status, HashCode)
     End Function
 
     Public Function getButtonPressedSound()
-        Return String.Format("http://{0}:{1}/secpanel/media/key.mp3", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/secpanel/media/key.mp3", ServerURL)
     End Function
 
     Public Function getWrongCodeSound()
-        Return String.Format("http://{0}:{1}/secpanel/media/wrongcode.mp3", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/secpanel/media/wrongcode.mp3", ServerURL)
     End Function
 
     Public Function getArmSound()
-        Return String.Format("http://{0}:{1}/secpanel/media/arm.mp3", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/secpanel/media/arm.mp3", ServerURL)
     End Function
 
     Public Function getDisarmedSound()
-        Return String.Format("http://{0}:{1}/secpanel/media/disarm.mp3", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/secpanel/media/disarm.mp3", ServerURL)
     End Function
 
     Public Function getLightLog(idx As Integer)
-        Return String.Format("http://{0}:{1}/json.htm?type=lightlog&idx={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx.ToString)
+        Return String.Format("{0}/json.htm?type=lightlog&idx={2}", ServerURL, idx.ToString)
     End Function
 
     Public Function getGraph(idx As Integer, range As String, sensor As String, Optional method As Integer = 0)
         If method > 0 Then
-            Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&method={3}&idx={4}&range={5}",
-                     app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort,
+            Return String.Format("{0}/json.htm?type=graph&sensor={1}&method={2}&idx={3}&range={4}",
+                     ServerURL,
                      sensor, method, idx.ToString, range)
         Else
-            Return String.Format("http://{0}:{1}/json.htm?type=graph&sensor={2}&idx={3}&range={4}",
-                             app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort,
+            Return String.Format("{0}/json.htm?type=graph&sensor={1}&idx={2}&range={3}",
+                             ServerURL,
                              sensor, idx.ToString, range)
         End If
     End Function
@@ -1030,59 +1047,59 @@ Public NotInheritable Class DomoApi
         'By sending a lastupdate parameter with a unix epoch number, we'll only get the updated devices since that epoch
         WriteToDebug("DomoApi", TimeToUnixSeconds(app.myViewModel.LastRefresh).ToString)
         If LoadAllUpdates Then
-            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, roomIDX)
+            Return String.Format("{0}/json.htm?type=devices&filter=all&used=true&order=Name&plan={1}", ServerURL, roomIDX)
         Else
             Dim lastUpdateEpoch As Long = TimeToUnixSeconds(app.myViewModel.LastRefresh).ToString
-            Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true&order=Name&plan={2}&lastupdate={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, roomIDX, lastUpdateEpoch)
+            Return String.Format("{0}/json.htm?type=devices&filter=all&used=true&order=Name&plan={1}&lastupdate={2}", ServerURL, roomIDX, lastUpdateEpoch)
 
         End If
     End Function
 
     Public Function getAllScenesForRoom(roomIDX As String)
-        Return String.Format("http://{0}:{1}/json.htm?type=scenes&filter=all&used=true&order=Name&plan={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, roomIDX)
+        Return String.Format("{0}/json.htm?type=scenes&filter=all&used=true&order=Name&plan={1}", ServerURL, roomIDX)
     End Function
 
     Public Function getAllDevices() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=devices&filter=all&used=true", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=devices&filter=all&used=true", ServerURL)
     End Function
 
     Public Function getAllScenes() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=scenes", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=scenes", ServerURL)
     End Function
 
 
     Public Function getVersion() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getversion", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=command&param=getversion", ServerURL)
     End Function
 
     Public Function getConfig() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getconfig", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=command&param=getconfig", ServerURL)
     End Function
 
     Public Function getSettings() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=settings", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=settings", ServerURL)
     End Function
 
     Public Function getauth() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getauth", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=command&param=getauth", ServerURL)
     End Function
 
     Public Function getSunRiseSet() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=command&param=getSunRiseSet", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=command&param=getSunRiseSet", ServerURL)
     End Function
 
 
     Public Function getDeviceStatus(idx As String) As String
-        Return String.Format("http://{0}:{1}/json.htm?type=devices&rid={2}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx)
+        Return String.Format("{0}/json.htm?type=devices&rid={1}", ServerURL, idx)
     End Function
 
     Public Function setDimmer(idx As String, switchstate As String, Optional passcode As String = "") As String
         Dim switchstring As String
         If Not switchstate = "On" Then switchstring = "Set%20Level&level=" Else switchstring = ""
         If passcode = "" Then
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd={3}{4}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstring, switchstate)
+            Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}{3}", ServerURL, idx, switchstring, switchstate)
         Else
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd={3}{4}&passcode={5}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstring, switchstate, passcode)
+            Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}{3}&passcode={4}", ServerURL, idx, switchstring, switchstate, passcode)
         End If
 
     End Function
@@ -1090,24 +1107,24 @@ Public NotInheritable Class DomoApi
 
     Public Function SwitchScene(idx As String, switchstate As String, Optional passcode As String = "") As String
         If passcode = "" Then
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchscene&idx={2}&switchcmd={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstate)
+            Return String.Format("{0}/json.htm?type=command&param=switchscene&idx={1}&switchcmd={2}", ServerURL, idx, switchstate)
         Else
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchscene&idx={2}&switchcmd={3}&passcode={4}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstate, passcode)
+            Return String.Format("{0}/json.htm?type=command&param=switchscene&idx={1}&switchcmd={2}&passcode={3}", ServerURL, idx, switchstate, passcode)
         End If
 
     End Function
 
     Public Function SwitchLight(idx As String, switchstate As String, Optional passcode As String = "") As String
         If passcode = "" Then
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd={3}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstate)
+            Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}", ServerURL, idx, switchstate)
         Else
-            Return String.Format("http://{0}:{1}/json.htm?type=command&param=switchlight&idx={2}&switchcmd={3}&passcode={4}", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort, idx, switchstate, passcode)
+            Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}&passcode={3}", ServerURL, idx, switchstate, passcode)
         End If
 
     End Function
 
     Public Function getPlans() As String
-        Return String.Format("http://{0}:{1}/json.htm?type=plans", app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        Return String.Format("{0}/json.htm?type=plans", ServerURL)
     End Function
 End Class
 

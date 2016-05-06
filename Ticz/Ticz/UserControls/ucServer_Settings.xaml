@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="300">
 
     <Grid>
         <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
@@ -15,6 +15,9 @@
             <TextBox      Text="{Binding TiczSettings.ServerIP, Mode=TwoWay}"/>
             <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
             <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" />
+            <CheckBox Content="Use SSL" IsChecked="{Binding TiczSettings.UseHTTPS, Mode=TwoWay}" Margin="0,0,-30,0"     />
+            <CheckBox Content="Ignore SSL Certificate Errors" IsChecked="{Binding TiczSettings.IgnoreSSLErrors, Mode=TwoWay}"   Margin="0,0,-40,0"    />
+           
             <TextBlock    Margin="0,5,0,0" Text="Username"/>
             <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
             <TextBlock    Margin="0,5,0,0" Text="Password"/>
