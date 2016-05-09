@@ -6,15 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="600"
     d:DesignWidth="300">
 
     <Grid>
         <StackPanel x:Name="FirstSettings" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
             <TextBlock    Margin="0,5,0,0" Text="IP Address or hostname"/>
-            <TextBox      Text="{Binding TiczSettings.ServerIP, Mode=TwoWay}"/>
+            <TextBox      Text="{Binding TiczSettings.ServerIP, Mode=TwoWay}" PlaceholderText="i.e. 192.168.192.1 or myserver.org" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
             <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
-            <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" />
+            <TextBox      Text="{Binding TiczSettings.ServerPort, Mode=TwoWay}" PlaceholderText="i.e. 8080" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" InputScope="Number"/>
             <CheckBox Content="Use SSL" IsChecked="{Binding TiczSettings.UseHTTPS, Mode=TwoWay}" Margin="0,0,-30,0"     />
             <CheckBox Content="Ignore SSL Certificate Errors" IsChecked="{Binding TiczSettings.IgnoreSSLErrors, Mode=TwoWay}"   Margin="0,0,-40,0"    />
            
@@ -22,6 +22,7 @@
             <TextBox      Text="{Binding TiczSettings.Username, Mode=TwoWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
             <TextBlock    Margin="0,5,0,0" Text="Password"/>
             <PasswordBox  Password="{Binding TiczSettings.Password, Mode=TwoWay}"/>
+            <TextBlock Text="Note: Domoticz should be configured with Basic-Auth authentication" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"/>
             <Button       Margin="0,5,0,0" Content="Test Connection" Command="{Binding TiczSettings.TestConnectionCommand}"/>
             <TextBlock    Margin="0,5,0,0" Text="{Binding TiczSettings.TestConnectionResult}"/>
             <ProgressBar IsIndeterminate="{Binding TiczSettings.TestInProgress}" Background="Transparent"/>

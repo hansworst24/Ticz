@@ -1005,7 +1005,12 @@ Partial Public Class TiczSettings
 
 
     Public Function GetFullURL() As String
-        Return "http://" + app.myViewModel.TiczSettings.ServerIP + ":" + ServerPort
+        If UseHTTPS Then
+            Return "https://" + app.myViewModel.TiczSettings.ServerIP + ":" + ServerPort
+        Else
+            Return "http://" + app.myViewModel.TiczSettings.ServerIP + ":" + ServerPort
+        End If
+
     End Function
 
     Public Function AddOrUpdateValue(Key As String, value As Object)
