@@ -1026,7 +1026,7 @@ Public NotInheritable Class DomoApi
     End Function
 
     Public Function getLightLog(idx As Integer)
-        Return String.Format("{0}/json.htm?type=lightlog&idx={2}", ServerURL, idx.ToString)
+        Return String.Format("{0}/json.htm?type=lightlog&idx={1}", ServerURL, idx.ToString)
     End Function
 
     Public Function getGraph(idx As Integer, range As String, sensor As String, Optional method As Integer = 0)
