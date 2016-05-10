@@ -216,12 +216,14 @@ Public Class DeviceViewModel
                                 Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER : Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
                             End Select
                         Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
-                            Select Case SwitchType
-                                Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
+                            Select Case SubType
+                                Case Constants.DEVICE.SUBTYPE.RGB, Constants.DEVICE.SUBTYPE.RGBW : Return CType(Application.Current.Resources("DeviceWideRGBDimmerView"), DataTemplate)
+                                Case Else : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
                             End Select
                         Case Constants.DEVICE.TYPE.LIGHT_SWITCH
                             Select Case SwitchType
                                 Case Constants.DEVICE.SWITCHTYPE.SELECTOR : Return CType(Application.Current.Resources("DeviceWideSelectorView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
                             End Select
                         Case Constants.DEVICE.TYPE.P1_SMART_METER
                             Select Case SubType
@@ -445,6 +447,7 @@ Public Class DeviceViewModel
                     Case "visibility" : FileName = "visibility48.png"
                     Case "wind" : FileName = "wind48.png"
                 End Select
+                'WriteToDebug(String.Format("{0}/images/{1}", vm.TiczSettings.GetFullURL, FileName), "")
                 Return String.Format("{0}/images/{1}", vm.TiczSettings.GetFullURL, FileName)
             Else
                 If isOn Then Return String.Format("{0}/images/{1}{2}", vm.TiczSettings.GetFullURL, _Device.Image, "48_On.png")
@@ -1037,6 +1040,45 @@ Public Class DeviceViewModel
         End Get
     End Property
 
+
+
+
+
+
+    Public ReadOnly Property SelectRGBValues As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        WriteToDebug("DeviceViewModel.SelectRGBValues()", "executed")
+                                        Dim cDialog As New ContentDialog
+                                        cDialog.Padding = New Thickness(0)
+                                        cDialog.Margin = New Thickness(0)
+                                        cDialog.Title = "Select a color"
+                                        cDialog.FullSizeDesired = False
+                                        cDialog.Content = New ucRGBColorPicker
+                                        cDialog.DataContext = New ColorPickerViewModel(Me)
+                                        'cDialog.ContentTemplate = CType(Application.Current.Resources("RGBColorPicker"), DataTemplate)
+                                        Await cDialog.ShowAsync()
+
+                                        'If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Then
+                                        '    'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent
+                                        '    Dim ValueToSend As Integer = Math.Round((MaxDimLevel / 100) * LevelInt)
+                                        '    WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
+                                        '    Dim SwitchToState As String = (ValueToSend).ToString
+                                        '    If [Protected] Then
+                                        '        SwitchingToState = SwitchToState
+                                        '        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+                                        '        vm.selectedDevice = Me
+                                        '        vm.ShowDevicePassword = True
+                                        '        Exit Sub
+                                        '    End If
+                                        '    Dim ret As retvalue = Await SwitchDevice(SwitchToState)
+                                        'End If
+                                    End Sub)
+
+        End Get
+    End Property
+
+
     Public ReadOnly Property SliderValueChanged As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
@@ -1264,6 +1306,39 @@ Public Class DeviceViewModel
         Await SwitchDevice(ToStatus)
     End Function
 
+
+
+    Public Async Function SetRGBValues(hex As String) As Task(Of retvalue)
+        WriteToDebug("DeviceViewModel.SetRGBValues()", "executed")
+        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+        Dim url As String = (New DomoApi).setRGBDimmer(Me.idx, hex)
+        Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
+        If Not response.IsSuccessStatusCode Then
+            Await app.myViewModel.Notify.Update(True, "Error switching device", 2, False, 2)
+            Return New retvalue With {.err = "Error switching device", .issuccess = 0}
+        Else
+            If Not response.Content Is Nothing Then
+                Dim domoRes As Domoticz.Response
+                Try
+                    domoRes = JsonConvert.DeserializeObject(Of Domoticz.Response)(Await response.Content.ReadAsStringAsync())
+                    If domoRes.status <> "OK" Then
+                        Await app.myViewModel.Notify.Update(True, domoRes.message, 2, False, 2)
+                        Return New retvalue With {.err = "Error switching device", .issuccess = 0}
+                    Else
+                        Await app.myViewModel.Notify.Update(False, "Device switched", 1, False, 2)
+                    End If
+                    Await Me.Update()
+                    domoRes = Nothing
+                    SwitchingToState = ""
+                    Return New retvalue With {.issuccess = 1}
+                Catch ex As Exception
+                    app.myViewModel.Notify.Update(True, "Server sent empty response", 2, False, 2)
+                    Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
+                End Try
+            End If
+            Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
+        End If
+    End Function
 
     Public Async Function SwitchDevice(Optional forcedSwitchToState As String = "") As Task(Of retvalue)
         Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)

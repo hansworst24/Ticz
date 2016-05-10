@@ -212,6 +212,7 @@ Public NotInheritable Class Constants
             Public Const P1_ELECTRIC As String = "Energy"
             Public Const PERCENTAGE As String = "Percentage"
             Public Const RGB As String = "RGB"
+            Public Const RGBW As String = "RGBW"
             Public Const SETPOINT As String = "SetPoint"
             Public Const SELECTOR_SWITCH As String = "Selector Switch"
             Public Const SWITCH As String = "Switch"
@@ -1101,9 +1102,15 @@ Public NotInheritable Class DomoApi
         Else
             Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}{3}&passcode={4}", ServerURL, idx, switchstring, switchstate, passcode)
         End If
-
     End Function
 
+    Public Function setRGBDimmer(idx As String, hex As String)
+        Return String.Format("{0}/json.htm?type=command&param=setcolbrightnessvalue&idx={1}&hex={2}", ServerURL, idx, hex)
+    End Function
+
+    'Public Function setRGBDimmer(idx As String, hue As Integer, brightness As Integer, isWhite As Boolean)
+    '    Return String.Format("{0}/json.htm?type=command&param=setcolbrightnessvalue&idx={1}&hue={2}&brightness={3}&iswhite={4}", ServerURL, idx, hue, brightness, isWhite.ToString.ToLower)
+    'End Function
 
     Public Function SwitchScene(idx As String, switchstate As String, Optional passcode As String = "") As String
         If passcode = "" Then

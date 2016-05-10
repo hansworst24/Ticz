@@ -105,6 +105,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Fonts\TickingTimebombBB.ttf" />
+    <Content Include="Images\colorpicker.png" />
     <Content Include="test_data\371_json_day.txt" />
     <Content Include="test_data\371_json_month.txt" />
     <Content Include="test_data\371_json_year.txt" />
@@ -158,6 +159,9 @@
     <Compile Include="UserControls\ucDeviceList_Icon.xaml.vb">
       <DependentUpon>ucDeviceList_Icon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucRGBColorPicker.xaml.vb">
+      <DependentUpon>ucRGBColorPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucDevice_Details.xaml.vb">
       <DependentUpon>ucDevice_Details.xaml</DependentUpon>
     </Compile>
@@ -191,6 +195,7 @@
     <Compile Include="UserControls\ucToastMessage.xaml.vb">
       <DependentUpon>ucToastMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ColorPickerViewModel.vb" />
     <Compile Include="ViewModels\DevicesViewModel.vb" />
     <Compile Include="ViewModels\DeviceViewModel.vb" />
     <Compile Include="ViewModel\TiczViewModel.vb" />
@@ -367,6 +372,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\ucRGBColorPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\ucDevice_Details.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -454,6 +463,15 @@
     <Reference Include="Syncfusion.SfChart.Universal, Version=13.4451.0.53, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for Universal\8.1\Syncfusion.SfChart.Universal.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfColorPickers.WinRT">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for WinRT\8.1\Syncfusion.SfColorPickers.WinRT.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfRadialMenu.WinRT">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for WinRT\8.1\Syncfusion.SfRadialMenu.WinRT.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfShared.WinRT">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for WinRT\8.1\Syncfusion.SfShared.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

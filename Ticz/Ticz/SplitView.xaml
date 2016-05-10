@@ -254,7 +254,7 @@
             <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Margin="0,0,4,0">
                 <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{Binding DomoVersion.version}" FontSize="10" Style="{ThemeResource BaseTextBlockStyle}"/>
             </Border>
-            
+           
             <!--DEVICE DETAILS-->
             <local:ucDevice_Details x:Name="DeviceDetails" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
                 <Interactivity:Interaction.Behaviors>
@@ -277,7 +277,6 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </local:ucDevice_Password>
-
             <local:ucDeviceList_Icon x:Name="IconView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_List x:Name="ListView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_Grid x:Name="GridView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
@@ -314,7 +313,6 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </local:ucDevice_GraphsList>
-
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding currentRoom.RoomConfiguration.RoomView}" Value="Icon View">
                     <Core:GoToStateAction StateName="ShowIconView"/>
