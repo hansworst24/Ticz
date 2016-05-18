@@ -440,6 +440,7 @@ Public Class DeviceViewModel
                     Case "rain" : FileName = "rain48.png"
                     Case "scene" : FileName = "push48.png"
                     Case "security" : FileName = "security48.png"
+                    Case "smoke" : FileName = If(isOn, "smoke48on.png", "smoke48off.png")
                     Case "Speaker" : If isOn Then FileName = "Speaker48_On.png" Else FileName = "Speaker48_Off.png"
                     Case "temperature" : FileName = "temp48.png"
                     Case "text" : FileName = "text48.png"
@@ -488,6 +489,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.SCALE : Return Constants.ICONPATH.SCALE
                     Case Constants.DEVICE.TYPEIMG.SCENE : Return Constants.ICONPATH.SCENE
                     Case Constants.DEVICE.TYPEIMG.SECURITY : Return Constants.ICONPATH.SECURITY
+                    Case Constants.DEVICE.TYPEIMG.SMOKE : Return Constants.ICONPATH.SMOKE
                     Case Constants.DEVICE.TYPEIMG.SPEAKER : Return Constants.ICONPATH.SPEAKER
                     Case Constants.DEVICE.TYPEIMG.TEMPERATURE : Return Constants.ICONPATH.TEMPERATURE
                     Case Constants.DEVICE.TYPEIMG.TEXT : Return Constants.ICONPATH.TEXT
@@ -551,6 +553,8 @@ Public Class DeviceViewModel
                     If Status = Constants.DEVICE.STATUS.OFF Then Return False Else Return True
                 Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                     If Status = Constants.DEVICE.STATUS.OFF Then Return False Else Return True
+                Case Constants.DEVICE.SWITCHTYPE.SMOKE_DETECTOR
+                    If Status = Constants.DEVICE.STATUS.ON Then Return True Else Return False
                 Case Else
                     Select Case Type
                         Case Constants.DEVICE.TYPE.SECURITY
