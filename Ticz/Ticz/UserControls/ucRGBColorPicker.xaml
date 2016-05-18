@@ -16,6 +16,6 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <SFMedia:SfColorPicker Grid.Row="0" SelectedColor="{x:Bind MySelectedColor, Mode=TwoWay}"/>
-        <Button Grid.Row="1" HorizontalAlignment="Stretch" Content="Set Color" Click="{x:Bind SetRGBOnDevice }"/>
+        <Button Grid.Row="1" Margin="0,10,0,0" HorizontalAlignment="Stretch" Content="Set Color" Click="{x:Bind SetRGBOnDevice }"/>
     </Grid>
 </UserControl>
