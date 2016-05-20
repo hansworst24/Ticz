@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -106,6 +106,10 @@
     </Content>
     <Content Include="Fonts\TickingTimebombBB.ttf" />
     <Content Include="Images\colorpicker.png" />
+    <Content Include="Media\arm.mp3" />
+    <Content Include="Media\disarm.mp3" />
+    <Content Include="Media\key.mp3" />
+    <Content Include="Media\wrongcode.mp3" />
     <Content Include="test_data\371_json_day.txt" />
     <Content Include="test_data\371_json_month.txt" />
     <Content Include="test_data\371_json_year.txt" />
@@ -122,6 +126,10 @@
     <Content Include="test_data\weight_day.txt" />
     <Content Include="test_data\weight_month.txt" />
     <Content Include="test_data\weight_year.txt" />
+    <Content Include="Media\arm.ogg" />
+    <Content Include="Media\disarm.ogg" />
+    <Content Include="Media\key.ogg" />
+    <Content Include="Media\wrongcode.ogg" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="project.json" />
   </ItemGroup>
@@ -158,6 +166,9 @@
     </Compile>
     <Compile Include="UserControls\ucDeviceList_Icon.xaml.vb">
       <DependentUpon>ucDeviceList_Icon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucLMSRemote.xaml.vb">
+      <DependentUpon>ucLMSRemote.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ucRGBColorPicker.xaml.vb">
       <DependentUpon>ucRGBColorPicker.xaml</DependentUpon>
@@ -198,6 +209,8 @@
     <Compile Include="ViewModels\ColorPickerViewModel.vb" />
     <Compile Include="ViewModels\DevicesViewModel.vb" />
     <Compile Include="ViewModels\DeviceViewModel.vb" />
+    <Compile Include="ViewModels\LogitechMediaServerDeviceViewModel.vb" />
+    <Compile Include="ViewModels\SecurityPanelViewModel.vb" />
     <Compile Include="ViewModel\TiczViewModel.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -369,6 +382,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ucDeviceList_Icon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucLMSRemote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

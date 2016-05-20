@@ -9,7 +9,7 @@ Public Class DeviceViewModel
     Inherits ViewModelBase
     Implements IDisposable
 
-    Private _Device As DeviceModel
+    Protected Friend _Device As DeviceModel
     Private _Configuration As TiczStorage.DeviceConfiguration
 
 #Region "Constructor"
@@ -213,8 +213,13 @@ Public Class DeviceViewModel
                                 Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER : Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
-                            End Select
+                                Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
+                                    Select Case HardwareType
+                                        Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
+                                        Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideLMSPlayerView"), DataTemplate)
+                                    End Select
+                                    Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
+                                    End Select
                         Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                             Select Case SubType
                                 Case Constants.DEVICE.SUBTYPE.RGB, Constants.DEVICE.SUBTYPE.RGBW : Return CType(Application.Current.Resources("DeviceWideRGBDimmerView"), DataTemplate)
@@ -457,6 +462,12 @@ Public Class DeviceViewModel
 
         End Get
     End Property
+
+    Public ReadOnly Property HardwareType
+        Get
+            Return _Device.HardwareType
+        End Get
+    End Property
     Public ReadOnly Property IconPathGeometry As String
         Get
             If _Device.CustomImage = 0 Then
@@ -478,7 +489,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.LEAF : Return Constants.ICONPATH.LEAF
                     Case Constants.DEVICE.TYPEIMG.LIGHT : Return Constants.ICONPATH.LIGHTBULB
                     Case Constants.DEVICE.TYPEIMG.LIGHTBULB : Return Constants.ICONPATH.LIGHTBULB
-                    Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.SPEAKER
+                    Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.LMS_PLAYER
                     Case Constants.DEVICE.TYPEIMG.LUX : Return Constants.ICONPATH.LUX
                     Case Constants.DEVICE.TYPEIMG.MEDIA : Return Constants.ICONPATH.MEDIA
                     Case Constants.DEVICE.TYPEIMG.MOISTURE : Return Constants.ICONPATH.MOISTURE
@@ -1245,6 +1256,9 @@ Public Class DeviceViewModel
         End Get
     End Property
 
+
+
+
 #End Region
 #Region "Methods"
     Public Async Function LoadStatus() As Task(Of DeviceModel)
@@ -1310,6 +1324,16 @@ Public Class DeviceViewModel
         Await SwitchDevice(ToStatus)
     End Function
 
+
+    Public Async Sub SwitchDeviceCommand()
+        If Me.CanBeSwitched Then
+            Dim ret As retvalue = Await SwitchDevice()
+        Else
+            'Only get the status of the device if it can't be switched
+            Await Update()
+        End If
+
+    End Sub
 
 
     Public Async Function SetRGBValues(hex As String) As Task(Of retvalue)
@@ -1426,6 +1450,7 @@ Public Class DeviceViewModel
         End If
 
     End Function
+
 
 #End Region
 #Region "IDisposable Support"

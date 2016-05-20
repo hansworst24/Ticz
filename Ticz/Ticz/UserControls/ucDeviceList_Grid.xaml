@@ -51,7 +51,6 @@
             </GridView.ItemContainerStyle>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <!--<Rectangle Fill="DarkOrange" DataContext="{Binding}" MinHeight="120" MinWidth="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
                     <local:ucDevice_Dynamic DataContext="{Binding}" />
                 </DataTemplate>
             </GridView.ItemTemplate>

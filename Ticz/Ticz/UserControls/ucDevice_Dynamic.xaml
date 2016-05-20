@@ -17,6 +17,7 @@
     <Grid x:Name="rootGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="0" Padding="5" HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1" >
         <Grid.Resources>
+            <!--<local:DevicesViewModel x:Key="Test"/>-->
         </Grid.Resources>
         <!--<VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
@@ -188,7 +189,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{Binding ButtonColumnSpan}" Grid.RowSpan="{Binding ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Command="{Binding ButtonPressedCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{Binding ButtonColumnSpan}" Grid.RowSpan="{Binding ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Click="{x:Bind Device.SwitchDeviceCommand}"  HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
                     <Grid>
                         <Viewbox x:Name="Icon" Visibility="{Binding PathIconVisibility}" CacheMode="BitmapCache" Height="{Binding ButtonSize}" Width="{Binding ButtonSize}" Stretch="Uniform">
