@@ -1658,9 +1658,9 @@ Public Class TiczViewModel
     Public Async Function PerformAutoRefresh(ct As CancellationToken) As Task
         Try
             While Not ct.IsCancellationRequested
-                WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
+                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
                 Dim i As Integer = 0
-                WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
+                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
                 If TiczSettings.SecondsForRefresh = 0 Then
                     While i < 5 * 1000
                         Await Task.Delay(100)
@@ -1675,7 +1675,7 @@ Public Class TiczViewModel
                     End While
                 End If
                 If ct.IsCancellationRequested Then Exit While
-                WriteToDebug("TiczViewModel.PerformAutoRefresh", "refreshing")
+                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "refreshing")
                 If TiczSettings.SecondsForRefresh > 0 Then Await Refresh(False)
             End While
         Catch ex As Exception
@@ -1715,7 +1715,7 @@ Public Class TiczViewModel
 
         'Iterate through the list of updated devices, find the matching device in the room and update it
         If devicesToRefresh.Count > 0 Then
-            WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", devicesToRefresh.Count))
+            'WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", devicesToRefresh.Count))
             For Each d In devicesToRefresh
                 Dim deviceToUpdate As DeviceViewModel
                 If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
@@ -1739,7 +1739,7 @@ Public Class TiczViewModel
         sWatch.Stop()
         If dev_response.IsSuccessStatusCode AndAlso grp_response.IsSuccessStatusCode Then
             'But only if the amount of time passed for the Refresh is around 500ms (approx. time for the animation showing "Refreshing" to be on the screen
-            WriteToDebug("TiczViewModel.Refresh()", String.Format("Refresh took {0} ms", sWatch.ElapsedMilliseconds))
+            'WriteToDebug("TiczViewModel.Refresh()", String.Format("Refresh took {0} ms", sWatch.ElapsedMilliseconds))
             If sWatch.ElapsedMilliseconds < 500 Then
                 Await Task.Delay(500 - sWatch.ElapsedMilliseconds)
             End If

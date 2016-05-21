@@ -251,10 +251,30 @@ Public Class DeviceViewModel
         End Set
     End Property
 
-    Public ReadOnly Property DeviceProperties As List(Of KeyValuePair(Of String, String))
+    'Public ReadOnly Property DeviceProperties As List(Of KeyValuePair(Of String, String))
+    '    Get
+    '        Dim dType As Type = _Device.GetType()
+    '        Dim returnprops As New List(Of KeyValuePair(Of String, String))
+    '        For Each prop In dType.GetProperties()
+    '            Dim v As String
+    '            If prop.PropertyType Is GetType(Integer) Then
+    '                v = CType(prop.GetValue(DeviceModel), Integer)
+    '            ElseIf prop.PropertyType Is GetType(Double) Then
+    '                v = CType(prop.GetValue(DeviceModel), Double)
+    '            Else
+    '                v = TryCast(prop.GetValue(DeviceModel, Nothing), String)
+    '            End If
+    '            returnprops.Add(New KeyValuePair(Of String, String)(prop.Name, v))
+    '        Next
+
+    '        Return returnprops
+    '    End Get
+    'End Property
+
+    Public ReadOnly Property DeviceProperties As List(Of DeviceProperty)
         Get
             Dim dType As Type = _Device.GetType()
-            Dim returnprops As New List(Of KeyValuePair(Of String, String))
+            Dim returnprops As New List(Of DeviceProperty)
             For Each prop In dType.GetProperties()
                 Dim v As String
                 If prop.PropertyType Is GetType(Integer) Then
@@ -264,12 +284,15 @@ Public Class DeviceViewModel
                 Else
                     v = TryCast(prop.GetValue(DeviceModel, Nothing), String)
                 End If
-                returnprops.Add(New KeyValuePair(Of String, String)(prop.Name, v))
+                returnprops.Add(New DeviceProperty With {.Key = prop.Name, .Value = v})
             Next
 
             Return returnprops
         End Get
     End Property
+
+
+
     Public Property DewPoint As String
         Get
             Return _Device.DewPoint
@@ -414,7 +437,7 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    Public ReadOnly Property BitmapIconURI
+    Public ReadOnly Property BitmapIconURI As String
         Get
             Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
 
@@ -860,16 +883,16 @@ Public Class DeviceViewModel
             End If
         End Set
     End Property
-    Public Property MarqueeLength As Integer
+    Public Property MarqueeLength As Double?
         Get
             Return _MarqueeLength
         End Get
-        Set(value As Integer)
+        Set(value As Double?)
             _MarqueeLength = value
             RaisePropertyChanged("MarqueeLength")
         End Set
     End Property
-    Private Property _MarqueeLength As Integer
+    Private Property _MarqueeLength As Double?
     Public Property MarqueeStart As Boolean
         Get
             Return _MarqueeStart
@@ -1184,19 +1207,19 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    Public ReadOnly Property ShowDeviceDetails As RelayCommand
-        Get
-            Return New RelayCommand(Sub()
-                                        WriteToDebug("Device.ShowDeviceDetails()", "executed")
-                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                        vm.selectedDevice = Me
-                                        Dim a = Me.DeviceProperties
-                                        vm.ShowDeviceDetails = True
-                                        vm.ShowBackButton = True
-                                        WriteToDebug(vm.selectedDevice.Name, "should be there")
-                                    End Sub)
-        End Get
-    End Property
+    'Public ReadOnly Property ShowDeviceDetails As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Sub()
+    '                                    WriteToDebug("Device.ShowDeviceDetails()", "executed")
+    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                    vm.selectedDevice = Me
+    '                                    Dim a = Me.DeviceProperties
+    '                                    vm.ShowDeviceDetails = True
+    '                                    vm.ShowBackButton = True
+    '                                    WriteToDebug(vm.selectedDevice.Name, "should be there")
+    '                                End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property ButtonPressedCommand As RelayCommand
         Get
@@ -1261,6 +1284,43 @@ Public Class DeviceViewModel
 
 #End Region
 #Region "Methods"
+    Public Async Sub ShowDeviceDetails()
+        WriteToDebug("Device.ShowDeviceDetails()", "executed")
+        Dim cDialog As New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           cDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        cDialog.Title = Me.Name
+        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        cDialog.VerticalAlignment = VerticalAlignment.Stretch
+        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim details As New ucDevice_Details()
+        details.DataContext = Me
+        cDialog.Content = details
+        Await cDialog.ShowAsync()
+    End Sub
+    'Public ReadOnly Property ShowDeviceDetails As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Sub()
+    '                                    WriteToDebug("Device.ShowDeviceDetails()", "executed")
+    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                    vm.selectedDevice = Me
+    '                                    Dim a = Me.DeviceProperties
+    '                                    vm.ShowDeviceDetails = True
+    '                                    vm.ShowBackButton = True
+    '                                    WriteToDebug(vm.selectedDevice.Name, "should be there")
+    '                                End Sub)
+    '    End Get
+    'End Property
+
+
+
     Public Async Function LoadStatus() As Task(Of DeviceModel)
         Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
         Dim response As HttpResponseMessage

@@ -139,6 +139,9 @@
     </Compile>
     <Compile Include="Classes\Classes.vb" />
     <Compile Include="Classes\convertors.vb" />
+    <Compile Include="Classes\DataTemplates.xaml.vb">
+      <DependentUpon>DataTemplates.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\DeviceModel.vb" />
     <Compile Include="Models\DevicesModel.vb" />
     <Compile Include="SplitView.xaml.vb">
@@ -348,6 +351,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Classes\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Classes\Dictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

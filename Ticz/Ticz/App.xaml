@@ -8,6 +8,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <local:MyDictionary/>
+                <local:DataTemplates/>
+                <ResourceDictionary Source="Classes/DataTemplates.xaml"/>
                 <ResourceDictionary Source="Classes/Dictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

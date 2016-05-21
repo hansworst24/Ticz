@@ -4,16 +4,19 @@ Public NotInheritable Class ucLMSRemote
     Inherits UserControl
 
     Public Property Player As LogitechMediaServerDeviceViewModel
-    Public Sub New()
+        Get
+            Return CType(Me.DataContext, LogitechMediaServerDeviceViewModel)
+        End Get
+        Set(value As LogitechMediaServerDeviceViewModel)
 
+        End Set
+    End Property
+
+    Public Sub New()
         ' This call is required by the designer.
         InitializeComponent()
         AddHandler DataContextChanged, Sub(s, e)
-                                           If Not DataContext Is Nothing Then
-                                               WriteToDebug("--------DataContext Changed for : ", (CType(DataContext, LogitechMediaServerDeviceViewModel).Name))
-                                           End If
-
-                                           Player = CType(DataContext, LogitechMediaServerDeviceViewModel)
+                                           Me.Bindings.Update()
                                        End Sub
     End Sub
 

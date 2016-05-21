@@ -931,7 +931,7 @@ Public NotInheritable Class Domoticz
             Using wc As New HttpClient(filter)
                 Dim cts As New CancellationTokenSource(5000)
                 Try
-                    WriteToDebug("Downloader.DownloadJSON", url)
+                    'WriteToDebug("Downloader.DownloadJSON", url)
                     Dim response As HttpResponseMessage = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
                     Return response
                 Catch ex As TaskCanceledException

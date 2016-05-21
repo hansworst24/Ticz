@@ -176,7 +176,7 @@
             </Grid.RowDefinitions>
             <!-- THIS IS THE HEADER FOR THE DEVICE, CONTAINING THE NAME-->
             <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5">
-            <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{Binding Name}" FontSize="{Binding HeaderFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{x:Bind Device.Name}" FontSize="{x:Bind Device.HeaderFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
             </Border>
             <!-- THIS IS THE CONTENTS FOR THE DEVICE. IT CONTAINS BOTH AN ICON AND OPTIONALLY THE DEVICEDETAILS. 
             DEPENDING ON THE DEVICEVIEW(ICON/WIDE/LARGE) THE CONTENTS IS SPANNED ACROSS ONE OR MORE COLUMNS/ROWS THROUGH STATETRIGGERS-->
@@ -189,28 +189,28 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{Binding ButtonColumnSpan}" Grid.RowSpan="{Binding ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Click="{x:Bind Device.SwitchDeviceCommand}"  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{x:Bind Device.ButtonColumnSpan}" Grid.RowSpan="{x:Bind Device.ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Click="{x:Bind Device.SwitchDeviceCommand}"  HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
                     <Grid>
-                        <Viewbox x:Name="Icon" Visibility="{Binding PathIconVisibility}" CacheMode="BitmapCache" Height="{Binding ButtonSize}" Width="{Binding ButtonSize}" Stretch="Uniform">
-                            <Path Fill="{Binding IconForegroundColor}" Stretch="Uniform"  Data="{Binding IconPathGeometry}"/>
+                        <Viewbox x:Name="Icon" Visibility="{x:Bind Device.PathIconVisibility}" CacheMode="BitmapCache" Height="{x:Bind Device.ButtonSize}" Width="{x:Bind Device.ButtonSize, Mode=OneWay}" Stretch="Uniform">
+                            <Path Fill="{x:Bind Device.IconForegroundColor, Mode=OneWay}" Stretch="Uniform"  Data="{x:Bind Device.IconPathGeometry}"/>
                         </Viewbox>
-                        <Image Source="{Binding BitmapIconURI}" Visibility="{Binding BitmapIconVisibility}" Height="48" Width="48" Stretch="Uniform">
+                        <Image Source="{x:Bind Device.BitmapIconURI, Mode=OneWay}" Visibility="{x:Bind Device.BitmapIconVisibility}" Height="48" Width="48" Stretch="Uniform">
                         </Image>
                     </Grid>
                 </Button.Content>
             </Button>
-            <ContentControl x:Name="DeviceDetails" Grid.Row="{Binding ContentRow}" Grid.Column="{Binding ContentColumn}" Grid.ColumnSpan="{Binding ContentColumnSpan}" ContentTemplate="{Binding DeviceContentTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <ContentControl x:Name="DeviceDetails" Grid.Row="{x:Bind Device.ContentRow}" Grid.Column="{x:Bind Device.ContentColumn}" Grid.ColumnSpan="{x:Bind Device.ContentColumnSpan}" ContentTemplate="{x:Bind Device.DeviceContentTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Grid>
    
         <!-- THIS IS THE FOOTER FOR THE DEVICE, CONTAINING THE PRIMARY DEVICE INFORMATION-->
             <Border x:Name="PrimaryInfo" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Padding="0">
-            <TextBlock x:Name="Footer"  Text="{Binding FooterText}" FontSize="{Binding FooterFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
+            <TextBlock x:Name="Footer"  Text="{x:Bind Device.FooterText, Mode=OneWay}" FontSize="{x:Bind Device.FooterFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
             </Border>
         <!-- THIS IS THE FLYOUT MENU FOR THE DEVICE-->
         <FlyoutBase.AttachedFlyout>
             <MenuFlyout>
-                <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Command="{Binding ShowDeviceDetails}"/>
+                <MenuFlyoutItem x:Name="mfShowDetails" Text="Show Device Details" Click="{x:Bind Device.ShowDeviceDetails}" />
                 <MenuFlyoutItem x:Name="mfShowGraphs" Text="Show Graph" Command="{Binding ShowDeviceGraph}"/>
                 <MenuFlyoutSeparator Visibility="{Binding ResizeContextMenuVisibility}"/>
                 <MenuFlyoutItem x:Name="mfSmall" Text="Icon" Command="{Binding ResizeCommand}" Visibility="{Binding ResizeContextMenuVisibility}" CommandParameter="{Binding ElementName=mfSmall, Path=Text}"/>

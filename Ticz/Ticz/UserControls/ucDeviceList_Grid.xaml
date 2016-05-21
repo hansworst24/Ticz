@@ -51,7 +51,7 @@
             </GridView.ItemContainerStyle>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <local:ucDevice_Dynamic DataContext="{Binding}" />
+                    <local:ucDevice_Dynamic DataContext="{Binding}" Margin="0" />
                 </DataTemplate>
             </GridView.ItemTemplate>
             <Interactivity:Interaction.Behaviors>

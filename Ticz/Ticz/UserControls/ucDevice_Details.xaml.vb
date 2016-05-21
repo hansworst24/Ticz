@@ -3,4 +3,29 @@
 Public NotInheritable Class ucDevice_Details
     Inherits UserControl
 
+    Public Property Device As DeviceViewModel
+        Get
+            Return CType(Me.DataContext, DeviceViewModel)
+        End Get
+        Set(value As DeviceViewModel)
+
+        End Set
+    End Property
+
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+        AddHandler DataContextChanged, Sub(s, e)
+                                           If Not DataContext Is Nothing Then
+                                               WriteToDebug("DataContext Changed for : ", (CType(DataContext, DeviceViewModel).Name))
+                                           End If
+
+                                           'Device = CType(DataContext, DeviceViewModel)
+                                           Me.Bindings.Update()
+                                       End Sub
+        ' Add any initialization after the InitializeComponent() call.
+
+    End Sub
+
 End Class

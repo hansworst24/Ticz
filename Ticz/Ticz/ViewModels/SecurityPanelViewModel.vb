@@ -8,6 +8,14 @@ Imports Windows.Security.Cryptography.Core
 Imports Windows.Storage.Streams
 Imports Windows.Web.Http
 
+
+Public Class DeviceProperty
+    Public Property Key As String
+    Public Property Value As String
+End Class
+
+
+
 Public Class SecurityPanelViewModel
     Inherits ViewModelBase
 

@@ -272,7 +272,7 @@
             </Border>
            
             <!--DEVICE DETAILS-->
-            <local:ucDevice_Details x:Name="DeviceDetails" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
+            <!--<local:ucDevice_Details x:Name="DeviceDetails" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding ShowDeviceDetails}" Value="True">
                         <Core:GoToStateAction StateName="ShowDeviceDetails"/>
@@ -281,7 +281,7 @@
                         <Core:GoToStateAction StateName="HideDeviceDetails"/>
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
-            </local:ucDevice_Details>
+            </local:ucDevice_Details>-->
             <!--PASSWORD ENTRY-->
             <local:ucDevice_Password x:Name="DevicePassword" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
                 <Interactivity:Interaction.Behaviors>
