@@ -1070,7 +1070,7 @@ Public NotInheritable Class DomoApi
         If app.myViewModel.TiczSettings.UseHTTPS Then Return "https" Else Return "http"
     End Function
 
-    Public Function ServerURL()
+    Public Function ServerURL() As String
         Return String.Format("{0}://{1}:{2}", If(app.myViewModel.TiczSettings.UseHTTPS, "https", "http"), app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
     End Function
 

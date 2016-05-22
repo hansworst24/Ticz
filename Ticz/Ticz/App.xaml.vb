@@ -1,9 +1,10 @@
 ﻿Imports GalaSoft.MvvmLight.Threading
+Imports Windows.UI
 ''' <summary>
 ''' Provides application-specific behavior to supplement the default Application class.
 ''' </summary>
 NotInheritable Class Application
-    Inherits Windows.UI.Xaml.Application
+    Inherits Xaml.Application
 
     Public myViewModel As New TiczViewModel
 
@@ -15,6 +16,14 @@ NotInheritable Class Application
             Microsoft.ApplicationInsights.WindowsCollectors.Metadata Or
             Microsoft.ApplicationInsights.WindowsCollectors.Session)
         InitializeComponent()
+
+        If myViewModel.TiczSettings.UseDarkTheme Then
+            CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Dark
+        Else
+            CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Light
+        End If
+
+
     End Sub
 
     ''' <summary>
@@ -43,7 +52,13 @@ NotInheritable Class Application
         If rootFrame Is Nothing Then
             ' Create a Frame to act as the navigation context and navigate to the first page
             rootFrame = New Frame()
-            If myViewModel.TiczSettings.UseDarkTheme Then rootFrame.RequestedTheme = ElementTheme.Dark Else rootFrame.RequestedTheme = ElementTheme.Light
+            If myViewModel.TiczSettings.UseDarkTheme Then
+                rootFrame.RequestedTheme = ElementTheme.Dark
+                'CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Dark
+            Else
+                rootFrame.RequestedTheme = ElementTheme.Light
+                'CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Light
+            End If
             AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
             If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
@@ -58,6 +73,9 @@ NotInheritable Class Application
             ' parameter
             rootFrame.Navigate(GetType(SplitView), e.Arguments)
         End If
+        Dim a As Color = CType(CType(Application.Current, Application).Resources("ApplicationPageBackgroundThemeBrush"), SolidColorBrush).Color
+        ApplicationView.GetForCurrentView.TitleBar.BackgroundColor = a
+        ApplicationView.GetForCurrentView.TitleBar.ButtonBackgroundColor = a
         ApplicationView.GetForCurrentView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible)
         ApplicationView.PreferredLaunchViewSize = New Size(800, 480)
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize
@@ -67,17 +85,7 @@ NotInheritable Class Application
                 sBar.HideAsync()
             End If
         End If
-        'If (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) Then
-        '    TiczViewModel.ShowBackButtonBar = False
-        'Else
-        '    TiczViewModel.ShowBackButtonBar = True
-        'End If
 
-        '        var service = FirstFloor.XamlSpy.Services.XamlSpyService.Current;
-        'service.Connect("[address]", [port], "[password]";
-
-        'AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
-        ' Ensure the current window is active
         DispatcherHelper.Initialize()
         Window.Current.Activate()
     End Sub
@@ -86,19 +94,6 @@ NotInheritable Class Application
         WriteToDebug("App.VisibleBoundsChanged", "executed")
     End Sub
 
-
-    'Public Sub App_BackRequested(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-    '    If myViewModel.TiczMenu.IsMenuOpen Then myViewModel.TiczMenu.IsMenuOpen = False
-    '    WriteToDebug("App.App_BackRequested", "executed")
-    '    Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
-    '    If rootFrame Is Nothing Then Exit Sub
-    '    If rootFrame.CanGoBack AndAlso e.Handled = False Then
-    '        e.Handled = True
-    '        rootFrame.GoBack()
-
-    '    End If
-
-    'End Sub
 
     ''' <summary>
     ''' Invoked when Navigation to a certain page fails

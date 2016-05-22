@@ -189,18 +189,27 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{x:Bind Device.ButtonColumnSpan}" Grid.RowSpan="{x:Bind Device.ButtonRowSpan}" x:Name="DeviceSwitchButton" Style="{StaticResource DeviceButtonSimple}"  Padding="0" Margin="0" Click="{x:Bind Device.SwitchDeviceCommand}"  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Grid.Row="0" Grid.Column="0" Width="50" Height="50" 
+                Grid.ColumnSpan="{x:Bind Device.ButtonColumnSpan}"
+                Grid.RowSpan="{x:Bind Device.ButtonRowSpan}" 
+                Style="{StaticResource DeviceButtonSimple}"
+                Click="{x:Bind Device.SwitchDeviceCommand}"  
+                HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
-                    <Grid>
-                        <Viewbox x:Name="Icon" Visibility="{x:Bind Device.PathIconVisibility}" CacheMode="BitmapCache" Height="{x:Bind Device.ButtonSize}" Width="{x:Bind Device.ButtonSize, Mode=OneWay}" Stretch="Uniform">
-                            <Path Fill="{x:Bind Device.IconForegroundColor, Mode=OneWay}" Stretch="Uniform"  Data="{x:Bind Device.IconPathGeometry}"/>
-                        </Viewbox>
-                        <Image Source="{x:Bind Device.BitmapIconURI, Mode=OneWay}" Visibility="{x:Bind Device.BitmapIconVisibility}" Height="48" Width="48" Stretch="Uniform">
-                        </Image>
-                    </Grid>
+                    <ContentControl ContentTemplate="{x:Bind Device.DeviceIconTemplate}" Height="50" Width="50"
+                        HorizontalContentAlignment="Stretch" 
+                        VerticalContentAlignment="Stretch"/>
                 </Button.Content>
             </Button>
-            <ContentControl x:Name="DeviceDetails" Grid.Row="{x:Bind Device.ContentRow}" Grid.Column="{x:Bind Device.ContentColumn}" Grid.ColumnSpan="{x:Bind Device.ContentColumnSpan}" ContentTemplate="{x:Bind Device.DeviceContentTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <ContentControl x:Name="DeviceDetails" 
+                Grid.Row="{x:Bind Device.ContentRow}"
+                Grid.Column="{x:Bind Device.ContentColumn}" 
+                Grid.ColumnSpan="{x:Bind Device.ContentColumnSpan}" 
+                ContentTemplate="{x:Bind Device.DeviceContentTemplate}" 
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"/>
         </Grid>
    
         <!-- THIS IS THE FOOTER FOR THE DEVICE, CONTAINING THE PRIMARY DEVICE INFORMATION-->

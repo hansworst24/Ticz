@@ -5,7 +5,15 @@ Public NotInheritable Class ucDevice_Dynamic
 
     Public Property Device As DeviceViewModel
         Get
-            Return CType(Me.DataContext, DeviceViewModel)
+            If Not Me.DataContext Is Nothing Then
+                If Me.DataContext.GetType Is GetType(DeviceViewModel) Then
+                    Return CType(Me.DataContext, DeviceViewModel)
+                End If
+                Return CType(Me.DataContext, LogitechMediaServerDeviceViewModel)
+
+            Else
+                Return CType(Me.DataContext, LogitechMediaServerDeviceViewModel)
+            End If
         End Get
         Set(value As DeviceViewModel)
 

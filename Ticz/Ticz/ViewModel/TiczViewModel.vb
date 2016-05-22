@@ -8,6 +8,10 @@ Imports Windows.UI.Core
 Imports Windows.Web.Http
 
 
+Public Class DeviceProperty
+    Public Property Key As String
+    Public Property Value As String
+End Class
 
 
 Public Class DeviceGroup(Of T)
@@ -963,28 +967,28 @@ Public Class TiczMenuSettings
     End Sub
 
 
-    Public Property ShowSecurityPanel As Boolean
-        Get
-            Return _ShowSecurityPanel
-        End Get
-        Set(value As Boolean)
-            _ShowSecurityPanel = value
-            app.myViewModel.DomoSecPanel.IsFadingIn = value
-            RaisePropertyChanged("ShowSecurityPanel")
-        End Set
-    End Property
-    Private Property _ShowSecurityPanel As Boolean
+    'Public Property ShowSecurityPanel As Boolean
+    '    Get
+    '        Return _ShowSecurityPanel
+    '    End Get
+    '    Set(value As Boolean)
+    '        _ShowSecurityPanel = value
+    '        app.myViewModel.DomoSecPanel.IsFadingIn = value
+    '        RaisePropertyChanged("ShowSecurityPanel")
+    '    End Set
+    'End Property
+    'Private Property _ShowSecurityPanel As Boolean
 
-    Public Property ShowAbout As Boolean
-        Get
-            Return _ShowAbout
-        End Get
-        Set(value As Boolean)
-            _ShowAbout = value
-            RaisePropertyChanged("ShowAbout")
-        End Set
-    End Property
-    Private Property _ShowAbout As Boolean
+    'Public Property ShowAbout As Boolean
+    '    Get
+    '        Return _ShowAbout
+    '    End Get
+    '    Set(value As Boolean)
+    '        _ShowAbout = value
+    '        RaisePropertyChanged("ShowAbout")
+    '    End Set
+    'End Property
+    'Private Property _ShowAbout As Boolean
 
     Public Property ShowBackButton As Boolean
         Get
@@ -1025,7 +1029,7 @@ Public Class TiczMenuSettings
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("TiczMenuSettings.ReloadCommand()", "executed")
                                         IsMenuOpen = False
-                                        ShowSecurityPanel = False
+                                        'ShowSecurityPanel = False
                                         Dim app As Application = CType(Xaml.Application.Current, Application)
                                         app.myViewModel.ShowDeviceGraph = False
                                         app.myViewModel.ShowDeviceDetails = False
@@ -1037,43 +1041,43 @@ Public Class TiczMenuSettings
     End Property
 
 
-    Public ReadOnly Property ShowSecurityPanelCommand As RelayCommand
-        Get
-            Return New RelayCommand(Sub()
-                                        WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
-                                        IsMenuOpen = False
-                                        app.myViewModel.ShowDeviceGraph = False
-                                        app.myViewModel.ShowDeviceDetails = False
-                                        app.myViewModel.ShowDevicePassword = False
-                                        ShowSecurityPanel = Not ShowSecurityPanel
-                                        If ShowSecurityPanel Then ShowBackButton = True
-                                    End Sub)
-        End Get
-    End Property
+    'Public ReadOnly Property ShowSecurityPanelCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Sub()
+    '                                    WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
+    '                                    IsMenuOpen = False
+    '                                    app.myViewModel.ShowDeviceGraph = False
+    '                                    app.myViewModel.ShowDeviceDetails = False
+    '                                    app.myViewModel.ShowDevicePassword = False
+    '                                    ShowSecurityPanel = Not ShowSecurityPanel
+    '                                    If ShowSecurityPanel Then ShowBackButton = True
+    '                                End Sub)
+    '    End Get
+    'End Property
 
-    Public ReadOnly Property ShowAboutCommand As RelayCommand
-        Get
-            Return New RelayCommand(Sub()
-                                        WriteToDebug("TiczMenuSettings.ShowAboutCommand()", "executed")
-                                        ShowAbout = Not ShowAbout
-                                        If ShowAbout Then IsMenuOpen = False : ShowSecurityPanel = False : ShowBackButton = True
-                                    End Sub)
-        End Get
-    End Property
+    'Public ReadOnly Property ShowAboutCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Sub()
+    '                                    WriteToDebug("TiczMenuSettings.ShowAboutCommand()", "executed")
+    '                                    ShowAbout = Not ShowAbout
+    '                                    If ShowAbout Then IsMenuOpen = False : ShowBackButton = True
+    '                                End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property OpenMenuCommand As RelayCommand
         Get
             Return New RelayCommand(Sub()
                                         If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
                                         IsMenuOpen = Not IsMenuOpen
-                                        ShowAbout = False
-                                        If IsMenuOpen Then
-                                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-                                            app.myViewModel.ShowBackButton = True
-                                        Else
-                                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-                                            app.myViewModel.ShowBackButton = False
-                                        End If
+                                        'ShowAbout = False
+                                        'If IsMenuOpen Then
+                                        '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                                        '    app.myViewModel.ShowBackButton = True
+                                        'Else
+                                        '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                                        '    app.myViewModel.ShowBackButton = False
+                                        'End If
                                         WriteToDebug("TiczMenuSettings.OpenMenuCommand()", IsMenuOpen)
                                     End Sub)
         End Get
@@ -1139,6 +1143,7 @@ Public Class TiczMenuSettings
                                     End Sub)
         End Get
     End Property
+
 End Class
 
 Public Class GraphListViewModel
@@ -1209,6 +1214,10 @@ End Class
 Public Class TiczViewModel
     Inherits ViewModelBase
 
+    Public Property CurrentContentDialog As ContentDialog
+
+
+
     Public Property GraphList As GraphListViewModel
         Get
             Return _GraphList
@@ -1274,7 +1283,7 @@ Public Class TiczViewModel
 
     Public ReadOnly Property CanGoBack As Boolean
         Get
-            If Not ShowDeviceDetails And Not ShowDeviceGraph And Not ShowDevicePassword And Not TiczMenu.ShowSecurityPanel And Not TiczMenu.ShowAbout And Not TiczMenu.IsMenuOpen Then
+            If Not ShowDeviceDetails And Not ShowDeviceGraph And Not ShowDevicePassword And Not TiczMenu.IsMenuOpen Then
                 Return False
             Else
                 Return True
@@ -1285,13 +1294,13 @@ Public Class TiczViewModel
     Public Property ShowBackButton As Boolean
         Get
             If Not Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons") Then
-                If CanGoBack Then
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-                    Return True
-                Else
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-                    Return False
-                End If
+                'If CanGoBack Then
+                '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                '    Return True
+                'Else
+                '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
+                '    Return False
+                'End If
             Else
                 Return False
             End If
@@ -1354,10 +1363,10 @@ Public Class TiczViewModel
                                                        ShowDeviceGraph = False
                                                    ElseIf ShowDeviceDetails Then
                                                        ShowDeviceDetails = False
-                                                   ElseIf TiczMenu.ShowAbout Then
-                                                       TiczMenu.ShowAbout = False
-                                                   ElseIf TiczMenu.ShowSecurityPanel Then
-                                                       TiczMenu.ShowSecurityPanel = False
+                                                       'ElseIf TiczMenu.ShowAbout Then
+                                                       '    TiczMenu.ShowAbout = False
+                                                       'ElseIf TiczMenu.ShowSecurityPanel Then
+                                                       '    TiczMenu.ShowSecurityPanel = False
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms" Then
                                                        TiczMenu.IsMenuOpen = False
                                                    ElseIf TiczMenu.IsMenuOpen And TiczMenu.ActiveMenuContents = "Rooms Configuration" Then
@@ -1387,12 +1396,12 @@ Public Class TiczViewModel
             Return New RelayCommand(Of Object)(Async Sub(x)
                                                    Dim s = TryCast(x, TiczStorage.RoomConfiguration)
                                                    If Not s Is Nothing Then
-                                                       If TiczMenu.ShowAbout Then TiczMenu.ShowAbout = False
+                                                       'If TiczMenu.ShowAbout Then TiczMenu.ShowAbout = False
                                                        If ShowDeviceGraph Then ShowDeviceGraph = False
                                                        If ShowDeviceDetails Then ShowDeviceDetails = False
                                                        If ShowDevicePassword Then ShowDevicePassword = False
                                                        If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
-                                                       If TiczMenu.ShowSecurityPanel Then TiczMenu.ShowSecurityPanel = False
+                                                       'If TiczMenu.ShowSecurityPanel Then TiczMenu.ShowSecurityPanel = False
                                                        ShowBackButton = False
                                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
                                                        Dim sWatch = Stopwatch.StartNew()
@@ -1429,20 +1438,20 @@ Public Class TiczViewModel
         End Get
     End Property
 
-    Public ReadOnly Property ConfirmPasswordEntry As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("TiczViewModel.ConfirmPasswordEntry()", "executed")
-                                        ShowDevicePassword = False
-                                        If Not selectedDevice Is Nothing Then
-                                            If Not selectedDevice.PassCode = "" Then
-                                                Await selectedDevice.SwitchDevice()
-                                            End If
-                                            selectedDevice.PassCode = ""
-                                        End If
-                                    End Sub)
-        End Get
-    End Property
+    'Public ReadOnly Property ConfirmPasswordEntry As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("TiczViewModel.ConfirmPasswordEntry()", "executed")
+    '                                    ShowDevicePassword = False
+    '                                    If Not selectedDevice Is Nothing Then
+    '                                        If Not selectedDevice.PassCode = "" Then
+    '                                            Await selectedDevice.SwitchDevice()
+    '                                        End If
+    '                                        selectedDevice.PassCode = ""
+    '                                    End If
+    '                                End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property HideDeviceDetails As RelayCommand
         Get
@@ -1480,6 +1489,56 @@ Public Class TiczViewModel
         currentRoom = New RoomViewModel With {.ItemHeight = 120}
         EnabledRooms = New ObservableCollection(Of TiczStorage.RoomConfiguration)
     End Sub
+
+    Public Async Sub ShowSecurityPanel()
+        WriteToDebug("TiczMenuSettings.ShowSecurityPanel()", "executed")
+        Me.TiczMenu.IsMenuOpen = False
+        CurrentContentDialog = New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           CurrentContentDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        CurrentContentDialog.Title = "Security Panel"
+        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim details As New ucSecurityPanel()
+        'details.DataContext = Me
+        CurrentContentDialog.Content = details
+        Await CurrentContentDialog.ShowAsync()
+    End Sub
+
+    Public Async Sub ShowAbout()
+        WriteToDebug("TiczMenuSettings.ShowAbout()", "executed")
+        Me.TiczMenu.IsMenuOpen = False
+        CurrentContentDialog = New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           CurrentContentDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        'CurrentContentDialog.Title = "About"
+        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim about As New ucAbout()
+        'details.DataContext = Me
+        CurrentContentDialog.Content = about
+        Await CurrentContentDialog.ShowAsync()
+    End Sub
+
+
+
+
 
     Public Async Function LoadGraphData(ByVal d As DeviceViewModel) As Task
         GraphList = New GraphListViewModel

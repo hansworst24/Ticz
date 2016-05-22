@@ -48,22 +48,24 @@ Public Class LogitechMediaServerDeviceViewModel
 
 
     'Public Async Function OpenLMSRemote() As Task
-    '    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '    vm.selectedDevice = Me
-    '    vm.ShowLMSRemote = True
-    '    vm.ShowBackButton = True
     '    Dim cDialog As New ContentDialog
+    '    'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+    '    Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+    '                                                   If e.Key = Windows.System.VirtualKey.Escape Then
+    '                                                       cDialog.Hide()
+    '                                                   End If
+    '                                               End Sub)
+    '    cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
     '    cDialog.Title = Me.Name
     '    cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-    '    cDialog.Width = ApplicationView.GetForCurrentView.VisibleBounds.Width
-    '    cDialog.Height = ApplicationView.GetForCurrentView.VisibleBounds.Height
     '    cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
     '    cDialog.VerticalAlignment = VerticalAlignment.Stretch
     '    cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
     '    cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
     '    cDialog.FullSizeDesired = True
-    '    cDialog.Content = New ucLMSRemote()
-    '    cDialog.DataContext = Me
+    '    Dim remote As New ucLMSRemote
+    '    remote.DataContext = Me
+    '    cDialog.Content = remote
     '    Await cDialog.ShowAsync()
     'End Function
 

@@ -9,13 +9,6 @@ Imports Windows.Storage.Streams
 Imports Windows.Web.Http
 
 
-Public Class DeviceProperty
-    Public Property Key As String
-    Public Property Value As String
-End Class
-
-
-
 Public Class SecurityPanelViewModel
     Inherits ViewModelBase
 
@@ -71,27 +64,27 @@ Public Class SecurityPanelViewModel
 
     Public Property CurrentArmState As String
 
-    Public ReadOnly Property DigitKeyPressedSound As String
-        Get
-            Return (New DomoApi).getButtonPressedSound()
-        End Get
-    End Property
+    'Public ReadOnly Property DigitKeyPressedSound As Uri
+    '    Get
+    '        Return New Uri("msappx://Media/key.mp3")
+    '    End Get
+    'End Property
 
-    Public ReadOnly Property WrongCodeSound As String
-        Get
-            Return (New DomoApi).getWrongCodeSound()
-        End Get
-    End Property
-    Public ReadOnly Property DisarmSound As String
-        Get
-            Return (New DomoApi).getDisarmedSound()
-        End Get
-    End Property
-    Public ReadOnly Property ArmSound As String
-        Get
-            Return (New DomoApi).getArmSound()
-        End Get
-    End Property
+    'Public ReadOnly Property WrongCodeSound As Uri
+    '    Get
+    '        Return New Uri("msappx://Media/wrongcode.mp3")
+    '    End Get
+    'End Property
+    'Public ReadOnly Property DisarmSound As Uri
+    '    Get
+    '        Return New Uri("msappx://Media/disarm.mp3")
+    '    End Get
+    'End Property
+    'Public ReadOnly Property ArmSound As Uri
+    '    Get
+    '        Return New Uri("msappx://Media/arm.mp3")
+    '    End Get
+    'End Property
 
     Public Property AudioFile As String
         Get
@@ -138,7 +131,7 @@ Public Class SecurityPanelViewModel
             If CodeInput = "" Then
                 DisplayText = String.Format("ARM DELAY : {0}", app.myViewModel.DomoSettings.SecOnDelay - i)
                 Await RunOnUIThread(Sub()
-                                        If app.myViewModel.TiczSettings.PlaySecPanelSFX And app.myViewModel.TiczMenu.ShowSecurityPanel Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                        If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
                                     End Sub)
 
             End If
@@ -166,48 +159,6 @@ Public Class SecurityPanelViewModel
                                 If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayArmRequested(Me, EventArgs.Empty)
                             End Sub)
     End Function
-
-    Public ReadOnly Property DigitPressedCommand As RelayCommand(Of Object)
-        Get
-            Return New RelayCommand(Of Object)(Async Sub(x)
-                                                   Dim btn As Button = TryCast(x, Button)
-                                                   If Not btn Is Nothing Then
-                                                       Await RunOnUIThread(Sub()
-                                                                               Dim app As Application = CType(Application.Current, Application)
-                                                                               If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
-                                                                           End Sub)
-                                                       Dim digit As Integer = btn.Content
-                                                       CodeInput = If(CodeInput = "", digit, CodeInput & digit)
-                                                       DisplayText = ""
-                                                       For Each d In CodeInput
-                                                           DisplayText += "#"
-                                                       Next
-                                                   End If
-                                               End Sub)
-        End Get
-    End Property
-
-    Public ReadOnly Property CancelPressedCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        'Clear the contents of the Sec Panel Display and restore the current arm state when digits were pressed.
-                                        'If not digits were pressed, remove the secpanel from view
-                                        Dim app As Application = CType(Application.Current, Application)
-
-                                        If CodeInput = "" Then
-                                            IsFadingIn = False
-                                            app.myViewModel.TiczMenu.ShowSecurityPanel = False
-                                            app.myViewModel.ShowBackButton = False
-                                        Else
-                                            CodeInput = ""
-                                            Await RunOnUIThread(Sub()
-                                                                    If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
-                                                                End Sub)
-                                            DisplayText = CurrentArmState
-                                        End If
-                                    End Sub)
-        End Get
-    End Property
 
     Public ReadOnly Property DisarmPressedCommand As RelayCommand
         Get
@@ -290,6 +241,83 @@ Public Class SecurityPanelViewModel
             WriteToDebug("SecurityPanel.CreateSecurityHash()", String.Format("Created a MD5 hash from {0} : {1}", CodeInput, CodeHash))
         End If
 
+    End Sub
+
+    Public Async Sub DisarmPressed()
+        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_DISARM)
+        CodeInput = ""
+        Dim app As Application = CType(Application.Current, Application)
+        If ret.issuccess Then
+            Await StopCountDown()
+            CurrentArmState = "DISARMED"
+            DisplayText = CurrentArmState
+            If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDisArmRequested(Me, EventArgs.Empty)
+        Else
+            DisplayText = ret.err
+            If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+            Await Task.Delay(2000)
+            If CodeInput = "" Then DisplayText = CurrentArmState
+        End If
+    End Sub
+
+    Public Async Sub ArmHomePressed()
+        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_ARMHOME)
+        Dim app As Application = CType(Application.Current, Application)
+        CodeInput = ""
+        If ret.issuccess Then
+            CurrentArmState = "ARM HOME"
+            TimestampLastSet = Date.Now()
+            Await StartCountDown()
+        Else
+            DisplayText = ret.err
+            If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+            Await Task.Delay(2000)
+            If CodeInput = "" Then DisplayText = CurrentArmState
+        End If
+    End Sub
+
+    Public Async Sub ArmAwayPressed()
+        Dim ret As retvalue = Await SetSecurityStatus(Constants.SECPANEL.SEC_ARMAWAY)
+        Dim app As Application = CType(Application.Current, Application)
+        CodeInput = ""
+        If ret.issuccess Then
+            CurrentArmState = "ARM AWAY"
+            TimestampLastSet = Date.Now()
+            Await StartCountDown()
+        Else
+            DisplayText = ret.err
+            If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayWrongCodeRequested(Me, EventArgs.Empty)
+            Await Task.Delay(2000)
+            If CodeInput = "" Then DisplayText = CurrentArmState
+        End If
+    End Sub
+
+    Public Async Sub CancelPressed()
+        'Clear the contents of the Sec Panel Display and restore the current arm state when digits were pressed.
+        'If not digits were pressed, remove the secpanel from view
+        Dim app As Application = CType(Application.Current, Application)
+        If Not CodeInput = "" Then
+            CodeInput = ""
+            DisplayText = CurrentArmState
+        End If
+        app.myViewModel.CurrentContentDialog.Hide()
+    End Sub
+
+    Public Async Sub DigitPressed(s As Object, e As RoutedEventArgs)
+        WriteToDebug("SecurityPanelViewModel.ButtonPressed()", "executed")
+        Dim btn As Button = TryCast(e.OriginalSource, Button)
+        If Not btn Is Nothing Then
+            Await RunOnUIThread(Sub()
+                                    Dim app As Application = CType(Application.Current, Application)
+                                    If app.myViewModel.TiczSettings.PlaySecPanelSFX Then RaiseEvent PlayDigitSoundRequested(Me, EventArgs.Empty)
+                                End Sub)
+            Dim digit As Integer = btn.Content
+            CodeInput = If(CodeInput = "", digit, CodeInput & digit)
+            DisplayText = ""
+            For Each d In CodeInput
+                DisplayText += "#"
+            Next
+        End If
     End Sub
 
     Public Async Function SetSecurityStatus(status As Integer) As Task(Of retvalue)

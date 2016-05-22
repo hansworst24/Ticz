@@ -12,22 +12,6 @@
     
     <Grid x:Name="rootGrid">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AboutStates">
-                <VisualState x:Name="ShowAbout">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AboutView">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideAbout">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AboutView">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
             <VisualStateGroup x:Name="MenuStates">
                 <VisualState x:Name="ShowMenu">
                     <Storyboard>
@@ -45,38 +29,6 @@
                                 <CircleEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="DeviceDetailsState">
-                <VisualState x:Name="ShowDeviceDetails">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeviceDetails">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideDeviceDetails">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeviceDetails">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="LMSRemoteState">
-                <VisualState x:Name="ShowLMSRemote">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="LMSRemote">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideLMSRemote">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="LMSRemote">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
@@ -108,22 +60,6 @@
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="GraphsList">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="SecurityPanelState">
-                <VisualState x:Name="ShowSecurityPanel">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="SecurityPanelView">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideSecurityPanel">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="SecurityPanelView">
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -271,19 +207,8 @@
                 <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{Binding DomoVersion.version}" FontSize="10" Style="{ThemeResource BaseTextBlockStyle}"/>
             </Border>
            
-            <!--DEVICE DETAILS-->
-            <!--<local:ucDevice_Details x:Name="DeviceDetails" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding ShowDeviceDetails}" Value="True">
-                        <Core:GoToStateAction StateName="ShowDeviceDetails"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding ShowDeviceDetails}" Value="False">
-                        <Core:GoToStateAction StateName="HideDeviceDetails"/>
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </local:ucDevice_Details>-->
             <!--PASSWORD ENTRY-->
-            <local:ucDevice_Password x:Name="DevicePassword" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
+            <!--<local:ucDevice_Password x:Name="DevicePassword" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding ShowDevicePassword}" Value="True">
                         <Core:GoToStateAction StateName="ShowPasswordPrompt"/>
@@ -292,33 +217,12 @@
                         <Core:GoToStateAction StateName="HidePasswordPrompt"/>
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
-            </local:ucDevice_Password>
+            </local:ucDevice_Password>-->
             <local:ucDeviceList_Icon x:Name="IconView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_List x:Name="ListView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_Grid x:Name="GridView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_ResizeGrid x:Name="ResizeView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
             <local:ucDeviceList_Dashboard x:Name="DashboardView" Grid.Row="1" DataContext="{Binding}" Visibility="Collapsed" Margin="0"/>
-            <local:ucAbout x:Name="AboutView" Grid.Row="1" Visibility="Collapsed" Canvas.ZIndex="100">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowAbout}" Value="True">
-                        <Core:GoToStateAction StateName="ShowAbout"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowAbout}" Value="False">
-                        <Core:GoToStateAction StateName="HideAbout"/>
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </local:ucAbout>
-            <local:ucSecurityPanel x:Name="SecurityPanelView" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" DataContext="{Binding}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowSecurityPanel}" Value="True">
-                        <Core:GoToStateAction StateName="ShowSecurityPanel"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding TiczMenu.ShowSecurityPanel}" Value="False">
-                        <Core:GoToStateAction StateName="HideSecurityPanel"/>
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </local:ucSecurityPanel>
-
             <local:ucDevice_GraphsList x:Name="GraphsList" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="100">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding ShowDeviceGraph}" Value="True">
@@ -359,11 +263,6 @@
                         <AppBarButton Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" Height="48" Command="{Binding TiczMenu.OpenMenuCommand}">
                             <AppBarButton.Icon>
                                 <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
-                        <AppBarButton x:Name="AppBarBackButton" Width="48" HorizontalAlignment="Left" Visibility="{Binding BackButtonVisibility}" VerticalAlignment="Center" Height="48" Command="{Binding GoBackCommand}">
-                            <AppBarButton.Icon>
-                                <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE112;"/>
                             </AppBarButton.Icon>
                         </AppBarButton>
                     </StackPanel>

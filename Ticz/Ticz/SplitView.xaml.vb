@@ -17,9 +17,9 @@ Public NotInheritable Class SplitView
 
     Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
         '        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
-        If e.NavigationMode = NavigationMode.New Then
-            AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
-        End If
+        'If e.NavigationMode = NavigationMode.New Then
+        '    AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
+        'End If
         '        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
         'If rootFrame.CanGoBack Then
         'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
@@ -31,17 +31,17 @@ Public NotInheritable Class SplitView
     End Sub
 
 
-    Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-        WriteToDebug("App.BackButtonPressed", "executed")
-        If app.myViewModel.CanGoBack Then
-            e.Handled = True
-            app.myViewModel.GraphList.Dispose()
-            Dim cmd = app.myViewModel.GoBackCommand
-            cmd.Execute(Nothing)
+    'Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+    '    WriteToDebug("App.BackButtonPressed", "executed")
+    '    If app.myViewModel.CanGoBack Then
+    '        e.Handled = True
+    '        app.myViewModel.GraphList.Dispose()
+    '        Dim cmd = app.myViewModel.GoBackCommand
+    '        cmd.Execute(Nothing)
 
-            Exit Sub
-        End If
-    End Sub
+    '        Exit Sub
+    '    End If
+    'End Sub
 
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)

@@ -2,7 +2,7 @@
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
-Imports Windows.UI.Core
+Imports Windows.UI
 Imports Windows.Web.Http
 
 Public Class DeviceViewModel
@@ -11,6 +11,7 @@ Public Class DeviceViewModel
 
     Protected Friend _Device As DeviceModel
     Private _Configuration As TiczStorage.DeviceConfiguration
+    Private _cDialog As ContentDialog 'Used to present a password prompt to the user for Protected Devices
 
 #Region "Constructor"
     Public Sub New(d As DeviceModel, r As String)
@@ -76,9 +77,9 @@ Public Class DeviceViewModel
     Public ReadOnly Property ButtonSize As Integer
         Get
             Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON : Return 50
-                Case Constants.DEVICEVIEWS.WIDE : Return 50
-                Case Constants.DEVICEVIEWS.LARGE : Return 100
+                Case Constants.DEVICEVIEWS.ICON : Return 48
+                Case Constants.DEVICEVIEWS.WIDE : Return 48
+                Case Constants.DEVICEVIEWS.LARGE : Return 96
                 Case Else
                     Return 50
             End Select
@@ -196,6 +197,18 @@ Public Class DeviceViewModel
             Return _Device
         End Get
     End Property
+
+
+    Public ReadOnly Property DeviceIconTemplate As DataTemplate
+        Get
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+            Return If(vm.TiczSettings.UseDomoticzIcons,
+                CType(Application.Current.Resources("DomoIconDataTemplate"), DataTemplate),
+                CType(Application.Current.Resources("TiczIconDataTemplate"), DataTemplate))
+        End Get
+    End Property
+
+
     Public ReadOnly Property DeviceContentTemplate As DataTemplate
         Get
             Select Case DeviceRepresentation
@@ -219,7 +232,7 @@ Public Class DeviceViewModel
                                         Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideLMSPlayerView"), DataTemplate)
                                     End Select
                                     Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
-                                    End Select
+                            End Select
                         Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                             Select Case SubType
                                 Case Constants.DEVICE.SUBTYPE.RGB, Constants.DEVICE.SUBTYPE.RGBW : Return CType(Application.Current.Resources("DeviceWideRGBDimmerView"), DataTemplate)
@@ -250,26 +263,6 @@ Public Class DeviceViewModel
             RaisePropertyChanged("DeviceOrder")
         End Set
     End Property
-
-    'Public ReadOnly Property DeviceProperties As List(Of KeyValuePair(Of String, String))
-    '    Get
-    '        Dim dType As Type = _Device.GetType()
-    '        Dim returnprops As New List(Of KeyValuePair(Of String, String))
-    '        For Each prop In dType.GetProperties()
-    '            Dim v As String
-    '            If prop.PropertyType Is GetType(Integer) Then
-    '                v = CType(prop.GetValue(DeviceModel), Integer)
-    '            ElseIf prop.PropertyType Is GetType(Double) Then
-    '                v = CType(prop.GetValue(DeviceModel), Double)
-    '            Else
-    '                v = TryCast(prop.GetValue(DeviceModel, Nothing), String)
-    '            End If
-    '            returnprops.Add(New KeyValuePair(Of String, String)(prop.Name, v))
-    '        Next
-
-    '        Return returnprops
-    '    End Get
-    'End Property
 
     Public ReadOnly Property DeviceProperties As List(Of DeviceProperty)
         Get
@@ -417,23 +410,9 @@ Public Class DeviceViewModel
                 Return Windows.UI.Xaml.Application.Current.Resources("SystemControlHighlightAccentBrush")
             Else
                 Dim myBrush As New SolidColorBrush
-                myBrush.Color = Windows.UI.Color.FromArgb(128, 128, 128, 128)
+                myBrush.Color = CType(Windows.UI.Color.FromArgb(128, 128, 128, 128), Color)
                 Return myBrush
             End If
-        End Get
-    End Property
-
-    Public ReadOnly Property BitmapIconVisibility As String
-        Get
-            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
-            If vm.TiczSettings.UseDomoticzIcons Then Return Constants.VISIBLE Else Return Constants.COLLAPSED
-        End Get
-    End Property
-
-    Public ReadOnly Property PathIconVisibility As String
-        Get
-            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
-            If vm.TiczSettings.UseDomoticzIcons Then Return Constants.COLLAPSED Else Return Constants.VISIBLE
         End Get
     End Property
 
@@ -446,19 +425,20 @@ Public Class DeviceViewModel
                 Select Case _Device.TypeImg
                     Case "Alert" : FileName = "Alert48_0.png" 'TODO : Change Icon based on Alert Level
                     Case "air" : FileName = "air48.png"
-                    Case "blinds" : If isOn Then FileName = "blinds48.png" Else FileName = "blindsopen48.png"
+                    Case "blinds" : FileName = If(isOn, "blinds48.png", "blindsopen48.png")
                     Case "counter" : FileName = "Counter48.png"
-                    Case "contact" : If isOn Then FileName = "contact48_open.png" Else FileName = "contact48.png"
+                    Case "contact" : FileName = If(isOn, "contact48_open.png", "contact48.png")
                     Case "current" : FileName = "current48.png"
                     Case "gauge" : FileName = "gauge48.png"
-                    Case "dimmer" : If isOn Then FileName = "Dimmer48_On.png" Else FileName = "Dimmer48_Off.png"
-                    Case "door" : If isOn Then FileName = "door48open.png" Else FileName = "door48.png"
+                    Case "dimmer" : FileName = If("Dimmer48_On.png", "Dimmer48_Off.png")
+                    Case "door" : FileName = If(isOn, "door48open.png", "door48.png")
                     Case "doorbell" : FileName = "doorbell48.png"
-                    Case "group" : If isOn Then FileName = "pushoff48.png" Else FileName = "push48.png"
+                    Case "group" : FileName = If(isOn, "pushoff48.png", "push48.png")
                     Case "hardware" : FileName = "Percentage48.png"
                     Case "leaf" : FileName = "leaf48.png"
-                    Case "lightbulb" : If isOn Then FileName = "Light48_On.png" Else FileName = "Light48_Off.png"
-                    Case "LogitechMediaServer" : If isOn Then FileName = "LogitechMediaServer48_On.png" Else FileName = "LogitechMediaServer48_Off.png"
+                    Case "Light" : FileName = If(isOn, "Light48_On.png", "Light48_Off.png")
+                    Case "lightbulb" : FileName = If(isOn, "Light48_On.png", "Light48_Off.png")
+                    Case "LogitechMediaServer" : FileName = If(isOn, "LogitechMediaServer48_On.png", "LogitechMediaServer48_Off.png")
                     Case "lux" : FileName = "lux48.png"
                     Case "Media" : If isOn Then FileName = "Media48_On.png" Else FileName = "Media48_Off.png"
                     Case "moisture" : FileName = "moisture48.png"
@@ -468,15 +448,18 @@ Public Class DeviceViewModel
                     Case "rain" : FileName = "rain48.png"
                     Case "scene" : FileName = "push48.png"
                     Case "security" : FileName = "security48.png"
+                    Case "siren" : FileName = If(isOn, "siren-on.png", "siren-off.png")
                     Case "smoke" : FileName = If(isOn, "smoke48on.png", "smoke48off.png")
-                    Case "Speaker" : If isOn Then FileName = "Speaker48_On.png" Else FileName = "Speaker48_Off.png"
+                    Case "Speaker" : FileName = If(isOn, "Speaker48_On.png", "Speaker48_Off.png")
                     Case "temperature" : FileName = "temp48.png"
                     Case "text" : FileName = "text48.png"
                     Case "uv" : FileName = "uv48.png"
                     Case "visibility" : FileName = "visibility48.png"
                     Case "wind" : FileName = "wind48.png"
                 End Select
-                'WriteToDebug(String.Format("{0}/images/{1}", vm.TiczSettings.GetFullURL, FileName), "")
+                If FileName = "" Then
+                    FileName = "logo.png"
+                End If
                 Return String.Format("{0}/images/{1}", vm.TiczSettings.GetFullURL, FileName)
             Else
                 If isOn Then Return String.Format("{0}/images/{1}{2}", vm.TiczSettings.GetFullURL, _Device.Image, "48_On.png")
@@ -587,6 +570,8 @@ Public Class DeviceViewModel
                     If Status = Constants.DEVICE.STATUS.OFF Then Return False Else Return True
                 Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                     If Status = Constants.DEVICE.STATUS.OFF Then Return False Else Return True
+                Case Constants.DEVICE.SWITCHTYPE.X10_SIREN
+                    If Status = "All On" Then Return True Else Return False
                 Case Constants.DEVICE.SWITCHTYPE.SMOKE_DETECTOR
                     If Status = Constants.DEVICE.STATUS.ON Then Return True Else Return False
                 Case Else
@@ -905,13 +890,13 @@ Public Class DeviceViewModel
     Private Property _MarqueeStart As Boolean
 #End Region
 #Region "Relay Commands"
-    Public ReadOnly Property DeviceUnloaded As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.DeviceUnloaded()", "executed")
-                                    End Sub)
-        End Get
-    End Property
+    'Public ReadOnly Property DeviceUnloaded As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("Device.DeviceUnloaded()", "executed")
+    '                                End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property DataFieldChanged As RelayCommand(Of Object)
         Get
@@ -941,25 +926,25 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    Public ReadOnly Property DeviceLoaded As RelayCommand(Of Object)
-        Get
-            Return New RelayCommand(Of Object)(Sub(x)
-                                                   WriteToDebug("TiczViewModel.DeviceLoaded()", "executed")
-                                                   'Dim dev = x
-                                                   'WriteToDebug("TiczViewModel.DeviceLoaded()", String.Format("Item Width : {0} / ItemRes : {1}", dev.ToString(), Me.DeviceRepresentation))
-                                                   'HACK FOR SLIDERS
-                                                   Dim dip = LevelInt
-                                                   LevelInt = 0
-                                                   If Not MaxDimLevel = 0 Then
-                                                       LevelInt = Math.Floor((100 / MaxDimLevel) * dip)
-                                                   End If
+    'Public ReadOnly Property DeviceLoaded As RelayCommand(Of Object)
+    '    Get
+    '        Return New RelayCommand(Of Object)(Sub(x)
+    '                                               WriteToDebug("TiczViewModel.DeviceLoaded()", "executed")
+    '                                               'Dim dev = x
+    '                                               'WriteToDebug("TiczViewModel.DeviceLoaded()", String.Format("Item Width : {0} / ItemRes : {1}", dev.ToString(), Me.DeviceRepresentation))
+    '                                               'HACK FOR SLIDERS
+    '                                               Dim dip = LevelInt
+    '                                               LevelInt = 0
+    '                                               If Not MaxDimLevel = 0 Then
+    '                                                   LevelInt = Math.Floor((100 / MaxDimLevel) * dip)
+    '                                               End If
 
-                                                   Dim devres = Me.DeviceRepresentation
-                                                   Me.DeviceRepresentation = ""
-                                                   Me.DeviceRepresentation = devres
-                                               End Sub)
-        End Get
-    End Property
+    '                                               Dim devres = Me.DeviceRepresentation
+    '                                               Me.DeviceRepresentation = ""
+    '                                               Me.DeviceRepresentation = devres
+    '                                           End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property ResizeCommand As RelayCommand(Of Object)
         Get
@@ -1088,29 +1073,22 @@ Public Class DeviceViewModel
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("DeviceViewModel.SelectRGBValues()", "executed")
                                         Dim cDialog As New ContentDialog
-                                        cDialog.Padding = New Thickness(0)
-                                        cDialog.Margin = New Thickness(0)
+                                        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+                                        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                                                           cDialog.Hide()
+                                                                                       End If
+                                                                                   End Sub)
+                                        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
                                         cDialog.Title = "Select a color"
-                                        cDialog.FullSizeDesired = False
+                                        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+                                        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+                                        cDialog.VerticalAlignment = VerticalAlignment.Stretch
+                                        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+                                        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
                                         cDialog.Content = New ucRGBColorPicker
                                         cDialog.DataContext = New ColorPickerViewModel(Me)
-                                        'cDialog.ContentTemplate = CType(Application.Current.Resources("RGBColorPicker"), DataTemplate)
                                         Await cDialog.ShowAsync()
-
-                                        'If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Then
-                                        '    'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent
-                                        '    Dim ValueToSend As Integer = Math.Round((MaxDimLevel / 100) * LevelInt)
-                                        '    WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
-                                        '    Dim SwitchToState As String = (ValueToSend).ToString
-                                        '    If [Protected] Then
-                                        '        SwitchingToState = SwitchToState
-                                        '        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                        '        vm.selectedDevice = Me
-                                        '        vm.ShowDevicePassword = True
-                                        '        Exit Sub
-                                        '    End If
-                                        '    Dim ret As retvalue = Await SwitchDevice(SwitchToState)
-                                        'End If
                                     End Sub)
 
         End Get
@@ -1139,67 +1117,67 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    Public ReadOnly Property OpenButtonCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.OpenButtonCommand()", "executed")
-                                        Dim switchToState As String
-                                        Select Case SwitchType
-                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
-                                                switchToState = Constants.DEVICE.STATUS.OFF
-                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-                                                switchToState = Constants.DEVICE.STATUS.ON
-                                            Case Else
-                                                switchToState = Constants.DEVICE.STATUS.OFF
-                                        End Select
-                                        If [Protected] Then
-                                            SwitchingToState = switchToState
-                                            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                            vm.selectedDevice = Me
-                                            vm.ShowDevicePassword = True
-                                            Exit Sub
-                                        End If
-                                        Dim ret As retvalue = Await SwitchDevice(switchToState)
-                                    End Sub)
+    'Public ReadOnly Property OpenButtonCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("Device.OpenButtonCommand()", "executed")
+    '                                    Dim switchToState As String
+    '                                    Select Case SwitchType
+    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS
+    '                                            switchToState = Constants.DEVICE.STATUS.OFF
+    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+    '                                            switchToState = Constants.DEVICE.STATUS.ON
+    '                                        Case Else
+    '                                            switchToState = Constants.DEVICE.STATUS.OFF
+    '                                    End Select
+    '                                    If [Protected] Then
+    '                                        SwitchingToState = switchToState
+    '                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                        vm.selectedDevice = Me
+    '                                        vm.ShowDevicePassword = True
+    '                                        Exit Sub
+    '                                    End If
+    '                                    Dim ret As retvalue = Await SwitchDevice(switchToState)
+    '                                End Sub)
 
-        End Get
-    End Property
+    '    End Get
+    'End Property
 
-    Public ReadOnly Property CloseButtonCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.CloseButtonCommand()", "executed")
-                                        Dim switchToState As String
-                                        Select Case SwitchType
-                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
-                                                switchToState = Constants.DEVICE.STATUS.ON
-                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-                                                switchToState = Constants.DEVICE.STATUS.OFF
-                                            Case Else
-                                                switchToState = Constants.DEVICE.STATUS.ON
-                                        End Select
-                                        If [Protected] Then
-                                            SwitchingToState = switchToState
-                                            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                            vm.selectedDevice = Me
-                                            vm.ShowDevicePassword = True
-                                            Exit Sub
-                                        End If
-                                        Dim ret As retvalue = Await SwitchDevice(switchToState)
-                                    End Sub)
+    'Public ReadOnly Property CloseButtonCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("Device.CloseButtonCommand()", "executed")
+    '                                    Dim switchToState As String
+    '                                    Select Case SwitchType
+    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS
+    '                                            switchToState = Constants.DEVICE.STATUS.ON
+    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+    '                                            switchToState = Constants.DEVICE.STATUS.OFF
+    '                                        Case Else
+    '                                            switchToState = Constants.DEVICE.STATUS.ON
+    '                                    End Select
+    '                                    If [Protected] Then
+    '                                        SwitchingToState = switchToState
+    '                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                        vm.selectedDevice = Me
+    '                                        vm.ShowDevicePassword = True
+    '                                        Exit Sub
+    '                                    End If
+    '                                    Dim ret As retvalue = Await SwitchDevice(switchToState)
+    '                                End Sub)
 
-        End Get
-    End Property
+    '    End Get
+    'End Property
 
     Public ReadOnly Property ShowDeviceGraph As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("Device.ShowDeviceGraphs()", "executed")
                                         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+                                        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
                                         '                                        app.myViewModel.selectedDevice = Me
                                         Await vm.LoadGraphData(Me)
-                                        vm.TiczMenu.ShowSecurityPanel = False
+                                        'vm.TiczMenu.ShowSecurityPanel = False
                                         vm.ShowBackButton = True
                                         '                                        app.myViewModel.Notify.Clear()
 
@@ -1207,34 +1185,21 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    'Public ReadOnly Property ShowDeviceDetails As RelayCommand
+
+    'Public ReadOnly Property ButtonPressedCommand As RelayCommand
     '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    WriteToDebug("Device.ShowDeviceDetails()", "executed")
-    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '                                    vm.selectedDevice = Me
-    '                                    Dim a = Me.DeviceProperties
-    '                                    vm.ShowDeviceDetails = True
-    '                                    vm.ShowBackButton = True
-    '                                    WriteToDebug(vm.selectedDevice.Name, "should be there")
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("Device.ButtonPressedCommand()", "executed")
+    '                                    If Me.CanBeSwitched Then
+    '                                        Dim ret As retvalue = Await SwitchDevice()
+    '                                    Else
+    '                                        'Only get the status of the device if it can't be switched
+    '                                        Await Update()
+    '                                    End If
     '                                End Sub)
+
     '    End Get
     'End Property
-
-    Public ReadOnly Property ButtonPressedCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.ButtonPressedCommand()", "executed")
-                                        If Me.CanBeSwitched Then
-                                            Dim ret As retvalue = Await SwitchDevice()
-                                        Else
-                                            'Only get the status of the device if it can't be switched
-                                            Await Update()
-                                        End If
-                                    End Sub)
-
-        End Get
-    End Property
 
     Public ReadOnly Property ButtonRightTappedCommand As RelayCommand
         Get
@@ -1284,6 +1249,60 @@ Public Class DeviceViewModel
 
 #End Region
 #Region "Methods"
+    ''' <summary>
+    ''' Triggered by Devices that Open/Close
+    ''' </summary>
+    ''' <returns></returns>
+    Public Async Function OpenButton() As Task
+        WriteToDebug("Device.OpenButtonCommand()", "executed")
+        Dim switchToState As String
+        Select Case SwitchType
+            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                switchToState = Constants.DEVICE.STATUS.OFF
+            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                switchToState = Constants.DEVICE.STATUS.ON
+            Case Else
+                switchToState = Constants.DEVICE.STATUS.OFF
+        End Select
+        If [Protected] Then
+            SwitchingToState = switchToState
+            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+            vm.selectedDevice = Me
+            vm.ShowDevicePassword = True
+            Exit Function
+        End If
+        Dim ret As retvalue = Await SwitchDevice(switchToState)
+    End Function
+    ''' <summary>
+    ''' Triggered by Devices that Open/Close
+    ''' </summary>
+    ''' <returns></returns>
+    Public Async Function CloseButton() As Task
+        WriteToDebug("Device.CloseButtonCommand()", "executed")
+        Dim switchToState As String
+        Select Case SwitchType
+            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                switchToState = Constants.DEVICE.STATUS.ON
+            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                switchToState = Constants.DEVICE.STATUS.OFF
+            Case Else
+                switchToState = Constants.DEVICE.STATUS.ON
+        End Select
+        If [Protected] Then
+            SwitchingToState = switchToState
+            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+            vm.selectedDevice = Me
+            vm.ShowDevicePassword = True
+            Exit Function
+        End If
+        Dim ret As retvalue = Await SwitchDevice(switchToState)
+    End Function
+
+
+    ''' <summary>
+    ''' Opens a custom ContentDialog which shows a list of Key/Value pairs for each property of the device
+    ''' </summary>
+    ''' <returns></returns>
     Public Async Sub ShowDeviceDetails()
         WriteToDebug("Device.ShowDeviceDetails()", "executed")
         Dim cDialog As New ContentDialog
@@ -1305,20 +1324,6 @@ Public Class DeviceViewModel
         cDialog.Content = details
         Await cDialog.ShowAsync()
     End Sub
-    'Public ReadOnly Property ShowDeviceDetails As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    WriteToDebug("Device.ShowDeviceDetails()", "executed")
-    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '                                    vm.selectedDevice = Me
-    '                                    Dim a = Me.DeviceProperties
-    '                                    vm.ShowDeviceDetails = True
-    '                                    vm.ShowBackButton = True
-    '                                    WriteToDebug(vm.selectedDevice.Name, "should be there")
-    '                                End Sub)
-    '    End Get
-    'End Property
-
 
 
     Public Async Function LoadStatus() As Task(Of DeviceModel)
@@ -1428,15 +1433,52 @@ Public Class DeviceViewModel
         End If
     End Function
 
+
+    'Triggers closing the Password Prompt Dialog Box
+    Public Sub ClosePasswordPrompt()
+        If Not _cDialog Is Nothing Then
+            _cDialog.Hide()
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Shows a Password Prompt Dialog with a OK button. By clicking the OK button or ESC/Back button the Dialog dissapears
+    ''' </summary>
+    ''' <returns></returns>
+    Public Async Function ShowPasswordPrompt() As Task
+        WriteToDebug("DeviceViewModel.ShowPasswordPrompt()", "executed")
+        _cDialog = New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           PassCode = ""
+                                                           _cDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        _cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        _cDialog.Title = Me.Name
+        _cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        _cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        _cDialog.VerticalAlignment = VerticalAlignment.Stretch
+        _cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        _cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        _cDialog.IsPrimaryButtonEnabled = True
+        _cDialog.PrimaryButtonText = "OK"
+        Dim password As New ucDevice_Password()
+        password.DataContext = Me
+        _cDialog.Content = password
+        Await _cDialog.ShowAsync()
+    End Function
+
+
     Public Async Function SwitchDevice(Optional forcedSwitchToState As String = "") As Task(Of retvalue)
         Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-
         If Not forcedSwitchToState = "" Then SwitchingToState = forcedSwitchToState
-        'Check if the device is password protected. If so, show the password prompt box and exit
+        'Check if the device is password protected. If so, show the password prompt
         If [Protected] And PassCode = "" Then
-            app.myViewModel.selectedDevice = Me
-            app.myViewModel.ShowDevicePassword = True
-            Exit Function
+            Await ShowPasswordPrompt()
+            'If the PassCode is still empty, don't do anything
+            If PassCode = "" Then Exit Function
         End If
 
         'Identify what kind of device we are and in what state we're in in order to perform the switch
@@ -1483,6 +1525,7 @@ Public Class DeviceViewModel
         End If
 
         Dim response As HttpResponseMessage = Await Task.Run(Function() (New Domoticz).DownloadJSON(url))
+        PassCode = ""
         If Not response.IsSuccessStatusCode Then
             Await app.myViewModel.Notify.Update(True, "Error switching device", 2, False, 2)
             Return New retvalue With {.err = "Error switching device", .issuccess = 0}
@@ -1508,6 +1551,8 @@ Public Class DeviceViewModel
             End If
             Return New retvalue With {.issuccess = 0, .err = "server sent empty response"}
         End If
+
+
 
     End Function
 
@@ -1544,6 +1589,10 @@ Public Class DeviceViewModel
         Dispose(True)
         ' TODO: uncomment the following line if Finalize() is overridden above.
         ' GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
     End Sub
 #End Region
 End Class
