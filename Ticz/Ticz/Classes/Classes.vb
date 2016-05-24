@@ -251,13 +251,7 @@ End Class
 
 
 
-
-
-
-''' <summary>
-''' TiczStorage contains Ticz settings and configurations that are stored on Storage
-''' </summary>
-Public NotInheritable Class TiczStorage
+Namespace TiczStorage
     Public Class RoomConfigurations
         Inherits ObservableCollection(Of RoomConfiguration)
 
@@ -290,7 +284,7 @@ Public NotInheritable Class TiczStorage
                 stream.Dispose()
             End If
 
-            app.myViewModel.EnabledRooms.Clear()
+            app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomConfiguration)
 
             For Each r In app.myViewModel.DomoRooms.result.OrderBy(Function(x) x.Order)
                 Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
@@ -345,6 +339,13 @@ Public NotInheritable Class TiczStorage
 
     Public Class RoomConfiguration
         Inherits ViewModelBase
+        Public ReadOnly Property RoomViewChoices As List(Of String)
+            Get
+                Return New List(Of String)({Constants.ROOMVIEW.ICONVIEW, Constants.ROOMVIEW.GRIDVIEW, Constants.ROOMVIEW.LISTVIEW,
+                                                                Constants.ROOMVIEW.RESIZEVIEW, Constants.ROOMVIEW.DASHVIEW}).ToList
+            End Get
+        End Property
+
         Public Property RoomIDX As Integer
         Public Property RoomName As String
         Public Property ShowRoom As Boolean
@@ -353,9 +354,10 @@ Public NotInheritable Class TiczStorage
                 Return _RoomView
             End Get
             Set(value As String)
-                _RoomView = value
-                RaisePropertyChanged("RoomView")
-                'WriteToDebug("--------------Roomview----------------", _RoomView)
+                If _RoomView <> value And value <> "" Then
+                    _RoomView = value
+                    RaisePropertyChanged("RoomView")
+                End If
             End Set
         End Property
         Private Property _RoomView As String
@@ -363,6 +365,7 @@ Public NotInheritable Class TiczStorage
 
         Public Sub New()
             DeviceConfigurations = New DeviceConfigurations
+            RoomView = "Icon View"
         End Sub
     End Class
 
@@ -451,9 +454,17 @@ Public NotInheritable Class TiczStorage
         '    End If
         'End Function
     End Class
+End Namespace
 
 
-End Class
+''' <summary>
+''' TiczStorage contains Ticz settings and configurations that are stored on Storage
+''' </summary>
+'Public NotInheritable Class TiczStorage
+
+
+
+'End Class
 
 
 Public NotInheritable Class Domoticz
@@ -931,7 +942,7 @@ Public NotInheritable Class Domoticz
             Using wc As New HttpClient(filter)
                 Dim cts As New CancellationTokenSource(5000)
                 Try
-                    'WriteToDebug("Downloader.DownloadJSON", url)
+                    WriteToDebug("Downloader.DownloadJSON", url)
                     Dim response As HttpResponseMessage = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
                     Return response
                 Catch ex As TaskCanceledException

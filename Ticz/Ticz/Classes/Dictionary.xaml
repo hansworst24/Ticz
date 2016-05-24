@@ -1328,7 +1328,7 @@
                                 
                                 <Grid x:Name="DialogSpace" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="40" />
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="0" />
                                     </Grid.RowDefinitions>

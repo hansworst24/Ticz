@@ -14,7 +14,7 @@
 
     <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GridViewDevices}" IsSourceGrouped="True" />
+            <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding GroupedDevices}" IsSourceGrouped="True" />
         </Grid.Resources>
         <GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" 
                   ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -38,7 +38,7 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!--<StackPanel Orientation="Horizontal"/>-->
-                    <ItemsWrapGrid Orientation="Horizontal"/>
+                    <ItemsWrapGrid Orientation="Horizontal" ItemWidth="{Binding ItemWidth}"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.ItemContainerStyle>
@@ -56,7 +56,7 @@
             </GridView.ItemTemplate>
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="SizeChanged">
-                    <Core:InvokeCommandAction Command="{Binding currentRoom.GridViewSizeChangedCommand}" CommandParameter="{Binding ElementName=griddie}"/>
+                    <Core:InvokeCommandAction Command="{Binding GridViewSizeChangedCommand}" CommandParameter="{Binding ElementName=griddie}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </GridView>

@@ -12,15 +12,15 @@
     d:DesignWidth="400">
 
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Rectangle HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8"/>
+        </Grid.RowDefinitions>-->
+        <!--<Rectangle HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8"/>
         <Border HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Stretch" Height="40" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-            <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding GraphList.deviceName}" FontSize="24" Style="{ThemeResource BaseTextBlockStyle}"/>
-        </Border>
-        <ListView Grid.Row="1" ItemsSource="{Binding GraphList.graphDataList}" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"  ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Enabled" SelectionMode="None" >
+            <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding deviceName}" FontSize="24" Style="{ThemeResource BaseTextBlockStyle}"/>
+        </Border>-->
+        <ListView ItemsSource="{Binding graphDataList}" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"  ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Enabled" SelectionMode="None" >
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Margin" Value="0,0,0,10"/>
@@ -38,26 +38,5 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ListView>
-        <!--<ScrollViewer Grid.Row="1" VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Visible" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl  ItemsSource="{Binding GraphList.graphDataList}"  ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollMode="Disabled">
-                --><!--<ItemsControl.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0,0,0,10"/>
-                --><!--<Setter Property="IsHitTestVisible" Value="False"/>--><!--
-                </Style>
-            </ItemsControl.ItemContainerStyle>--><!--
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl ContentTemplate="{Binding GraphDataTemplate}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>-->
-        <!--<ContentControl DataContext="{Binding GraphList.graphDataList[0]}" ContentTemplate="{Binding GraphDataTemplate}"        />-->
     </Grid>
 </UserControl>

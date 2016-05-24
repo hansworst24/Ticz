@@ -15,8 +15,8 @@ Public Class LogitechMediaServerDeviceViewModel
         End Get
     End Property
 
-    Public Sub New(d As DeviceModel, r As String)
-        MyBase.New(d, r)
+    Public Sub New(d As DeviceModel, r As String, c As TiczStorage.DeviceConfiguration)
+        MyBase.New(d, r, c)
     End Sub
 
     Public ReadOnly Property OpenLMSRemote As RelayCommand

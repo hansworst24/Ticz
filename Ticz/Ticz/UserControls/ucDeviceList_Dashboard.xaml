@@ -13,10 +13,7 @@
     d:DesignWidth="400">
 
     <Grid x:Name="griddieDashBoard" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
-        <Grid.Resources>
-            <CollectionViewSource x:Key="cvsDashboardView" Source="{Binding currentRoom.DashboardViewDevices}" IsSourceGrouped="False"/>
-        </Grid.Resources>
-        <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsDashboardView}}" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="None" Background="Transparent">
+        <local:VariableGrid x:Name="vGrid" DataContext="{x:Bind RoomViewModel, Mode=OneWay}"  ItemsSource="{x:Bind RoomViewModel.Devices, Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="None" Background="Transparent">
             <local:VariableGrid.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -28,17 +25,19 @@
                 </Style>
             </local:VariableGrid.ItemContainerStyle>
             <local:VariableGrid.ItemTemplate>
-                <DataTemplate>
-                    <!--<Rectangle Fill="DarkOrange"/>-->
-                    <local:ucDevice_Dynamic DataContext="{Binding}" Margin="0" />
+                <DataTemplate x:DataType="local:DeviceViewModel">
+                    <!--<Rectangle Fill="DarkOrange" Height="120" Width="120"/>-->
+                    <local:ucDevice_Dynamic  Margin="0" />
                 </DataTemplate>
             </local:VariableGrid.ItemTemplate>
             <local:VariableGrid.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!--<ItemsWrapGrid Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0"/>-->
-                    <VariableSizedWrapGrid Margin="0" Orientation="Horizontal" HorizontalAlignment="Stretch"  HorizontalChildrenAlignment="Left" ItemHeight="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemHeight}" ItemWidth="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemWidth}"/>
+                    <VariableSizedWrapGrid Margin="0" Orientation="Horizontal" HorizontalAlignment="Stretch"  HorizontalChildrenAlignment="Left" ItemHeight="120" ItemWidth="{Binding ItemWidth, Mode=OneWay}"/>
                 </ItemsPanelTemplate>
             </local:VariableGrid.ItemsPanel>
         </local:VariableGrid>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ItemWidth" Text="{x:Bind RoomViewModel.ItemWidth, Mode=OneWay}"/>
+        <Rectangle Fill="Yellow" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40"/>
     </Grid>
 </UserControl>

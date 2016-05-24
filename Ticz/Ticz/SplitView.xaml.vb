@@ -9,55 +9,50 @@ Public NotInheritable Class SplitView
     Inherits Page
 
     Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-    'Dim vm As TiczViewModel = app.myViewModel
+
+    Public ReadOnly Property vm As TiczViewModel
+        Get
+            Return app.myViewModel
+        End Get
+    End Property
+
+    'Public ReadOnly Property vm As TiczViewModel
+    '    Get
+    '        Return CType(Application.Current, Application).myViewModel
+    '    End Get
+    'End Property
 
     Public Sub New()
         InitializeComponent()
+        'AddHandler DataContextChanged, Sub(s, e)
+        '                                   vm = CType(DataContext, TiczViewModel)
+        '                               End Sub
     End Sub
 
-    Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
+    Protected Overrides Async Sub OnNavigatedTo(e As NavigationEventArgs)
         '        RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
-        'If e.NavigationMode = NavigationMode.New Then
-        '    AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
-        'End If
-        '        Dim rootFrame As Frame = CType(Window.Current.Content, Frame)
-        'If rootFrame.CanGoBack Then
-        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-        'Else
-        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-        'End If
-
+        If e.NavigationMode = NavigationMode.New Then
+            AddHandler SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf BackButtonPressed
+        End If
+        Await vm.Load()
         Me.DataContext = app.myViewModel
     End Sub
 
 
-    'Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
-    '    WriteToDebug("App.BackButtonPressed", "executed")
-    '    If app.myViewModel.CanGoBack Then
-    '        e.Handled = True
-    '        app.myViewModel.GraphList.Dispose()
-    '        Dim cmd = app.myViewModel.GoBackCommand
-    '        cmd.Execute(Nothing)
-
-    '        Exit Sub
-    '    End If
-    'End Sub
+    Public Sub BackButtonPressed(sender As Object, e As Windows.UI.Core.BackRequestedEventArgs)
+        WriteToDebug("App.BackButtonPressed", "executed")
+        If app.myViewModel.TiczMenu.IsMenuOpen Then
+            app.myViewModel.TiczMenu.MenuGoBack()
+            e.Handled = True
+            Exit Sub
+        End If
+    End Sub
 
 
     Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
         WriteToDebug("App.OnNavigatedFrom", "executed")
         app.myViewModel.StopRefresh()
         'RemoveHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf app.App_BackRequested
-    End Sub
-
-    Private Sub GridView_SizeChanged(sender As Object, e As SizeChangedEventArgs)
-        WriteToDebug("MainPage.GridView_SizeChanged()", "executed")
-        Dim gv As GridView = CType(sender, GridView)
-        Dim Panel = CType(gv.ItemsPanelRoot, ItemsWrapGrid)
-        Dim amountOfColumns = Math.Ceiling(gv.ActualWidth / 400)
-        If amountOfColumns < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then amountOfColumns = app.myViewModel.TiczSettings.MinimumNumberOfColumns
-        Panel.ItemWidth = e.NewSize.Width / amountOfColumns
-        WriteToDebug("Panel Width = ", Panel.ItemWidth)
     End Sub
 
 End Class

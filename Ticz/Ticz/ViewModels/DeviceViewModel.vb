@@ -14,19 +14,10 @@ Public Class DeviceViewModel
     Private _cDialog As ContentDialog 'Used to present a password prompt to the user for Protected Devices
 
 #Region "Constructor"
-    Public Sub New(d As DeviceModel, r As String)
+    Public Sub New(d As DeviceModel, r As String, c As TiczStorage.DeviceConfiguration)
         _Device = d
         RoomView = r
-        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-        Dim devConfig As TiczStorage.DeviceConfiguration = (From dev In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations
-                                                            Where dev.DeviceIDX = idx And dev.DeviceName = Name Select dev).FirstOrDefault
-        If devConfig Is Nothing Then
-            Dim newDevConfig As TiczStorage.DeviceConfiguration = (New TiczStorage.DeviceConfiguration With {.DeviceIDX = idx, .DeviceName = Name,
-                                                                   .DeviceRepresentation = Constants.DEVICEVIEWS.ICON, .DeviceOrder = 9999})
-            app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.Add(newDevConfig)
-            devConfig = newDevConfig
-        End If
-        _Configuration = devConfig
+        _Configuration = c
     End Sub
 #End Region
 #Region "Properties"
@@ -653,22 +644,7 @@ Public Class DeviceViewModel
             Return _Device.MaxDimLevel
         End Get
     End Property
-    Public ReadOnly Property MoveUpDashboardVisibility As String
-        Get
-            Select Case RoomView
-                Case Constants.ROOMVIEW.DASHVIEW : Return Constants.VISIBLE
-                Case Else : Return Constants.COLLAPSED
-            End Select
-        End Get
-    End Property
-    Public ReadOnly Property MoveDownDashboardVisibility As String
-        Get
-            Select Case RoomView
-                Case Constants.ROOMVIEW.DASHVIEW : Return Constants.VISIBLE
-                Case Else : Return Constants.COLLAPSED
-            End Select
-        End Get
-    End Property
+
     Public ReadOnly Property Name As String
         Get
             Return _Device.Name
@@ -717,14 +693,14 @@ Public Class DeviceViewModel
             RaisePropertyChanged("RainRate")
         End Set
     End Property
-    Public ReadOnly Property ResizeContextMenuVisibility As String
-        Get
-            Select Case RoomView
-                Case Constants.ROOMVIEW.DASHVIEW, Constants.ROOMVIEW.RESIZEVIEW : Return Constants.VISIBLE
-                Case Else : Return Constants.COLLAPSED
-            End Select
-        End Get
-    End Property
+    'Public ReadOnly Property ResizeContextMenuVisibility As String
+    '    Get
+    '        Select Case RoomView
+    '            Case Constants.ROOMVIEW.DASHVIEW, Constants.ROOMVIEW.RESIZEVIEW : Return Constants.VISIBLE
+    '            Case Else : Return Constants.COLLAPSED
+    '        End Select
+    '    End Get
+    'End Property
     Public Property RoomView As String
     Public Property Speed As String
         Get
@@ -946,56 +922,76 @@ Public Class DeviceViewModel
     '    End Get
     'End Property
 
-    Public ReadOnly Property ResizeCommand As RelayCommand(Of Object)
-        Get
-            Return New RelayCommand(Of Object)(Async Sub(x)
-                                                   Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-                                                   WriteToDebug("Device.ResizeCommand()", "executed")
-                                                   Dim newSizeRequested As String = TryCast(x, String)
-                                                   If Not newSizeRequested Is Nothing Then
-                                                       'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
-                                                       Dim myIndex As Integer
-                                                       Dim myGroupIndex As Integer
-                                                       If app.myViewModel.currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                                                           myIndex = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                                           app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
-                                                       Else
-                                                           For Each g In app.myViewModel.currentRoom.GetActiveGroupedDeviceList
-                                                               If g.Contains(Me) Then
-                                                                   myGroupIndex = app.myViewModel.currentRoom.GetActiveGroupedDeviceList.IndexOf(g)
-                                                                   myIndex = g.IndexOf(Me)
-                                                                   g.Remove(Me)
-                                                               End If
-                                                           Next
-                                                       End If
-                                                       'Secondly change the DeviceRepresentation to the one selected
-                                                       Select Case newSizeRequested
-                                                           Case Constants.DEVICEVIEWS.WIDE
-                                                               DeviceRepresentation = Constants.DEVICEVIEWS.WIDE
-                                                           Case Constants.DEVICEVIEWS.ICON
-                                                               DeviceRepresentation = Constants.DEVICEVIEWS.ICON
-                                                           Case Constants.DEVICEVIEWS.LARGE
-                                                               DeviceRepresentation = Constants.DEVICEVIEWS.LARGE
-                                                       End Select
-                                                       'Save the DeviceRepresentation to storage
-                                                       Dim devConfig = (From d In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
-                                                       If Not devConfig Is Nothing Then
-                                                           devConfig.DeviceRepresentation = DeviceRepresentation
-                                                       End If
-                                                       Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-                                                       'Re-initialize the deviceviewmodel
-                                                       'Await Me.Initialize()
+    Public Async Function ResizeIcon() As Task
+        Await Resize(Constants.DEVICEVIEWS.ICON)
+    End Function
 
-                                                       're-insert the device back into the view
-                                                       If app.myViewModel.currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                                                           app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex, Me)
-                                                       Else
-                                                           app.myViewModel.currentRoom.GetActiveGroupedDeviceList(myGroupIndex).Insert(myIndex, Me)
-                                                       End If
-                                                   End If
-                                               End Sub)
-        End Get
-    End Property
+    Public Async Function ResizeWide() As Task
+        Await Resize(Constants.DEVICEVIEWS.WIDE)
+    End Function
+
+    Public Async Function ResizeLarge() As Task
+        Await Resize(Constants.DEVICEVIEWS.LARGE)
+    End Function
+
+    Public Async Function Resize(deviceSize As String) As Task
+        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+        WriteToDebug(String.Format("Device.Resize() - {0}", deviceSize), "executed")
+        'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
+        Dim myIndex As Integer
+        myIndex = app.myViewModel.currentRoom.Devices.IndexOf(Me)
+        app.myViewModel.currentRoom.Devices.Remove(Me)
+        'Secondly change the DeviceRepresentation to the one selected
+        DeviceRepresentation = deviceSize
+        'Save the DeviceRepresentation to storage
+        Dim devConfig = (From d In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
+        If Not devConfig Is Nothing Then
+            devConfig.DeviceRepresentation = DeviceRepresentation
+        End If
+        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+        're-insert the device back into the view
+        ' app.myViewModel.currentRoom.GroupedDevices(0).Insert(0, Me)
+        app.myViewModel.currentRoom.Devices.Insert(myIndex, Me)
+        RaisePropertyChanged("DeviceRepresentation")
+    End Function
+
+
+    'Public ReadOnly Property ResizeCommand As RelayCommand(Of Object)
+    '    Get
+    '        Return New RelayCommand(Of Object)(Async Sub(x)
+    '                                               Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+    '                                               WriteToDebug("Device.ResizeCommand()", "executed")
+    '                                               Dim newSizeRequested As String = TryCast(x, String)
+    '                                               If Not newSizeRequested Is Nothing Then
+    '                                                   'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
+    '                                                   Dim myIndex As Integer
+    '                                                   Dim myGroupIndex As Integer
+    '                                                   myIndex = app.myViewModel.currentRoom.Devices.IndexOf(Me)
+    '                                                   app.myViewModel.currentRoom.Devices.Remove(Me)
+    '                                                   'Secondly change the DeviceRepresentation to the one selected
+    '                                                   Select Case newSizeRequested
+    '                                                       Case Constants.DEVICEVIEWS.WIDE
+    '                                                           DeviceRepresentation = Constants.DEVICEVIEWS.WIDE
+    '                                                       Case Constants.DEVICEVIEWS.ICON
+    '                                                           DeviceRepresentation = Constants.DEVICEVIEWS.ICON
+    '                                                       Case Constants.DEVICEVIEWS.LARGE
+    '                                                           DeviceRepresentation = Constants.DEVICEVIEWS.LARGE
+    '                                                   End Select
+    '                                                   'Save the DeviceRepresentation to storage
+    '                                                   Dim devConfig = (From d In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
+    '                                                   If Not devConfig Is Nothing Then
+    '                                                       devConfig.DeviceRepresentation = DeviceRepresentation
+    '                                                   End If
+    '                                                   Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+    '                                                   'Re-initialize the deviceviewmodel
+    '                                                   'Await Me.Initialize()
+
+    '                                                   're-insert the device back into the view
+    '                                                   app.myViewModel.currentRoom.Devices.Insert(myIndex, Me)
+    '                                               End If
+    '                                           End Sub)
+    '    End Get
+    'End Property
 
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
@@ -1024,14 +1020,15 @@ Public Class DeviceViewModel
                                                        WriteToDebug("Device.SelectorSelectionChanged()", String.Format("Selected Item : {0} / Selected Index {1}", s, combobox.SelectedIndex))
                                                        Dim SwitchToState As String = (combobox.SelectedIndex * 10).ToString
                                                        If [Protected] Then
-                                                           SwitchingToState = SwitchToState
-                                                           Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                                           vm.selectedDevice = Me
-                                                           vm.ShowDevicePassword = True
-                                                           Exit Sub
+                                                           'SwitchingToState = SwitchToState
+                                                           'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+                                                           'vm.selectedDevice = Me
+                                                           ''TODO  : FIX PASSWORD
+                                                           Await ShowPasswordPrompt()
+                                                           If PassCode = "" Then Exit Sub
                                                        End If
                                                        Dim ret As retvalue = Await SwitchDevice(SwitchToState)
-                                                   Else
+                                                       Else
                                                        WriteToDebug("Device.SelectorSelectionChanged()", "ignoring...")
                                                    End If
                                                End Sub)
@@ -1104,11 +1101,11 @@ Public Class DeviceViewModel
                                             WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
                                             Dim SwitchToState As String = (ValueToSend).ToString
                                             If [Protected] Then
-                                                SwitchingToState = SwitchToState
-                                                Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                                vm.selectedDevice = Me
-                                                vm.ShowDevicePassword = True
-                                                Exit Sub
+                                                'SwitchingToState = SwitchToState
+                                                'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+                                                'vm.selectedDevice = Me
+                                                Await ShowPasswordPrompt()
+                                                If PassCode = "" Then Exit Sub
                                             End If
                                             Dim ret As retvalue = Await SwitchDevice(SwitchToState)
                                         End If
@@ -1169,21 +1166,21 @@ Public Class DeviceViewModel
     '    End Get
     'End Property
 
-    Public ReadOnly Property ShowDeviceGraph As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.ShowDeviceGraphs()", "executed")
-                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                        'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-                                        '                                        app.myViewModel.selectedDevice = Me
-                                        Await vm.LoadGraphData(Me)
-                                        'vm.TiczMenu.ShowSecurityPanel = False
-                                        vm.ShowBackButton = True
-                                        '                                        app.myViewModel.Notify.Clear()
+    'Public ReadOnly Property ShowDeviceGraph As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    WriteToDebug("Device.ShowDeviceGraphs()", "executed")
+    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                    'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
+    '                                    '                                        app.myViewModel.selectedDevice = Me
+    '                                    Await vm.LoadGraphData(Me)
+    '                                    'vm.TiczMenu.ShowSecurityPanel = False
+    '                                    vm.ShowBackButton = True
+    '                                    '                                        app.myViewModel.Notify.Clear()
 
-                                    End Sub)
-        End Get
-    End Property
+    '                                End Sub)
+    '    End Get
+    'End Property
 
 
     'Public ReadOnly Property ButtonPressedCommand As RelayCommand
@@ -1210,39 +1207,65 @@ Public Class DeviceViewModel
         End Get
     End Property
 
-    Public ReadOnly Property MoveUpDashboardCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.MoveUpDashboardCommand()", "executed")
-                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                        vm.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
-                                        Dim myIndex As Integer = vm.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                        If Not myIndex = 0 Then
-                                            vm.currentRoom.GetActiveDeviceList.Remove(Me)
-                                            vm.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
-                                        End If
-                                        Await vm.TiczRoomConfigs.SaveRoomConfigurations()
-                                    End Sub)
+    Public Async Sub MoveUp()
+        WriteToDebug("Device.MoveUp()", "executed")
+        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+        vm.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
+        Dim myIndex As Integer = vm.currentRoom.Devices.IndexOf(Me)
+        If Not myIndex = 0 Then
+            vm.currentRoom.Devices.Remove(Me)
+            vm.currentRoom.Devices.Insert(myIndex - 1, Me)
+        End If
+        Await vm.TiczRoomConfigs.SaveRoomConfigurations()
+    End Sub
 
-        End Get
-    End Property
+    Public Async Sub MoveDown()
+        WriteToDebug("Device.MoveDown()", "executed")
+        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
+        Dim myIndex As Integer = app.myViewModel.currentRoom.Devices.IndexOf(Me)
+        If Not myIndex = app.myViewModel.currentRoom.Devices.Count - 1 Then
+            app.myViewModel.currentRoom.Devices.Remove(Me)
+            app.myViewModel.currentRoom.Devices.Insert(myIndex + 1, Me)
+        End If
+        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+    End Sub
 
-    Public ReadOnly Property MoveDownDashboardCommand As RelayCommand
-        Get
-            Return New RelayCommand(Async Sub()
-                                        WriteToDebug("Device.MoveDownDashboardCommand()", "executed")
-                                        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-                                        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
-                                        Dim myIndex As Integer = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
-                                        If Not myIndex = app.myViewModel.currentRoom.GetActiveDeviceList.Count - 1 Then
-                                            app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
-                                            app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex + 1, Me)
-                                        End If
-                                        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-                                    End Sub)
 
-        End Get
-    End Property
+    'Public ReadOnly Property MoveUpDashboardCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    'WriteToDebug("Device.MoveUpDashboardCommand()", "executed")
+    '                                    'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '                                    'vm.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
+    '                                    'Dim myIndex As Integer = vm.currentRoom.GetActiveDeviceList.IndexOf(Me)
+    '                                    'If Not myIndex = 0 Then
+    '                                    '    vm.currentRoom.GetActiveDeviceList.Remove(Me)
+    '                                    '    vm.currentRoom.GetActiveDeviceList.Insert(myIndex - 1, Me)
+    '                                    'End If
+    '                                    'Await vm.TiczRoomConfigs.SaveRoomConfigurations()
+    '                                End Sub)
+
+    '    End Get
+    'End Property
+
+    'Public ReadOnly Property MoveDownDashboardCommand As RelayCommand
+    '    Get
+    '        Return New RelayCommand(Async Sub()
+    '                                    'TODO REVIVE RESIZECOMMANDS
+    '                                    'WriteToDebug("Device.MoveDownDashboardCommand()", "executed")
+    '                                    'Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+    '                                    'app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
+    '                                    'Dim myIndex As Integer = app.myViewModel.currentRoom.GetActiveDeviceList.IndexOf(Me)
+    '                                    'If Not myIndex = app.myViewModel.currentRoom.GetActiveDeviceList.Count - 1 Then
+    '                                    '    app.myViewModel.currentRoom.GetActiveDeviceList.Remove(Me)
+    '                                    '    app.myViewModel.currentRoom.GetActiveDeviceList.Insert(myIndex + 1, Me)
+    '                                    'End If
+    '                                    'Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+    '                                End Sub)
+
+    '    End Get
+    'End Property
 
 
 
@@ -1265,11 +1288,11 @@ Public Class DeviceViewModel
                 switchToState = Constants.DEVICE.STATUS.OFF
         End Select
         If [Protected] Then
-            SwitchingToState = switchToState
-            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-            vm.selectedDevice = Me
-            vm.ShowDevicePassword = True
-            Exit Function
+            'SwitchingToState = switchToState
+            'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+            'vm.selectedDevice = Me
+            Await ShowPasswordPrompt()
+            If PassCode = "" Then Exit Function
         End If
         Dim ret As retvalue = Await SwitchDevice(switchToState)
     End Function
@@ -1289,11 +1312,11 @@ Public Class DeviceViewModel
                 switchToState = Constants.DEVICE.STATUS.ON
         End Select
         If [Protected] Then
-            SwitchingToState = switchToState
-            Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-            vm.selectedDevice = Me
-            vm.ShowDevicePassword = True
-            Exit Function
+            'SwitchingToState = switchToState
+            'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+            'vm.selectedDevice = Me
+            Await ShowPasswordPrompt()
+            If PassCode = "" Then Exit Function
         End If
         Dim ret As retvalue = Await SwitchDevice(switchToState)
     End Function
@@ -1323,6 +1346,172 @@ Public Class DeviceViewModel
         details.DataContext = Me
         cDialog.Content = details
         Await cDialog.ShowAsync()
+    End Sub
+
+
+    Public Async Function GetDeviceGraphData() As Task(Of GraphListViewModel)
+        Dim app As Application = CType(Application.Current, Application)
+        Dim GraphList = New GraphListViewModel
+        '        ShowDeviceGraph = True
+        Await app.myViewModel.Notify.Update(False, "Loading graphs, please wait...", 0, False, 0)
+        GraphList.deviceName = Name
+        Dim GraphsToAdd As New List(Of Domoticz.DeviceGraphContainer)
+
+        Select Case Type
+            Case Constants.DEVICE.TYPE.RFXMETER
+                Select Case SwitchTypeVal
+                    Case 0 'ENERGY METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                    Case 1 'GAS METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphGasDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphGasWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphGasMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphGasYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                    Case 2 'WATER METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("GraphWaterConsumptionYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                    Case 3 'COUNTER METER
+                        'ASSUMPTION THAT COUNTER METER IS LIKE ON/OFF SWITCH
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(idx)))
+                    Case 4 'ENERGY GENERATED METER
+                        'ASSUMPTION THAT ENERGY GENERATED IS THE SAME AS ENERGY METER
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                End Select
+            Case Constants.DEVICE.TYPE.LUX
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                'TEST DATA FOR LUX
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphLuxDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter"), "ms-appx:///test_data/lux_day.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphLuxMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter"), "ms-appx:///test_data/lux_month.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphLuxYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter"), "ms-appx:///test_data/lux_year.txt"))
+            Case Constants.DEVICE.TYPE.WEIGHT
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWeightDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWeightMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphWeightYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                'TEST DATA FOR WEIGHT
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWeightDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter"), "ms-appx:///test_data/weight_day.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWeightMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter"), "ms-appx:///test_data/weight_month.txt"))
+                'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphWeightYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter"), "ms-appx:///test_data/weight_year.txt"))
+            Case Constants.DEVICE.TYPE.WIND
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphWindDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "wind")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphWindMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "wind")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphWindYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "wind")))
+            Case Constants.DEVICE.TYPE.RAIN
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphRainDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphRainWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphRainMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "rain")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphRainYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "rain")))
+
+            Case Constants.DEVICE.TYPE.THERMOSTAT
+                Select Case SubType
+                    Case Constants.DEVICE.SUBTYPE.SETPOINT
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "temp")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "temp")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "temp")))
+                End Select
+            Case Constants.DEVICE.TYPE.LIGHT_SWITCH
+                Select Case SubType
+                    Case Constants.DEVICE.SUBTYPE.SELECTOR_SWITCH, Constants.DEVICE.SUBTYPE.SWITCH
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(idx)))
+                End Select
+            Case Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.LIGHTING_1, Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "", TryCast(Xaml.Application.Current.Resources("FastGraph"), DataTemplate), (New DomoApi).getLightLog(idx)))
+
+            Case Constants.DEVICE.TYPE.TEMP
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphTemperatureYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "temp")))
+            Case Constants.DEVICE.TYPE.TEMP_HUMI, Constants.DEVICE.TYPE.TEMP_HUMI_BARO
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "temp")))
+                GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphTempHuYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "temp")))
+            Case Constants.DEVICE.TYPE.GENERAL
+                Select Case SubType
+                    Case Constants.DEVICE.SUBTYPE.KWH
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("GeneralKWHDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_day.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("GeneralKWHWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("GeneralKWHMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("GeneralKWHYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter"), "ms-appx:///test_data/General_kWh_Graph Data_588_json_year.txt"))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("GeneralKWHDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter", 1)))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("GeneralKWHWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("GeneralKWHMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("GeneralKWHYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                End Select
+            Case Constants.DEVICE.TYPE.USAGE
+                Select Case SubType
+                    Case Constants.DEVICE.SUBTYPE.ELECTRIC
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter"), "ms-appx:///test_data/371_json_day.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter"), "ms-appx:///test_data/371_json_month.txt"))
+                        'GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter"), "ms-appx:///test_data/371_json_year.txt"))
+                        'TODO : REMOVE TESTDATA
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphUsageElectricYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                End Select
+            Case Else
+                Select Case SubType
+                    Case Constants.DEVICE.SUBTYPE.PERCENTAGE
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphPercentageDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "Percentage")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphPercentageMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "Percentage")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphPercentageYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "Percentage")))
+                    Case Constants.DEVICE.SUBTYPE.P1_ELECTRIC
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphEnergyYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                    Case Constants.DEVICE.SUBTYPE.P1_GAS
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "day", TryCast(Xaml.Application.Current.Resources("FastGraphGasDay"), DataTemplate), (New DomoApi).getGraph(idx, "day", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "week", TryCast(Xaml.Application.Current.Resources("FastGraphGasWeek"), DataTemplate), (New DomoApi).getGraph(idx, "week", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "month", TryCast(Xaml.Application.Current.Resources("FastGraphGasMonth"), DataTemplate), (New DomoApi).getGraph(idx, "month", "counter")))
+                        GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("FastGraphGasYear"), DataTemplate), (New DomoApi).getGraph(idx, "year", "counter")))
+                End Select
+        End Select
+
+        'Add an empty graph which tells the user to help getting their data in :)
+        If GraphsToAdd.Count = 0 Then
+            GraphsToAdd.Add(New Domoticz.DeviceGraphContainer(idx, Type, SubType, Name, "year", TryCast(Xaml.Application.Current.Resources("NoGraphAvailable"), DataTemplate), ""))
+        End If
+
+        For Each g In GraphsToAdd
+            Await Task.Run(Function() g.Load(Me, g.datafile))
+            GraphList.graphDataList.Add(g)
+        Next
+        app.myViewModel.Notify.Clear(True)
+        Return GraphList
+
+    End Function
+
+    Public Async Sub ShowDeviceGraphs()
+        WriteToDebug("Device.ShowDeviceDetails()", "executed")
+        Dim GraphList As GraphListViewModel = Await GetDeviceGraphData()
+        Dim cDialog As New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           cDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        cDialog.Title = Me.Name
+        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        cDialog.VerticalAlignment = VerticalAlignment.Stretch
+        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim details As New ucDevice_GraphsList()
+        details.DataContext = GraphList
+        cDialog.Content = details
+        Await cDialog.ShowAsync()
+        GraphList.Dispose()
     End Sub
 
 
@@ -1505,12 +1694,12 @@ Public Class DeviceViewModel
                         If SwitchingToState = "" Then
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
                         End If
-                        url = (New DomoApi).setDimmer(idx, SwitchingToState)
+                        url = (New DomoApi).setDimmer(idx, SwitchingToState, PassCode)
                     Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                         If SwitchingToState = "" Then
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
                         End If
-                        url = (New DomoApi).setDimmer(idx, SwitchingToState)
+                        url = (New DomoApi).setDimmer(idx, SwitchingToState, PassCode)
                     Case Else
                         If SwitchingToState = "" Then
                             If Me.isOn Then SwitchingToState = Constants.DEVICE.STATUS.OFF Else SwitchingToState = Constants.DEVICE.STATUS.ON

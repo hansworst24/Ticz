@@ -10,6 +10,235 @@
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
     
+    
+    
+    
+    
+    
+    <!-- RoomView Data Templates-->
+    <DataTemplate x:Key="IconViewDataTemplate" x:DataType="local:RoomViewModel">
+        <Grid x:Name="gridRoomIconView" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices, Mode=OneWay}"
+                                  IsSourceGrouped="True" />
+            </Grid.Resources>
+            <GridView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                   SelectionMode="None">
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Top"/>
+                        <Setter Property="Margin" Value="2"/>
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <!--<Rectangle Fill="DarkOrange" DataContext="{Binding}" MinHeight="120" MinWidth="120" Height="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemWidth}"/>-->
+                        <local:ucDevice_Dynamic 
+                            Height="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemHeight}" 
+                            Width="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemWidth}"/>
+                    </DataTemplate>
+
+                </GridView.ItemTemplate>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                        <!--<StackPanel Orientation="Vertical"/>-->
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.GroupStyle >
+                    <GroupStyle HidesIfEmpty="True">
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="4">
+                                    <TextBlock Text="{Binding Key}" FontSize="16"/>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </GridView.GroupStyle>
+            </GridView>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewDataTemplate" x:DataType="local:RoomViewModel">
+        <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <ListView ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                          SelectionMode="None">
+                <ListView.GroupStyle>
+                    <GroupStyle HidesIfEmpty="True">
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border HorizontalAlignment="Stretch" Background="Transparent" Padding="4">
+                                    <TextBlock Text="{Binding Key}" FontSize="16" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="2" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <local:ucDevice_Dynamic/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewDataTemplate" x:DataType="local:RoomViewModel">
+        <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <GridView x:Name="griddie" ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}" Background="Transparent" 
+                  ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <GridView.GroupStyle>
+                    <GroupStyle HidesIfEmpty="True">
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                                <!--<ItemsWrapGrid Orientation="Horizontal" Margin="0,0,0,20" ItemHeight="{Binding currentRoom.ItemHeight}" ItemWidth="{Binding currentRoom.ItemWidth}"/>-->
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Key}" FontSize="16" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </GridView.GroupStyle>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!--<StackPanel Orientation="Horizontal"/>-->
+                        <ItemsWrapGrid Orientation="Horizontal" ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Top"/>
+                        <Setter Property="Margin" Value="2"/>
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <local:ucDevice_Dynamic Margin="0" />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SizeChanged">
+                        <Core:InvokeCommandAction Command="{Binding currentRoom.GridViewSizeChangedCommand}" CommandParameter="{Binding ElementName=griddie}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </GridView>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ResizeViewDataTemplate" x:DataType="local:RoomViewModel">
+        <Grid x:Name="Griddie" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices}" IsSourceGrouped="True" />
+            </Grid.Resources>
+            <local:VariableGrid x:Name="vGrid"  ItemsSource="{Binding Source={StaticResource cvsGroupedDevices}}"
+                            Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                            SelectionMode="None" CanReorderItems="True" CanDragItems="True" AllowDrop="True">
+                <local:VariableGrid.GroupStyle>
+                    <GroupStyle HidesIfEmpty="True">
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border HorizontalAlignment="Stretch" Padding="4">
+                                    <TextBlock Text="{Binding Key}" FontSize="16" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <VariableSizedWrapGrid Orientation="Horizontal" 
+                                                       HorizontalAlignment="Stretch"  
+                                                       HorizontalChildrenAlignment="Left" 
+                                                       ItemHeight="{Binding ElementName=Griddie, Path=DataContext.currentRoom.ItemHeight}" 
+                                                       ItemWidth="{Binding ElementName=Griddie, Path=DataContext.currentRoom.ItemWidth}"/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </local:VariableGrid.GroupStyle>
+                <local:VariableGrid.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2"/>
+                    </Style>
+                </local:VariableGrid.ItemContainerStyle>
+                <local:VariableGrid.ItemTemplate>
+                    <DataTemplate>
+                        <local:ucDevice_Dynamic Margin="0" />
+                    </DataTemplate>
+                </local:VariableGrid.ItemTemplate>
+                <local:VariableGrid.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </local:VariableGrid.ItemsPanel>
+            </local:VariableGrid>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DashboardViewDataTemplate" x:DataType="local:RoomViewModel">
+        <Grid x:Name="griddieDashBoard" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+            <Grid.Resources>
+                <CollectionViewSource x:Key="cvsDevices" Source="{Binding currentRoom.Devices}" IsSourceGrouped="False"/>
+            </Grid.Resources>
+            <local:VariableGrid x:Name="vGrid"   ItemsSource="{Binding Source={StaticResource cvsDevices}}" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="None" Background="Transparent">
+                <local:VariableGrid.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </local:VariableGrid.ItemContainerStyle>
+                <local:VariableGrid.ItemTemplate>
+                    <DataTemplate>
+                        <local:ucDevice_Dynamic Margin="0" />
+                    </DataTemplate>
+                </local:VariableGrid.ItemTemplate>
+                <local:VariableGrid.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid Margin="0" Orientation="Horizontal" 
+                                               HorizontalAlignment="Stretch"  
+                                               HorizontalChildrenAlignment="Left" ItemHeight="120"
+                                               ItemWidth="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemWidth}"/>
+                    </ItemsPanelTemplate>
+                </local:VariableGrid.ItemsPanel>
+            </local:VariableGrid>
+        </Grid>
+    </DataTemplate>
+
+
+
+
+
+
     <!-- ICON DATATEMPLATES, ONE OF THE 2 IS USED AS ICON AND SWITCH FOR EACH DEVICE. 
     USING X:BIND ON THESE FOR SOME REASON DON'T WORK. ALTHOUGH COMPILATION OCCURS AND APP RUNS, NO ICONS ARE VISIBLE --> 
 
@@ -652,11 +881,11 @@
 
     <!-- THESE ARE THE DEVICE CONTENT TEMPLATES USED TO SHOW DIFFERENT CONTENT FOR DIFFERENT TYPES OF DEVICES -->
 
-    <DataTemplate x:Key="DeviceIconView">
+    <DataTemplate x:Key="DeviceIconView" x:DataType="local:DeviceViewModel">
         <Grid Width="1">
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="DeviceWideView">
+    <DataTemplate x:Key="DeviceWideView" x:DataType="local:DeviceViewModel">
         <Grid Margin="20,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -664,11 +893,11 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="SecondInfoText" Grid.Row="0" Text="{Binding Data}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
-            <TextBlock x:Name="ThirdInfoText" Grid.Row="1" Text=""   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="ThirdInfoText" Grid.Row="1" Text="" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
             <TextBlock x:Name="FourthInfoText" Grid.Row="2" Text="{Binding LastUpdate}" TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="DeviceWideWindView">
+    <DataTemplate x:Key="DeviceWideWindView" x:DataType="local:DeviceViewModel">
         <Grid Margin="20,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -905,15 +1134,15 @@
             </Button>
             <!--<Image Grid.Row="0" Grid.RowSpan="3" Height="40" Width="40" Grid.Column="0" Source="/Images/TiczLogo.png"/>-->
             <Canvas x:Name="MarqueeCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True" Height="16">
-                <Canvas.Resources>
+                <!--<Canvas.Resources>
                     <Storyboard x:Name="MarqueeOn">
                         <DoubleAnimation Storyboard.TargetName="SecondInfoText" Storyboard.TargetProperty="(Canvas.Left)" 
                                             Duration="0:0:10" From="0" AutoReverse="True" 
                                             To="{Binding MarqueeLength, Mode=OneWay}" RepeatBehavior="Forever" />
                     </Storyboard>
-                </Canvas.Resources>
+                </Canvas.Resources>-->
                 <TextBlock Name="SecondInfoText" Text="{Binding Data, Mode=OneWay}" Foreground="#FF808080" FontSize="12" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}">
-                    <Interactivity:Interaction.Behaviors>
+                    <!--<Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="SizeChanged">
                             <Core:InvokeCommandAction Command="{Binding DataFieldChanged}" CommandParameter="{Binding ElementName=MarqueeCanvas}"/>
                         </Core:EventTriggerBehavior>
@@ -923,7 +1152,7 @@
                         <Core:DataTriggerBehavior Binding="{Binding MarqueeStart}" Value="False">
                             <Media:ControlStoryboardAction Storyboard="{StaticResource MarqueeOn}"  ControlStoryboardOption="Stop"/>
                         </Core:DataTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
+                    </Interactivity:Interaction.Behaviors>-->
                 </TextBlock>
             </Canvas>
             <TextBlock x:Name="ThirdInfoText" Grid.Row="1" Grid.Column="1" Text=""   TextWrapping="NoWrap" Foreground="#FF808080" FontSize="12" VerticalAlignment="Stretch" Style="{StaticResource BodyTextBlockStyle}"/>
