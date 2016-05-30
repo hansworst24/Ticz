@@ -47,7 +47,7 @@ Public Class LogitechMediaServerDeviceViewModel
     End Property
 
 
-    'Public Async Function OpenLMSRemote() As Task
+    'Public Async Sub OpenLMSRemote()
     '    Dim cDialog As New ContentDialog
     '    'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
     '    Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -67,7 +67,7 @@ Public Class LogitechMediaServerDeviceViewModel
     '    remote.DataContext = Me
     '    cDialog.Content = remote
     '    Await cDialog.ShowAsync()
-    'End Function
+    'End Sub
 
 
 

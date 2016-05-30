@@ -9,10 +9,17 @@
     xmlns:SyncFusion="using:Syncfusion.UI.Xaml.Charts"
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
-    
-    
-    
-    
+
+
+
+    <!--<DataTemplate x:Key="CameraDataTemplate" x:DataType="local:CameraViewModel">
+        <Grid>
+            <Grid>
+                <Image Source="{x:Bind imgurl, TargetNullValue='/Images/TiczLogo.png', FallbackValue='/Images/TiczLogo.png', Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Button Click="{x:Bind GetFrame, Mode=OneWay}" Content="Refresh"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>-->
     
     
     <!-- RoomView Data Templates-->
@@ -343,19 +350,12 @@
                     <SyncFusion:NumericalAxis Header="Electric Usage in kW" Minimum="0" LabelFormat="0 kW"  FontSize="12" />
                 </SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:StackingColumnSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
-                <!--<SyncFusion:StackingColumnSeries Label="Usage_2"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>-->
-                <!--TODO : Looks like FastStackingColumnBitmapSeries causes big memory leaks -->
-                <!--<SyncFusion:FastStackingColumnBitmapSeries Label="Usage_1"  ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v"/>
-                <SyncFusion:FastStackingColumnBitmapSeries Label="Usage_2" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v2"/>-->
             </SyncFusion:SfChart>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="GeneralKWHMonth">
         <Grid>
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
-                <!--<SyncFusion:SfChart.Behaviors>
-                <SyncFusion:ChartZoomPanBehavior EnablePanning="True" />
-            </SyncFusion:SfChart.Behaviors>-->
                 <SyncFusion:SfChart.PrimaryAxis>
                     <SyncFusion:DateTimeAxis  LabelFormat="MMM dd" IntervalType="Days" Interval="2" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
@@ -369,9 +369,6 @@
     <DataTemplate x:Key="GeneralKWHYear">
         <Grid>
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
-                <!--<SyncFusion:SfChart.Behaviors>
-                <SyncFusion:ChartZoomPanBehavior EnablePanning="True" />
-            </SyncFusion:SfChart.Behaviors>-->
                 <SyncFusion:SfChart.PrimaryAxis>
                     <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
@@ -439,9 +436,6 @@
     <DataTemplate x:Key="FastGraphEnergyYear">
         <Grid>
             <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
-                <!--<SyncFusion:SfChart.Behaviors>
-                <SyncFusion:ChartZoomPanBehavior EnablePanning="True" />
-            </SyncFusion:SfChart.Behaviors>-->
                 <SyncFusion:SfChart.PrimaryAxis>
                     <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
                 </SyncFusion:SfChart.PrimaryAxis>
@@ -594,7 +588,7 @@
     <DataTemplate x:Key="FastGraphWeightYear">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>
-                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" IntervalType="Months" Interval="1" FontSize="12"/>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v_max">
                 <SyncFusion:SplineSeries.YAxis>
@@ -641,7 +635,7 @@
     <DataTemplate x:Key="FastGraphTempHuYear">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>
-                <SyncFusion:DateTimeAxis LabelFormat="MMM dd" FontSize="12"/>
+                <SyncFusion:DateTimeAxis LabelFormat="MMM" IntervalType="Months"  Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SplineSeries Label="Temperature" Interior="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="te">
                 <SyncFusion:SplineSeries.YAxis>
@@ -687,7 +681,7 @@
     <DataTemplate x:Key="FastGraphTemperatureYear">
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>
-                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" FontSize="12"/>
+                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:NumericalAxis Header="Temperature in C" LabelFormat="#.0 °C;"  FontSize="12" />
@@ -864,17 +858,12 @@
 
         <SyncFusion:SfChart HorizontalAlignment="Stretch" Header="{Binding GraphTitle}" FontSize="20"  Height="300">
             <SyncFusion:SfChart.PrimaryAxis>
-                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" FontSize="12"/>
+                <SyncFusion:DateTimeAxis  LabelFormat="MMM" IntervalType="Months" Interval="1" FontSize="12"/>
             </SyncFusion:SfChart.PrimaryAxis>
             <SyncFusion:SfChart.SecondaryAxis>
                 <SyncFusion:NumericalAxis Header="Percentage" LabelFormat="p1" FontSize="12" Minimum="0" />
             </SyncFusion:SfChart.SecondaryAxis>
             <SyncFusion:SplineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v_avg_percentage"/>
-            <!--<SyncFusion:FastLineSeries Label="Temperature" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" ItemsSource="{Binding result}" XBindingPath="d" YBindingPath="v_avg">
-                    <SyncFusion:FastLineSeries.Trendlines>
-                        <SyncFusion:Trendline Type="Polynomial" Stroke="Gray"  PolynomialOrder="4"/>
-                    </SyncFusion:FastLineSeries.Trendlines>
-                </SyncFusion:FastLineSeries>-->
         </SyncFusion:SfChart>
 
     </DataTemplate>

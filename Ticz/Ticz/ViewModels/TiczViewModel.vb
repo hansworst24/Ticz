@@ -8,7 +8,7 @@ Public Class TiczViewModel
     Inherits ViewModelBase
 
     Public Property CurrentContentDialog As ContentDialog
-
+    Public Property Cameras As New CameraListViewModel
     Public Property DomoConfig As New Domoticz.Config
     Public Property DomoSunRiseSet As New Domoticz.SunRiseSet
     Public Property DomoVersion As New Domoticz.Version
@@ -93,6 +93,14 @@ Public Class TiczViewModel
     Public Async Sub RoomSelected(sender As Object, e As SelectionChangedEventArgs)
         Dim selectedRoom As TiczStorage.RoomConfiguration = TryCast(sender, ListView).SelectedItem
         If Not selectedRoom Is Nothing Then
+            If Not Cameras Is Nothing Then
+                For Each c In Cameras
+                    c.AutoRefreshEnabled = False
+                Next
+            End If
+
+
+
             Await Notify.Update(False, "Loading room...", 1, False, 0)
             If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
             ' Me.StopRefresh()
@@ -127,6 +135,39 @@ Public Class TiczViewModel
         CurrentContentDialog.Content = details
         Await CurrentContentDialog.ShowAsync()
     End Sub
+
+
+    Public Async Sub ShowCameras()
+        WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
+        Me.TiczMenu.IsMenuOpen = False
+        CurrentContentDialog = New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           CurrentContentDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        CurrentContentDialog.Title = "Cameras"
+        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim clist As New ucCameraList()
+        'Before Showing the cams, try to capture the latest frame for each
+        For Each c In Cameras
+            Await c.GetFrameFromJPG()
+        Next
+        clist.DataContext = Cameras
+        CurrentContentDialog.Content = clist
+        Await CurrentContentDialog.ShowAsync()
+        'Stop refreshing any camera that exists
+        For Each c In Cameras
+            c.StopRefresh()
+        Next
+    End Sub
+
 
     Public Async Sub ShowAbout()
         WriteToDebug("TiczMenuSettings.ShowAbout()", "executed")
@@ -335,8 +376,6 @@ Public Class TiczViewModel
             Await Room.GetDevicesForRoom(Room.RoomConfiguration.RoomView)
             currentRoom = Room
         End If
-
-        'Notify.Clear()
     End Function
 
     ''' <summary>
@@ -369,13 +408,18 @@ Public Class TiczViewModel
         Await Notify.Update(False, "Loading Domoticz version info...", 0, False, 0)
         If Not (Await DomoVersion.Load()).issuccess Then Exit Function
 
+        'Load Cameras from Domoticz
+        Await Notify.Update(False, "Loading cameras...", 0, False, 0)
+        If Not (Await Cameras.Load()).issuccess Then
+            Await Notify.Update(True, "Error loading cameras...", 1, False, 0)
+        End If
+
         'Load the Room/Floorplans from the Domoticz Server
         Await Notify.Update(False, "Loading Domoticz rooms...", 0)
-        Dim result As retvalue = Await DomoRooms.Load()
-        If Not result.issuccess Then
-            Await Notify.Update(True, "Connection Error, couldn't load Rooms..", 2, False, 0)
-            Exit Function
+        If Not (Await DomoRooms.Load()).issuccess Then
+            Await Notify.Update(True, "Error loading Domoticz rooms...", 1, False, 0)
         End If
+
         If DomoRooms.result.Count = 0 Then
             Await Notify.Update(True, "No roomplans are configured on the Domoticz Server. Create one or more roomplans in Domoticz in order to see something here :)", 2, False, 0)
             Exit Function
@@ -385,23 +429,17 @@ Public Class TiczViewModel
         Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0, False, 0)
         Await DomoSecPanel.GetSecurityStatus()
 
-
         'Load the Room Configurations from Storage
-        Dim isSuccess As Boolean
         Await Notify.Update(False, "Loading Ticz Room configuration...", 0, False, 0)
-        isSuccess = Await TiczRoomConfigs.LoadRoomConfigurations()
-        'Wait for 2 seconds to let any notification stay
-        If Not isSuccess Then Await Task.Delay(2000)
+        If Not Await TiczRoomConfigs.LoadRoomConfigurations() Then
+            Await Task.Delay(2000)
+        End If
 
         Await LoadRoom()
 
-        Await Notify.Update(False, "Loading Devices for preferred room...", 0, False, 0)
-        'Await currentRoom.LoadDevicesForRoom()
-
         'Save the (potentially refreshhed) roomconfigurations again
         Await Notify.Update(False, "Saving Ticz Room configuration...", 0, False, 0)
-        'Await TiczRoomConfigs.SaveRoomConfigurations()
-        'If Not TiczRooms.Count = 0 Then currentRoom = TiczRooms(0)
+        Await TiczRoomConfigs.SaveRoomConfigurations()
         LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
 

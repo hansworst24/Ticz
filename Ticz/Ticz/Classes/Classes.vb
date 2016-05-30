@@ -915,7 +915,21 @@ Public NotInheritable Class Domoticz
         Public Property idx As String
     End Class
 
-    Public Async Function DownloadJSON(url As String) As Task(Of HttpResponseMessage)
+    Public Class Camera
+        Public Property Address As String
+        Public Property Enabled As Boolean
+        Public Property ImageURL As String
+        Public Property Name As String
+        Public Property idx As Integer
+    End Class
+
+    Public Class Cameras
+        Public Property result As List(Of Camera)
+        Public Property status As String
+        Public Property title As String
+    End Class
+
+    Public Async Function DownloadJSON(url As String, Optional timeOut As Integer = 5000) As Task(Of HttpResponseMessage)
 
         Using filter As New HttpBaseProtocolFilter
             If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
@@ -940,7 +954,7 @@ Public NotInheritable Class Domoticz
             filter.AllowUI = False
             filter.UseProxy = False
             Using wc As New HttpClient(filter)
-                Dim cts As New CancellationTokenSource(5000)
+                Dim cts As New CancellationTokenSource(timeOut)
                 Try
                     WriteToDebug("Downloader.DownloadJSON", url)
                     Dim response As HttpResponseMessage = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
@@ -1084,6 +1098,34 @@ Public NotInheritable Class DomoApi
     Public Function ServerURL() As String
         Return String.Format("{0}://{1}:{2}", If(app.myViewModel.TiczSettings.UseHTTPS, "https", "http"), app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
     End Function
+
+
+    Public Function getCamFrame(camidx As Integer)
+        Return String.Format("{0}/camsnapshot.jpg?idx={1}&t={2}", ServerURL, camidx, (New Random().Next))
+    End Function
+
+    Public Function getCameras()
+        Return String.Format("{0}/json.htm?type=cameras", ServerURL)
+        '        {
+        '   "result" : [
+        '      {
+        '         "Address" : "192.xxx.xxx.xxx",
+        '         "Enabled" : "true",
+        '         "ImageURL" : "/cam_pic.php",
+        '         "Name" : "RPI",
+        '         "Password" : "",
+        '         "Port" : 80,
+        '         "Username" : "",
+        '         "idx" : "1"
+        '      }
+        '   ],
+        '   "status" : "OK",
+        '   "title" : "Cameras"
+        '}
+
+    End Function
+
+
 
     Public Function getSecurityStatus()
         Return String.Format("{0}/json.htm?type=command&param=getsecstatus", ServerURL)
