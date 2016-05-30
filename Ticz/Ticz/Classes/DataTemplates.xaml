@@ -9,19 +9,7 @@
     xmlns:SyncFusion="using:Syncfusion.UI.Xaml.Charts"
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
-
-
-
-    <!--<DataTemplate x:Key="CameraDataTemplate" x:DataType="local:CameraViewModel">
-        <Grid>
-            <Grid>
-                <Image Source="{x:Bind imgurl, TargetNullValue='/Images/TiczLogo.png', FallbackValue='/Images/TiczLogo.png', Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                <Button Click="{x:Bind GetFrame, Mode=OneWay}" Content="Refresh"/>
-            </Grid>
-        </Grid>
-    </DataTemplate>-->
-    
-    
+   
     <!-- RoomView Data Templates-->
     <DataTemplate x:Key="IconViewDataTemplate" x:DataType="local:RoomViewModel">
         <Grid x:Name="gridRoomIconView" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
