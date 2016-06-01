@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid VerticalAlignment="Top">
+    <Grid>
         <Grid.Resources>
             <local:VariableViewModelItemDataTemplateSelector x:Key="VariableDataTemplateSelector"/>
         </Grid.Resources>

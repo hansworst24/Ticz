@@ -497,7 +497,7 @@
                                     Background="{TemplateBinding Background}"
                                     FlowDirection="{TemplateBinding FlowDirection}">
 
-                                <Grid x:Name="DialogSpace" VerticalAlignment="Top" MaxHeight="{TemplateBinding MaxHeight}">
+                                <Grid x:Name="DialogSpace" VerticalAlignment="Top" MinHeight="{TemplateBinding MaxHeight}" MaxHeight="{TemplateBinding MaxHeight}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="40" />
                                         <RowDefinition Height="*" />

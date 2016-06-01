@@ -156,14 +156,9 @@ Public Class TiczViewModel
             CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
             CurrentContentDialog.Title = "Domoticz Variables"
             CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-            'CurrentContentDialog.MinHeight = Window.Current.Bounds.Height
             CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
-
-            'CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Center
             CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-            'CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Center
             CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-            ' CurrentContentDialog.FullSizeDesired = True
             Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
             Dim uclist As New ucVariableList
             uclist.DataContext = vlist
