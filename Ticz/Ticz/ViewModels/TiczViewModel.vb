@@ -15,6 +15,7 @@ Public Class TiczViewModel
     Public Property DomoRooms As New Domoticz.Plans
     Public Property DomoSettings As New Domoticz.Settings
     Public Property DomoSecPanel As New SecurityPanelViewModel
+    Public Property Variables As New VariableListViewModel
     Public Property EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
         Get
             Return _EnabledRooms
@@ -136,6 +137,43 @@ Public Class TiczViewModel
         Await CurrentContentDialog.ShowAsync()
     End Sub
 
+
+    Public Async Sub ShowVariables()
+        WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
+        Me.TiczMenu.IsMenuOpen = False
+        'Load Domoticz Variables
+        Await Notify.Update(False, "Loading Domoticz variables...", 0, False, 0)
+        If Not (Await Variables.Load()).issuccess Then
+            Await Notify.Update(True, "Error loading Domoticz variables...", 1, False, 0)
+        Else
+            CurrentContentDialog = New ContentDialog
+            'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+            Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                           If e.Key = Windows.System.VirtualKey.Escape Then
+                                                               CurrentContentDialog.Hide()
+                                                           End If
+                                                       End Sub)
+            CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+            CurrentContentDialog.Title = "Domoticz Variables"
+            CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+            'CurrentContentDialog.MinHeight = Window.Current.Bounds.Height
+            CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+
+            'CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Center
+            CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+            'CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Center
+            CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+            ' CurrentContentDialog.FullSizeDesired = True
+            Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
+            Dim uclist As New ucVariableList
+            uclist.DataContext = vlist
+            CurrentContentDialog.Content = uclist
+            Notify.Clear()
+            Await CurrentContentDialog.ShowAsync()
+            CurrentContentDialog = Nothing
+        End If
+
+    End Sub
 
     Public Async Sub ShowCameras()
         WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
@@ -412,6 +450,7 @@ Public Class TiczViewModel
         Await Notify.Update(False, "Loading cameras...", 0, False, 0)
         If Not (Await Cameras.Load()).issuccess Then
             Await Notify.Update(True, "Error loading cameras...", 1, False, 0)
+            Await Task.Delay(1000)
         End If
 
         'Load the Room/Floorplans from the Domoticz Server

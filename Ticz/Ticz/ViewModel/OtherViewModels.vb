@@ -170,7 +170,7 @@ Public Class ToastMessageViewModel
             If (priority >= msg_Priority Or ForceUpdate = True) Then
                 cts.Cancel()
                 If priority > msg_Priority Then
-                    Await Task.Delay(300)
+                    'Await Task.Delay(300)
                 End If
 
             Else

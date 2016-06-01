@@ -1,0 +1,57 @@
+﻿<UserControl
+    x:Class="Ticz.ucVariableList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid VerticalAlignment="Top">
+        <Grid.Resources>
+            <local:VariableViewModelItemDataTemplateSelector x:Key="VariableDataTemplateSelector"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" ItemsSource="{Binding}" ItemTemplateSelector="{StaticResource VariableDataTemplateSelector}" SelectionMode="None" Margin="0" Padding="0">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="2,0,2,0" Padding="5" HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Variable Name"/>
+                        <TextBlock Grid.Column="1" Text="Value"/>
+                        <TextBlock Grid.Column="2" Text="Update"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="2" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <!--<ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>-->
+            <!--<ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:VariableViewModel">
+                    <ContentControl ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
+                    <ContentControl Content="{Binding}" ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
+                    <ContentPresenter ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>-->
+        </ListView>
+        <local:ucToastMessage Grid.Row="0" VerticalAlignment="Bottom" DataContext="{Binding message}"/>
+    </Grid>
+</UserControl>

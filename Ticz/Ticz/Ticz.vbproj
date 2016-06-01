@@ -142,6 +142,7 @@
     <Compile Include="Classes\DataTemplates.xaml.vb">
       <DependentUpon>DataTemplates.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\DataTemplateSelectors.vb" />
     <Compile Include="Models\DeviceModel.vb" />
     <Compile Include="Models\DevicesModel.vb" />
     <Compile Include="SplitView.xaml.vb">
@@ -212,6 +213,9 @@
     <Compile Include="UserControls\ucToastMessage.xaml.vb">
       <DependentUpon>ucToastMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucVariableList.xaml.vb">
+      <DependentUpon>ucVariableList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\CameraListViewModel.vb" />
     <Compile Include="ViewModels\CameraViewModel.vb" />
     <Compile Include="ViewModels\ColorPickerViewModel.vb" />
@@ -221,6 +225,8 @@
     <Compile Include="ViewModels\RoomViewModel.vb" />
     <Compile Include="ViewModels\SecurityPanelViewModel.vb" />
     <Compile Include="ViewModels\TiczViewModel.vb" />
+    <Compile Include="ViewModels\VariableListViewModel.vb" />
+    <Compile Include="ViewModels\VariableViewModel.vb" />
     <Compile Include="ViewModel\OtherViewModels.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -454,6 +460,10 @@
     <Page Include="UserControls\ucToastMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ucVariableList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

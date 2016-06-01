@@ -168,6 +168,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Click="{x:Bind Menu.ShowSettings}" Style="{StaticResource MenuItemButton}" Padding="0" Margin="0" HorizontalAlignment="Center">
                     <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="28" Glyph="&#xE115;" Margin="0,0,0,0" Height="48" Width="48"/>
@@ -181,7 +182,10 @@
                 <Button Grid.Column="3" Click="{x:Bind vm.ShowCameras}" Style="{StaticResource MenuItemButton}" Padding="0" Margin="0" HorizontalAlignment="Center">
                     <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="28" Glyph="&#xE960;" Margin="0,0,0,0" Height="48" Width="48"/>
                 </Button>
-                <Button Grid.Column="4" Click="{x:Bind vm.ShowAbout}" Style="{StaticResource MenuItemButton}" Padding="0" Margin="0" HorizontalAlignment="Center">
+                <Button Grid.Column="4" Click="{x:Bind vm.ShowVariables}" Style="{StaticResource MenuItemButton}" Padding="0" Margin="0" HorizontalAlignment="Center">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="28" Glyph="&#xE185;" Margin="0,0,0,0" Height="48" Width="48"/>
+                </Button>
+                <Button Grid.Column="5" Click="{x:Bind vm.ShowAbout}" Style="{StaticResource MenuItemButton}" Padding="0" Margin="0" HorizontalAlignment="Center">
                     <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="28" Glyph="&#xE113;" Margin="0,0,0,0" Height="48" Width="48"/>
                 </Button>
             </Grid>

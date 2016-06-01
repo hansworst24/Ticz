@@ -13,10 +13,7 @@
     mc:Ignorable="d">
     
     <Grid x:Name="rootGrid">
-        <Grid.Resources>
-            <converters:RoomViewDataTemplateSelector x:Key="RoomViewTemplateSelector"/>
-        </Grid.Resources>
-        
+       
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="MenuStates">
                 <VisualState x:Name="ShowMenu">
@@ -88,47 +85,6 @@
                             ContentTemplate="{Binding currentRoom.RoomContentTemplate}" 
                             HorizontalContentAlignment="Stretch" 
                             VerticalContentAlignment="Stretch"/>
-
-            <!--<ListView Grid.Row="1" ItemsSource="{x:Bind vm.Cameras, Mode=OneWay}" SelectionMode="None" Margin="0" Padding="0">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Margin" Value="2" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:CameraViewModel">
-                        <Grid MaxHeight="600" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="0" Padding="5" HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            --><!-- THIS IS THE HEADER FOR THE DEVICE, CONTAINING THE NAME--><!--
-                            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5">
-                                <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{x:Bind name}" 
-                    FontSize="20" 
-                    HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>
-                            </Border>
-                            <Image Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Stretch="Uniform" Canvas.ZIndex="99"  Source="{x:Bind frame1, TargetNullValue='/Images/TiczLogo.png', FallbackValue='/Images/TiczLogo.png', Mode=OneWay}"/>
-                            <ToggleSwitch Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,0,0,0" OffContent="Auto refresh disabled" OnContent="Auto refresh enabled" IsOn="{x:Bind AutoRefreshEnabled, Mode=TwoWay}"/>
-                            <Slider Grid.Row="3" Margin="10,0,0,0"  Grid.Column="0" Minimum="100" Maximum="2000" Value="{x:Bind RefreshDelay, Mode=TwoWay}"/>
-                            <Border Grid.Row="3" Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Stretch">
-                                <TextBlock Text="{x:Bind RefreshDelayText, Mode=OneWay}" VerticalAlignment="Center" Style="{ThemeResource SettingsExplanationStyle}"/>
-                            </Border>
-                            
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-
-            </ListView>-->
             <!-- BUSY INDICATOR -->
             <busy:SfBusyIndicator Background="Transparent" Margin="0,-14,20,-14" 
                                   Grid.Row="1" 

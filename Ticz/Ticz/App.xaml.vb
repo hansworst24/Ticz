@@ -42,7 +42,9 @@ NotInheritable Class Application
 #End If
         'Add BackKeyHandler for HardwareButtons
         'AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
-
+        AddHandler ApplicationView.GetForCurrentView().VisibleBoundsChanged, AddressOf VisibleBoundsChanged
+        AddHandler InputPane.GetForCurrentView().Hiding, AddressOf KeyboardHiding
+        AddHandler InputPane.GetForCurrentView().Showing, AddressOf KeyboardShowing
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
 
 
@@ -92,6 +94,27 @@ NotInheritable Class Application
 
     Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
         WriteToDebug("App.VisibleBoundsChanged", "executed")
+        If Not myViewModel.CurrentContentDialog Is Nothing Then
+            WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
+            WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
+        End If
+    End Sub
+
+    Public Sub KeyboardShowing(sender As InputPane, args As InputPaneVisibilityEventArgs)
+        WriteToDebug("App.KeyboardShowing", "executed")
+        If Not myViewModel.CurrentContentDialog Is Nothing Then
+            myViewModel.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height - sender.OccludedRect.Height
+        End If
+    End Sub
+
+    Public Async Sub KeyboardHiding(sender As InputPane, args As InputPaneVisibilityEventArgs)
+        WriteToDebug("App.KeyboardHiding", "executed")
+        If Not myViewModel.CurrentContentDialog Is Nothing Then
+            'We wait for a few milliseconds because resizing the ContentDialog immediately may cause a click event within the ContentDialog not to trigger properly
+            Await Task.Delay(100)
+            WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
+            myViewModel.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+        End If
     End Sub
 
 

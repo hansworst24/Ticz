@@ -915,6 +915,76 @@ Public NotInheritable Class Domoticz
         Public Property idx As String
     End Class
 
+    Public Class Variable
+        Public Property LastUpdate As DateTime
+        Public Property Name As String
+        Public Property Type As Integer
+        Public Property Value As String
+        Public Property idx As Integer
+        '         "LastUpdate" : "2016-05-30 15:58:52",
+        '         "Name" : "TestInteger",
+        '         "Type" : "0",
+        '         "Value" : "1",
+        '         "idx" : "6"
+    End Class
+
+    Public Class Variables
+        Public Property result As List(Of Variable)
+        Public Property status As String
+        Public Property title As String
+        '        {
+        '   "result" : [
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:02",
+        '         "Name" : "Toon_Tijdelijk_Away",
+        '         "Type" : "0",
+        '         "Value" : "0",
+        '         "idx" : "1"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:15",
+        '         "Name" : "TestTime",
+        '         "Type" : "4",
+        '         "Value" : "23:00",
+        '         "idx" : "2"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:28",
+        '         "Name" : "TestDate",
+        '         "Type" : "3",
+        '         "Value" : "01-07-2016",
+        '         "idx" : "3"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:45",
+        '         "Name" : "TestString",
+        '         "Type" : "2",
+        '         "Value" : "Hello World !",
+        '         "idx" : "4"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:57:46",
+        '         "Name" : "TestFloat",
+        '         "Type" : "1",
+        '         "Value" : "1.54",
+        '         "idx" : "5"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:58:52",
+        '         "Name" : "TestInteger",
+        '         "Type" : "0",
+        '         "Value" : "1",
+        '         "idx" : "6"
+        '      }
+        '   ],
+        '   "status" : "OK",
+        '   "title" : "GetUserVariables"
+        '}
+
+    End Class
+
+
+
     Public Class Camera
         Public Property Address As String
         Public Property Enabled As Boolean
@@ -1015,6 +1085,7 @@ Public NotInheritable Class DomoApi
 
     Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
+
     Public NotInheritable Class LMSPlayer
         Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
@@ -1097,6 +1168,68 @@ Public NotInheritable Class DomoApi
 
     Public Function ServerURL() As String
         Return String.Format("{0}://{1}:{2}", If(app.myViewModel.TiczSettings.UseHTTPS, "https", "http"), app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+    End Function
+
+    Public Function setVariable(idx As Integer, vname As String, type As String, value As String)
+        Return String.Format("{0}/json.htm?type=command&param=updateuservariable&idx={1}&vname={2}&vtype={3}&vvalue={4}", ServerURL, idx, vname, type, value)
+        ''http://192.168.168.4:8888/json.htm?type=command&param=updateuservariable&idx=3&vname=TestDate&vtype=3&vvalue=13-01-2017 
+    End Function
+
+
+    Public Function getVariables()
+        Return String.Format("{0}/json.htm?type=command&param=getuservariables", ServerURL)
+        '       {
+        '   "result" : [
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:02",
+        '         "Name" : "Toon_Tijdelijk_Away",
+        '         "Type" : "0",
+        '         "Value" : "0",
+        '         "idx" : "1"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:15",
+        '         "Name" : "TestTime",
+        '         "Type" : "4",
+        '         "Value" : "23:00",
+        '         "idx" : "2"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:28",
+        '         "Name" : "TestDate",
+        '         "Type" : "3",
+        '         "Value" : "01-07-2016",
+        '         "idx" : "3"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:06:45",
+        '         "Name" : "TestString",
+        '         "Type" : "2",
+        '         "Value" : "Hello World !",
+        '         "idx" : "4"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:57:46",
+        '         "Name" : "TestFloat",
+        '         "Type" : "1",
+        '         "Value" : "1.54",
+        '         "idx" : "5"
+        '      },
+        '      {
+        '         "LastUpdate" : "2016-05-30 15:58:52",
+        '         "Name" : "TestInteger",
+        '         "Type" : "0",
+        '         "Value" : "1",
+        '         "idx" : "6"
+        '      }
+        '   ],
+        '   "status" : "OK",
+        '   "title" : "GetUserVariables"
+        '}
+
+
+
+
     End Function
 
 
