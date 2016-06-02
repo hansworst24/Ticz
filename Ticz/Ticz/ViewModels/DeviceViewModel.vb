@@ -72,7 +72,7 @@ Public Class DeviceViewModel
                 Case Constants.DEVICEVIEWS.WIDE : Return 48
                 Case Constants.DEVICEVIEWS.LARGE : Return 96
                 Case Else
-                    Return 50
+                    Return 48
             End Select
         End Get
     End Property
@@ -215,7 +215,7 @@ Public Class DeviceViewModel
                                 Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
                                     Select Case HardwareType
-                                        Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
+                                        Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideKODIPlayerView"), DataTemplate)
                                         Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideLMSPlayerView"), DataTemplate)
                                     End Select
                                     Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)

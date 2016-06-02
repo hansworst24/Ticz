@@ -1086,6 +1086,111 @@ Public NotInheritable Class DomoApi
 
     Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
 
+    Public NotInheritable Class KODIPlayer
+        Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+
+        Public Function ServerURL()
+            Return String.Format("{0}://{1}:{2}", If(app.myViewModel.TiczSettings.UseHTTPS, "https", "http"), app.myViewModel.TiczSettings.ServerIP, app.myViewModel.TiczSettings.ServerPort)
+        End Function
+
+        Public Function HomeURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Home", ServerURL, idx)
+        End Function
+
+        Public Function InfoURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Info", ServerURL, idx)
+        End Function
+
+        Public Function BackURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Back", ServerURL, idx)
+        End Function
+
+        Public Function MenuURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=ContextMenu", ServerURL, idx)
+        End Function
+
+        Public Function OKURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Select", ServerURL, idx)
+        End Function
+
+        Public Function RightURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Right", ServerURL, idx)
+        End Function
+
+        Public Function LeftURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Left", ServerURL, idx)
+        End Function
+
+        Public Function DownURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Down", ServerURL, idx)
+        End Function
+
+        Public Function UpURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Up", ServerURL, idx)
+        End Function
+
+        Public Function ChannelUpURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=ChannelUp", ServerURL, idx)
+        End Function
+
+        Public Function ChannelDownURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=ChannelDown", ServerURL, idx)
+        End Function
+
+        Public Function ChannelsURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Channels", ServerURL, idx)
+        End Function
+
+        Public Function FullScreenURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=FullScreen", ServerURL, idx)
+        End Function
+
+        Public Function ShowSubtitlesURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=ShowSubtitles", ServerURL, idx)
+        End Function
+
+        Public Function StopURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Stop", ServerURL, idx)
+        End Function
+
+        Public Function PauseURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Pause", ServerURL, idx)
+        End Function
+
+        Public Function VolumeUpURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=VolumeUp", ServerURL, idx)
+        End Function
+        Public Function VolumeDownURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=VolumeDown", ServerURL, idx)
+        End Function
+
+        Public Function MuteURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Mute", ServerURL, idx)
+        End Function
+
+        Public Function BigStepBackURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=BigStepBack", ServerURL, idx)
+        End Function
+
+        Public Function RewindURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=Rewind", ServerURL, idx)
+        End Function
+
+        Public Function FastForwardURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=FastForward", ServerURL, idx)
+        End Function
+
+        Public Function BigStepForwardURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=BigStepForward", ServerURL, idx)
+        End Function
+
+        Public Function PlayPauseURL(idx As String) As String
+            Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=PlayPause", ServerURL, idx)
+        End Function
+
+
+
+    End Class
 
     Public NotInheritable Class LMSPlayer
         Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)

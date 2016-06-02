@@ -174,6 +174,9 @@
     <Compile Include="UserControls\ucDeviceList_Icon.xaml.vb">
       <DependentUpon>ucDeviceList_Icon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucKODIRemote.xaml.vb">
+      <DependentUpon>ucKODIRemote.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucLMSRemote.xaml.vb">
       <DependentUpon>ucLMSRemote.xaml</DependentUpon>
     </Compile>
@@ -221,6 +224,7 @@
     <Compile Include="ViewModels\ColorPickerViewModel.vb" />
     <Compile Include="ViewModels\DevicesViewModel.vb" />
     <Compile Include="ViewModels\DeviceViewModel.vb" />
+    <Compile Include="ViewModels\KODIDeviceViewModel.vb" />
     <Compile Include="ViewModels\LogitechMediaServerDeviceViewModel.vb" />
     <Compile Include="ViewModels\RoomViewModel.vb" />
     <Compile Include="ViewModels\SecurityPanelViewModel.vb" />
@@ -408,6 +412,10 @@
     <Page Include="UserControls\ucDeviceList_Icon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucKODIRemote.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ucLMSRemote.xaml">
       <SubType>Designer</SubType>

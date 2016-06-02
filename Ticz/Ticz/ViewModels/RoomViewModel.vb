@@ -187,6 +187,8 @@ Public Class RoomViewModel
                 End If
                 If d.HardwareType = Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER Then
                     DevToAdd = New LogitechMediaServerDeviceViewModel(d, RoomView, devConfig)
+                ElseIf d.HardwareType = Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER Then
+                    DevToAdd = New KODIDeviceViewModel(d, RoomView, devConfig)
                 Else
                     DevToAdd = New DeviceViewModel(d, RoomView, devConfig)
                 End If
