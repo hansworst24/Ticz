@@ -1,31 +1,36 @@
-# Ticz
-
-Universal Windows App, written in VB.net, for controlling Domoticz (www.domoticz.com)
-###### Updated for : Ticz v1.7.0
+# __Ticz__
+## Universal Windows App, written in VB.net, for controlling Domoticz (www.domoticz.com)
+#### Updated for : Ticz v1.9.2
+---
 ## What and why is Ticz ?
 Ticz is being developed primarily as a Windows 10 Mobile app, to control your devices/lights from Domoticz. Although Domoticz implements a powerful WebGUI, I had trouble using this on Windows 10 Mobile in combination with the Edge browser. My credentials weren't stored properly, so when I was outside my LAN, I always had to retype my credentials on the Login page. Long story short ; It took me too long before I was able to switch a light :)
 
 As I had gained a little experience in programming for Windows Store with TV Head (control your TVHeadend server), I decided it might be best to write an App, instead of using the WebGUI. With the advantage of Universal Apps, and the support for Windows IoT on Raspberry Pi2's I also saw it as a nice goal to see if the same App could be run as a (wall-mounted) "Control Panel". The support for Windows 10 on Desktops/Tablets is automatically implemented.
 
-## Goal of Ticz
-Ticz will only implement the basic primary tasks of controlling Domoticz devices. It should remain as light-weight as possible, but allow you to do all primary tasks when 'on the road'. Some features (like graphs) might be added mostly as eye-candy if it remains small and doesn't require a lot of work to implement.
+### Goal of Ticz
+Ticz will only implement the basic primary tasks of controlling Domoticz devices. It should remain as light-weight as possible, but allow you to do all primary tasks when 'on the road'. Most features to control Domoticz are implemented now.
 
-## Current Status
-The current version v1.7.0.0 has implemented most of the groundwork required for a good working app. Most 'standard' devices within Domoticz are included and working properly. 
-### Windows 10 Mobile/Tablet/PC
+### Current Status
+Version v1.9.2.0 supports all main features of Domoticz, including ; Devices / Camera's / Charts / Security Panel / Variables
+
+---
+# __Requirements__
+
+## Windows 10 Mobile/Tablet/PC
 Although primarily targeting Windows 10 Mobile, the app works perfectly fine (and much faster :) ) on Windows 10 Desktop/Tablet.
-### Windows 10 IoT
-I have a test-setup of a RPi2, with a Adafruit 7" 800x480 LCD Touchscreen panel, on which I can deploy the same app without issues (although it requires you to compile for ARM). Loading times are fairly poor and screen animations as well. The touchscreen currently emulates a mouse and the view-angle is pretty pathetic :) So I do not consider this yet a proper environment for running a Control Panel setup, but it's a POC :)
 
-## Requirements / Before you begin
+## Windows 10 IoT
+Version v1.9.2.0 of Ticz works fine on a RPi2 running Windows IoT, although some operations obviously require more time (i.e. rendering). I currently run a RPi2 with a Chalk-Elec 7" 1280x800 IPS Touch panel, and it supports 'true' touch (not mouse emulation). Windows IoT doesn't support a soft-keyboard yet, so when setting up the app you'll need a keyboard too.
 
-- Domoticz needs to be configured with Basic-Auth authentication for Authentication to work in Ticz. If configured with Login Page, it'll show 'Unauthorized'
-- Domoticz needs to be configured with Roomplans, in order for Devices to show up. 
+### Before you start using Ticz
 
-## Device Support
+- Domoticz needs to be configured with Basic-Auth authentication for Authentication to work in Ticz. If configured with Login Page, it'll show 'Unauthorized' even though your credentials match.
+- Ticz follows the thought of having your devices grouped in Rooms, so you will not have to search for your device in a big long list. Therefore Domoticz needs to be configured with Rooms, in which your devices sit.
+
+### Device Support
 All standard devices are as far as I know supported and working properly. There might be specific devices (think about thermostats or other stuff) that I was not able to test in any way, not even with virtual devices. If you have such devices, and they don't work properly in Ticz, let me know and with your help in sending over some device information I can add them !
 
-## Room Configuration
+### Room Configuration
 - Within the Settings menu you will find Room Configuration. Here you can define 
   - which Room you want to load at Ticz startup
   - if you want Ticz to add a 'All Devices' room
@@ -66,7 +71,7 @@ For those who want the 'Domoticz experience', the app also supports loading the 
 
 ### My environment
 - Ticz was written and tested with the following configuration, therefore devices that weren't part of this setup might not work properly as they need specific configuration :
-  - Domoticz v2.4015
+  - Domoticz v3.5114
   - Fibaro Door Sensors / Wallplugs / Relay Switches
   - GreenWave Powernode 1 and 6
   - Weather Underground Plugion
