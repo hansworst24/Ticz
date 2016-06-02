@@ -109,10 +109,9 @@ NotInheritable Class Application
 
     Public Async Sub KeyboardHiding(sender As InputPane, args As InputPaneVisibilityEventArgs)
         WriteToDebug("App.KeyboardHiding", "executed")
+        'We wait for a few milliseconds because resizing the ContentDialog immediately may cause a click event within the ContentDialog not to trigger properly
+        Await Task.Delay(100)
         If Not myViewModel.CurrentContentDialog Is Nothing Then
-            'We wait for a few milliseconds because resizing the ContentDialog immediately may cause a click event within the ContentDialog not to trigger properly
-            Await Task.Delay(100)
-            WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
             myViewModel.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
         End If
     End Sub

@@ -11,7 +11,7 @@ Public Class DeviceViewModel
 
     Protected Friend _Device As DeviceModel
     Private _Configuration As TiczStorage.DeviceConfiguration
-    Private _cDialog As ContentDialog 'Used to present a password prompt to the user for Protected Devices
+    'Private _cDialog As ContentDialog 'Used to present a password prompt to the user for Protected Devices
 
 #Region "Constructor"
     Public Sub New(d As DeviceModel, r As String, c As TiczStorage.DeviceConfiguration)
@@ -1515,8 +1515,9 @@ Public Class DeviceViewModel
 
     'Triggers closing the Password Prompt Dialog Box
     Public Sub ClosePasswordPrompt()
-        If Not _cDialog Is Nothing Then
-            _cDialog.Hide()
+        Dim cDialog As ContentDialog = CType(Application.Current, Application).myViewModel.CurrentContentDialog
+        If Not cDialog Is Nothing Then
+            cDialog.Hide()
         End If
     End Sub
 
@@ -1526,27 +1527,28 @@ Public Class DeviceViewModel
     ''' <returns></returns>
     Public Async Function ShowPasswordPrompt() As Task
         WriteToDebug("DeviceViewModel.ShowPasswordPrompt()", "executed")
-        _cDialog = New ContentDialog
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        vm.CurrentContentDialog = New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
                                                        If e.Key = Windows.System.VirtualKey.Escape Then
                                                            PassCode = ""
-                                                           _cDialog.Hide()
+                                                           vm.CurrentContentDialog.Hide()
                                                        End If
                                                    End Sub)
-        _cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        _cDialog.Title = Me.Name
-        _cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        _cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        _cDialog.VerticalAlignment = VerticalAlignment.Stretch
-        _cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        _cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-        _cDialog.IsPrimaryButtonEnabled = True
-        _cDialog.PrimaryButtonText = "OK"
+        vm.CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        vm.CurrentContentDialog.Title = Me.Name
+        vm.CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        vm.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+        vm.CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        vm.CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        vm.CurrentContentDialog.IsPrimaryButtonEnabled = True
+        vm.CurrentContentDialog.PrimaryButtonText = "OK"
         Dim password As New ucDevice_Password()
         password.DataContext = Me
-        _cDialog.Content = password
-        Await _cDialog.ShowAsync()
+        vm.CurrentContentDialog.Content = password
+        Await vm.CurrentContentDialog.ShowAsync()
+        vm.CurrentContentDialog = Nothing
     End Function
 
 
