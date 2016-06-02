@@ -203,6 +203,7 @@
             <StackPanel Grid.Row="0" x:Name="SettingsMenu" Orientation="Vertical" Visibility="Visible" Margin="10,0,10,0">
                 <Button Content="Server Settings" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowServerSettingsMenu}"/>
                 <Button Content="Rooms Configuration" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowRoomSettingsMenu}"/>
+                <!--<Button Content="Camera Settings" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowCameraSettingsMenu}"/>-->
                 <Button Content="General" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowGeneralSettingsMenu}"/>
             </StackPanel>
             <Border Grid.Row="1">

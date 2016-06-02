@@ -9,6 +9,19 @@ Public Class CameraViewModel
     Private cameraidx As Integer
     Public Property name As String
     Public Property frame1 As BitmapImage
+    Private Property _FrameBytes As Long
+    Private Property _TotalFrameBytes As Long
+    Public ReadOnly Property FrameSize As String
+        Get
+            Return String.Format("{0} {1}/frame", Math.Round(_FrameBytes / 1024, 2), "KB")
+        End Get
+    End Property
+
+    Public ReadOnly Property TotalFrameSize As String
+        Get
+            Return String.Format("{0} {1}", Math.Round(_TotalFrameBytes / 1024, 2), "KB")
+        End Get
+    End Property
 
     Public Property AutoRefreshEnabled As Boolean
         Get
@@ -87,6 +100,8 @@ Public Class CameraViewModel
         Dim response As HttpResponseMessage = Await (New Domoticz).DownloadJSON(url, 1000)
         If response.IsSuccessStatusCode Then
             Dim imageStream As IBuffer = Await response.Content.ReadAsBufferAsync()
+            _FrameBytes = imageStream.Length
+            _TotalFrameBytes += imageStream.Length
             If Not imageStream.Length = 0 Then
                 Await RunOnUIThread(Async Sub()
                                         Dim newFrame As New BitmapImage
@@ -100,6 +115,8 @@ Public Class CameraViewModel
                                         WriteToDebug("CameraViewModel.GetFrameFromJPG()", String.Format("Frame rendered for camera : {0}", name))
                                         frame1 = newFrame
                                         RaisePropertyChanged("frame1")
+                                        RaisePropertyChanged("FrameSize")
+                                        RaisePropertyChanged("TotalFrameSize")
                                     End Sub)
             End If
         End If
