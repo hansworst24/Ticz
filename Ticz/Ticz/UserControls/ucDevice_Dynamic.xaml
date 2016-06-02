@@ -38,14 +38,14 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Width="50" Height="50" 
+            <Button Grid.Row="0" Grid.Column="0" Width="{x:Bind Device.ButtonSize}" Height="{x:Bind Device.ButtonSize}" 
                 Grid.ColumnSpan="{x:Bind Device.ButtonColumnSpan}"
                 Grid.RowSpan="{x:Bind Device.ButtonRowSpan}" 
                 Style="{StaticResource DeviceButtonSimple}"
                 Click="{x:Bind Device.SwitchDeviceCommand}"  
                 HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button.Content>
-                    <ContentControl ContentTemplate="{x:Bind Device.DeviceIconTemplate}" Height="50" Width="50"
+                    <ContentControl ContentTemplate="{x:Bind Device.DeviceIconTemplate}" Height="{x:Bind Device.ButtonSize}" Width="{x:Bind Device.ButtonSize}"
                         HorizontalContentAlignment="Stretch" 
                         VerticalContentAlignment="Stretch"/>
                 </Button.Content>

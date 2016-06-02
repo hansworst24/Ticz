@@ -458,6 +458,11 @@ Public Class DeviceViewModel
     Public ReadOnly Property IconPathGeometry As String
         Get
             If _Device.CustomImage = 0 Then
+                'Specific Icons for KODI and LMS based on HardwareType
+                Select Case _Device.HardwareType
+                    Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return Constants.ICONPATH.KODI
+                    Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return Constants.ICONPATH.LMS_PLAYER
+                End Select
                 Select Case _Device.TypeImg
                     Case Constants.DEVICE.TYPEIMG.ALERT : Return Constants.ICONPATH.ALERT
                     Case Constants.DEVICE.TYPEIMG.AIR : Return Constants.ICONPATH.AIR
@@ -476,7 +481,6 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.LEAF : Return Constants.ICONPATH.LEAF
                     Case Constants.DEVICE.TYPEIMG.LIGHT : Return Constants.ICONPATH.LIGHTBULB
                     Case Constants.DEVICE.TYPEIMG.LIGHTBULB : Return Constants.ICONPATH.LIGHTBULB
-                    Case Constants.DEVICE.TYPEIMG.LOGITECHMEDIASERVER : Return Constants.ICONPATH.LMS_PLAYER
                     Case Constants.DEVICE.TYPEIMG.LUX : Return Constants.ICONPATH.LUX
                     Case Constants.DEVICE.TYPEIMG.MEDIA : Return Constants.ICONPATH.MEDIA
                     Case Constants.DEVICE.TYPEIMG.MOISTURE : Return Constants.ICONPATH.MOISTURE
