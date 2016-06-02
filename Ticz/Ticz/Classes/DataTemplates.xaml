@@ -9,8 +9,7 @@
     xmlns:SyncFusion="using:Syncfusion.UI.Xaml.Charts"
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
-    
-    
+
     <!-- Variable ViewModel DataTemplates -->
     <DataTemplate x:Key="VariableIntegerTemplate" x:DataType="local:VariableViewModel">
         <Grid x:Name="rootGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="0" Padding="5" HorizontalAlignment="Stretch"

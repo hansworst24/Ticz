@@ -54,31 +54,59 @@
             </Interactivity:Interaction.Behaviors>
         </local:ucMenu_MainMenu>
 
-        <Grid x:Name="mainGrid" Margin="0,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="0">
+        <Grid x:Name="mainGrid" 
+              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Height="40">
-                <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{x:Bind vm.currentRoom.RoomName, Mode=OneWay}" FontSize="24" Style="{ThemeResource BaseTextBlockStyle}"/>
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center" 
+                    Grid.Row="0" 
+                    Height="40">
+                <TextBlock VerticalAlignment="Center" 
+                           Text="{x:Bind vm.currentRoom.RoomName, Mode=OneWay}"
+                           FontSize="24" 
+                           Style="{ThemeResource BaseTextBlockStyle}"/>
             </Border>
-            <Border HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Margin="4,0,0,0">
+            <Border HorizontalAlignment="Left" 
+                    VerticalAlignment="Center" 
+                    Grid.Row="0" 
+                    Margin="4,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="20" Glyph="&#xE706;"/>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" 
+                              FontSize="20" 
+                              Glyph="&#xE706;"/>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xEB11;"/>
-                            <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{x:Bind vm.DomoSunRiseSet.Sunrise, Mode=OneWay}" FontSize="10" Style="{ThemeResource BaseTextBlockStyle}"/>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      FontSize="12" 
+                                      Glyph="&#xEB11;"/>
+                            <TextBlock VerticalAlignment="Center" 
+                                       Text="{x:Bind vm.DomoSunRiseSet.Sunrise, Mode=OneWay}" 
+                                       FontSize="10" 
+                                       Style="{ThemeResource BaseTextBlockStyle}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xEB0F;"/>
-                            <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{x:Bind vm.DomoSunRiseSet.Sunset, Mode=OneWay}" FontSize="10" Style="{ThemeResource BaseTextBlockStyle}"/>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      FontSize="12" 
+                                      Glyph="&#xEB0F;"/>
+                            <TextBlock VerticalAlignment="Center" 
+                                       Text="{x:Bind vm.DomoSunRiseSet.Sunset, Mode=OneWay}"
+                                       FontSize="10" 
+                                       Style="{ThemeResource BaseTextBlockStyle}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Margin="0,0,4,0">
-                <TextBlock Margin="0,0,0,0" VerticalAlignment="Center" Text="{x:Bind vm.DomoVersion.version, Mode=OneWay}" FontSize="10" Style="{ThemeResource BaseTextBlockStyle}"/>
+            <Border HorizontalAlignment="Right" 
+                    VerticalAlignment="Center" 
+                    Grid.Row="0" 
+                    Margin="0,0,4,0">
+                <TextBlock VerticalAlignment="Center" 
+                           Text="{x:Bind vm.DomoVersion.version, Mode=OneWay}"
+                           FontSize="10" 
+                           Style="{ThemeResource BaseTextBlockStyle}"/>
             </Border>
             <!-- THIS IS THE ROOM VIEW, WHICH IS THE COLLECETION OF DEVICES THAT ARE SHOWN IN THE SELECTED ROOM VIEW-->
             <ContentControl Grid.Row="1" 
@@ -101,18 +129,35 @@
     </Grid>
 
     <Page.BottomAppBar>
-    <CommandBar IsOpen="False" IsSticky="False" ClosedDisplayMode="Compact" HorizontalContentAlignment="Stretch">
+    <CommandBar IsOpen="False" 
+                IsSticky="False" 
+                ClosedDisplayMode="Compact" 
+                HorizontalContentAlignment="Stretch">
             <CommandBar.Content>
                 <Grid HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
-                        <AppBarButton Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" Height="48" Click="{x:Bind vm.TiczMenu.MenuSwitch}">
+                        <AppBarButton Width="48" 
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center" 
+                                      Height="48" 
+                                      Click="{x:Bind vm.TiczMenu.MenuSwitch}">
                             <AppBarButton.Icon>
-                                <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="26" Glyph="&#xE700;"/>
+                                <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                          FontSize="26" 
+                                          Glyph="&#xE700;"/>
                             </AppBarButton.Icon>
                         </AppBarButton>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <AppBarButton Name="abbRefresh" Icon="Refresh" HorizontalAlignment="Right" VerticalAlignment="Center" Height="48" Width="48" Click="{x:Bind vm.ManualRefresh}"/>
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Center">
+                        <AppBarButton Name="abbRefresh" 
+                                      Icon="Refresh" 
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center" 
+                                      Height="48"
+                                      Width="48"
+                                      Click="{x:Bind vm.ManualRefresh}"/>
                     </StackPanel>
                 </Grid>
             </CommandBar.Content>

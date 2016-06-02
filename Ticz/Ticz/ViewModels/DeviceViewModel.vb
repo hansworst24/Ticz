@@ -196,6 +196,20 @@ Public Class DeviceViewModel
                 CType(Application.Current.Resources("TiczIconDataTemplate"), DataTemplate))
         End Get
     End Property
+    Public ReadOnly Property DeviceColumnSpan As Integer
+        Get
+            Select Case DeviceRepresentation
+                Case Constants.DEVICEVIEWS.ICON
+                    Return 1
+                Case Constants.DEVICEVIEWS.WIDE
+                    Return 2
+                Case Constants.DEVICEVIEWS.LARGE
+                    Return 2
+                Case Else
+                    Return 1
+            End Select
+        End Get
+    End Property
     Public ReadOnly Property DeviceContentTemplate As DataTemplate
         Get
             Select Case DeviceRepresentation
@@ -240,6 +254,38 @@ Public Class DeviceViewModel
                 Case Else : Return CType(Application.Current.Resources("DeviceIconView"), DataTemplate)
             End Select
         End Get
+    End Property
+    Public ReadOnly Property DeviceRowSpan As Integer
+        Get
+            Select Case DeviceRepresentation
+                Case Constants.DEVICEVIEWS.ICON
+                    Return 1
+                Case Constants.DEVICEVIEWS.WIDE
+                    Return 1
+                Case Constants.DEVICEVIEWS.LARGE
+                    Return 2
+                Case Else
+                    Return 1
+            End Select
+        End Get
+    End Property
+    Public Property DeviceRepresentation As String
+        Get
+            Select Case RoomView
+                Case Constants.ROOMVIEW.RESIZEVIEW, Constants.ROOMVIEW.DASHVIEW : Return _Configuration.DeviceRepresentation
+                Case Constants.ROOMVIEW.GRIDVIEW : Return Constants.DEVICEVIEWS.WIDE
+                Case Constants.ROOMVIEW.ICONVIEW : Return Constants.DEVICEVIEWS.ICON
+                Case Constants.ROOMVIEW.LISTVIEW : Return Constants.DEVICEVIEWS.WIDE
+                Case Else : Return Constants.DEVICEVIEWS.ICON
+            End Select
+
+        End Get
+        Set(value As String)
+            If RoomView = Constants.ROOMVIEW.RESIZEVIEW Or RoomView = Constants.ROOMVIEW.DASHVIEW Then
+                _Configuration.DeviceRepresentation = value
+                RaisePropertyChanged("DeviceRepresentation")
+            End If
+        End Set
     End Property
     Public Property DeviceOrder As Integer
         Get
@@ -784,52 +830,7 @@ Public Class DeviceViewModel
             Return _Device.idx
         End Get
     End Property
-    Public ReadOnly Property DeviceColumnSpan As Integer
-        Get
-            Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON
-                    Return 1
-                Case Constants.DEVICEVIEWS.WIDE
-                    Return 2
-                Case Constants.DEVICEVIEWS.LARGE
-                    Return 2
-                Case Else
-                    Return 1
-            End Select
-        End Get
-    End Property
-    Public ReadOnly Property DeviceRowSpan As Integer
-        Get
-            Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON
-                    Return 1
-                Case Constants.DEVICEVIEWS.WIDE
-                    Return 1
-                Case Constants.DEVICEVIEWS.LARGE
-                    Return 2
-                Case Else
-                    Return 1
-            End Select
-        End Get
-    End Property
-    Public Property DeviceRepresentation As String
-        Get
-            Select Case RoomView
-                Case Constants.ROOMVIEW.RESIZEVIEW, Constants.ROOMVIEW.DASHVIEW : Return _Configuration.DeviceRepresentation
-                Case Constants.ROOMVIEW.GRIDVIEW : Return Constants.DEVICEVIEWS.WIDE
-                Case Constants.ROOMVIEW.ICONVIEW : Return Constants.DEVICEVIEWS.ICON
-                Case Constants.ROOMVIEW.LISTVIEW : Return Constants.DEVICEVIEWS.WIDE
-                Case Else : Return Constants.DEVICEVIEWS.ICON
-            End Select
 
-        End Get
-        Set(value As String)
-            If RoomView = Constants.ROOMVIEW.RESIZEVIEW Or RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                _Configuration.DeviceRepresentation = value
-                RaisePropertyChanged("DeviceRepresentation")
-            End If
-        End Set
-    End Property
     Public Property MarqueeLength As Double?
         Get
             Return _MarqueeLength
@@ -881,32 +882,21 @@ Public Class DeviceViewModel
     End Property
 
 
+    Public ReadOnly Property GroupSwitchOn As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        Await SwitchGroup(Constants.DEVICE.STATUS.ON)
+                                    End Sub)
+        End Get
+    End Property
 
-    'Public Async Function GroupSwitchOn() As Task
-    '    Await SwitchGroup(Constants.DEVICE.STATUS.ON)
-    'End Function
-
-    'Public Async Function GroupSwitchOff() As Task
-    '    Await SwitchGroup(Constants.DEVICE.STATUS.OFF)
-    'End Function
-
-
-
-    'Public ReadOnly Property GroupSwitchOn As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    Await SwitchGroup(Constants.DEVICE.STATUS.ON)
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property GroupSwitchOff As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    Await SwitchGroup(Constants.DEVICE.STATUS.OFF)
-    '                                End Sub)
-    '    End Get
-    'End Property
+    Public ReadOnly Property GroupSwitchOff As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        Await SwitchGroup(Constants.DEVICE.STATUS.OFF)
+                                    End Sub)
+        End Get
+    End Property
 
     Public ReadOnly Property SelectorSelectionChanged As RelayCommand(Of Object)
         Get
@@ -933,21 +923,6 @@ Public Class DeviceViewModel
                                                End Sub)
         End Get
     End Property
-
-
-    'Public Sub SetPointUp()
-    '    Data = CType(Data, Double) + 0.5
-    'End Sub
-
-    'Public Sub SetPointDown()
-    '    Data = CType(Data, Double) - 0.5
-    'End Sub
-
-    'Public Async Sub SetSetPoint()
-    '    Await SwitchDevice(Data)
-    'End Sub
-
-
 
     Public ReadOnly Property SetPointUpCommand As RelayCommand
         Get
@@ -1023,104 +998,6 @@ Public Class DeviceViewModel
 
         End Get
     End Property
-
-    'Public ReadOnly Property OpenButtonCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    WriteToDebug("Device.OpenButtonCommand()", "executed")
-    '                                    Dim switchToState As String
-    '                                    Select Case SwitchType
-    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS
-    '                                            switchToState = Constants.DEVICE.STATUS.OFF
-    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-    '                                            switchToState = Constants.DEVICE.STATUS.ON
-    '                                        Case Else
-    '                                            switchToState = Constants.DEVICE.STATUS.OFF
-    '                                    End Select
-    '                                    If [Protected] Then
-    '                                        SwitchingToState = switchToState
-    '                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '                                        vm.selectedDevice = Me
-    '                                        vm.ShowDevicePassword = True
-    '                                        Exit Sub
-    '                                    End If
-    '                                    Dim ret As retvalue = Await SwitchDevice(switchToState)
-    '                                End Sub)
-
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property CloseButtonCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    WriteToDebug("Device.CloseButtonCommand()", "executed")
-    '                                    Dim switchToState As String
-    '                                    Select Case SwitchType
-    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS
-    '                                            switchToState = Constants.DEVICE.STATUS.ON
-    '                                        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-    '                                            switchToState = Constants.DEVICE.STATUS.OFF
-    '                                        Case Else
-    '                                            switchToState = Constants.DEVICE.STATUS.ON
-    '                                    End Select
-    '                                    If [Protected] Then
-    '                                        SwitchingToState = switchToState
-    '                                        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '                                        vm.selectedDevice = Me
-    '                                        vm.ShowDevicePassword = True
-    '                                        Exit Sub
-    '                                    End If
-    '                                    Dim ret As retvalue = Await SwitchDevice(switchToState)
-    '                                End Sub)
-
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property ShowDeviceGraph As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    WriteToDebug("Device.ShowDeviceGraphs()", "executed")
-    '                                    Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '                                    'SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-    '                                    '                                        app.myViewModel.selectedDevice = Me
-    '                                    Await vm.LoadGraphData(Me)
-    '                                    'vm.TiczMenu.ShowSecurityPanel = False
-    '                                    vm.ShowBackButton = True
-    '                                    '                                        app.myViewModel.Notify.Clear()
-
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-
-    'Public ReadOnly Property ButtonPressedCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    WriteToDebug("Device.ButtonPressedCommand()", "executed")
-    '                                    If Me.CanBeSwitched Then
-    '                                        Dim ret As retvalue = Await SwitchDevice()
-    '                                    Else
-    '                                        'Only get the status of the device if it can't be switched
-    '                                        Await Update()
-    '                                    End If
-    '                                End Sub)
-
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property ButtonRightTappedCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    WriteToDebug("Device.ButtonRightTappedCommand()", "executed")
-    '                                End Sub)
-
-    '    End Get
-    'End Property
-
-
-
-
-
 #End Region
 #Region "Methods"
 

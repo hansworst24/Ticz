@@ -49,7 +49,6 @@ Public Class TiczViewModel
             _currentRoom = value
             RaisePropertyChanged("RoomContentTemplate")
             RaisePropertyChanged("currentRoom")
-
         End Set
     End Property
     Private Property _currentRoom As RoomViewModel
@@ -87,30 +86,15 @@ Public Class TiczViewModel
     End Property
 
     Public Sub New()
-        'currentRoom = New RoomViewModel With {.ItemHeight = 120}
-        'EnabledRooms = New ObservableCollection(Of TiczStorage.RoomConfiguration)
     End Sub
 
     Public Async Sub RoomSelected(sender As Object, e As SelectionChangedEventArgs)
         Dim selectedRoom As TiczStorage.RoomConfiguration = TryCast(sender, ListView).SelectedItem
         If Not selectedRoom Is Nothing Then
-            If Not Cameras Is Nothing Then
-                For Each c In Cameras
-                    c.AutoRefreshEnabled = False
-                Next
-            End If
-
-
-
             Await Notify.Update(False, "Loading room...", 1, False, 0)
             If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
-            ' Me.StopRefresh()
             Await LoadRoom(selectedRoom.RoomIDX)
-            'currentRoom.SetRoomToLoad(selectedRoom.RoomIDX)
-            ' Await currentRoom.LoadDevicesForRoom()
-            'Await Task.Delay(2000)
             Notify.Clear()
-            'Me.StartRefresh()
         End If
     End Sub
 
@@ -132,7 +116,6 @@ Public Class TiczViewModel
         CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
         CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucSecurityPanel()
-        'details.DataContext = Me
         CurrentContentDialog.Content = details
         Await CurrentContentDialog.ShowAsync()
     End Sub
@@ -141,7 +124,6 @@ Public Class TiczViewModel
     Public Async Sub ShowVariables()
         WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
         Me.TiczMenu.IsMenuOpen = False
-        'Load Domoticz Variables
         Await Notify.Update(False, "Loading Domoticz variables...", 0, False, 0)
         If Not (Await Variables.Load()).issuccess Then
             Await Notify.Update(True, "Error loading Domoticz variables...", 1, False, 0)
@@ -220,7 +202,6 @@ Public Class TiczViewModel
         CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
         CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim about As New ucAbout()
-        'details.DataContext = Me
         CurrentContentDialog.Content = about
         Await CurrentContentDialog.ShowAsync()
     End Sub

@@ -16,14 +16,6 @@ NotInheritable Class Application
             Microsoft.ApplicationInsights.WindowsCollectors.Metadata Or
             Microsoft.ApplicationInsights.WindowsCollectors.Session)
         InitializeComponent()
-
-        If myViewModel.TiczSettings.UseDarkTheme Then
-            CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Dark
-        Else
-            CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Light
-        End If
-
-
     End Sub
 
     ''' <summary>
@@ -40,11 +32,10 @@ NotInheritable Class Application
             Me.DebugSettings.EnableFrameRateCounter = True
         End If
 #End If
-        'Add BackKeyHandler for HardwareButtons
-        'AddHandler Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested, AddressOf App_BackRequested
-        AddHandler ApplicationView.GetForCurrentView().VisibleBoundsChanged, AddressOf VisibleBoundsChanged
+        'Add Handlers for when the soft keyboard in sown/hidden. Used to adjust the height of an existing ConTentDialog accordingly
         AddHandler InputPane.GetForCurrentView().Hiding, AddressOf KeyboardHiding
         AddHandler InputPane.GetForCurrentView().Showing, AddressOf KeyboardShowing
+
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
 
 
@@ -56,10 +47,8 @@ NotInheritable Class Application
             rootFrame = New Frame()
             If myViewModel.TiczSettings.UseDarkTheme Then
                 rootFrame.RequestedTheme = ElementTheme.Dark
-                'CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Dark
             Else
                 rootFrame.RequestedTheme = ElementTheme.Light
-                'CType(Application.Current, Application).RequestedTheme = ApplicationTheme.Light
             End If
             AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
@@ -92,13 +81,13 @@ NotInheritable Class Application
         Window.Current.Activate()
     End Sub
 
-    Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
-        WriteToDebug("App.VisibleBoundsChanged", "executed")
-        If Not myViewModel.CurrentContentDialog Is Nothing Then
-            WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
-            WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
-        End If
-    End Sub
+    'Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
+    '    WriteToDebug("App.VisibleBoundsChanged", "executed")
+    '    If Not myViewModel.CurrentContentDialog Is Nothing Then
+    '        WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
+    '        WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
+    '    End If
+    'End Sub
 
     Public Sub KeyboardShowing(sender As InputPane, args As InputPaneVisibilityEventArgs)
         WriteToDebug("App.KeyboardShowing", "executed")

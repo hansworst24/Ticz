@@ -403,12 +403,12 @@ Partial Public Class TiczSettings
         'settings.Save()
     End Sub
 
-    Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
-    Public ReadOnly Property YesNoChoices As List(Of String)
-        Get
-            Return _YesNoList
-        End Get
-    End Property
+    'Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
+    'Public ReadOnly Property YesNoChoices As List(Of String)
+    '    Get
+    '        Return _YesNoList
+    '    End Get
+    'End Property
 
 
     Public Property IgnoreSSLErrors As Boolean?
@@ -563,16 +563,6 @@ Partial Public Class TiczSettings
         End Set
     End Property
 
-    'Public Property currentRoomView As String
-    '    Get
-    '        Return GetValueOrDefault(Of String)(strcurrentRoomViewKeyName, strcurrentRoomViewDefault)
-    '    End Get
-    '    Set(value As String)
-    '        If AddOrUpdateValue(strcurrentRoomViewKeyName, value) Then
-    '            Save()
-    '        End If
-    '    End Set
-    'End Property
     Private _SecondsForRefresh As List(Of Integer) = New List(Of Integer)({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60}).ToList
     Public ReadOnly Property SecondsForRefreshChoices As List(Of Integer)
         Get
@@ -696,93 +686,6 @@ Public Class TiczMenuSettings
     End Property
     Private Property _ActiveMenuContents As String
 
-    'Public ReadOnly Property ReloadCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-
-
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-
-    'Public ReadOnly Property ShowSecurityPanelCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    WriteToDebug("TiczMenuSettings.ShowSecurityPanelCommand()", "executed")
-    '                                    IsMenuOpen = False
-    '                                    app.myViewModel.ShowDeviceGraph = False
-    '                                    app.myViewModel.ShowDeviceDetails = False
-    '                                    app.myViewModel.ShowDevicePassword = False
-    '                                    ShowSecurityPanel = Not ShowSecurityPanel
-    '                                    If ShowSecurityPanel Then ShowBackButton = True
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property ShowAboutCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    WriteToDebug("TiczMenuSettings.ShowAboutCommand()", "executed")
-    '                                    ShowAbout = Not ShowAbout
-    '                                    If ShowAbout Then IsMenuOpen = False : ShowBackButton = True
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-    'Public ReadOnly Property OpenMenuCommand As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Sub()
-    '                                    If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
-    '                                    IsMenuOpen = Not IsMenuOpen
-    '                                    'ShowAbout = False
-    '                                    'If IsMenuOpen Then
-    '                                    '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible
-    '                                    '    app.myViewModel.ShowBackButton = True
-    '                                    'Else
-    '                                    '    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed
-    '                                    '    app.myViewModel.ShowBackButton = False
-    '                                    'End If
-    '                                    WriteToDebug("TiczMenuSettings.OpenMenuCommand()", IsMenuOpen)
-    '                                End Sub)
-    '    End Get
-    'End Property
-
-
-
-
-
-
-
-
-    'Public ReadOnly Property SettingsMenuGoBack As RelayCommand
-    '    Get
-    '        Return New RelayCommand(Async Sub()
-    '                                    If ActiveMenuContents = "Rooms" Then IsMenuOpen = False : Exit Sub
-
-    '                                    If ActiveMenuContents = "Rooms Configuration" Then
-    '                                        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
-    '                                        ActiveMenuContents = "Settings"
-    '                                        Exit Sub
-    '                                    End If
-    '                                    If ActiveMenuContents = "General" Then
-    '                                        app.myViewModel.TiczSettings.Save()
-    '                                        ActiveMenuContents = "Settings"
-    '                                        Exit Sub
-    '                                    End If
-    '                                    If ActiveMenuContents = "Server settings" Then
-    '                                        app.myViewModel.TiczSettings.Save()
-    '                                        ActiveMenuContents = "Settings"
-    '                                        Exit Sub
-    '                                    End If
-    '                                    If ActiveMenuContents = "Settings" Then
-    '                                        Await app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
-    '                                        ActiveMenuContents = "Rooms"
-    '                                        Exit Sub
-    '                                    End If
-    '                                End Sub)
-    '    End Get
-    'End Property
 
     Public Sub MenuSwitch()
         If Not IsMenuOpen Then ActiveMenuContents = "Rooms"
@@ -818,7 +721,6 @@ Public Class TiczMenuSettings
         ElseIf IsMenuOpen And ActiveMenuContents = "Server settings" Then
             ActiveMenuContents = "Settings"
         ElseIf IsMenuOpen And ActiveMenuContents = "Settings" Then
-            'Await vm.TiczRoomConfigs.LoadRoomConfigurations()
             ActiveMenuContents = "Rooms"
         End If
     End Sub
