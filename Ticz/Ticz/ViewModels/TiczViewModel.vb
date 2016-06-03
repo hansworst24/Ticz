@@ -195,7 +195,7 @@ Public Class TiczViewModel
                                                        End If
                                                    End Sub)
         CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        'CurrentContentDialog.Title = "About"
+        CurrentContentDialog.Title = "About Ticz..."
         CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
         CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
         CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
