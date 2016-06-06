@@ -146,7 +146,7 @@ Public Class TiczViewModel
             CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
             CurrentContentDialog.Title = "Domoticz Variables"
             CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-            CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+            CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
             CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
             CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
             Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
@@ -178,7 +178,7 @@ Public Class TiczViewModel
         CurrentContentDialog.AddHandler(UIElement.TappedEvent, touchHandler, True)
         CurrentContentDialog.Title = ""
         CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenBlackContentDialog"), Style)
-        CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
         CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
         CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
@@ -208,7 +208,8 @@ Public Class TiczViewModel
                                                    End Sub)
         CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         CurrentContentDialog.Title = "Cameras"
-        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
         CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
         CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
         CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
@@ -242,7 +243,8 @@ Public Class TiczViewModel
                                                    End Sub)
         CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         CurrentContentDialog.Title = "About Ticz..."
-        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
         CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
         CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
         CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
