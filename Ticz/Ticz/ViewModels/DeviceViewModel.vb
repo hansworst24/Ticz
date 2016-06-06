@@ -954,7 +954,10 @@ Public Class DeviceViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("DeviceViewModel.SelectRGBValues()", "executed")
+
                                         Dim cDialog As New ContentDialog
+                                        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                                        vm.IdleTimer.StopCounter()
                                         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
                                         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
                                                                                        If e.Key = Windows.System.VirtualKey.Escape Then
@@ -971,6 +974,7 @@ Public Class DeviceViewModel
                                         cDialog.Content = New ucRGBColorPicker
                                         cDialog.DataContext = New ColorPickerViewModel(Me)
                                         Await cDialog.ShowAsync()
+                                        vm.IdleTimer.StartCounter()
                                     End Sub)
 
         End Get
@@ -1112,6 +1116,8 @@ Public Class DeviceViewModel
     ''' </summary>
     Public Async Sub ShowDeviceDetails()
         WriteToDebug("Device.ShowDeviceDetails()", "executed")
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        vm.IdleTimer.StopCounter()
         Dim cDialog As New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -1130,6 +1136,7 @@ Public Class DeviceViewModel
         details.DataContext = Me
         cDialog.Content = details
         Await cDialog.ShowAsync()
+        vm.IdleTimer.StartCounter()
     End Sub
 
     Public Async Function GetDeviceGraphData() As Task(Of GraphListViewModel)
@@ -1259,6 +1266,8 @@ Public Class DeviceViewModel
 
     Public Async Sub ShowDeviceGraphs()
         WriteToDebug("Device.ShowDeviceDetails()", "executed")
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        vm.IdleTimer.StopCounter()
         Dim GraphList As GraphListViewModel = Await GetDeviceGraphData()
         Dim cDialog As New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
@@ -1279,6 +1288,7 @@ Public Class DeviceViewModel
         cDialog.Content = details
         Await cDialog.ShowAsync()
         GraphList.Dispose()
+        vm.IdleTimer.StartCounter()
     End Sub
 
 
@@ -1405,6 +1415,7 @@ Public Class DeviceViewModel
     Public Async Function ShowPasswordPrompt() As Task
         WriteToDebug("DeviceViewModel.ShowPasswordPrompt()", "executed")
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        vm.IdleTimer.StopCounter()
         vm.CurrentContentDialog = New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -1426,6 +1437,7 @@ Public Class DeviceViewModel
         vm.CurrentContentDialog.Content = password
         Await vm.CurrentContentDialog.ShowAsync()
         vm.CurrentContentDialog = Nothing
+        vm.IdleTimer.StartCounter()
     End Function
 
 

@@ -32,11 +32,13 @@ NotInheritable Class Application
             Me.DebugSettings.EnableFrameRateCounter = True
         End If
 #End If
-        'Add Handlers for when the soft keyboard in sown/hidden. Used to adjust the height of an existing ConTentDialog accordingly
+        'Add Handlers for when the soft keyboard in shown/hidden. Used to adjust the height of an existing ConTentDialog accordingly
         AddHandler InputPane.GetForCurrentView().Hiding, AddressOf KeyboardHiding
         AddHandler InputPane.GetForCurrentView().Showing, AddressOf KeyboardShowing
 
+
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
+
 
 
         ' Do not repeat app initialization when the Window already has content,
@@ -45,6 +47,8 @@ NotInheritable Class Application
         If rootFrame Is Nothing Then
             ' Create a Frame to act as the navigation context and navigate to the first page
             rootFrame = New Frame()
+            AddHandler rootFrame.PointerMoved, AddressOf ResetIdleCounter
+            'AddHandler rootFrame.PointerPressed, AddressOf ResetIdleCounter
             If myViewModel.TiczSettings.UseDarkTheme Then
                 rootFrame.RequestedTheme = ElementTheme.Dark
             Else
@@ -88,6 +92,12 @@ NotInheritable Class Application
     '        WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
     '    End If
     'End Sub
+    Public Sub ResetIdleCounter(sender As Object, args As PointerRoutedEventArgs)
+        WriteToDebug("App.ResetIdleCounter", "executed")
+        If Not myViewModel.IdleTimer Is Nothing Then
+            myViewModel.IdleTimer.ResetCounter()
+        End If
+    End Sub
 
     Public Sub KeyboardShowing(sender As InputPane, args As InputPaneVisibilityEventArgs)
         WriteToDebug("App.KeyboardShowing", "executed")

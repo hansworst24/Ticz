@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Class="Ticz.ucScreenSaver"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <Image Source="/Images/TiczLogo.png" Height="100" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Image.RenderTransform>
+                <TranslateTransform X="{x:Bind ScreenSaver.XOffset, Mode=OneWay}" Y="{x:Bind ScreenSaver.YOffset, Mode=OneWay}"/>
+            </Image.RenderTransform>
+        </Image>
+    </Grid>
+</UserControl>

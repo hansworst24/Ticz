@@ -215,6 +215,8 @@ Partial Public Class TiczSettings
     Const strUseBitmapIconsKeyName As String = "strUseBitmapIcons"
     Const strUseHTTPSKeyName As String = "strUseHTTPS"
     Const strIgnoreSSLErrorsKeyName As String = "strIgnoreSSLErrors"
+    Const strScreenSaverActiveKeyName As String = "strScreenSaverActive"
+    Const strIdleTimeBeforeScreenSaverKeyName As String = "strIdleTimeBeforeScreenSaver"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -239,6 +241,8 @@ Partial Public Class TiczSettings
     Const strOnlyShowFavouritesDefault As Boolean = False
     Const strUseHTTPSDefault As Boolean = False
     Const strIgnoreSSLErrorsDefault As Boolean = False
+    Const strScreenSaverActiveDefault = False
+    Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -261,6 +265,8 @@ Partial Public Class TiczSettings
     Const strOnlyShowFavouritesDefault As Boolean = False
     Const strUseHTTPSDefault As Boolean = False
     Const strIgnoreSSLErrorsDefault As Boolean = False
+    Const strScreenSaverActiveDefault = False
+    Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
 #End If
 
     Const strConnectionStatusDefault = False
@@ -409,6 +415,48 @@ Partial Public Class TiczSettings
     '        Return _YesNoList
     '    End Get
     'End Property
+
+    Public Property ScreenSaverActive As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strScreenSaverActiveKeyName, strScreenSaverActiveDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strScreenSaverActiveKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
+    Private _IdleTimeBeforeScreenSaverChoices As List(Of Integer) = New List(Of Integer)({60, 120, 180, 240, 360})
+
+    Public ReadOnly Property IdleTimeBeforeScreenSaverChoices As List(Of Integer)
+        Get
+            Return _IdleTimeBeforeScreenSaverChoices
+        End Get
+    End Property
+
+    'Public Property SelectedIdleTimeBeforeScreenSaver As Integer
+    '    Get
+    '        Return GetValueOrDefault(Of Boolean)(strSelectedIdleTimeBeforeScreenSaverKeyName, strSelectedIdleTimeBeforeScreenSaverDefault)
+    '    End Get
+    '    Set(value As Integer)
+    '        If AddOrUpdateValue(strSelectedIdleTimeBeforeScreenSaverKeyName, value) Then
+    '            Save()
+    '        End If
+    '    End Set
+    'End Property
+
+    Public Property IdleTimeBeforeScreenSaver As Integer
+        Get
+            Return GetValueOrDefault(Of Integer)(strIdleTimeBeforeScreenSaverKeyName, strIdleTimeBeforeScreenSaverDefault)
+        End Get
+        Set(value As Integer)
+            If AddOrUpdateValue(strIdleTimeBeforeScreenSaverKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
 
 
     Public Property IgnoreSSLErrors As Boolean?

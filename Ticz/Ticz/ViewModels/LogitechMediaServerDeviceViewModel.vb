@@ -23,6 +23,8 @@ Public Class LogitechMediaServerDeviceViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         Dim cDialog As New ContentDialog
+                                        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                                        vm.IdleTimer.StopCounter()
                                         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
                                         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
                                                                                        If e.Key = Windows.System.VirtualKey.Escape Then
@@ -41,6 +43,8 @@ Public Class LogitechMediaServerDeviceViewModel
                                         remote.DataContext = Me
                                         cDialog.Content = remote
                                         Await cDialog.ShowAsync()
+
+                                        vm.IdleTimer.StartCounter()
                                     End Sub)
 
         End Get

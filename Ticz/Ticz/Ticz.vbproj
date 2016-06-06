@@ -189,6 +189,9 @@
     <Compile Include="UserControls\ucMenu_RoomSettings.xaml.vb">
       <DependentUpon>ucMenu_RoomSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucScreenSaver.xaml.vb">
+      <DependentUpon>ucScreenSaver.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucSecurityPanel.xaml.vb">
       <DependentUpon>ucSecurityPanel.xaml</DependentUpon>
     </Compile>
@@ -209,9 +212,11 @@
     <Compile Include="ViewModels\ColorPickerViewModel.vb" />
     <Compile Include="ViewModels\DevicesViewModel.vb" />
     <Compile Include="ViewModels\DeviceViewModel.vb" />
+    <Compile Include="ViewModels\IdleTimerViewModel.vb" />
     <Compile Include="ViewModels\KODIDeviceViewModel.vb" />
     <Compile Include="ViewModels\LogitechMediaServerDeviceViewModel.vb" />
     <Compile Include="ViewModels\RoomViewModel.vb" />
+    <Compile Include="ViewModels\ScreenSaverViewModel.vb" />
     <Compile Include="ViewModels\SecurityPanelViewModel.vb" />
     <Compile Include="ViewModels\TiczViewModel.vb" />
     <Compile Include="ViewModels\VariableListViewModel.vb" />
@@ -415,6 +420,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucMenu_RoomSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucScreenSaver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

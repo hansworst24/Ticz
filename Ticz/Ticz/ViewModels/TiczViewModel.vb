@@ -26,6 +26,7 @@ Public Class TiczViewModel
         End Set
     End Property
     Private Property _EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
+    Public Property IdleTimer As IdleTimerViewModel
     Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
     Public Property TiczSettings As New TiczSettings
     Public Property TiczMenu As New TiczMenuSettings
@@ -101,6 +102,7 @@ Public Class TiczViewModel
     Public Async Sub ShowSecurityPanel()
         WriteToDebug("TiczMenuSettings.ShowSecurityPanel()", "executed")
         Me.TiczMenu.IsMenuOpen = False
+        Me.IdleTimer.StopCounter()
         CurrentContentDialog = New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -108,7 +110,11 @@ Public Class TiczViewModel
                                                            CurrentContentDialog.Hide()
                                                        End If
                                                    End Sub)
+        Dim pointerMoved As New PointerEventHandler(Sub(s, e)
+                                                        CType(Application.Current, Application).ResetIdleCounter(s, e)
+                                                    End Sub)
         CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        CurrentContentDialog.AddHandler(UIElement.PointerMovedEvent, pointerMoved, True)
         CurrentContentDialog.Title = "Security Panel"
         CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
         CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
@@ -118,12 +124,14 @@ Public Class TiczViewModel
         Dim details As New ucSecurityPanel()
         CurrentContentDialog.Content = details
         Await CurrentContentDialog.ShowAsync()
+        Me.IdleTimer.StartCounter()
     End Sub
 
 
     Public Async Sub ShowVariables()
         WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
         Me.TiczMenu.IsMenuOpen = False
+        Me.IdleTimer.StopCounter()
         Await Notify.Update(False, "Loading Domoticz variables...", 0, False, 0)
         If Not (Await Variables.Load()).issuccess Then
             Await Notify.Update(True, "Error loading Domoticz variables...", 1, False, 0)
@@ -148,13 +156,49 @@ Public Class TiczViewModel
             Notify.Clear()
             Await CurrentContentDialog.ShowAsync()
             CurrentContentDialog = Nothing
+            Me.IdleTimer.StartCounter()
         End If
 
+    End Sub
+
+    Public Async Sub ShowScreenSaver()
+        WriteToDebug("TiczMenuSettings.ShowScreenSaver()", "executed")
+        Me.TiczMenu.IsMenuOpen = False
+        CurrentContentDialog = New ContentDialog
+        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
+        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                                       If e.Key = Windows.System.VirtualKey.Escape Then
+                                                           CurrentContentDialog.Hide()
+                                                       End If
+                                                   End Sub)
+        Dim touchHandler = New TappedEventHandler(Sub(s, e)
+                                                      CurrentContentDialog.Hide()
+                                                  End Sub)
+        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        CurrentContentDialog.AddHandler(UIElement.TappedEvent, touchHandler, True)
+        CurrentContentDialog.Title = ""
+        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenBlackContentDialog"), Style)
+        CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
+        Dim ucScreenSaver As New ucScreenSaver
+        Dim sSaver As New ScreenSaverViewModel(Window.Current.Bounds)
+        ucScreenSaver.DataContext = sSaver
+        CurrentContentDialog.Content = ucScreenSaver
+        Notify.Clear()
+        sSaver.StartRefresh()
+        Await CurrentContentDialog.ShowAsync()
+        CurrentContentDialog = Nothing
+        IdleTimer.ResetCounter()
+        sSaver.StopRefresh()
+        sSaver = Nothing
     End Sub
 
     Public Async Sub ShowCameras()
         WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
         Me.TiczMenu.IsMenuOpen = False
+        Me.IdleTimer.StopCounter()
         CurrentContentDialog = New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -181,12 +225,14 @@ Public Class TiczViewModel
         For Each c In Cameras
             c.StopRefresh()
         Next
+        Me.IdleTimer.StartCounter()
     End Sub
 
 
     Public Async Sub ShowAbout()
         WriteToDebug("TiczMenuSettings.ShowAbout()", "executed")
         Me.TiczMenu.IsMenuOpen = False
+        Me.IdleTimer.StopCounter()
         CurrentContentDialog = New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
         Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
@@ -204,6 +250,7 @@ Public Class TiczViewModel
         Dim about As New ucAbout()
         CurrentContentDialog.Content = about
         Await CurrentContentDialog.ShowAsync()
+        Me.IdleTimer.StartCounter()
     End Sub
 
     Public Async Sub StartRefresh()
@@ -452,6 +499,10 @@ Public Class TiczViewModel
 
         Await LoadRoom()
 
+        'Initialize ScreenSaver
+        IdleTimer = New IdleTimerViewModel(TiczSettings.IdleTimeBeforeScreenSaver)
+
+
         'Save the (potentially refreshhed) roomconfigurations again
         Await Notify.Update(False, "Saving Ticz Room configuration...", 0, False, 0)
         Await TiczRoomConfigs.SaveRoomConfigurations()
@@ -463,6 +514,8 @@ Public Class TiczViewModel
         Else
             Notify.Clear()
         End If
+
+        'TODO : ADD SCREENSAVER LOGIC
         IsLoading = False
     End Function
 End Class

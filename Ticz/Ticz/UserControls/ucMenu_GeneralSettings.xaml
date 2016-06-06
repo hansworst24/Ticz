@@ -58,7 +58,15 @@
                 <TextBlock Text="Ticz will (try to) use hardcoded Domoticz Icons to show your devices. If no icon is shown for your device, let me know and I'll to add it !" 
                            TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                 <ToggleSwitch IsOn="{x:Bind TiczSettings.UseDomoticzIcons, Mode=TwoWay}" />
-
+                <TextBlock Margin="0,10,0,0" Text="Use Screensaver" 
+                           Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="Ticz will present you with a fine screensaver after the selected amount of seconds has passed without user input." 
+                           TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleSwitch IsOn="{x:Bind TiczSettings.ScreenSaverActive, Mode=TwoWay}" MinWidth="100" />
+                    <ComboBox  x:Name="lbScreenSaverTimeOut" VerticalAlignment="Center" MinWidth="100" ItemsSource="{x:Bind TiczSettings.IdleTimeBeforeScreenSaverChoices}" 
+                           SelectedItem="{x:Bind TiczSettings.IdleTimeBeforeScreenSaver, Mode=TwoWay, Converter={StaticResource IntToObjectConverter}}" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
         <Border Grid.Row="1">

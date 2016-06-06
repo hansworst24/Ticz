@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Row="0" HorizontalAlignment="Right" Height="150" VerticalAlignment="Bottom" Source="/Images/TiczLogo.png"/>
-            <TextBlock Grid.Row="0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Text="Ticz v1.9.3" />
+            <TextBlock Grid.Row="0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Text="Ticz v2.0.0" />
         </Grid>
         <ScrollViewer x:Name="scrolly" VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="00,0,10,0">
             <Grid Margin="10,20,10,0">
