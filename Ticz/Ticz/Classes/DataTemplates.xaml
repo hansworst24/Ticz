@@ -22,12 +22,39 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Name, Mode=OneWay}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="12" TextWrapping="NoWrap"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding LastUpdate, Mode=OneWay}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="10"  Foreground="#FF808080"/>
-            <TextBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBlock Grid.Column="0" 
+                       Grid.ColumnSpan="3"
+                       Grid.Row="0"
+                       Margin="0,0,0,4"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding Name, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="12" 
+                       TextWrapping="NoWrap"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.Row="1"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding LastUpdate, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="10" 
+                       Foreground="#FF808080"/>
+            <TextBox Grid.Column="1" 
+                     Grid.Row="1" 
+                     Grid.RowSpan="2" 
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      InputScope="Number"/>
-            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Padding="5,0,5,0" VerticalAlignment="Stretch" Margin="0" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateValue}"/>
+            <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" 
+                    Padding="5,0,5,0" 
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    HorizontalAlignment="Right"
+                    Content="Update" 
+                    Command="{Binding UpdateValue}"/>
         </Grid>
     </DataTemplate>
 
@@ -42,12 +69,39 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Name}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="12" TextWrapping="NoWrap"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding LastUpdate}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="10"  Foreground="#FF808080"/>
-            <TextBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      InputScope="Number"/>
-            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Padding="5,0,5,0" VerticalAlignment="Stretch" Margin="0" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateValue}"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.ColumnSpan="3"
+                       Grid.Row="0"
+                       Margin="0,0,0,4"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding Name, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="12" 
+                       TextWrapping="NoWrap"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.Row="1"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding LastUpdate, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="10" 
+                       Foreground="#FF808080"/>
+            <TextBox Grid.Column="1" 
+                     Grid.Row="1"
+                     Grid.RowSpan="2" 
+                     HorizontalAlignment="Stretch" 
+                     Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     InputScope="Number"/>
+            <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" 
+                    Padding="5,0,5,0" 
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    HorizontalAlignment="Right"
+                    Content="Update" 
+                    Command="{Binding UpdateValue}"/>
         </Grid>
     </DataTemplate>
 
@@ -62,11 +116,38 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Name}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="12" TextWrapping="NoWrap"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding LastUpdate}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="10"  Foreground="#FF808080"/>
-            <TextBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Text="{Binding Value, Mode=TwoWay}"/>
-            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"  Padding="5,0,5,0" VerticalAlignment="Stretch" Margin="0" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateValue}"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.ColumnSpan="3"
+                       Grid.Row="0"
+                       Margin="0,0,0,4"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding Name, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="12" 
+                       TextWrapping="NoWrap"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.Row="1"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding LastUpdate, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="10" 
+                       Foreground="#FF808080"/>
+            <TextBox Grid.Column="1" 
+                     Grid.Row="1" 
+                     Grid.RowSpan="2" 
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding Value, Mode=TwoWay}"/>
+            <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" 
+                    Padding="5,0,5,0" 
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    HorizontalAlignment="Right"
+                    Content="Update" 
+                    Command="{Binding UpdateValue}"/>
         </Grid>
     </DataTemplate>
 
@@ -81,13 +162,41 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Name}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="12" TextWrapping="NoWrap"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding LastUpdate}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="10"  Foreground="#FF808080" TextWrapping="NoWrap"/>
-            <DatePicker Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" DayFormat="{}{day.integer(2)}" 
-                        MonthFormat="{}{month.integer(2)}" YearFormat="{}{year.full(4)}" Date="{Binding DateValue, Mode=TwoWay}"/>
-            <Button Grid.Column="2" Grid.Row="0" VerticalAlignment="Stretch" Grid.RowSpan="2" Padding="5,0,5,0" Margin="0" HorizontalAlignment="Right" Content="Update" 
-                    Command="{Binding UpdateValue }"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.ColumnSpan="3"
+                       Grid.Row="0"
+                       Margin="0,0,0,4"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding Name, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="12" 
+                       TextWrapping="NoWrap"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.Row="1"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding LastUpdate, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="10" 
+                       Foreground="#FF808080"/>
+            <DatePicker Grid.Column="1" 
+                        Grid.Row="1" 
+                        Grid.RowSpan="2"
+                        HorizontalAlignment="Stretch" 
+                        DayFormat="{}{day.integer(2)}" 
+                        MonthFormat="{}{month.integer(2)}" 
+                        YearFormat="{}{year.full(4)}"
+                        Date="{Binding DateValue, Mode=TwoWay}"/>
+            <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" 
+                    Padding="5,0,5,0" 
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    HorizontalAlignment="Right"
+                    Content="Update" 
+                    Command="{Binding UpdateValue}"/>
         </Grid>
     </DataTemplate>
 
@@ -102,11 +211,38 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Name}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="12" TextWrapping="NoWrap"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding LastUpdate}" Style="{ThemeResource BaseTextBlockStyle}" FontSize="10"  Foreground="#FF808080"/>
-            <TimePicker Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Time="{Binding TimeValue, Mode=TwoWay}"/>
-            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Padding="5,0,5,0" VerticalAlignment="Stretch" Margin="0" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateValue}"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.ColumnSpan="3"
+                       Grid.Row="0"
+                       Margin="0,0,0,4"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding Name, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="12" 
+                       TextWrapping="NoWrap"/>
+            <TextBlock Grid.Column="0" 
+                       Grid.Row="1"
+                       HorizontalAlignment="Left" 
+                       Text="{Binding LastUpdate, Mode=OneWay}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       FontSize="10" 
+                       Foreground="#FF808080"/>
+            <TimePicker Grid.Column="1" 
+                        Grid.Row="1" 
+                        Grid.RowSpan="2"
+                        HorizontalAlignment="Stretch"
+                        Time="{Binding TimeValue, Mode=TwoWay}"/>
+            <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" 
+                    Padding="5,0,5,0" 
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    HorizontalAlignment="Right"
+                    Content="Update" 
+                    Command="{Binding UpdateValue}"/>
         </Grid>
     </DataTemplate>
    

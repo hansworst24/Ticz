@@ -22,9 +22,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Row="0" HorizontalAlignment="Right" Height="150" VerticalAlignment="Bottom" Source="/Images/TiczLogo.png"/>
-            <TextBlock Grid.Row="0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Text="Ticz v2.0.0" />
+            <TextBlock Grid.Row="0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Text="Ticz v2.0.1" />
         </Grid>
-        <ScrollViewer x:Name="scrolly" VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="00,0,10,0">
+        <ScrollViewer x:Name="scrolly" VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,10,0">
             <Grid Margin="10,20,10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -41,7 +41,12 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="1" Margin="0,20,0,30" TextAlignment="Justify" Text="Ticz was created by a non-professional programmer as both a hobby, and a need for a Windows Phone app for the splendid Domoticz project. By creating a Universal Windows app, the project will also allow itself to be easily deployed to Windows 10 tablets, PC's and IoT. Please provide your feedback/issues/comments through one of the options mentioned below ! Regards, Frank" TextWrapping="Wrap" FontSize="{ThemeResource TextStyleLargeFontSize}"/>
+                <TextBlock Grid.Row="1" 
+                           Margin="0,5,0,30" 
+                           TextAlignment="Justify" 
+                           Text="Ticz was created by a non-professional programmer as both a hobby, and a need for a Windows Phone app for the splendid Domoticz project. By creating a Universal Windows app, the project will also allow itself to be easily deployed to Windows 10 tablets, PC's and IoT. Please provide your feedback/issues/comments through one of the options mentioned below ! Regards, Frank"
+                           TextWrapping="Wrap" 
+                           FontSize="16"/>
                 <Viewbox Grid.Row="3" HorizontalAlignment="Left" Margin="0,00,0,0" Width="30">
                     <Path Stretch="Uniform" Fill="{ThemeResource SystemControlForegroundBaseHighBrush}" Data="m 135.50381 501.5396 c -5.98647 -2.43509 -9.62831 -8.40469 -8.97178 -14.8298 -0.47707 -23.43453 -0.39728 -46.88745 -0.0526 -70.32387 -0.33011 -5.97769 1.36733 -12.61038 7.1344 -15.50526 8.95125 -3.01643 18.64032 -2.05874 27.95595 -2.47738 31.84806 -0.16063 63.69693 -0.0575 95.54537 -0.0869 4.3556 3.02147 10.0624 5.7438 10.46349 11.74611 1.83229 15.22855 0.84776 30.63575 1.1338 45.9411 -0.26529 12.10722 0.62008 24.33302 -1.10562 36.34695 -1.45102 5.87571 -6.82347 9.96379 -12.89498 9.88773 -20.84618 1.68045 -41.80018 0.80559 -62.69428 1.02312 -17.86332 -0.2096 -35.77543 0.32968 -53.59722 -1.07434 -0.98233 -0.14568 -1.98947 -0.26639 -2.91649 -0.64743 z m 88.4027 -24.64334 c -4.31777 -4.19451 -8.63555 -8.38902 -12.95332 -12.58353 -4.4732 4.06448 -8.29192 9.34047 -14.09337 11.50363 -5.91903 -2.26247 -9.83201 -7.65212 -14.41467 -11.82009 -8.52336 8.52337 -17.04672 17.04673 -25.57009 25.57009 26.66159 -0.0289 53.32317 -0.0577 79.98476 -0.0866 -4.31776 -4.19448 -8.6356 -8.38914 -12.95331 -12.5835 z m -67.04063 -38.57382 c -5.65139 -5.48583 -11.05639 -11.29443 -17.17552 -16.25608 -1.29946 11.70486 -0.75632 23.59583 -0.93613 35.38051 0.1743 9.60696 -0.23787 19.28918 0.86303 28.83529 7.57721 -5.20619 13.80031 -12.27239 20.42896 -18.66403 4.34654 -4.34654 8.69307 -8.69308 13.03961 -13.03962 -5.40663 -5.41868 -10.81344 -10.83744 -16.21995 -16.25607 z m 98.11894 15.3121 c 0 -11.14394 0 -22.28788 0 -33.43182 -11.45042 11.45042 -22.90085 22.90085 -34.35127 34.35127 11.08868 10.87647 21.64154 22.36247 33.39573 32.51237 1.20627 -11.0565 0.77991 -22.30327 0.95554 -33.43182 z m -33.78711 -18.13068 c 7.60385 -7.8125 15.20771 -15.625 22.81156 -23.4375 -30.22628 0.13579 -60.46696 -0.408 -90.67988 0.65083 -4.61893 0.53257 3.8166 5.76706 5.02063 8.11163 12.64562 12.87549 25.25737 25.81635 38.58853 37.98601 4.94766 -2.00043 9.19254 -8.80757 13.81225 -12.62992 3.49187 -3.55098 6.97324 -7.11228 10.44691 -10.68105 z"/>
                 </Viewbox>
