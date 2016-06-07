@@ -56,7 +56,7 @@ Public Class CustomContentDialog
         CloseButtonVisibility = If(ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"), "Collapsed", "Visible")
         HeaderVisibility = Visibility.Visible
         BackgroundOpacity = 0.8
-        Me.Template = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
+        'Me.Template = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
         'ThemeResource SystemControlBackgroundChromeMediumBrush
         Me.Background = CType(Application.Current.Resources("SystemControlBackgroundChromeMediumBrush"), SolidColorBrush)
         Me.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height

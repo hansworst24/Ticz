@@ -10,7 +10,7 @@
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
     
-    <ControlTemplate x:Key="CustomContentDialogTemplate" TargetType="local:CustomContentDialog">
+    <!--<ControlTemplate x:Key="CustomContentDialogTemplate" TargetType="local:CustomContentDialog">
         <Grid HorizontalAlignment="Stretch" 
                   MaxWidth="{TemplateBinding MaxWidth}" 
                   MinWidth="{TemplateBinding MaxWidth}" 
@@ -42,7 +42,7 @@
                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
         </Grid>
-    </ControlTemplate>
+    </ControlTemplate>-->
 
     <!-- Variable ViewModel DataTemplates -->
     <DataTemplate x:Key="VariableIntegerTemplate" x:DataType="local:VariableViewModel">
