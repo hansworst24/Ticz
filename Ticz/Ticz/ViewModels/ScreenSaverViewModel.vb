@@ -4,8 +4,8 @@ Imports GalaSoft.MvvmLight
 Public Class ScreenSaverViewModel
     Inherits ViewModelBase
 
-    Public Property ImageWidth As Double
-    Public Property ImageHeight As Double
+    Public Property Width As Double
+    Public Property Height As Double
     Public Property XOffset As Integer
         Get
             Return _XOffset
@@ -33,8 +33,9 @@ Public Class ScreenSaverViewModel
     Public Property ct As CancellationToken
 
     Public Sub New(bounds As Rect)
-        ImageWidth = 100
-        ImageHeight = 100
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        Width = 100 * vm.TiczSettings.ZoomFactor
+        Height = 100 * vm.TiczSettings.ZoomFactor
         screenBounds = bounds
     End Sub
 
@@ -60,8 +61,8 @@ Public Class ScreenSaverViewModel
             Dim sWidth As Integer = screenBounds.Width
             Dim sHeight As Integer = screenBounds.Height
             RunOnUIThread(Sub()
-                              XOffset = rnd.Next(0, sWidth - ImageWidth)
-                              YOffset = rnd.Next(0, sHeight - ImageHeight)
+                              XOffset = rnd.Next(0, sWidth - Width)
+                              YOffset = rnd.Next(0, sHeight - Height)
 
                           End Sub)
             Await Task.Delay(2000)

@@ -431,7 +431,7 @@ Partial Public Class TiczSettings
     End Property
 
 
-    Private _ZoomFactorChoices As List(Of Double) = New List(Of Double)({1.0, 1.5, 2.0, 2.5, 3.0})
+    Private _ZoomFactorChoices As List(Of Double) = New List(Of Double)({1.0, 1.2, 1.5, 1.7, 2.0, 2.5, 3.0})
     Public ReadOnly Property ZoomFactorChoices As List(Of Double)
         Get
             Return _ZoomFactorChoices

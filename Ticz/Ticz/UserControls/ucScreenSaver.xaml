@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <Grid>
-        <Image Source="/Images/TiczLogo.png" Height="100" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Image Source="/Images/TiczLogo.png" Height="{x:Bind ScreenSaver.Width}" Width="{x:Bind ScreenSaver.Height}" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Image.RenderTransform>
                 <TranslateTransform X="{x:Bind ScreenSaver.XOffset, Mode=OneWay}" Y="{x:Bind ScreenSaver.YOffset, Mode=OneWay}"/>
             </Image.RenderTransform>
