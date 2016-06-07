@@ -16,10 +16,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" ItemsSource="{Binding}" ItemTemplateSelector="{StaticResource VariableDataTemplateSelector}" SelectionMode="None" Margin="0" Padding="0">
+        <ListView Grid.Row="0"
+                  ItemsSource="{Binding}" 
+                  ItemTemplateSelector="{StaticResource VariableDataTemplateSelector}" 
+                  SelectionMode="None" 
+                  Margin="0" 
+                  Padding="0"
+                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
             <ListView.HeaderTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="2,0,2,0" Padding="5" HorizontalAlignment="Stretch"
+                    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="2,0,2,0" Padding="4" HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*"/>
