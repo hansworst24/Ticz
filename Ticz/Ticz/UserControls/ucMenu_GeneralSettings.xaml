@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="900"
+    d:DesignHeight="1400"
     d:DesignWidth="400">
     <UserControl.Resources>
         <converters:IntToObjectConverter x:Key="IntToObjectConverter"/>
@@ -67,6 +67,13 @@
                     <ComboBox  x:Name="lbScreenSaverTimeOut" VerticalAlignment="Center" MinWidth="100" ItemsSource="{x:Bind TiczSettings.IdleTimeBeforeScreenSaverChoices}" 
                            SelectedItem="{x:Bind TiczSettings.IdleTimeBeforeScreenSaver, Mode=TwoWay, Converter={StaticResource IntToObjectConverter}}" />
                 </StackPanel>
+                <TextBlock Margin="0,10,0,0" Text="Zoom Factor" 
+                           Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="On some devices that have a high resolution, but a small screensize (i.e. 7-inch 1280x800) the Devices will show up very tiny. This slider gives the possibility to increase the size of the devices by a factor. For the moment other on-screen controls remain the standard size"
+                TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                <ComboBox  x:Name="cbZoomFactor" VerticalAlignment="Center" MinWidth="100" ItemsSource="{x:Bind TiczSettings.ZoomFactorChoices}" 
+                           SelectedItem="{x:Bind TiczSettings.ZoomFactor, Mode=TwoWay, Converter={StaticResource IntToObjectConverter}}" />
+
             </StackPanel>
         </ScrollViewer>
         <Border Grid.Row="1">

@@ -67,12 +67,13 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property ButtonSize As Integer
         Get
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
             Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON : Return 48
-                Case Constants.DEVICEVIEWS.WIDE : Return 48
-                Case Constants.DEVICEVIEWS.LARGE : Return 96
+                Case Constants.DEVICEVIEWS.ICON, Constants.DEVICEVIEWS.WIDE
+                    Return vm.TiczSettings.ZoomFactor * 48
+                Case Constants.DEVICEVIEWS.LARGE : Return vm.TiczSettings.ZoomFactor * 96
                 Case Else
-                    Return 48
+                    Return vm.TiczSettings.ZoomFactor * 48
             End Select
         End Get
     End Property
@@ -354,12 +355,13 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property FooterFontSize As Integer
         Get
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
             Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON : Return 12
-                Case Constants.DEVICEVIEWS.WIDE : Return 16
-                Case Constants.DEVICEVIEWS.LARGE : Return 20
+                Case Constants.DEVICEVIEWS.ICON : Return 12 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.WIDE : Return 16 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.LARGE : Return 20 * vm.TiczSettings.ZoomFactor
                 Case Else
-                    Return 12
+                    Return 12 * vm.TiczSettings.ZoomFactor
             End Select
         End Get
     End Property
@@ -414,12 +416,13 @@ Public Class DeviceViewModel
     End Property
     Public ReadOnly Property HeaderFontSize As Integer
         Get
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
             Select Case DeviceRepresentation
-                Case Constants.DEVICEVIEWS.ICON : Return 12
-                Case Constants.DEVICEVIEWS.WIDE : Return 16
-                Case Constants.DEVICEVIEWS.LARGE : Return 20
+                Case Constants.DEVICEVIEWS.ICON : Return 12 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.WIDE : Return 16 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.LARGE : Return 20 * vm.TiczSettings.ZoomFactor
                 Case Else
-                    Return 12
+                    Return 12 * vm.TiczSettings.ZoomFactor
             End Select
         End Get
     End Property

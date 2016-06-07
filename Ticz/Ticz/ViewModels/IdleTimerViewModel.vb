@@ -19,7 +19,7 @@ Public Class IdleTimerViewModel
             If vm.TiczSettings.ScreenSaverActive Then
                 If currentIdleTime < vm.TiczSettings.IdleTimeBeforeScreenSaver Then
                     currentIdleTime += 1
-                    WriteToDebug("IdleTimerViewModel.StartCounter()", String.Format("currentIdleTime = {0}", currentIdleTime))
+                    'WriteToDebug("IdleTimerViewModel.StartCounter()", String.Format("currentIdleTime = {0}", currentIdleTime))
                     If currentIdleTime = vm.TiczSettings.IdleTimeBeforeScreenSaver Then
                         RunOnUIThread(Sub()
                                           vm.ShowScreenSaver()

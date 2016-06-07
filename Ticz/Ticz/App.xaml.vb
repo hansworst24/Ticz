@@ -89,7 +89,7 @@ NotInheritable Class Application
 
     Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
         If Not myViewModel.ActiveContentDialog Is Nothing Then
-            WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
+            ' WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
             myViewModel.ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
             myViewModel.ActiveContentDialog.MinHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
             myViewModel.ActiveContentDialog.MinWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
@@ -97,7 +97,7 @@ NotInheritable Class Application
         End If
     End Sub
     Public Sub ResetIdleCounter(sender As Object, args As PointerRoutedEventArgs)
-        WriteToDebug("App.ResetIdleCounter", "executed")
+        'WriteToDebug("App.ResetIdleCounter", "executed")
         If Not myViewModel.IdleTimer Is Nothing Then
             myViewModel.IdleTimer.ResetCounter()
         End If

@@ -217,6 +217,7 @@ Partial Public Class TiczSettings
     Const strIgnoreSSLErrorsKeyName As String = "strIgnoreSSLErrors"
     Const strScreenSaverActiveKeyName As String = "strScreenSaverActive"
     Const strIdleTimeBeforeScreenSaverKeyName As String = "strIdleTimeBeforeScreenSaver"
+    Const strZoomFactorKeyName As String = "strZoomFactor"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -243,6 +244,7 @@ Partial Public Class TiczSettings
     Const strIgnoreSSLErrorsDefault As Boolean = False
     Const strScreenSaverActiveDefault = False
     Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
+    Const strZoomFactorDefault As Double = 1.0
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -267,6 +269,7 @@ Partial Public Class TiczSettings
     Const strIgnoreSSLErrorsDefault As Boolean = False
     Const strScreenSaverActiveDefault = False
     Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
+    Const strZoomFactorDefault As Double = 1.0
 #End If
 
     Const strConnectionStatusDefault = False
@@ -422,6 +425,25 @@ Partial Public Class TiczSettings
         End Get
         Set(value As Boolean)
             If AddOrUpdateValue(strScreenSaverActiveKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
+
+
+    Private _ZoomFactorChoices As List(Of Double) = New List(Of Double)({1.0, 1.5, 2.0, 2.5, 3.0})
+    Public ReadOnly Property ZoomFactorChoices As List(Of Double)
+        Get
+            Return _ZoomFactorChoices
+        End Get
+    End Property
+
+    Public Property ZoomFactor As Double
+        Get
+            Return GetValueOrDefault(Of Double)(strZoomFactorKeyName, strZoomFactorDefault)
+        End Get
+        Set(value As Double)
+            If AddOrUpdateValue(strZoomFactorKeyName, value) Then
                 Save()
             End If
         End Set

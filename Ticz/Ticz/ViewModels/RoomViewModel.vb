@@ -115,10 +115,10 @@ Public Class RoomViewModel
         End Get
     End Property
 
-    Public Sub New()
-        RoomConfiguration = New TiczStorage.RoomConfiguration
-        ItemHeight = 120
-    End Sub
+    'Public Sub New()
+    '    RoomConfiguration = New TiczStorage.RoomConfiguration
+    '    ItemHeight = 120
+    'End Sub
 
     Public Sub New(roomplan As Domoticz.Plan, roomConfig As TiczStorage.RoomConfiguration)
         RoomIDX = roomplan.idx
@@ -143,6 +143,8 @@ Public Class RoomViewModel
                 Throw New Exception("RoomView unkown, cant calculate itemwidth")
         End Select
         If Not iWidth = 0 Then
+            iWidth = iWidth * app.myViewModel.TiczSettings.ZoomFactor
+            ItemHeight = ItemHeight * app.myViewModel.TiczSettings.ZoomFactor
             Dim completeItems = Math.Floor(ApplicationView.GetForCurrentView.VisibleBounds.Width / iWidth)
             If completeItems < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then completeItems = app.myViewModel.TiczSettings.MinimumNumberOfColumns
             Dim remainder = ApplicationView.GetForCurrentView.VisibleBounds.Width - (completeItems * iWidth) - (completeItems * iMargin)

@@ -391,7 +391,8 @@
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--<StackPanel Orientation="Horizontal"/>-->
-                        <ItemsWrapGrid Orientation="Horizontal" ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"/>
+                        <ItemsWrapGrid Orientation="Horizontal" ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"
+                                       ItemHeight="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemHeight}"/>
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemContainerStyle>
@@ -492,7 +493,7 @@
                     <ItemsPanelTemplate>
                         <VariableSizedWrapGrid Margin="0" Orientation="Horizontal" 
                                                HorizontalAlignment="Stretch"  
-                                               HorizontalChildrenAlignment="Left" ItemHeight="120"
+                                               HorizontalChildrenAlignment="Left" ItemHeight="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemHeight}"
                                                ItemWidth="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemWidth}"/>
                     </ItemsPanelTemplate>
                 </local:VariableGrid.ItemsPanel>
@@ -518,7 +519,7 @@
 
     <DataTemplate x:Key="DomoIconDataTemplate">
         <Grid>
-            <Image Source="{Binding BitmapIconURI, Mode=OneWay}" Height="48" Width="48" Stretch="Uniform"/>
+            <Image Source="{Binding BitmapIconURI, Mode=OneWay}" Width="{Binding ButtonSize}" Stretch="Uniform"/>
         </Grid>
     </DataTemplate>
 
