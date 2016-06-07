@@ -108,23 +108,7 @@ Public Class TiczViewModel
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
         ActiveContentDialog = New TiczContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   ActiveContentDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        'Dim pointerMoved As New PointerEventHandler(Sub(s, e)
-        '                                                CType(Application.Current, Application).ResetIdleCounter(s, e)
-        '                                            End Sub)
-        'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        'ActiveContentDialog.AddHandler(UIElement.PointerMovedEvent, pointerMoved, True)
         ActiveContentDialog.Title = "Security Panel"
-        'ActiveContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucSecurityPanel()
         ActiveContentDialog.Content = details
         Await ActiveContentDialog.ShowAsync()
@@ -140,15 +124,7 @@ Public Class TiczViewModel
         If Not (Await Variables.Load()).issuccess Then
             Await Notify.Update(True, "Error loading Domoticz variables...", 1, False, 0)
         Else
-            'ActiveContentDialog = New ContentDialog
             ActiveContentDialog = New TiczContentDialog
-            'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-            'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-            '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-            '                                                   ActiveContentDialog.Hide()
-            '                                               End If
-            '                                           End Sub)
-            'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
             ActiveContentDialog.Title = "Domoticz Variables"
             Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
             Dim uclist As New ucVariableList
@@ -192,24 +168,7 @@ Public Class TiczViewModel
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
         ActiveContentDialog = New TiczContentDialog
-        'Dim ActiveContentDialog As New ContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   ActiveContentDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         ActiveContentDialog.Title = "Cameras"
-        'Dim a = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
-        'ActiveContentDialog.Template = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
-        'ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        'ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-        'ActiveContentDialog.MaxWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
-        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim clist As New ucCameraList()
         'Before Showing the cams, try to capture the latest frame for each
         For Each c In Cameras
@@ -231,20 +190,7 @@ Public Class TiczViewModel
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
         ActiveContentDialog = New TiczContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   ActiveContentDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        ' ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         ActiveContentDialog.Title = "About Ticz..."
-        'ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        'ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim about As New ucAbout()
         ActiveContentDialog.Content = about
         Await ActiveContentDialog.ShowAsync()
@@ -287,9 +233,7 @@ Public Class TiczViewModel
     Public Async Function PerformAutoRefresh(ct As CancellationToken) As Task
         Try
             While Not ct.IsCancellationRequested
-                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "executed")
                 Dim i As Integer = 0
-                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "sleeping")
                 If TiczSettings.SecondsForRefresh = 0 Then
                     While i < 5 * 1000
                         Await Task.Delay(100)
@@ -304,7 +248,6 @@ Public Class TiczViewModel
                     End While
                 End If
                 If ct.IsCancellationRequested Then Exit While
-                'WriteToDebug("TiczViewModel.PerformAutoRefresh", "refreshing")
                 If TiczSettings.SecondsForRefresh > 0 Then Await Refresh(False)
             End While
         Catch ex As Exception
@@ -352,7 +295,6 @@ Public Class TiczViewModel
                 dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(currentRoom.RoomIDX, LoadAllUpdates)))
                 grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(currentRoom.RoomIDX)))
             End If
-
 
             'Collect all updated groups/scenes and devices into a single list
             Dim devicesToRefresh As New List(Of DeviceModel)

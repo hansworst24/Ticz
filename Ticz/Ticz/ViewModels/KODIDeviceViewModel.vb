@@ -14,27 +14,13 @@ Public Class KODIDeviceViewModel
                                         Dim cDialog As New TiczContentDialog
                                         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
                                         vm.IdleTimer.StopCounter()
-                                        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-                                        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-                                        '                                                   cDialog.Hide()
-                                        '                                               End If
-                                        '                                           End Sub)
-                                        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
                                         cDialog.Title = Me.Name
-                                        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-                                        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
-                                        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-                                        'cDialog.FullSizeDesired = True
                                         Dim remote As New ucKODIRemote
                                         remote.DataContext = Me
                                         cDialog.Content = remote
                                         Await cDialog.ShowAsync()
                                         vm.IdleTimer.StartCounter()
                                     End Sub)
-
         End Get
     End Property
 

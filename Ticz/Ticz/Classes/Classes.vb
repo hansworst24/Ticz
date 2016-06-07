@@ -9,8 +9,6 @@ Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
 Imports Windows.Storage
 Imports Windows.Security.Cryptography.Certificates
-Imports Windows.Foundation.Metadata
-Imports GalaSoft.MvvmLight.Command
 
 Public Class retvalue
     Public Property issuccess As Boolean
@@ -459,16 +457,6 @@ Namespace TiczStorage
         'End Function
     End Class
 End Namespace
-
-
-''' <summary>
-''' TiczStorage contains Ticz settings and configurations that are stored on Storage
-''' </summary>
-'Public NotInheritable Class TiczStorage
-
-
-
-'End Class
 
 
 Public NotInheritable Class Domoticz
@@ -1045,6 +1033,7 @@ Public NotInheritable Class Domoticz
 
 End Class
 
+
 Public Class VariableGrid
     Inherits GridView
 
@@ -1059,7 +1048,6 @@ Public Class VariableGrid
             End If
         End If
     End Sub
-    'PrepareContainerForItemOverride(element, item)
 End Class
 
 Public Class OpenMenuFlyoutAction
@@ -1188,9 +1176,6 @@ Public NotInheritable Class DomoApi
         Public Function PlayPauseURL(idx As String) As String
             Return String.Format("{0}/json.htm?type=command&param=kodimediacommand&idx={1}&action=PlayPause", ServerURL, idx)
         End Function
-
-
-
     End Class
 
     Public NotInheritable Class LMSPlayer
@@ -1264,10 +1249,7 @@ Public NotInheritable Class DomoApi
         Public Function UpURL(idx As String) As String
             Return String.Format("{0}/json.htm?type=command&param=lmsmediacommand&idx={1}&action=Up", ServerURL, idx)
         End Function
-
     End Class
-
-
 
     Public Function Protocol()
         If app.myViewModel.TiczSettings.UseHTTPS Then Return "https" Else Return "http"
@@ -1285,58 +1267,6 @@ Public NotInheritable Class DomoApi
 
     Public Function getVariables()
         Return String.Format("{0}/json.htm?type=command&param=getuservariables", ServerURL)
-        '       {
-        '   "result" : [
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:06:02",
-        '         "Name" : "Toon_Tijdelijk_Away",
-        '         "Type" : "0",
-        '         "Value" : "0",
-        '         "idx" : "1"
-        '      },
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:06:15",
-        '         "Name" : "TestTime",
-        '         "Type" : "4",
-        '         "Value" : "23:00",
-        '         "idx" : "2"
-        '      },
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:06:28",
-        '         "Name" : "TestDate",
-        '         "Type" : "3",
-        '         "Value" : "01-07-2016",
-        '         "idx" : "3"
-        '      },
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:06:45",
-        '         "Name" : "TestString",
-        '         "Type" : "2",
-        '         "Value" : "Hello World !",
-        '         "idx" : "4"
-        '      },
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:57:46",
-        '         "Name" : "TestFloat",
-        '         "Type" : "1",
-        '         "Value" : "1.54",
-        '         "idx" : "5"
-        '      },
-        '      {
-        '         "LastUpdate" : "2016-05-30 15:58:52",
-        '         "Name" : "TestInteger",
-        '         "Type" : "0",
-        '         "Value" : "1",
-        '         "idx" : "6"
-        '      }
-        '   ],
-        '   "status" : "OK",
-        '   "title" : "GetUserVariables"
-        '}
-
-
-
-
     End Function
 
 
@@ -1346,26 +1276,7 @@ Public NotInheritable Class DomoApi
 
     Public Function getCameras()
         Return String.Format("{0}/json.htm?type=cameras", ServerURL)
-        '        {
-        '   "result" : [
-        '      {
-        '         "Address" : "192.xxx.xxx.xxx",
-        '         "Enabled" : "true",
-        '         "ImageURL" : "/cam_pic.php",
-        '         "Name" : "RPI",
-        '         "Password" : "",
-        '         "Port" : 80,
-        '         "Username" : "",
-        '         "idx" : "1"
-        '      }
-        '   ],
-        '   "status" : "OK",
-        '   "title" : "Cameras"
-        '}
-
     End Function
-
-
 
     Public Function getSecurityStatus()
         Return String.Format("{0}/json.htm?type=command&param=getsecstatus", ServerURL)
@@ -1437,7 +1348,6 @@ Public NotInheritable Class DomoApi
         Return String.Format("{0}/json.htm?type=scenes", ServerURL)
     End Function
 
-
     Public Function getVersion() As String
         Return String.Format("{0}/json.htm?type=command&param=getversion", ServerURL)
     End Function
@@ -1477,17 +1387,12 @@ Public NotInheritable Class DomoApi
         Return String.Format("{0}/json.htm?type=command&param=setcolbrightnessvalue&idx={1}&hex={2}", ServerURL, idx, hex)
     End Function
 
-    'Public Function setRGBDimmer(idx As String, hue As Integer, brightness As Integer, isWhite As Boolean)
-    '    Return String.Format("{0}/json.htm?type=command&param=setcolbrightnessvalue&idx={1}&hue={2}&brightness={3}&iswhite={4}", ServerURL, idx, hue, brightness, isWhite.ToString.ToLower)
-    'End Function
-
     Public Function SwitchScene(idx As String, switchstate As String, Optional passcode As String = "") As String
         If passcode = "" Then
             Return String.Format("{0}/json.htm?type=command&param=switchscene&idx={1}&switchcmd={2}", ServerURL, idx, switchstate)
         Else
             Return String.Format("{0}/json.htm?type=command&param=switchscene&idx={1}&switchcmd={2}&passcode={3}", ServerURL, idx, switchstate, passcode)
         End If
-
     End Function
 
     Public Function SwitchLight(idx As String, switchstate As String, Optional passcode As String = "") As String
@@ -1496,7 +1401,6 @@ Public NotInheritable Class DomoApi
         Else
             Return String.Format("{0}/json.htm?type=command&param=switchlight&idx={1}&switchcmd={2}&passcode={3}", ServerURL, idx, switchstate, passcode)
         End If
-
     End Function
 
     Public Function getPlans() As String

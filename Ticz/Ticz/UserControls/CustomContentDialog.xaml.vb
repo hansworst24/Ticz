@@ -9,7 +9,6 @@ Public Class CustomContentDialog
     Public Shared Property CloseButtonVisibilityProperty As DependencyProperty _
                            = DependencyProperty.Register("CloseButtonVisibility",
                            GetType(String), GetType(CustomContentDialog), New PropertyMetadata(""))
-
     Public Shared Property HeaderVisibilityProperty As DependencyProperty _
                            = DependencyProperty.Register("HeaderVisibility",
                            GetType(Visibility), GetType(CustomContentDialog), New PropertyMetadata(""))
@@ -71,7 +70,6 @@ Public Class CustomContentDialog
                                                            Me.Hide()
                                                        End If
                                                    End Sub)
-        Me.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-
+        Me.AddHandler(KeyDownEvent, escapekeyhandler, True)
     End Sub
 End Class

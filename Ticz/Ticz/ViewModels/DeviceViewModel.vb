@@ -1119,19 +1119,7 @@ Public Class DeviceViewModel
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
         Dim cDialog As New TiczContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   cDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         cDialog.Title = Me.Name
-        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucDevice_Details()
         details.DataContext = Me
         cDialog.Content = details
@@ -1270,19 +1258,7 @@ Public Class DeviceViewModel
         vm.IdleTimer.StopCounter()
         Dim GraphList As GraphListViewModel = Await GetDeviceGraphData()
         Dim cDialog As New TiczContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   cDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         cDialog.Title = Me.Name
-        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucDevice_GraphsList()
         details.DataContext = GraphList
         cDialog.Content = details
@@ -1417,21 +1393,7 @@ Public Class DeviceViewModel
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
         vm.ActiveContentDialog = New TiczContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-        '                                                   PassCode = ""
-        '                                                   vm.ActiveContentDialog.Hide()
-        '                                               End If
-        '                                           End Sub)
-        'vm.ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         vm.ActiveContentDialog.Title = Me.Name
-        'vm.ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        'vm.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height
-        'vm.ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        'vm.ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-        'vm.ActiveContentDialog.IsPrimaryButtonEnabled = True
-        'vm.ActiveContentDialog.PrimaryButtonText = "OK"
         Dim password As New ucDevice_Password()
         password.DataContext = Me
         vm.ActiveContentDialog.Content = password
