@@ -955,22 +955,22 @@ Public Class DeviceViewModel
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("DeviceViewModel.SelectRGBValues()", "executed")
 
-                                        Dim cDialog As New ContentDialog
+                                        Dim cDialog As New TiczContentDialog
                                         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
                                         vm.IdleTimer.StopCounter()
                                         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-                                        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                                                           cDialog.Hide()
-                                                                                       End If
-                                                                                   End Sub)
-                                        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+                                        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+                                        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+                                        '                                                   cDialog.Hide()
+                                        '                                               End If
+                                        '                                           End Sub)
+                                        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
                                         cDialog.Title = "Select a color"
-                                        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-                                        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-                                        cDialog.VerticalAlignment = VerticalAlignment.Stretch
-                                        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-                                        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+                                        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+                                        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+                                        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
+                                        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+                                        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
                                         cDialog.Content = New ucRGBColorPicker
                                         cDialog.DataContext = New ColorPickerViewModel(Me)
                                         Await cDialog.ShowAsync()
@@ -1118,20 +1118,20 @@ Public Class DeviceViewModel
         WriteToDebug("Device.ShowDeviceDetails()", "executed")
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
-        Dim cDialog As New ContentDialog
+        Dim cDialog As New TiczContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           cDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   cDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         cDialog.Title = Me.Name
-        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        cDialog.VerticalAlignment = VerticalAlignment.Stretch
-        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucDevice_Details()
         details.DataContext = Me
         cDialog.Content = details
@@ -1269,20 +1269,20 @@ Public Class DeviceViewModel
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
         Dim GraphList As GraphListViewModel = Await GetDeviceGraphData()
-        Dim cDialog As New ContentDialog
+        Dim cDialog As New TiczContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           cDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   cDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
         cDialog.Title = Me.Name
-        cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        cDialog.VerticalAlignment = VerticalAlignment.Stretch
-        cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucDevice_GraphsList()
         details.DataContext = GraphList
         cDialog.Content = details
@@ -1402,7 +1402,7 @@ Public Class DeviceViewModel
 
     'Triggers closing the Password Prompt Dialog Box
     Public Sub ClosePasswordPrompt()
-        Dim cDialog As ContentDialog = CType(Application.Current, Application).myViewModel.CurrentContentDialog
+        Dim cDialog As ContentDialog = CType(Application.Current, Application).myViewModel.ActiveContentDialog
         If Not cDialog Is Nothing Then
             cDialog.Hide()
         End If
@@ -1416,27 +1416,27 @@ Public Class DeviceViewModel
         WriteToDebug("DeviceViewModel.ShowPasswordPrompt()", "executed")
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
-        vm.CurrentContentDialog = New ContentDialog
+        vm.ActiveContentDialog = New TiczContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           PassCode = ""
-                                                           vm.CurrentContentDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        vm.CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        vm.CurrentContentDialog.Title = Me.Name
-        vm.CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        vm.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
-        vm.CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        vm.CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-        vm.CurrentContentDialog.IsPrimaryButtonEnabled = True
-        vm.CurrentContentDialog.PrimaryButtonText = "OK"
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   PassCode = ""
+        '                                                   vm.ActiveContentDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        'vm.ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        vm.ActiveContentDialog.Title = Me.Name
+        'vm.ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        'vm.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height
+        'vm.ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'vm.ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'vm.ActiveContentDialog.IsPrimaryButtonEnabled = True
+        'vm.ActiveContentDialog.PrimaryButtonText = "OK"
         Dim password As New ucDevice_Password()
         password.DataContext = Me
-        vm.CurrentContentDialog.Content = password
-        Await vm.CurrentContentDialog.ShowAsync()
-        vm.CurrentContentDialog = Nothing
+        vm.ActiveContentDialog.Content = password
+        Await vm.ActiveContentDialog.ShowAsync()
+        vm.ActiveContentDialog = Nothing
         vm.IdleTimer.StartCounter()
     End Function
 

@@ -1,0 +1,52 @@
+﻿<local:CustomContentDialog
+    x:Class="Ticz.TiczContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ticz"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="ContentDialogTitle"
+    HorizontalContentAlignment="Stretch"
+    HorizontalAlignment="Stretch">
+    <local:CustomContentDialog.Template>
+        <ControlTemplate TargetType="local:CustomContentDialog">
+            <Grid HorizontalAlignment="Stretch" 
+                  MaxWidth="{TemplateBinding MaxWidth}" 
+                  MinWidth="{TemplateBinding MaxWidth}" 
+                  MinHeight="{TemplateBinding MaxHeight}" 
+                  MaxHeight="{TemplateBinding MaxHeight}"
+                  VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0" Grid.RowSpan="2" Fill="{TemplateBinding Background}" Opacity="{TemplateBinding BackgroundOpacity}"/>
+            <Border Grid.Row="0"
+                    Height="40" 
+                    Visibility="{TemplateBinding HeaderVisibility}" 
+                    Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
+                    VerticalAlignment="Stretch">
+                <TextBlock Text="{TemplateBinding Title}"
+                           FontSize="24"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+            </Border>
+            <Button x:Name="CloseContentDialogButton"
+                        Grid.Row="0"
+                        Content="Close" 
+                        Command="{Binding CloseCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                        Visibility="{Binding CloseButtonVisibility, RelativeSource={RelativeSource TemplatedParent}}" 
+                        Height="40" 
+                        Background="Transparent" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Top"
+                        />
+            <ContentPresenter Grid.Row="1"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Grid>
+
+        </ControlTemplate>
+    </local:CustomContentDialog.Template>
+  </local:CustomContentDialog>

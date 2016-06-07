@@ -300,7 +300,7 @@ Public Class SecurityPanelViewModel
             CodeInput = ""
             DisplayText = CurrentArmState
         End If
-        app.myViewModel.CurrentContentDialog.Hide()
+        app.myViewModel.ActiveContentDialog.Hide()
     End Sub
 
     Public Async Sub DigitPressed(s As Object, e As RoutedEventArgs)

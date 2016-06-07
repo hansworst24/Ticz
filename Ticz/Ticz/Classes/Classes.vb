@@ -9,6 +9,8 @@ Imports Windows.Storage.Streams
 Imports System.Xml.Serialization
 Imports Windows.Storage
 Imports Windows.Security.Cryptography.Certificates
+Imports Windows.Foundation.Metadata
+Imports GalaSoft.MvvmLight.Command
 
 Public Class retvalue
     Public Property issuccess As Boolean
@@ -1042,8 +1044,6 @@ Public NotInheritable Class Domoticz
     End Function
 
 End Class
-
-
 
 Public Class VariableGrid
     Inherits GridView

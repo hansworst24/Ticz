@@ -9,6 +9,40 @@
     xmlns:SyncFusion="using:Syncfusion.UI.Xaml.Charts"
     xmlns:SyncFusionMedia="using:Syncfusion.UI.Xaml.Controls.Media"
     xmlns:local="using:Ticz">
+    
+    <ControlTemplate x:Key="CustomContentDialogTemplate" TargetType="local:CustomContentDialog">
+        <Grid HorizontalAlignment="Stretch" 
+                  MaxWidth="{TemplateBinding MaxWidth}" 
+                  MinWidth="{TemplateBinding MaxWidth}" 
+                  MinHeight="{TemplateBinding MaxHeight}" 
+                  MaxHeight="{TemplateBinding MaxHeight}"
+                  VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0" Grid.RowSpan="2" Fill="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.8"/>
+            <Border Grid.Row="0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" VerticalAlignment="Stretch">
+                <TextBlock Text="{TemplateBinding Title}"
+                           FontSize="24"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+            </Border>
+            <Button x:Name="CloseContentDialogButton"
+                        Grid.Row="0"
+                        Content="Close" 
+                        Command="{Binding CloseCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                        Visibility="{Binding CloseButtonVisibility, RelativeSource={RelativeSource TemplatedParent}}" 
+                        Height="40" 
+                        Background="Transparent" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Top"
+                        />
+            <ContentPresenter Grid.Row="1"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Grid>
+    </ControlTemplate>
 
     <!-- Variable ViewModel DataTemplates -->
     <DataTemplate x:Key="VariableIntegerTemplate" x:DataType="local:VariableViewModel">

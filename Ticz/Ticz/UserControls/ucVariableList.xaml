@@ -22,9 +22,9 @@
                     <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="2,0,2,0" Padding="5" HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Variable Name"/>
                         <TextBlock Grid.Column="1" Text="Value"/>

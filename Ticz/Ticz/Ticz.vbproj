@@ -153,6 +153,9 @@
     </Compile>
     <Compile Include="Modules\Modules.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="UserControls\CustomContentDialog.xaml.vb">
+      <DependentUpon>CustomContentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucAbout.xaml.vb">
       <DependentUpon>ucAbout.xaml</DependentUpon>
     </Compile>
@@ -374,6 +377,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\CustomContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucAbout.xaml">
       <SubType>Designer</SubType>

@@ -1,1 +1,1 @@
-C:\Users\frank\Documents\Visual Studio 2015\Projects\Ticz\Ticz\Ticz\AppPackages\Ticz_2.0.0.0\Ticz_2.0.0.0_x86_x64_arm.appxbundle
+C:\Users\frank\Documents\Visual Studio 2015\Projects\Ticz\Ticz\Ticz\AppPackages\Ticz_2.0.2.0\Ticz_2.0.2.0_x86_x64_arm.appxbundle

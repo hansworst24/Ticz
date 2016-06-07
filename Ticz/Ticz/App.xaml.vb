@@ -35,6 +35,8 @@ NotInheritable Class Application
         'Add Handlers for when the soft keyboard in shown/hidden. Used to adjust the height of an existing ConTentDialog accordingly
         AddHandler InputPane.GetForCurrentView().Hiding, AddressOf KeyboardHiding
         AddHandler InputPane.GetForCurrentView().Showing, AddressOf KeyboardShowing
+        'Add handler for when the mainwindow is resized, so that any open contentdialog is stretched to full screen
+        AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf VisibleBoundsChanged
 
 
         Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
@@ -85,13 +87,15 @@ NotInheritable Class Application
         Window.Current.Activate()
     End Sub
 
-    'Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
-    '    WriteToDebug("App.VisibleBoundsChanged", "executed")
-    '    If Not myViewModel.CurrentContentDialog Is Nothing Then
-    '        WriteToDebug("Window.Current.Bounds : ", String.Format("{0} / {1}", Window.Current.Bounds.Height, Window.Current.Bounds.Width))
-    '        WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
-    '    End If
-    'End Sub
+    Public Sub VisibleBoundsChanged(sender As ApplicationView, args As Object)
+        If Not myViewModel.ActiveContentDialog Is Nothing Then
+            WriteToDebug("ApplicationView.GetForCurrentView.VisibleBounds : ", String.Format("{0} / {1}", ApplicationView.GetForCurrentView.VisibleBounds.Height, ApplicationView.GetForCurrentView.VisibleBounds.Width))
+            myViewModel.ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
+            myViewModel.ActiveContentDialog.MinHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
+            myViewModel.ActiveContentDialog.MinWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
+            myViewModel.ActiveContentDialog.MaxWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
+        End If
+    End Sub
     Public Sub ResetIdleCounter(sender As Object, args As PointerRoutedEventArgs)
         WriteToDebug("App.ResetIdleCounter", "executed")
         If Not myViewModel.IdleTimer Is Nothing Then
@@ -101,8 +105,8 @@ NotInheritable Class Application
 
     Public Sub KeyboardShowing(sender As InputPane, args As InputPaneVisibilityEventArgs)
         WriteToDebug("App.KeyboardShowing", "executed")
-        If Not myViewModel.CurrentContentDialog Is Nothing Then
-            myViewModel.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height - sender.OccludedRect.Height
+        If Not myViewModel.ActiveContentDialog Is Nothing Then
+            myViewModel.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height - sender.OccludedRect.Height
         End If
     End Sub
 
@@ -110,8 +114,8 @@ NotInheritable Class Application
         WriteToDebug("App.KeyboardHiding", "executed")
         'We wait for a few milliseconds because resizing the ContentDialog immediately may cause a click event within the ContentDialog not to trigger properly
         Await Task.Delay(100)
-        If Not myViewModel.CurrentContentDialog Is Nothing Then
-            myViewModel.CurrentContentDialog.MaxHeight = Window.Current.Bounds.Height
+        If Not myViewModel.ActiveContentDialog Is Nothing Then
+            myViewModel.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height
         End If
     End Sub
 

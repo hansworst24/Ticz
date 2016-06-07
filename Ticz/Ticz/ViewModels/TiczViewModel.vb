@@ -2,12 +2,16 @@
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
+Imports Windows.Foundation.Metadata
+Imports Windows.UI
 Imports Windows.Web.Http
 
 Public Class TiczViewModel
     Inherits ViewModelBase
 
-    Public Property CurrentContentDialog As ContentDialog
+    Public Property HasHardwareBackButton As Boolean = If(ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"), True, False)
+
+    Public Property ActiveContentDialog As CustomContentDialog
     Public Property Cameras As New CameraListViewModel
     Public Property DomoConfig As New Domoticz.Config
     Public Property DomoSunRiseSet As New Domoticz.SunRiseSet
@@ -103,27 +107,27 @@ Public Class TiczViewModel
         WriteToDebug("TiczMenuSettings.ShowSecurityPanel()", "executed")
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
-        CurrentContentDialog = New ContentDialog
+        ActiveContentDialog = New TiczContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           CurrentContentDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        Dim pointerMoved As New PointerEventHandler(Sub(s, e)
-                                                        CType(Application.Current, Application).ResetIdleCounter(s, e)
-                                                    End Sub)
-        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        CurrentContentDialog.AddHandler(UIElement.PointerMovedEvent, pointerMoved, True)
-        CurrentContentDialog.Title = "Security Panel"
-        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   ActiveContentDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        'Dim pointerMoved As New PointerEventHandler(Sub(s, e)
+        '                                                CType(Application.Current, Application).ResetIdleCounter(s, e)
+        '                                            End Sub)
+        'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        'ActiveContentDialog.AddHandler(UIElement.PointerMovedEvent, pointerMoved, True)
+        ActiveContentDialog.Title = "Security Panel"
+        'ActiveContentDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
+        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim details As New ucSecurityPanel()
-        CurrentContentDialog.Content = details
-        Await CurrentContentDialog.ShowAsync()
+        ActiveContentDialog.Content = details
+        Await ActiveContentDialog.ShowAsync()
         Me.IdleTimer.StartCounter()
     End Sub
 
@@ -136,26 +140,23 @@ Public Class TiczViewModel
         If Not (Await Variables.Load()).issuccess Then
             Await Notify.Update(True, "Error loading Domoticz variables...", 1, False, 0)
         Else
-            CurrentContentDialog = New ContentDialog
+            'ActiveContentDialog = New ContentDialog
+            ActiveContentDialog = New TiczContentDialog
             'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-            Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                           If e.Key = Windows.System.VirtualKey.Escape Then
-                                                               CurrentContentDialog.Hide()
-                                                           End If
-                                                       End Sub)
-            CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-            CurrentContentDialog.Title = "Domoticz Variables"
-            CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-            CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-            CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-            CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+            'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+            '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+            '                                                   ActiveContentDialog.Hide()
+            '                                               End If
+            '                                           End Sub)
+            'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+            ActiveContentDialog.Title = "Domoticz Variables"
             Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
             Dim uclist As New ucVariableList
             uclist.DataContext = vlist
-            CurrentContentDialog.Content = uclist
+            ActiveContentDialog.Content = uclist
             Notify.Clear()
-            Await CurrentContentDialog.ShowAsync()
-            CurrentContentDialog = Nothing
+            Await ActiveContentDialog.ShowAsync()
+            ActiveContentDialog = Nothing
             Me.IdleTimer.StartCounter()
         End If
 
@@ -164,32 +165,23 @@ Public Class TiczViewModel
     Public Async Sub ShowScreenSaver()
         WriteToDebug("TiczMenuSettings.ShowScreenSaver()", "executed")
         Me.TiczMenu.IsMenuOpen = False
-        CurrentContentDialog = New ContentDialog
-        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           CurrentContentDialog.Hide()
-                                                       End If
-                                                   End Sub)
+        ActiveContentDialog = New TiczContentDialog
+        ActiveContentDialog.HeaderVisibility = Visibility.Collapsed
+        ActiveContentDialog.Background = New SolidColorBrush(Colors.Black)
+        ActiveContentDialog.BackgroundOpacity = 1
         Dim touchHandler = New TappedEventHandler(Sub(s, e)
-                                                      CurrentContentDialog.Hide()
+                                                      ActiveContentDialog.Hide()
                                                   End Sub)
-        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        CurrentContentDialog.AddHandler(UIElement.TappedEvent, touchHandler, True)
-        CurrentContentDialog.Title = ""
-        CurrentContentDialog.Style = CType(Application.Current.Resources("FullScreenBlackContentDialog"), Style)
-        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        ActiveContentDialog.AddHandler(UIElement.TappedEvent, touchHandler, True)
         Dim vlist As VariableListViewModel = CType(Application.Current, Application).myViewModel.Variables
         Dim ucScreenSaver As New ucScreenSaver
         Dim sSaver As New ScreenSaverViewModel(Window.Current.Bounds)
         ucScreenSaver.DataContext = sSaver
-        CurrentContentDialog.Content = ucScreenSaver
+        ActiveContentDialog.Content = ucScreenSaver
         Notify.Clear()
         sSaver.StartRefresh()
-        Await CurrentContentDialog.ShowAsync()
-        CurrentContentDialog = Nothing
+        Await ActiveContentDialog.ShowAsync()
+        ActiveContentDialog = Nothing
         IdleTimer.ResetCounter()
         sSaver.StopRefresh()
         sSaver = Nothing
@@ -199,29 +191,33 @@ Public Class TiczViewModel
         WriteToDebug("TiczMenuSettings.ShowCameras()", "executed")
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
-        CurrentContentDialog = New ContentDialog
+        ActiveContentDialog = New TiczContentDialog
+        'Dim ActiveContentDialog As New ContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           CurrentContentDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        CurrentContentDialog.Title = "Cameras"
-        CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   ActiveContentDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        'ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        ActiveContentDialog.Title = "Cameras"
+        'Dim a = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
+        'ActiveContentDialog.Template = CType(Application.Current.Resources("CustomContentDialogTemplate"), ControlTemplate)
+        'ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        'ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
+        'ActiveContentDialog.MaxWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
+        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim clist As New ucCameraList()
         'Before Showing the cams, try to capture the latest frame for each
         For Each c In Cameras
             Await c.GetFrameFromJPG()
         Next
         clist.DataContext = Cameras
-        CurrentContentDialog.Content = clist
-        Await CurrentContentDialog.ShowAsync()
+        ActiveContentDialog.Content = clist
+        Await ActiveContentDialog.ShowAsync()
         'Stop refreshing any camera that exists
         For Each c In Cameras
             c.StopRefresh()
@@ -234,24 +230,24 @@ Public Class TiczViewModel
         WriteToDebug("TiczMenuSettings.ShowAbout()", "executed")
         Me.TiczMenu.IsMenuOpen = False
         Me.IdleTimer.StopCounter()
-        CurrentContentDialog = New ContentDialog
+        ActiveContentDialog = New TiczContentDialog
         'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-        Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                                       If e.Key = Windows.System.VirtualKey.Escape Then
-                                                           CurrentContentDialog.Hide()
-                                                       End If
-                                                   End Sub)
-        CurrentContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-        CurrentContentDialog.Title = "About Ticz..."
-        CurrentContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
-        CurrentContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
-        CurrentContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalAlignment = VerticalAlignment.Stretch
-        CurrentContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-        CurrentContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
+        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
+        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
+        '                                                   ActiveContentDialog.Hide()
+        '                                               End If
+        '                                           End Sub)
+        ' ActiveContentDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
+        ActiveContentDialog.Title = "About Ticz..."
+        'ActiveContentDialog.Style = CType(Application.Current.Resources("HalfScreenContentDialog"), Style)
+        'ActiveContentDialog.MaxHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height
+        'ActiveContentDialog.HorizontalAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalAlignment = VerticalAlignment.Stretch
+        'ActiveContentDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
+        'ActiveContentDialog.VerticalContentAlignment = VerticalAlignment.Stretch
         Dim about As New ucAbout()
-        CurrentContentDialog.Content = about
-        Await CurrentContentDialog.ShowAsync()
+        ActiveContentDialog.Content = about
+        Await ActiveContentDialog.ShowAsync()
         Me.IdleTimer.StartCounter()
     End Sub
 

@@ -534,7 +534,6 @@
                                     </ContentControl>
                                     <Grid x:Name="ContentScrollViewerrrr" Grid.Row="1">
                                         <ContentPresenter x:Name="Content" 
-                                                        
                                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                                         Content="{TemplateBinding Content}"
                                                         FontSize="{ThemeResource ControlContentThemeFontSize}"
