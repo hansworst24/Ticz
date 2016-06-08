@@ -179,6 +179,12 @@ Public Class DeviceViewModel
             RaisePropertyChanged("FooterText")
         End Set
     End Property
+    Public ReadOnly Property DataFontSize As Integer
+        Get
+            Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+            Return 12 * vm.TiczSettings.ZoomFactor
+        End Get
+    End Property
     Public ReadOnly Property Description As String
         Get
             Return _Device.Description
