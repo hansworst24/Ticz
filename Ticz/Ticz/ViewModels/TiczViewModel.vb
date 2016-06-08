@@ -31,7 +31,7 @@ Public Class TiczViewModel
     End Property
     Private Property _EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
     Public Property TiczSettings As New TiczSettings
-    Public Property IdleTimer As New IdleTimerViewModel(TiczSettings.IdleTimeBeforeScreenSaver)
+    Public Property IdleTimer As New IdleTimerViewModel
     Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
 
     Public Property TiczMenu As New TiczMenuSettings
@@ -451,8 +451,6 @@ Public Class TiczViewModel
         Else
             Notify.Clear()
         End If
-
-        'TODO : ADD SCREENSAVER LOGIC
 
         'Start IdleTimeCounter
         IdleTimer.StartCounter()
