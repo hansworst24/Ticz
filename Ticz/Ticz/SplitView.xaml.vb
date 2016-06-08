@@ -33,4 +33,7 @@ Public NotInheritable Class SplitView
         vm.StopRefresh()
     End Sub
 
+    Private Sub mainGrid_Tapped(sender As Object, e As TappedRoutedEventArgs)
+        If vm.TiczMenu.IsMenuOpen Then vm.TiczMenu.IsMenuOpen = False
+    End Sub
 End Class

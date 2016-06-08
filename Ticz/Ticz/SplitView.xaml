@@ -54,7 +54,7 @@
             </Interactivity:Interaction.Behaviors>
         </local:ucMenu_MainMenu>
 
-        <Grid x:Name="mainGrid" 
+        <Grid x:Name="mainGrid" Tapped="mainGrid_Tapped" 
               Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>

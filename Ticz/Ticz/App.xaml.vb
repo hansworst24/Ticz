@@ -97,7 +97,7 @@ NotInheritable Class Application
         End If
     End Sub
     Public Sub ResetIdleCounter(sender As Object, args As PointerRoutedEventArgs)
-        'WriteToDebug("App.ResetIdleCounter", "executed")
+        WriteToDebug("App.ResetIdleCounter", "executed")
         If Not myViewModel.IdleTimer Is Nothing Then
             myViewModel.IdleTimer.ResetCounter()
         End If
