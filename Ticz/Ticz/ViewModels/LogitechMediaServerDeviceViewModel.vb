@@ -22,59 +22,19 @@ Public Class LogitechMediaServerDeviceViewModel
     Public ReadOnly Property OpenLMSRemote As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim cDialog As New TiczContentDialog
                                         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                                        vm.ActiveContentDialog = New TiczContentDialog
                                         vm.IdleTimer.StopCounter()
-                                        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-                                        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-                                        '                                                   cDialog.Hide()
-                                        '                                               End If
-                                        '                                           End Sub)
-                                        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-                                        cDialog.Title = Me.Name
-                                        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-                                        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
-                                        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-                                        'cDialog.FullSizeDesired = True
+                                        vm.ActiveContentDialog.Title = Me.Name
                                         Dim remote As New ucLMSRemote
                                         remote.DataContext = Me
-                                        cDialog.Content = remote
-                                        Await cDialog.ShowAsync()
-
+                                        vm.ActiveContentDialog.Content = remote
+                                        Await vm.ActiveContentDialog.ShowAsync()
                                         vm.IdleTimer.StartCounter()
                                     End Sub)
 
         End Get
     End Property
-
-
-    'Public Async Sub OpenLMSRemote()
-    '    Dim cDialog As New ContentDialog
-    '    'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-    '    Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-    '                                                   If e.Key = Windows.System.VirtualKey.Escape Then
-    '                                                       cDialog.Hide()
-    '                                                   End If
-    '                                               End Sub)
-    '    cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-    '    cDialog.Title = Me.Name
-    '    cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-    '    cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-    '    cDialog.VerticalAlignment = VerticalAlignment.Stretch
-    '    cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-    '    cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-    '    cDialog.FullSizeDesired = True
-    '    Dim remote As New ucLMSRemote
-    '    remote.DataContext = Me
-    '    cDialog.Content = remote
-    '    Await cDialog.ShowAsync()
-    'End Sub
-
-
-
 
     Public Async Function PausePlayer() As Task
         Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)

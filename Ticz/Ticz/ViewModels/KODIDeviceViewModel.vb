@@ -11,14 +11,14 @@ Public Class KODIDeviceViewModel
     Public ReadOnly Property OpenKODIRemote As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        Dim cDialog As New TiczContentDialog
                                         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                                        vm.ActiveContentDialog = New TiczContentDialog
                                         vm.IdleTimer.StopCounter()
-                                        cDialog.Title = Me.Name
+                                        vm.ActiveContentDialog.Title = Me.Name
                                         Dim remote As New ucKODIRemote
                                         remote.DataContext = Me
-                                        cDialog.Content = remote
-                                        Await cDialog.ShowAsync()
+                                        vm.ActiveContentDialog.Content = remote
+                                        Await vm.ActiveContentDialog.ShowAsync()
                                         vm.IdleTimer.StartCounter()
                                     End Sub)
         End Get

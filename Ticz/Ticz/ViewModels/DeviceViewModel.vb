@@ -957,26 +957,13 @@ Public Class DeviceViewModel
         Get
             Return New RelayCommand(Async Sub()
                                         WriteToDebug("DeviceViewModel.SelectRGBValues()", "executed")
-
-                                        Dim cDialog As New TiczContentDialog
                                         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                                        vm.ActiveContentDialog = New TiczContentDialog
                                         vm.IdleTimer.StopCounter()
-                                        'Because we use a customized ContentDialog Style, the ESC key handler didn't work anymore. Therefore we add our own. 
-                                        'Dim escapekeyhandler = New KeyEventHandler(Sub(s, e)
-                                        '                                               If e.Key = Windows.System.VirtualKey.Escape Then
-                                        '                                                   cDialog.Hide()
-                                        '                                               End If
-                                        '                                           End Sub)
-                                        'cDialog.AddHandler(UIElement.KeyDownEvent, escapekeyhandler, True)
-                                        cDialog.Title = "Select a color"
-                                        'cDialog.Style = CType(Application.Current.Resources("FullScreenContentDialog"), Style)
-                                        'cDialog.HorizontalAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalAlignment = VerticalAlignment.Stretch
-                                        'cDialog.HorizontalContentAlignment = HorizontalAlignment.Stretch
-                                        'cDialog.VerticalContentAlignment = VerticalAlignment.Stretch
-                                        cDialog.Content = New ucRGBColorPicker
-                                        cDialog.DataContext = New ColorPickerViewModel(Me)
-                                        Await cDialog.ShowAsync()
+                                        vm.ActiveContentDialog.Title = "Select a color"
+                                        vm.ActiveContentDialog.Content = New ucRGBColorPicker
+                                        vm.ActiveContentDialog.DataContext = New ColorPickerViewModel(Me)
+                                        Await vm.ActiveContentDialog.ShowAsync()
                                         vm.IdleTimer.StartCounter()
                                     End Sub)
 
@@ -1121,12 +1108,12 @@ Public Class DeviceViewModel
         WriteToDebug("Device.ShowDeviceDetails()", "executed")
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
-        Dim cDialog As New TiczContentDialog
-        cDialog.Title = Me.Name
+        vm.ActiveContentDialog = New TiczContentDialog
+        vm.ActiveContentDialog.Title = Me.Name
         Dim details As New ucDevice_Details()
         details.DataContext = Me
-        cDialog.Content = details
-        Await cDialog.ShowAsync()
+        vm.ActiveContentDialog.Content = details
+        Await vm.ActiveContentDialog.ShowAsync()
         vm.IdleTimer.StartCounter()
     End Sub
 
@@ -1260,12 +1247,12 @@ Public Class DeviceViewModel
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         vm.IdleTimer.StopCounter()
         Dim GraphList As GraphListViewModel = Await GetDeviceGraphData()
-        Dim cDialog As New TiczContentDialog
-        cDialog.Title = Me.Name
+        vm.ActiveContentDialog = New TiczContentDialog
+        vm.ActiveContentDialog.Title = Me.Name
         Dim details As New ucDevice_GraphsList()
         details.DataContext = GraphList
-        cDialog.Content = details
-        Await cDialog.ShowAsync()
+        vm.ActiveContentDialog.Content = details
+        Await vm.ActiveContentDialog.ShowAsync()
         GraphList.Dispose()
         vm.IdleTimer.StartCounter()
     End Sub
