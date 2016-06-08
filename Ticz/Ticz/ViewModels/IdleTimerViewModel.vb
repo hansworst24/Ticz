@@ -8,8 +8,8 @@ Public Class IdleTimerViewModel
     Private ct As New CancellationToken
 
     Public Sub New(idleTimeBeforeAction As Integer)
-        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
-        If vm.TiczSettings.ScreenSaverActive Then StartCounter()
+        'Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        'If vm.TiczSettings.ScreenSaverActive Then StartCounter()
     End Sub
 
     Public Async Function Count(ct As CancellationToken) As Task
@@ -37,7 +37,9 @@ Public Class IdleTimerViewModel
         currentIdleTime = 0
     End Sub
 
-    Public Sub StartCounter()
+    Public Async Sub StartCounter()
+        StopCounter()
+        Await Task.Delay(300)
         cts = New CancellationTokenSource
         ct = cts.Token
         currentIdleTime = 0

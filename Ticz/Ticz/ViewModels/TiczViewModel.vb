@@ -30,9 +30,10 @@ Public Class TiczViewModel
         End Set
     End Property
     Private Property _EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
-    Public Property IdleTimer As IdleTimerViewModel
-    Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
     Public Property TiczSettings As New TiczSettings
+    Public Property IdleTimer As New IdleTimerViewModel(TiczSettings.IdleTimeBeforeScreenSaver)
+    Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
+
     Public Property TiczMenu As New TiczMenuSettings
     Public Property Notify As New ToastMessageViewModel
     Public Property IsRefreshing As Boolean
@@ -439,10 +440,6 @@ Public Class TiczViewModel
 
         Await LoadRoom()
 
-        'Initialize ScreenSaver
-        IdleTimer = New IdleTimerViewModel(TiczSettings.IdleTimeBeforeScreenSaver)
-
-
         'Save the (potentially refreshhed) roomconfigurations again
         Await Notify.Update(False, "Saving Ticz Room configuration...", 0, False, 0)
         Await TiczRoomConfigs.SaveRoomConfigurations()
@@ -456,6 +453,10 @@ Public Class TiczViewModel
         End If
 
         'TODO : ADD SCREENSAVER LOGIC
+
+        'Start IdleTimeCounter
+        IdleTimer.StartCounter()
+
         IsLoading = False
     End Function
 End Class
