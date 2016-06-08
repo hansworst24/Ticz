@@ -35,21 +35,6 @@
                   Margin="0" 
                   Padding="0"
                   ScrollViewer.VerticalScrollBarVisibility="Hidden">
-            <!--<ListView.HeaderTemplate>
-                <DataTemplate>
-                    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="2,0,2,0" Padding="4" HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="2*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Variable Name"/>
-                        <TextBlock Grid.Column="1" Text="Value"/>
-                        <TextBlock Grid.Column="2" Text="Update"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.HeaderTemplate>-->
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -57,18 +42,6 @@
                     <Setter Property="Margin" Value="2" />
                 </Style>
             </ListView.ItemContainerStyle>
-            <!--<ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>-->
-            <!--<ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:VariableViewModel">
-                    <ContentControl ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
-                    <ContentControl Content="{Binding}" ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
-                    <ContentPresenter ContentTemplate="{x:Bind Template, Mode=OneWay}" HorizontalContentAlignment="Stretch"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
         </ListView>
         <local:ucToastMessage Grid.Row="1" VerticalAlignment="Bottom" DataContext="{Binding message}"/>
     </Grid>
