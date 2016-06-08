@@ -110,7 +110,8 @@ Public Class RoomViewModel
     Public ReadOnly Property GridViewSizeChangedCommand As RelayCommand(Of Object)
         Get
             Return New RelayCommand(Of Object)(Sub(x)
-                                                   SetItemWidth()
+                                                   'WriteToDebug("GridViewSizeChanged", "Executed")
+                                                   'SetItemWidthHeight()
                                                End Sub)
         End Get
     End Property
@@ -126,30 +127,32 @@ Public Class RoomViewModel
         RoomConfiguration = roomConfig
         ItemHeight = 120
         'TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
-        SetItemWidth()
+        SetItemWidthHeight()
 
     End Sub
 
-    Public Sub SetItemWidth()
+    Public Sub SetItemWidthHeight()
+        Const DefaultItemWidth = 120 'The Default Width for an Device in Icon View
+        Const DefaultItemHeight = 120 'The Default Height for an Device in Icon View
         Dim iWidth As Integer  'Minimum Item Width
         Dim iMargin As Integer 'Any additional Margin that the item carries
         Select Case RoomConfiguration.RoomView
-            Case Constants.ROOMVIEW.DASHVIEW : iWidth = 120 : iMargin = 0
-            Case Constants.ROOMVIEW.RESIZEVIEW : iWidth = 120 : iMargin = 0
-            Case Constants.ROOMVIEW.GRIDVIEW : iWidth = 180 : iMargin = 0
-            Case Constants.ROOMVIEW.ICONVIEW : iWidth = 120 : iMargin = 4
-            Case Constants.ROOMVIEW.LISTVIEW : iWidth = 120 : iMargin = 0
+            Case Constants.ROOMVIEW.DASHVIEW : iWidth = DefaultItemWidth : iMargin = 0
+            Case Constants.ROOMVIEW.RESIZEVIEW : iWidth = DefaultItemWidth : iMargin = 0
+            Case Constants.ROOMVIEW.GRIDVIEW : iWidth = 200 : iMargin = 0
+            Case Constants.ROOMVIEW.ICONVIEW : iWidth = DefaultItemWidth : iMargin = 4
+            Case Constants.ROOMVIEW.LISTVIEW : iWidth = DefaultItemWidth : iMargin = 0
             Case Else
                 Throw New Exception("RoomView unkown, cant calculate itemwidth")
         End Select
         If Not iWidth = 0 Then
             iWidth = iWidth * app.myViewModel.TiczSettings.ZoomFactor
-            ItemHeight = ItemHeight * app.myViewModel.TiczSettings.ZoomFactor
+            ItemHeight = DefaultItemHeight * app.myViewModel.TiczSettings.ZoomFactor
             Dim completeItems = Math.Floor(ApplicationView.GetForCurrentView.VisibleBounds.Width / iWidth)
             If completeItems < app.myViewModel.TiczSettings.MinimumNumberOfColumns Then completeItems = app.myViewModel.TiczSettings.MinimumNumberOfColumns
             Dim remainder = ApplicationView.GetForCurrentView.VisibleBounds.Width - (completeItems * iWidth) - (completeItems * iMargin)
             ItemWidth = (iWidth + Math.Floor(remainder / completeItems))
-            WriteToDebug("RoomViewModel.Initialize()", String.Format("Visible Bounds:{0} / Complete Items:{1} / Remainder:{2} ItemWidth:{3}", ApplicationView.GetForCurrentView.VisibleBounds.Width, completeItems, remainder, ItemWidth))
+            WriteToDebug("RoomViewModel.SetItemWidth()", String.Format("Visible Bounds:{0} / Complete Items:{1} / Remainder:{2} ItemWidth:{3}", ApplicationView.GetForCurrentView.VisibleBounds.Width, completeItems, remainder, ItemWidth))
         Else
             app.myViewModel.Notify.Update(True, "Room Layout unknown - Item Width can't be calculated", 2, False, 0)
         End If
