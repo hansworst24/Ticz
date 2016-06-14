@@ -10,7 +10,6 @@ Public Class TiczViewModel
     Inherits ViewModelBase
 
     Public Property HasHardwareBackButton As Boolean = If(ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"), True, False)
-
     Public Property ActiveContentDialog As CustomContentDialog
     Public Property Cameras As New CameraListViewModel
     Public Property DomoConfig As New Domoticz.Config

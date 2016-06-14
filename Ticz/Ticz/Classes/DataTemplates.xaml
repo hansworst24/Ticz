@@ -357,7 +357,7 @@
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--<StackPanel Orientation="Horizontal"/>-->
-                        <ItemsWrapGrid Orientation="Horizontal" ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"
+                        <ItemsWrapGrid Margin="0" Orientation="Horizontal" ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"
                                        ItemHeight="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemHeight}"/>
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>

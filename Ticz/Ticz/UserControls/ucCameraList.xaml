@@ -6,11 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="500"
-    d:DesignWidth="300">
+    d:DesignHeight="700"
+    d:DesignWidth="640">
 
     <Grid>
-        <ListView Grid.Row="1" ItemsSource="{x:Bind Cameras, Mode=OneWay}" SelectionMode="None" Margin="0" Padding="0">
+        <ListView x:Name="lvCameraList" Grid.Row="1" ItemsSource="{x:Bind Cameras, Mode=OneWay}" SelectionMode="None" Margin="0" Padding="0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -22,7 +22,8 @@
                 <DataTemplate x:DataType="local:CameraViewModel">
                     <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                           Margin="0" 
-                          Padding="10" 
+                          Padding="4" 
+                          MaxHeight="{x:Bind MaxItemHeight, Mode=OneWay}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch" 
                           BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
@@ -31,7 +32,7 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="32"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -41,10 +42,10 @@
                         <Border Grid.Row="0" 
                                 Grid.Column="0" 
                                 Grid.ColumnSpan="2" 
-                                Margin="0,0,0,5">
+                                Margin="0,0,0,4">
                             <TextBlock x:Name="Header"
                                        Margin="0,0,0,0" Text="{x:Bind name}" 
-                                       FontSize="20"
+                                       FontSize="16"
                                        HorizontalAlignment="Center" 
                                        VerticalAlignment="Center" 
                                        TextWrapping="NoWrap"/>
@@ -54,38 +55,56 @@
                                Grid.ColumnSpan="2"
                                Stretch="Uniform" 
                                Canvas.ZIndex="99" 
-                               MaxHeight="300" 
                                Source="{x:Bind frame1, TargetNullValue='/Images/TiczLogo.png', FallbackValue='/Images/TiczLogo.png', Mode=OneWay}"/>
-                        <ToggleSwitch Grid.Row="2" 
+                        <ToggleSwitch Grid.Row="0" Margin="0,-14,0,0" Height="30"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="2" 
-                                      OffContent="Refresh disabled" 
-                                      OnContent="Refresh enabled" 
-                                      IsOn="{x:Bind AutoRefreshEnabled, Mode=TwoWay}"/>
-                        <TextBlock Grid.Row="2" 
+                                      IsOn="{x:Bind AutoRefreshEnabled, Mode=TwoWay}">
+                            <ToggleSwitch.OffContent>
+                                <TextBlock Text="Off" FontSize="10"/>
+                            </ToggleSwitch.OffContent>
+                            <ToggleSwitch.OnContent>
+                                <TextBlock Text="On" FontSize="10"/>
+                            </ToggleSwitch.OnContent>
+                        </ToggleSwitch>
+                        <StackPanel Grid.Row="0" 
+                                    Grid.Column="0" 
+                                    Grid.ColumnSpan="2" 
+                                    HorizontalAlignment="Right" 
+                                    Orientation="Vertical" 
+                                    Margin="0,0,12,0">
+                            <TextBlock Grid.Row="0" 
                                    Grid.Column="0" 
                                    Grid.ColumnSpan="2"
+                                   FontSize="8"
                                    VerticalAlignment="Top" 
                                    Style="{ThemeResource SettingsExplanationStyle}" 
                                    HorizontalAlignment="Right" Text="{x:Bind FrameSize, Mode=OneWay}"/>
-                        <TextBlock Grid.Row="2" 
+                            <TextBlock Grid.Row="2" 
                                    Grid.Column="0" 
                                    Grid.ColumnSpan="2"
+                                   FontSize="8"
                                    VerticalAlignment="Bottom" 
                                    Style="{ThemeResource SettingsExplanationStyle}" 
                                    HorizontalAlignment="Right" Text="{x:Bind TotalFrameSize, Mode=OneWay}"/>
-
+                            <TextBlock FontSize="8"
+                                   VerticalAlignment="Bottom" 
+                                   Style="{ThemeResource SettingsExplanationStyle}" 
+                                   HorizontalAlignment="Right" Text="{x:Bind FramesPerSecond, Mode=OneWay}"/>
+                        </StackPanel>
+ 
                         <Slider Grid.Row="3" 
                                 Margin="10,0,0,0" 
                                 Grid.Column="0" 
-                                Minimum="100" 
+                                Minimum="40" 
                                 Maximum="2000" 
                                 Value="{x:Bind RefreshDelay, Mode=TwoWay}"/>
                         <Border Grid.Row="3" 
                                 Grid.Column="1"
-                                Margin="10,0,0,0" 
+                                Margin="10,0,12,0" 
                                 VerticalAlignment="Stretch">
                             <TextBlock Text="{x:Bind RefreshDelayText, Mode=OneWay}" 
+                                       FontSize="10"
                                        VerticalAlignment="Center" HorizontalAlignment="Right" 
                                        Style="{ThemeResource SettingsExplanationStyle}"/>
                         </Border>

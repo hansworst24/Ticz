@@ -25,10 +25,20 @@ Public Class CameraListViewModel
         Else
             ret.issuccess = False : ret.err = response.ReasonPhrase
             Dim app As Application = CType(Application.Current, Application)
-            Await app.myViewModel.Notify.Update(True, String.Format("Error loading cameras ({0})", ret.err), 2, False, 2)
+            Await app.myViewModel.Notify.Update(True, String.Format("Error loading cameras / {0} / {1})", response.StatusCode.ToString, ret.err), 2, False, 2)
         End If
+
+        'Register to listen for visible bound changes, in order to resize the Camera View accordingly
+        'Dim app As Application = CType(Application.Current, Application)
+        AddHandler ApplicationView.GetForCurrentView.VisibleBoundsChanged, AddressOf ResizeCameras
         Return ret
     End Function
 
+    Public Async Sub ResizeCameras(sender As ApplicationView, args As Object)
+        WriteToDebug("CameraListViewModel.ResizeCameras()", "executed")
+        For Each c In Me
+            c.MaxItemHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height - 40
+        Next
+    End Sub
 
 End Class
