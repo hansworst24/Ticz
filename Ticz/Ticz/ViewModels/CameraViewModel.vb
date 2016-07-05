@@ -1,7 +1,9 @@
 ﻿Imports System.Threading
 Imports GalaSoft.MvvmLight
+Imports Windows.Security.Cryptography.Certificates
 Imports Windows.Storage.Streams
 Imports Windows.Web.Http
+Imports Windows.Web.Http.Filters
 
 Public Class CameraViewModel
     Inherits ViewModelBase
@@ -150,42 +152,68 @@ Public Class CameraViewModel
 
 
     Public Async Function GetFrameFromJPG() As Task
-        Dim url As String = (New DomoApi).getCamFrame(cameraidx)
-        'TODO ADD HTTP FILTER
-        Using httpClient As New HttpClient()
-            Dim cts As New CancellationTokenSource(1000)
-            Dim ct_GrabFrame As CancellationToken = cts.Token
-            Dim imageStream As IBuffer
-            Try
-                imageStream = Await httpClient.GetBufferAsync(New Uri(url)).AsTask(ct_GrabFrame)
-            Catch ex As Exception
-                WriteToDebug("CameraViewModel.GetFrameFromJPG()", "Frame Skipped")
-                Exit Function
-            End Try
-            _FrameBytes = imageStream.Length
-            _TotalFrameBytes += imageStream.Length
-            If Not imageStream.Length = 0 Then
-                _FrameCount += 1
-                Await RunOnUIThread(Async Sub()
-                                        Dim newFrame As New BitmapImage
-                                        Using RandomAccessStream As InMemoryRandomAccessStream = New InMemoryRandomAccessStream
-                                            Await RandomAccessStream.WriteAsync(imageStream)
-                                            RandomAccessStream.Seek(0)
-                                            If Not RandomAccessStream.Size = 0 Then
-                                                Await newFrame.SetSourceAsync(RandomAccessStream)
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        Dim httpfilter = (New Domoticz).httpfilter
+        Using httpfilter
+
+            'If Not vm.TiczSettings.Password = "" AndAlso Not vm.TiczSettings.Username = "" Then
+            '    filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = vm.TiczSettings.Password, .UserName = vm.TiczSettings.Username}
+            '    Try
+            '        'might fail on older W10 versions
+            '        filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
+            '    Catch ex As Exception
+
+            '    End Try
+            'End If
+            'filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
+            'filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
+
+            ''Ignore SSL Certificate issues
+            'If vm.TiczSettings.IgnoreSSLErrors Then
+            '    filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted)
+            '    filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName)
+            'Else
+            '    filter.IgnorableServerCertificateErrors.Clear()
+            'End If
+            'filter.AllowUI = False
+            'filter.UseProxy = False
+            Dim url As String = (New DomoApi).getCamFrame(cameraidx)
+            'TODO ADD HTTP FILTER
+            Using httpClient As New HttpClient(httpfilter)
+                Dim cts As New CancellationTokenSource(1000)
+                Dim ct_GrabFrame As CancellationToken = cts.Token
+                Dim imageStream As IBuffer
+                Try
+                    imageStream = Await httpClient.GetBufferAsync(New Uri(url)).AsTask(ct_GrabFrame)
+                Catch ex As Exception
+                    WriteToDebug("CameraViewModel.GetFrameFromJPG()", "Frame Skipped")
+                    Exit Function
+                End Try
+                _FrameBytes = imageStream.Length
+                _TotalFrameBytes += imageStream.Length
+                If Not imageStream.Length = 0 Then
+                    _FrameCount += 1
+                    Await RunOnUIThread(Async Sub()
+                                            Dim newFrame As New BitmapImage
+                                            Using RandomAccessStream As InMemoryRandomAccessStream = New InMemoryRandomAccessStream
+                                                Await RandomAccessStream.WriteAsync(imageStream)
+                                                RandomAccessStream.Seek(0)
+                                                If Not RandomAccessStream.Size = 0 Then
+                                                    Await newFrame.SetSourceAsync(RandomAccessStream)
+                                                End If
+                                            End Using
+                                            WriteToDebug("CameraViewModel.GetFrameFromJPG()", String.Format("Frame rendered for camera : {0}", name))
+                                            frame1 = newFrame
+                                            RaisePropertyChanged("frame1")
+                                            'Only update framesize and totalframesize once every second or so
+                                            If Date.Now.Subtract(_LastFrameCapture).Seconds >= 1 Then
+                                                RaisePropertyChanged("FrameSize")
+                                                RaisePropertyChanged("TotalFrameSize")
+                                                _LastFrameCapture = Date.Now
                                             End If
-                                        End Using
-                                        WriteToDebug("CameraViewModel.GetFrameFromJPG()", String.Format("Frame rendered for camera : {0}", name))
-                                        frame1 = newFrame
-                                        RaisePropertyChanged("frame1")
-                                        'Only update framesize and totalframesize once every second or so
-                                        If Date.Now.Subtract(_LastFrameCapture).Seconds >= 1 Then
-                                            RaisePropertyChanged("FrameSize")
-                                            RaisePropertyChanged("TotalFrameSize")
-                                            _LastFrameCapture = Date.Now
-                                        End If
-                                    End Sub)
-            End If
+                                        End Sub)
+                End If
+            End Using
         End Using
         ' Dim httpClient As New HttpClient()
 

@@ -991,41 +991,75 @@ Public NotInheritable Class Domoticz
         Public Property title As String
     End Class
 
-    Public Async Function DownloadJSON(url As String, Optional timeOut As Integer = 5000) As Task(Of HttpResponseMessage)
-
-        Using filter As New HttpBaseProtocolFilter
+    Public ReadOnly Property httpfilter As HttpBaseProtocolFilter
+        Get
+            Dim f As New HttpBaseProtocolFilter
             If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
-                filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
+                f.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
                 Try
                     'might fail on older W10 versions
-                    filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
+                    f.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
                 Catch ex As Exception
 
                 End Try
             End If
-            filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
-            filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
+            f.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
+            f.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
 
             'Ignore SSL Certificate issues
             If app.myViewModel.TiczSettings.IgnoreSSLErrors Then
-                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted)
-                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName)
+                f.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted)
+                f.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName)
             Else
-                filter.IgnorableServerCertificateErrors.Clear()
+                f.IgnorableServerCertificateErrors.Clear()
             End If
-            filter.AllowUI = False
-            filter.UseProxy = False
-            Using wc As New HttpClient(filter)
-                Dim cts As New CancellationTokenSource(timeOut)
+            f.AllowUI = False
+            f.UseProxy = False
+            Return f
+        End Get
+    End Property
+
+    Public Async Function DownloadJSON(url As String, Optional timeOut As Integer = 0) As Task(Of HttpResponseMessage)
+
+        Using httpfilter
+            'If Not app.myViewModel.TiczSettings.Password = "" AndAlso Not app.myViewModel.TiczSettings.Username = "" Then
+            '    filter.ServerCredential = New Windows.Security.Credentials.PasswordCredential With {.Password = app.myViewModel.TiczSettings.Password, .UserName = app.myViewModel.TiczSettings.Username}
+            '    Try
+            '        'might fail on older W10 versions
+            '        filter.CookieUsageBehavior = HttpCookieUsageBehavior.NoCookies
+            '    Catch ex As Exception
+
+            '    End Try
+            'End If
+            'filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.Default
+            'filter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache
+
+            ''Ignore SSL Certificate issues
+            'If app.myViewModel.TiczSettings.IgnoreSSLErrors Then
+            '    filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted)
+            '    filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName)
+            'Else
+            '    filter.IgnorableServerCertificateErrors.Clear()
+            'End If
+            'filter.AllowUI = False
+            'filter.UseProxy = False
+            Using wc As New HttpClient(httpfilter)
+                Dim cts As New CancellationTokenSource(If(timeOut = 0, app.myViewModel.TiczSettings.HTTPTimeOut * 1000, 5000))
+                Dim response As HttpResponseMessage
                 Try
                     WriteToDebug("Downloader.DownloadJSON", url)
-                    Dim response As HttpResponseMessage = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
+                    response = Await wc.GetAsync(New Uri(url)).AsTask(cts.Token)
                     Return response
                 Catch ex As TaskCanceledException
                     Return New HttpResponseMessage With {.ReasonPhrase = "Connection timed out", .StatusCode = HttpStatusCode.RequestTimeout}
                 Catch ex As Exception
                     WriteToDebug("Downloader.DownloadJSON", ex.Message.ToString)
-                    Return New HttpResponseMessage With {.ReasonPhrase = ex.Message, .StatusCode = HttpStatusCode.Unauthorized}
+                    If response Is Nothing Then
+                        Return New HttpResponseMessage With {.ReasonPhrase = ex.Message, .StatusCode = HttpStatusCode.ServiceUnavailable}
+                    Else
+                        Return response
+                    End If
+
                 End Try
             End Using
         End Using

@@ -218,6 +218,7 @@ Partial Public Class TiczSettings
     Const strScreenSaverActiveKeyName As String = "strScreenSaverActive"
     Const strIdleTimeBeforeScreenSaverKeyName As String = "strIdleTimeBeforeScreenSaver"
     Const strZoomFactorKeyName As String = "strZoomFactor"
+    Const strHTTPTimeOutKeyName As String = "strHTTPTimeOut"
 
 #If DEBUG Then
     'PUT YOUR (TEST) SERVER DETAILS HERE IF YOU WANT TO DEBUG, AND NOT PROVIDE CREDENTIALS AND SERVER DETAILS EACH TIME
@@ -245,6 +246,7 @@ Partial Public Class TiczSettings
     Const strScreenSaverActiveDefault = False
     Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
     Const strZoomFactorDefault As Double = 1.0
+    Const strHTTPTimeOutDefault As Double = 5
 #Else
     'PROD SETTINGS
     Const strServerIPDefault = ""
@@ -270,6 +272,7 @@ Partial Public Class TiczSettings
     Const strScreenSaverActiveDefault = False
     Const strIdleTimeBeforeScreenSaverDefault As Integer = 120
     Const strZoomFactorDefault As Double = 1.0
+    Const strHTTPTimeOutDefault As Double = 5
 #End If
 
     Const strConnectionStatusDefault = False
@@ -412,12 +415,16 @@ Partial Public Class TiczSettings
         'settings.Save()
     End Sub
 
-    'Private _YesNoList As List(Of String) = New List(Of String)({"True", "False"}).ToList
-    'Public ReadOnly Property YesNoChoices As List(Of String)
-    '    Get
-    '        Return _YesNoList
-    '    End Get
-    'End Property
+    Public Property HTTPTimeOut As Double
+        Get
+            Return GetValueOrDefault(Of Double)(strHTTPTimeOutKeyName, strHTTPTimeOutDefault)
+        End Get
+        Set(value As Double)
+            If AddOrUpdateValue(strHTTPTimeOutKeyName, value) Then
+                Save()
+            End If
+        End Set
+    End Property
 
     Public Property ScreenSaverActive As Boolean
         Get
