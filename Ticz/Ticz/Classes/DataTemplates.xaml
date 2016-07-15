@@ -1461,8 +1461,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30"  MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" Content="Open" HorizontalAlignment="Stretch" Click="{x:Bind OpenButton}"/>
-                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" Content="Close" HorizontalAlignment="Stretch" Click="{x:Bind CloseButton}"/>
+                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30"  MaxWidth="200" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
+                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MaxWidth="200" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
                 </Grid>
             </Border>
             <TextBlock x:Name="FourthInfoText" 
@@ -1478,6 +1478,50 @@
                        Style="{StaticResource BodyTextBlockStyle}"/>
         </Grid>
     </DataTemplate>
+    <DataTemplate x:Key="DeviceWideBlindsPercentageView" x:DataType="local:DeviceViewModel">
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="20,0,0,0" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Row="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Style="{StaticResource DeviceBorderLess}">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="ButtonOpen" Margin="0,0,10,0"  Height="30"  MaxWidth="200" Padding="0" Grid.Row="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" Content="Open" HorizontalAlignment="Stretch" Command="{Binding OpenButtonCommand}"/>
+                    <Button x:Name="ButtonClose" Margin="10,0,0,0"  Height="30" MaxWidth="200" Padding="0" Grid.Row="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" Content="Close" HorizontalAlignment="Stretch" Command="{Binding CloseButtonCommand}"/>
+                    <Slider x:Name="PercentageSlider" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Minimum="1" Maximum="100"  Margin="0,0,0,0" Value="{Binding LevelInt, Mode=TwoWay}" StepFrequency="1">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="PointerCaptureLost" SourceObject="{Binding ElementName=PercentageSlider}">
+                                <Core:InvokeCommandAction Command="{Binding SliderValueChanged}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Slider>
+                </Grid>
+            </Border>
+            <TextBlock x:Name="FourthInfoText" 
+                       Grid.Row="1"
+                       Grid.Column="0" 
+                       Grid.ColumnSpan="2" 
+                       Visibility="Collapsed" 
+                       Text="{x:Bind LastUpdate, Mode=OneWay}" 
+                       TextWrapping="NoWrap" 
+                       Foreground="#FF808080" 
+                       FontSize="{Binding DataFontSize}" 
+                       VerticalAlignment="Stretch" 
+                       Style="{StaticResource BodyTextBlockStyle}"/>
+        </Grid>
+    </DataTemplate>
+    
     <DataTemplate x:Key="DeviceWideSetPointView" x:DataType="local:DeviceViewModel">
         <Grid Grid.Column="1" Grid.Row="0"  Margin="0,0,0,0" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>

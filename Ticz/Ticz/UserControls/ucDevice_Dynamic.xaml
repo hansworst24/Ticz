@@ -22,7 +22,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <!-- THIS IS THE HEADER FOR THE DEVICE, CONTAINING THE NAME-->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5">
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0">
         <TextBlock x:Name="Header"  Margin="0,0,0,0" Text="{x:Bind Device.Name}" 
                     FontSize="{x:Bind Device.HeaderFontSize}" 
                     HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap"/>

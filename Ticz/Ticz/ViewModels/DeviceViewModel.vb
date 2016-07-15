@@ -182,7 +182,7 @@ Public Class DeviceViewModel
     Public ReadOnly Property DataFontSize As Integer
         Get
             Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
-            Return 12 * vm.TiczSettings.ZoomFactor
+            Return 10 * vm.TiczSettings.ZoomFactor
         End Get
     End Property
     Public ReadOnly Property Description As String
@@ -229,6 +229,13 @@ Public Class DeviceViewModel
                         Case Constants.DEVICE.TYPE.RAIN : Return CType(Application.Current.Resources("DeviceWideRainView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.GROUP : Return CType(Application.Current.Resources("DeviceWideGroupView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.SCENE : Return CType(Application.Current.Resources("DeviceWideSceneView"), DataTemplate)
+                        Case Constants.DEVICE.TYPE.LIGHTING_1
+                            Select Case SwitchType
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
+                            End Select
                         Case Constants.DEVICE.TYPE.LIGHTING_2
                             Select Case SwitchType
                                 Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
@@ -250,6 +257,11 @@ Public Class DeviceViewModel
                             Select Case SwitchType
                                 Case Constants.DEVICE.SWITCHTYPE.SELECTOR : Return CType(Application.Current.Resources("DeviceWideSelectorView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
+
                             End Select
                         Case Constants.DEVICE.TYPE.P1_SMART_METER
                             Select Case SubType
@@ -425,8 +437,8 @@ Public Class DeviceViewModel
             Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
             Select Case DeviceRepresentation
                 Case Constants.DEVICEVIEWS.ICON : Return 12 * vm.TiczSettings.ZoomFactor
-                Case Constants.DEVICEVIEWS.WIDE : Return 16 * vm.TiczSettings.ZoomFactor
-                Case Constants.DEVICEVIEWS.LARGE : Return 20 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.WIDE : Return 14 * vm.TiczSettings.ZoomFactor
+                Case Constants.DEVICEVIEWS.LARGE : Return 18 * vm.TiczSettings.ZoomFactor
                 Case Else
                     Return 12 * vm.TiczSettings.ZoomFactor
             End Select
@@ -521,7 +533,11 @@ Public Class DeviceViewModel
                 Select Case _Device.TypeImg
                     Case Constants.DEVICE.TYPEIMG.ALERT : Return Constants.ICONPATH.ALERT
                     Case Constants.DEVICE.TYPEIMG.AIR : Return Constants.ICONPATH.AIR
-                    Case Constants.DEVICE.TYPEIMG.BLINDS : Return Constants.ICONPATH.BLINDS
+                    Case Constants.DEVICE.TYPEIMG.BLINDS
+                        Select Case _Device.Status
+                            Case Constants.DEVICE.STATUS.OPEN : Return Constants.ICONPATH.BLINDS_OPEN
+                            Case Else : Return Constants.ICONPATH.BLINDS
+                        End Select
                     Case Constants.DEVICE.TYPEIMG.CONTACT : Return Constants.ICONPATH.CONTACT
                     Case Constants.DEVICE.TYPEIMG.COUNTER : Return Constants.ICONPATH.COUNTER
                     Case Constants.DEVICE.TYPEIMG.CURRENT : Return Constants.ICONPATH.CURRENT
@@ -603,6 +619,10 @@ Public Class DeviceViewModel
                 Case Constants.DEVICE.SWITCHTYPE.BLINDS
                     If Status = Constants.DEVICE.STATUS.OPEN Then Return False Else Return True
                 Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                    If Status = Constants.DEVICE.STATUS.OPEN Then Return True Else Return False
+                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE
+                    If Status = Constants.DEVICE.STATUS.OPEN Then Return False Else Return True
+                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED
                     If Status = Constants.DEVICE.STATUS.OPEN Then Return True Else Return False
                 Case Constants.DEVICE.SWITCHTYPE.DIMMER
                     If Status = Constants.DEVICE.STATUS.OFF Then Return False Else Return True
@@ -890,6 +910,54 @@ Public Class DeviceViewModel
         End Get
     End Property
 
+    Public ReadOnly Property OpenButtonCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        WriteToDebug("Device.OpenButtonCommand()", "executed")
+                                        Dim switchToState As String
+                                        Select Case SwitchType
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                switchToState = Constants.DEVICE.STATUS.OFF
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                                                switchToState = Constants.DEVICE.STATUS.ON
+                                            Case Else
+                                                switchToState = Constants.DEVICE.STATUS.OFF
+                                        End Select
+                                        If [Protected] Then
+                                            'SwitchingToState = switchToState
+                                            'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+                                            'vm.selectedDevice = Me
+                                            Await ShowPasswordPrompt()
+                                            If PassCode = "" Then Exit Sub
+                                        End If
+                                        Dim ret As retvalue = Await SwitchDevice(switchToState)
+                                    End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property CloseButtonCommand As RelayCommand
+        Get
+            Return New RelayCommand(Async Sub()
+                                        WriteToDebug("Device.CloseButtonCommand()", "executed")
+                                        Dim switchToState As String
+                                        Select Case SwitchType
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS
+                                                switchToState = Constants.DEVICE.STATUS.ON
+                                            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                                                switchToState = Constants.DEVICE.STATUS.OFF
+                                            Case Else
+                                                switchToState = Constants.DEVICE.STATUS.ON
+                                        End Select
+                                        If [Protected] Then
+                                            Await ShowPasswordPrompt()
+                                            If PassCode = "" Then Exit Sub
+                                        End If
+                                        Dim ret As retvalue = Await SwitchDevice(switchToState)
+                                    End Sub)
+        End Get
+    End Property
+
+
 
     Public ReadOnly Property GroupSwitchOn As RelayCommand
         Get
@@ -980,15 +1048,14 @@ Public Class DeviceViewModel
     Public ReadOnly Property SliderValueChanged As RelayCommand
         Get
             Return New RelayCommand(Async Sub()
-                                        If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Then
+                                        If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Or
+                                           Me.SwitchType = Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE Or
+                                           Me.SwitchType = Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED Then
                                             'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent
                                             Dim ValueToSend As Integer = Math.Round((MaxDimLevel / 100) * LevelInt)
                                             WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
                                             Dim SwitchToState As String = (ValueToSend).ToString
                                             If [Protected] Then
-                                                'SwitchingToState = SwitchToState
-                                                'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-                                                'vm.selectedDevice = Me
                                                 Await ShowPasswordPrompt()
                                                 If PassCode = "" Then Exit Sub
                                             End If
@@ -1057,54 +1124,54 @@ Public Class DeviceViewModel
         Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
     End Sub
 
-    ''' <summary>
-    ''' Triggered by Devices that Open/Close
-    ''' </summary>
-    ''' <returns></returns>
-    Public Async Function OpenButton() As Task
-        WriteToDebug("Device.OpenButtonCommand()", "executed")
-        Dim switchToState As String
-        Select Case SwitchType
-            Case Constants.DEVICE.SWITCHTYPE.BLINDS
-                switchToState = Constants.DEVICE.STATUS.OFF
-            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-                switchToState = Constants.DEVICE.STATUS.ON
-            Case Else
-                switchToState = Constants.DEVICE.STATUS.OFF
-        End Select
-        If [Protected] Then
-            'SwitchingToState = switchToState
-            'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-            'vm.selectedDevice = Me
-            Await ShowPasswordPrompt()
-            If PassCode = "" Then Exit Function
-        End If
-        Dim ret As retvalue = Await SwitchDevice(switchToState)
-    End Function
-    ''' <summary>
-    ''' Triggered by Devices that Open/Close
-    ''' </summary>
-    ''' <returns></returns>
-    Public Async Function CloseButton() As Task
-        WriteToDebug("Device.CloseButtonCommand()", "executed")
-        Dim switchToState As String
-        Select Case SwitchType
-            Case Constants.DEVICE.SWITCHTYPE.BLINDS
-                switchToState = Constants.DEVICE.STATUS.ON
-            Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-                switchToState = Constants.DEVICE.STATUS.OFF
-            Case Else
-                switchToState = Constants.DEVICE.STATUS.ON
-        End Select
-        If [Protected] Then
-            'SwitchingToState = switchToState
-            'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-            'vm.selectedDevice = Me
-            Await ShowPasswordPrompt()
-            If PassCode = "" Then Exit Function
-        End If
-        Dim ret As retvalue = Await SwitchDevice(switchToState)
-    End Function
+    '''' <summary>
+    '''' Triggered by Devices that Open/Close
+    '''' </summary>
+    '''' <returns></returns>
+    'Public Async Function OpenButton() As Task
+    '    WriteToDebug("Device.OpenButtonCommand()", "executed")
+    '    Dim switchToState As String
+    '    Select Case SwitchType
+    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS
+    '            switchToState = Constants.DEVICE.STATUS.OFF
+    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+    '            switchToState = Constants.DEVICE.STATUS.ON
+    '        Case Else
+    '            switchToState = Constants.DEVICE.STATUS.OFF
+    '    End Select
+    '    If [Protected] Then
+    '        'SwitchingToState = switchToState
+    '        'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '        'vm.selectedDevice = Me
+    '        Await ShowPasswordPrompt()
+    '        If PassCode = "" Then Exit Function
+    '    End If
+    '    Dim ret As retvalue = Await SwitchDevice(switchToState)
+    'End Function
+    '''' <summary>
+    '''' Triggered by Devices that Open/Close
+    '''' </summary>
+    '''' <returns></returns>
+    'Public Async Function CloseButton() As Task
+    '    WriteToDebug("Device.CloseButtonCommand()", "executed")
+    '    Dim switchToState As String
+    '    Select Case SwitchType
+    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS
+    '            switchToState = Constants.DEVICE.STATUS.ON
+    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+    '            switchToState = Constants.DEVICE.STATUS.OFF
+    '        Case Else
+    '            switchToState = Constants.DEVICE.STATUS.ON
+    '    End Select
+    '    If [Protected] Then
+    '        'SwitchingToState = switchToState
+    '        'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+    '        'vm.selectedDevice = Me
+    '        Await ShowPasswordPrompt()
+    '        If PassCode = "" Then Exit Function
+    '    End If
+    '    Dim ret As retvalue = Await SwitchDevice(switchToState)
+    'End Function
 
 
     ''' <summary>
@@ -1434,6 +1501,21 @@ Public Class DeviceViewModel
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
                         End If
                         url = (New DomoApi).setDimmer(idx, SwitchingToState, PassCode)
+                    Case Constants.DEVICE.SWITCHTYPE.BLINDS, Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
+                        If SwitchingToState = "" Then
+                            If Me.isOn Then SwitchingToState = Constants.DEVICE.STATUS.OFF Else SwitchingToState = Constants.DEVICE.STATUS.ON
+                        End If
+                        url = (New DomoApi).SwitchLight(Me.idx, SwitchingToState, PassCode)
+                    Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE, Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED
+                        Select Case SwitchingToState
+                            Case Constants.DEVICE.STATUS.OFF, Constants.DEVICE.STATUS.ON
+                                url = (New DomoApi).SwitchLight(Me.idx, SwitchingToState, PassCode)
+                            Case ""
+                                SwitchingToState = If(Me.isOn, Constants.DEVICE.STATUS.OFF, Constants.DEVICE.STATUS.ON)
+                                url = (New DomoApi).SwitchLight(Me.idx, SwitchingToState, PassCode)
+                            Case Else
+                                url = (New DomoApi).setDimmer(idx, SwitchingToState, PassCode)
+                        End Select
                     Case Constants.DEVICE.SWITCHTYPE.SELECTOR
                         If SwitchingToState = "" Then
                             If Me.Status = Constants.DEVICE.STATUS.OFF Then SwitchingToState = Constants.DEVICE.STATUS.ON Else SwitchingToState = Constants.DEVICE.STATUS.OFF
@@ -1471,6 +1553,7 @@ Public Class DeviceViewModel
                     Await Me.Update()
                     domoRes = Nothing
                     SwitchingToState = ""
+                    RaisePropertyChanged("IconPathGeometry")
                     Return New retvalue With {.issuccess = 1}
                 Catch ex As Exception
                     app.myViewModel.Notify.Update(True, "Server sent empty response", 2, False, 2)
