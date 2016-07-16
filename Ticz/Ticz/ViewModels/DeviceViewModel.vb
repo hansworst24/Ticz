@@ -229,48 +229,35 @@ Public Class DeviceViewModel
                         Case Constants.DEVICE.TYPE.RAIN : Return CType(Application.Current.Resources("DeviceWideRainView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.GROUP : Return CType(Application.Current.Resources("DeviceWideGroupView"), DataTemplate)
                         Case Constants.DEVICE.TYPE.SCENE : Return CType(Application.Current.Resources("DeviceWideSceneView"), DataTemplate)
-                        Case Constants.DEVICE.TYPE.LIGHTING_1
-                            Select Case SwitchType
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
-                            End Select
-                        Case Constants.DEVICE.TYPE.LIGHTING_2
-                            Select Case SwitchType
-                                Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
-                                    Select Case HardwareType
-                                        Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideKODIPlayerView"), DataTemplate)
-                                        Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideLMSPlayerView"), DataTemplate)
-                                    End Select
-                                    Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
-                            End Select
                         Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS
                             Select Case SubType
                                 Case Constants.DEVICE.SUBTYPE.RGB, Constants.DEVICE.SUBTYPE.RGBW : Return CType(Application.Current.Resources("DeviceWideRGBDimmerView"), DataTemplate)
                                 Case Else : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
-                            End Select
-                        Case Constants.DEVICE.TYPE.LIGHT_SWITCH
-                            Select Case SwitchType
-                                Case Constants.DEVICE.SWITCHTYPE.SELECTOR : Return CType(Application.Current.Resources("DeviceWideSelectorView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
-
                             End Select
                         Case Constants.DEVICE.TYPE.P1_SMART_METER
                             Select Case SubType
                                 Case Constants.DEVICE.SUBTYPE.P1_ELECTRIC : Return CType(Application.Current.Resources("DeviceWideP1ElectricityView"), DataTemplate)
                                 Case Constants.DEVICE.SUBTYPE.P1_GAS : Return CType(Application.Current.Resources("DeviceWideP1GasView"), DataTemplate)
                             End Select
+                        Case Else
+                            Select Case SwitchType
+                                Case Constants.DEVICE.SWITCHTYPE.DIMMER : Return CType(Application.Current.Resources("DeviceWideSliderView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                    'TODO : REPAIR BLINDS_PERCENTAGE VIEW
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
+                                    Select Case HardwareType
+                                        Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideKODIPlayerView"), DataTemplate)
+                                        Case Constants.DEVICE.HARDWARETYPE.LOGITECHMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideLMSPlayerView"), DataTemplate)
+                                    End Select
+                                    Return CType(Application.Current.Resources("DeviceWideMediaPlayerView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.SELECTOR : Return CType(Application.Current.Resources("DeviceWideSelectorView"), DataTemplate)
+                            End Select
                     End Select
                     Return CType(Application.Current.Resources("DeviceWideView"), DataTemplate)
-                Case Else : Return CType(Application.Current.Resources("DeviceIconView"), DataTemplate)
+                Case Else : Throw New Exception("Not implemented, no device representation selected")
             End Select
         End Get
     End Property
