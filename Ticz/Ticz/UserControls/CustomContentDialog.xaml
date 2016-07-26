@@ -16,7 +16,7 @@
                   MinWidth="{TemplateBinding MaxWidth}" 
                   MinHeight="{TemplateBinding MaxHeight}" 
                   MaxHeight="{TemplateBinding MaxHeight}"
-                  VerticalAlignment="Stretch">
+                  VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
