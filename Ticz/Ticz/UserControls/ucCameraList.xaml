@@ -32,7 +32,6 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition Height="32"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -56,7 +55,8 @@
                                Stretch="Uniform" 
                                Canvas.ZIndex="99" 
                                Source="{x:Bind frame1, TargetNullValue='/Images/TiczLogo.png', FallbackValue='/Images/TiczLogo.png', Mode=OneWay}"/>
-                        <ToggleSwitch Grid.Row="0" Margin="0,-14,0,0" Height="30"
+                        <ToggleSwitch Grid.Row="1" VerticalAlignment="Top"
+                                      Canvas.ZIndex="100"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="2" 
                                       IsOn="{x:Bind AutoRefreshEnabled, Mode=TwoWay}">
@@ -67,42 +67,49 @@
                                 <TextBlock Text="On" FontSize="10"/>
                             </ToggleSwitch.OnContent>
                         </ToggleSwitch>
-                        <StackPanel Grid.Row="0" 
+                        <StackPanel Grid.Row="1" 
                                     Grid.Column="0" 
                                     Grid.ColumnSpan="2" 
                                     HorizontalAlignment="Right" 
                                     Orientation="Vertical" 
-                                    Margin="0,0,12,0">
+                                    VerticalAlignment="Top"
+                                    Padding="0,0,12,0"
+                                    Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                                    Canvas.ZIndex="100">
                             <TextBlock Grid.Row="0" 
                                    Grid.Column="0" 
                                    Grid.ColumnSpan="2"
-                                   FontSize="8"
+                                   FontSize="10"
                                    VerticalAlignment="Top" 
                                    Style="{ThemeResource SettingsExplanationStyle}" 
                                    HorizontalAlignment="Right" Text="{x:Bind FrameSize, Mode=OneWay}"/>
                             <TextBlock Grid.Row="2" 
                                    Grid.Column="0" 
                                    Grid.ColumnSpan="2"
-                                   FontSize="8"
+                                   FontSize="10"
                                    VerticalAlignment="Bottom" 
                                    Style="{ThemeResource SettingsExplanationStyle}" 
                                    HorizontalAlignment="Right" Text="{x:Bind TotalFrameSize, Mode=OneWay}"/>
-                            <TextBlock FontSize="8"
+                            <TextBlock FontSize="10"
                                    VerticalAlignment="Bottom" 
                                    Style="{ThemeResource SettingsExplanationStyle}" 
                                    HorizontalAlignment="Right" Text="{x:Bind FramesPerSecond, Mode=OneWay}"/>
                         </StackPanel>
  
-                        <Slider Grid.Row="3" 
-                                Margin="10,0,0,0" 
+                        <Slider Grid.Row="1" 
+                                Margin="20,0,100,0" 
                                 Grid.Column="0" 
+                                Grid.ColumnSpan="2"
                                 Minimum="40" 
                                 Maximum="2000" 
-                                Value="{x:Bind RefreshDelay, Mode=TwoWay}"/>
-                        <Border Grid.Row="3" 
+                                Value="{x:Bind RefreshDelay, Mode=TwoWay}"
+                                Canvas.ZIndex="100"
+                                VerticalAlignment="Bottom"/>
+                        <Border Grid.Row="1" 
                                 Grid.Column="1"
-                                Margin="10,0,12,0" 
-                                VerticalAlignment="Stretch">
+                                Margin="10,0,12,10" 
+                                Canvas.ZIndex="100"
+                                VerticalAlignment="Bottom">
                             <TextBlock Text="{x:Bind RefreshDelayText, Mode=OneWay}" 
                                        FontSize="10"
                                        VerticalAlignment="Center" HorizontalAlignment="Right" 

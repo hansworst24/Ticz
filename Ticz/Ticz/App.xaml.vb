@@ -62,6 +62,7 @@ NotInheritable Class Application
                 ' TODO: Load state from previously suspended application
             End If
             ' Place the frame in the current Window
+            'rootFrame.VerticalContentAlignment = VerticalAlignment.Top
             Window.Current.Content = rootFrame
         End If
         If rootFrame.Content Is Nothing Then
@@ -108,6 +109,8 @@ NotInheritable Class Application
 
     Public Sub KeyboardShowing(sender As InputPane, args As InputPaneVisibilityEventArgs)
         WriteToDebug("App.KeyboardShowing", "executed")
+        'Dim rootFrame As Frame = Window.Current.Content
+        'rootFrame.MaxHeight = Window.Current.Bounds.Height - sender.OccludedRect.Height
         If Not myViewModel.ActiveContentDialog Is Nothing Then
             myViewModel.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height - sender.OccludedRect.Height
         End If
@@ -117,6 +120,8 @@ NotInheritable Class Application
         WriteToDebug("App.KeyboardHiding", "executed")
         'We wait for a few milliseconds because resizing the ContentDialog immediately may cause a click event within the ContentDialog not to trigger properly
         Await Task.Delay(100)
+        'Dim rootFrame As Frame = Window.Current.Content
+        'rootFrame.MaxHeight = Window.Current.Bounds.Height
         If Not myViewModel.ActiveContentDialog Is Nothing Then
             myViewModel.ActiveContentDialog.MaxHeight = Window.Current.Bounds.Height
         End If
