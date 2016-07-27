@@ -34,7 +34,14 @@ Public Class CameraViewModel
 
     Public ReadOnly Property TotalFrameSize As String
         Get
-            Return String.Format("{0} {1}", Math.Round(_TotalFrameBytes / 1024, 2), "KB")
+            Dim sizes As String() = {"bytes", "KB", "MB", "GB", "PB"}
+            Dim j = 0
+                Dim totalsize As Long = _TotalFrameBytes
+            While totalsize > 1024 AndAlso j < sizes.Length
+                totalsize = totalsize / 1024
+                    j = j + 1
+                End While
+                Return String.Format("{0} {1}", Math.Round(totalsize, 2), sizes(j))
         End Get
     End Property
 
