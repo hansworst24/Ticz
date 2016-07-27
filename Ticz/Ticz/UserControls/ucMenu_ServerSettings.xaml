@@ -14,24 +14,26 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <StackPanel x:Name="FirstSettings" Grid.Row="0" Orientation="Vertical">
-            <TextBlock    Margin="0,5,0,0" Text="IP Address or hostname"/>
-            <TextBox      Text="{x:Bind TiczSettings.ServerIP, Mode=TwoWay}" PlaceholderText="i.e. 192.168.192.1 or myserver.org" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
-            <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
-            <TextBox      Text="{x:Bind TiczSettings.ServerPort, Mode=TwoWay}" PlaceholderText="i.e. 8080 for HTTP, 443 for HTTPS" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" InputScope="Number"/>
-            <CheckBox Content="Use SSL" IsChecked="{x:Bind TiczSettings.UseHTTPS, Mode=TwoWay}" Margin="0,0,-30,0"     />
-            <CheckBox Content="Ignore SSL Certificate Errors" IsChecked="{x:Bind TiczSettings.IgnoreSSLErrors, Mode=TwoWay}"   Margin="0,0,-40,0"    />
-            <TextBlock    Margin="0,5,0,0" Text="HTTP Timeout (s)" VerticalAlignment="Center"/>
-            <Slider Minimum="1" Maximum="10" StepFrequency="1" Value="{x:Bind TiczSettings.HTTPTimeOut, Mode=TwoWay}" />
-            <TextBlock    Margin="0,5,0,0" Text="Username"/>
-            <TextBox      Text="{x:Bind TiczSettings.Username, Mode=TwoWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
-            <TextBlock    Margin="0,5,0,0" Text="Password"/>
-            <PasswordBox  Password="{x:Bind TiczSettings.Password, Mode=TwoWay}"/>
-            <TextBlock Text="Note: Domoticz should be configured with Basic-Auth authentication" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"/>
-            <Button       Margin="0,5,0,0" Content="Test Connection" Command="{x:Bind TiczSettings.TestConnectionCommand}"/>
-            <TextBlock    Margin="0,5,0,0" Text="{x:Bind TiczSettings.TestConnectionResult}"/>
-            <ProgressBar IsIndeterminate="{x:Bind TiczSettings.TestInProgress}" Background="Transparent"/>
-        </StackPanel>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden">
+            <StackPanel x:Name="FirstSettings">
+                <TextBlock    Margin="0,5,0,0" Text="IP Address or hostname"/>
+                <TextBox      Text="{x:Bind TiczSettings.ServerIP, Mode=TwoWay}" PlaceholderText="i.e. 192.168.192.1 or myserver.org" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
+                <TextBlock    Margin="0,5,0,0" Text="Port" VerticalAlignment="Center"/>
+                <TextBox      Text="{x:Bind TiczSettings.ServerPort, Mode=TwoWay}" PlaceholderText="i.e. 8080 for HTTP, 443 for HTTPS" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" InputScope="Number"/>
+                <CheckBox Content="Use SSL" IsChecked="{x:Bind TiczSettings.UseHTTPS, Mode=TwoWay}" Margin="0,0,-30,0"     />
+                <CheckBox Content="Ignore SSL Certificate Errors" IsChecked="{x:Bind TiczSettings.IgnoreSSLErrors, Mode=TwoWay}"   Margin="0,0,-40,0"    />
+                <TextBlock    Margin="0,5,0,0" Text="HTTP Timeout (s)" VerticalAlignment="Center"/>
+                <Slider Minimum="1" Maximum="10" StepFrequency="1" Value="{x:Bind TiczSettings.HTTPTimeOut, Mode=TwoWay}" />
+                <TextBlock    Margin="0,5,0,0" Text="Username"/>
+                <TextBox      Text="{x:Bind TiczSettings.Username, Mode=TwoWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False"/>
+                <TextBlock    Margin="0,5,0,0" Text="Password"/>
+                <PasswordBox  Password="{x:Bind TiczSettings.Password, Mode=TwoWay}"/>
+                <TextBlock Text="Note: Domoticz should be configured with Basic-Auth authentication" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <Button       Margin="0,5,0,0" Content="Test Connection" Command="{x:Bind TiczSettings.TestConnectionCommand}"/>
+                <TextBlock    Margin="0,5,0,0" Text="{x:Bind TiczSettings.TestConnectionResult}"/>
+                <ProgressBar IsIndeterminate="{x:Bind TiczSettings.TestInProgress}" Background="Transparent"/>
+            </StackPanel>
+        </ScrollViewer>
         <Border Grid.Row="1">
             <AppBarButton x:Name="AppBarBackButton" 
                           Width="40" 
