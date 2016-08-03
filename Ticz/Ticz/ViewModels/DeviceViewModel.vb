@@ -1084,7 +1084,8 @@ Public Class DeviceViewModel
         Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
         're-insert the device back into the view
         app.myViewModel.currentRoom.Devices.Insert(myIndex, Me)
-        RaisePropertyChanged("DeviceRepresentation")
+        'RaisePropertyChanged("DeviceRepresentation")
+        app.myViewModel.currentRoom.Refresh()
     End Function
 
     Public Async Sub MoveUp()

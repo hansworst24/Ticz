@@ -287,7 +287,12 @@ Namespace TiczStorage
                 stream.Dispose()
             End If
 
-            app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomConfiguration)
+            If Not app.myViewModel.EnabledRooms Is Nothing Then
+                app.myViewModel.EnabledRooms.Clear()
+            Else
+                app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomConfiguration)
+            End If
+
 
             For Each r In app.myViewModel.DomoRooms.result.OrderBy(Function(x) x.Order)
                 Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()

@@ -248,7 +248,12 @@ Public Class RoomViewModel
         Me.RoomConfiguration.DeviceConfigurations.SortRoomDevices()
     End Function
 
-
+    ''' <summary>
+    ''' Triggers raisepropertychanged on Grouped Devices
+    ''' </summary>
+    Public Sub Refresh()
+        RaisePropertyChanged("GroupedDevices")
+    End Sub
 
     Public Function CreateGroupedDevices() As DeviceGroup(Of DevicesViewModel)
         Dim NewDevices As New DeviceGroup(Of DevicesViewModel)
