@@ -13,13 +13,13 @@
         <converters:IntToObjectConverter x:Key="IntToObjectConverter"/>
     </UserControl.Resources>
     
-    <Grid>
+    <Grid Width="280">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden">
-            <StackPanel x:Name="SecondSettings" Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,20">
+        <ScrollViewer Grid.Row="0" HorizontalAlignment="Stretch" Margin="0" VerticalScrollBarVisibility="Visible">
+            <StackPanel x:Name="SecondSettings" Grid.Row="1" Grid.Column="0" Margin="0" Orientation="Vertical">
                 <TextBlock Text="Preferred Theme" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock Text="Select the Theme color you want to use for Ticz (requires a restart)." 
                            TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>

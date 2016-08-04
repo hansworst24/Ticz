@@ -174,6 +174,8 @@ Public Class RoomViewModel
         Dim url As String = (New DomoApi).getAllDevicesForRoom(RoomIDX, True)
         'Hack to change the URL used when the Room is a "All Devices" room, with a static IDX of 12321
         If Me.RoomIDX = 12321 Then url = (New DomoApi).getAllDevices()
+        'Hack to change the URL used when the Room is the "Favourites" room, which has a room IDX of 0
+        If Me.RoomIDX = 0 Then url = (New DomoApi).getFavouriteDevices()
         Dim response As HttpResponseMessage = Await (New Domoticz).DownloadJSON(url)
         Dim devicelist As New List(Of DeviceModel)
         If response.IsSuccessStatusCode Then

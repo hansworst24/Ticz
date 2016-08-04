@@ -12,7 +12,11 @@
     d:DesignHeight="500"
     d:DesignWidth="300">
 
-    <Grid x:Name="paneGrid" Margin="0,0,0,0" BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" BorderThickness="0,0,2,0">
+    <Grid x:Name="paneGrid" 
+          Margin="0,0,0,0" 
+          BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
+          Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" 
+          BorderThickness="0,0,2,0">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="MenuStates">
                 <VisualState x:Name="ShowRooms">
@@ -140,7 +144,7 @@
                 </Border>
         </StackPanel>
         <!-- THIS IS THE CONTENTS OF THE MENU, WHERE PARTS GET HIDDEN OR MADE VISIBLE BASED ON DATATRIGGERS-->
-        <Grid x:Name="MainMenu" Grid.Row="1" Margin="10,0,10,0" >
+        <Grid x:Name="MainMenu" Grid.Row="1" Margin="4,0,4,0" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -200,7 +204,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" x:Name="SettingsMenu" Orientation="Vertical" Visibility="Visible" Margin="10,0,10,0">
+            <StackPanel Grid.Row="0" x:Name="SettingsMenu" Orientation="Vertical" Visibility="Visible" Margin="4,0,4,0">
                 <Button Content="Server Settings" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowServerSettingsMenu}"/>
                 <Button Content="Rooms Configuration" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowRoomSettingsMenu}"/>
                 <!--<Button Content="Camera Settings" FontSize="20" Style="{StaticResource MenuItemButton}" Click="{x:Bind Menu.ShowCameraSettingsMenu}"/>-->
@@ -225,19 +229,19 @@
         </Grid>
 
 
-        <local:Menu_ServerSettings x:Name="ServerSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="10,0,10,0">
+        <local:Menu_ServerSettings x:Name="ServerSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="4,0,4,0">
             <local:Menu_ServerSettings.RenderTransform>
                 <TranslateTransform x:Name="ServerSettingsTranslate" X="300"/>
             </local:Menu_ServerSettings.RenderTransform>
         </local:Menu_ServerSettings>
 
-        <local:ucMenu_RoomSettings x:Name="RoomSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="10,0,0,0">
+        <local:ucMenu_RoomSettings x:Name="RoomSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="4,0,0,0">
             <local:ucMenu_RoomSettings.RenderTransform>
                 <TranslateTransform x:Name="RoomSettingsTranslate" X="300"/>
             </local:ucMenu_RoomSettings.RenderTransform>
         </local:ucMenu_RoomSettings>
 
-        <local:ucMenu_GeneralSettings x:Name="GeneralSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="10,0,10,0">
+        <local:ucMenu_GeneralSettings x:Name="GeneralSettingsMenu" Grid.Row="1" Visibility="Visible" Margin="4,0,4,0">
             <local:ucMenu_GeneralSettings.RenderTransform>
                 <TranslateTransform x:Name="GeneralSettingsTranslate" X="300"/>
             </local:ucMenu_GeneralSettings.RenderTransform>

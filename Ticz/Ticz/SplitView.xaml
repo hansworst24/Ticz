@@ -40,7 +40,12 @@
         <Border VerticalAlignment="Bottom" Grid.Row="1" Canvas.ZIndex="100" Margin="0,0,0,0">
             <local:ucToastMessage DataContext="{x:Bind vm.Notify}"/>
         </Border>
-        <local:ucMenu_MainMenu Width="300" Margin="0,0,0,0" DataContext="{x:Bind vm.TiczMenu}" WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True"  Canvas.ZIndex="100" HorizontalAlignment="Left">
+        <local:ucMenu_MainMenu Width="300" 
+                               Margin="0,0,0,0" 
+                               DataContext="{x:Bind vm.TiczMenu}" 
+                               WinRTExtensions:FrameworkElementExtensions.ClipToBounds="True"  
+                               Canvas.ZIndex="100" 
+                               HorizontalAlignment="Left">
             <local:ucMenu_MainMenu.RenderTransform>
                 <TranslateTransform x:Name="MenuTranslate" X="-300"/>
             </local:ucMenu_MainMenu.RenderTransform>
@@ -129,12 +134,12 @@
     </Grid>
 
     <Page.BottomAppBar>
-    <CommandBar IsOpen="False" 
-                IsSticky="False" 
-                ClosedDisplayMode="Compact" 
-                HorizontalContentAlignment="Stretch">
+        <CommandBar IsOpen="False" 
+                    IsSticky="False" 
+                    ClosedDisplayMode="Compact" 
+                    HorizontalContentAlignment="Stretch">
             <CommandBar.Content>
-                <Grid HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,0">
                     <StackPanel Orientation="Horizontal">
                         <AppBarButton Width="48" 
                                       HorizontalAlignment="Left"

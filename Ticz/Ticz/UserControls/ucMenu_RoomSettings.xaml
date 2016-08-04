@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden" Margin="0,10,0,0">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden" Margin="0,10,0,0" Padding="4,0,4,0">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -44,6 +44,10 @@
                     <TextBlock    Text="Add 'All Devices' Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Add a Room which contains All Devices" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind TiczSettings.ShowAllDevices, Mode=TwoWay}"/>
+                    <TextBlock    Text="Add 'Favorites' Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock    Text="Add a Room which contains Favorite (starred) Devices, similar to the Domoticz Dashboard" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind TiczSettings.ShowFavorites, Mode=TwoWay}"/>
+
                     <TextBlock    Text="Room Layout" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Grid.Row="0" Margin="0,10,0,0" Text="You can define for each room if the room is visible and in what layout it is presented." 
                                Style="{ThemeResource SettingsExplanationStyle}"/>

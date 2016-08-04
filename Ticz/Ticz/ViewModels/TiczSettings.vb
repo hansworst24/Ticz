@@ -19,6 +19,7 @@ Partial Public Class TiczSettings
     Const strMinimumNumberOfColumnsKeyName As String = "strMinimumNumberOfColumns"
     Const strShowMarqueeKeyName As String = "strShowMarquee"
     Const strShowAllDevicesKeyName As String = "strShowAllDevices"
+    Const strShowFavoritesDevicesKeyName As String = "strShowFavouritesDevices"
     Const strSecondsForRefreshKeyName As String = "strSecondsForRefresh"
     Const strPreferredRoomIDXKeyName As String = "strPreferredRoomIDX"
     Const strShowLastSeenKeyName As String = "strShowLastSeen"
@@ -42,8 +43,8 @@ Partial Public Class TiczSettings
     Const strTimeOutDefault = 5
     Const strMinimumNumberOfColumnsDefault = 2
     Const strShowMarqueeDefault = "False"
-    'Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = "False"
+    Const strShowFavoritesDevicesDefault = "False"
     Const strSecondsForRefreshDefault = 0
     Const strUseBitmapIconsDefault = False
     'Const strSwitchIconBackgroundDefault = False
@@ -69,8 +70,8 @@ Partial Public Class TiczSettings
     Const strTimeOutDefault = 0
     Const strMinimumNumberOfColumnsDefault = 1
     Const strShowMarqueeDefault = "True"
-    Const strShowFavouritesDefault = "True"
     Const strShowAllDevicesDefault = True
+    Const strShowFavoritesDevicesDefault = "False"
     Const strSecondsForRefreshDefault = 10
     Const strUseBitmapIconsDefault = False
     Const strSwitchIconBackgroundDefault = False
@@ -378,6 +379,18 @@ Partial Public Class TiczSettings
         End Get
         Set(value As Boolean)
             If AddOrUpdateValue(strShowAllDevicesKeyName, value) Then
+                Save()
+            End If
+            app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+        End Set
+    End Property
+
+    Public Property ShowFavorites As Boolean
+        Get
+            Return GetValueOrDefault(Of Boolean)(strShowFavoritesDevicesKeyName, strShowFavoritesDevicesDefault)
+        End Get
+        Set(value As Boolean)
+            If AddOrUpdateValue(strShowFavoritesDevicesKeyName, value) Then
                 Save()
             End If
             app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()

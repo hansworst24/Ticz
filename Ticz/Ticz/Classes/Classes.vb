@@ -894,6 +894,7 @@ Public NotInheritable Class Domoticz
                         Me.result.Add(p)
                     Next
                     If app.myViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
+                    If app.myViewModel.TiczSettings.ShowFavorites Then Me.result.Insert(0, New Plan With {.idx = 0, .Name = "Favourites", .Order = 0})
                 End If
 
                 If Me.result.Count = 0 Then
@@ -1394,6 +1395,10 @@ Public NotInheritable Class DomoApi
 
     Public Function getAllDevices() As String
         Return String.Format("{0}/json.htm?type=devices&filter=all&used=true", ServerURL)
+    End Function
+
+    Public Function getFavouriteDevices() As String
+        Return String.Format("{0}/json.htm?type=devices&filter=all&used=true&favorite=1&order=Name&plan=0", ServerURL)
     End Function
 
     Public Function getAllScenes() As String

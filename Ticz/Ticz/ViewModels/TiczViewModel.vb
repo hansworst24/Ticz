@@ -347,10 +347,10 @@ Public Class TiczViewModel
 
 
 
-    Public Async Function LoadRoom(Optional idx As Integer = 0) As Task
+    Public Async Function LoadRoom(Optional idx As Integer = -1) As Task
         ' Notify.Update(False, "Loading room...", 1, False, 0)
         Dim RoomToLoad As Domoticz.Plan
-        If idx = 0 Then
+        If idx = -1 Then
             ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
             Dim TiczRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
             If Not TiczRoom Is Nothing Then
