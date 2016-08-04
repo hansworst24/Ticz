@@ -16,7 +16,7 @@ Public Class RoomViewModel
     Public ReadOnly Property RoomContentTemplate As DataTemplate
         Get
             Select Case RoomConfiguration.RoomView
-                Case Constants.ROOMVIEW.ICONVIEW : Return CType(CType(Application.Current, Application).Resources("IconViewDataTemplate"), DataTemplate)
+                Case Constants.ROOMVIEW.ICONVIEW : Return CType(CType(Application.Current, Application).Resources("GridViewDataTemplate"), DataTemplate)
                 Case Constants.ROOMVIEW.GRIDVIEW : Return CType(CType(Application.Current, Application).Resources("GridViewDataTemplate"), DataTemplate)
                 Case Constants.ROOMVIEW.LISTVIEW : Return CType(CType(Application.Current, Application).Resources("ListViewDataTemplate"), DataTemplate)
                 Case Constants.ROOMVIEW.RESIZEVIEW : Return CType(CType(Application.Current, Application).Resources("ResizeViewDataTemplate"), DataTemplate)
@@ -125,7 +125,7 @@ Public Class RoomViewModel
         RoomIDX = roomplan.idx
         RoomName = roomplan.Name
         RoomConfiguration = roomConfig
-        ItemHeight = 120
+        ItemHeight = 112
         'TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
         SetItemWidthHeight()
 
@@ -140,7 +140,7 @@ Public Class RoomViewModel
             Case Constants.ROOMVIEW.DASHVIEW : iWidth = DefaultItemWidth : iMargin = 0
             Case Constants.ROOMVIEW.RESIZEVIEW : iWidth = DefaultItemWidth : iMargin = 0
             Case Constants.ROOMVIEW.GRIDVIEW : iWidth = 200 : iMargin = 0
-            Case Constants.ROOMVIEW.ICONVIEW : iWidth = DefaultItemWidth : iMargin = 4
+            Case Constants.ROOMVIEW.ICONVIEW : iWidth = DefaultItemWidth : iMargin = 0
             Case Constants.ROOMVIEW.LISTVIEW : iWidth = DefaultItemWidth : iMargin = 0
             Case Else
                 Throw New Exception("RoomView unkown, cant calculate itemwidth")

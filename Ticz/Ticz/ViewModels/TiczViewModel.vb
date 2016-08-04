@@ -58,20 +58,20 @@ Public Class TiczViewModel
     End Property
     Private Property _currentRoom As RoomViewModel
 
-    Public ReadOnly Property RoomContentTemplate As DataTemplate
-        Get
-            If Not currentRoom Is Nothing Then
-                Select Case currentRoom.RoomConfiguration.RoomView
-                    Case Constants.ROOMVIEW.ICONVIEW : Return CType(CType(Application.Current, Application).Resources("IconViewDataTemplate"), DataTemplate)
-                    Case Constants.ROOMVIEW.GRIDVIEW : Return CType(CType(Application.Current, Application).Resources("GridViewDataTemplate"), DataTemplate)
-                    Case Constants.ROOMVIEW.LISTVIEW : Return CType(CType(Application.Current, Application).Resources("ListViewDataTemplate"), DataTemplate)
-                    Case Constants.ROOMVIEW.RESIZEVIEW : Return CType(CType(Application.Current, Application).Resources("ResizeViewDataTemplate"), DataTemplate)
-                    Case Constants.ROOMVIEW.DASHVIEW : Return CType(CType(Application.Current, Application).Resources("DashboardViewDataTemplate"), DataTemplate)
-                End Select
-            End If
-        End Get
+    'Public ReadOnly Property RoomContentTemplate As DataTemplate
+    '    Get
+    '        If Not currentRoom Is Nothing Then
+    '            Select Case currentRoom.RoomConfiguration.RoomView
+    '                Case Constants.ROOMVIEW.ICONVIEW : Return CType(CType(Application.Current, Application).Resources("IconViewDataTemplate"), DataTemplate)
+    '                Case Constants.ROOMVIEW.GRIDVIEW : Return CType(CType(Application.Current, Application).Resources("GridViewDataTemplate"), DataTemplate)
+    '                Case Constants.ROOMVIEW.LISTVIEW : Return CType(CType(Application.Current, Application).Resources("ListViewDataTemplate"), DataTemplate)
+    '                Case Constants.ROOMVIEW.RESIZEVIEW : Return CType(CType(Application.Current, Application).Resources("ResizeViewDataTemplate"), DataTemplate)
+    '                Case Constants.ROOMVIEW.DASHVIEW : Return CType(CType(Application.Current, Application).Resources("DashboardViewDataTemplate"), DataTemplate)
+    '            End Select
+    '        End If
+    '    End Get
 
-    End Property
+    'End Property
 
     Public Property LastRefresh As DateTime
 

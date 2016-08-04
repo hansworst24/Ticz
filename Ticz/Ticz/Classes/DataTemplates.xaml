@@ -248,7 +248,7 @@
    
 
     <!-- RoomView Data Templates-->
-    <DataTemplate x:Key="IconViewDataTemplate" x:DataType="local:RoomViewModel">
+    <!--<DataTemplate x:Key="IconViewDataTemplate" x:DataType="local:RoomViewModel">
         <Grid x:Name="gridRoomIconView" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
             <Grid.Resources>
                 <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices, Mode=OneWay}"
@@ -262,11 +262,12 @@
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Top"/>
                         <Setter Property="Margin" Value="2"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplate>
                     <DataTemplate>
-                        <!--<Rectangle Fill="DarkOrange" DataContext="{Binding}" MinHeight="120" MinWidth="120" Height="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemHeight}" Width="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemWidth}"/>-->
                         <local:ucDevice_Dynamic 
                             Height="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemHeight}" 
                             Width="{Binding ElementName=gridRoomIconView, Path=DataContext.currentRoom.ItemWidth}"/>
@@ -275,8 +276,10 @@
                 </GridView.ItemTemplate>
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid Orientation="Horizontal"/>
-                        <!--<StackPanel Orientation="Vertical"/>-->
+                        <ItemsWrapGrid Margin="0" 
+                                       Orientation="Horizontal" 
+                                       ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"
+                                       ItemHeight="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemHeight}"/>
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.GroupStyle >
@@ -292,7 +295,7 @@
                 </GridView.GroupStyle>
             </GridView>
         </Grid>
-    </DataTemplate>
+    </DataTemplate>-->
 
     <DataTemplate x:Key="ListViewDataTemplate" x:DataType="local:RoomViewModel">
         <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
@@ -317,6 +320,8 @@
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Margin" Value="2" />
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
@@ -330,8 +335,9 @@
         </Grid>
     </DataTemplate>
 
+    <!-- THIS TEMPLATE IS USED FOR BOTH ICON VIEW AS WELL AS GRID VIEW. -->
     <DataTemplate x:Key="GridViewDataTemplate" x:DataType="local:RoomViewModel">
-        <Grid Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+        <Grid x:Name="GridGridView" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
             <Grid.Resources>
                 <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices}" IsSourceGrouped="True" />
             </Grid.Resources>
@@ -357,16 +363,19 @@
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Margin="0" 
                                        Orientation="Horizontal" 
-                                       ItemWidth="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemWidth}"
-                                       ItemHeight="{Binding ElementName=griddie, Path=DataContext.currentRoom.ItemHeight}"/>
+                                       ItemWidth="{Binding ElementName=GridGridView, Path=DataContext.currentRoom.ItemWidth}"
+                                       ItemHeight="{Binding ElementName=GridGridView, Path=DataContext.currentRoom.ItemHeight}"/>
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemContainerStyle>
                     <Style TargetType="GridViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalAlignment" Value="Top"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                         <Setter Property="Margin" Value="2"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplate>
@@ -384,7 +393,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ResizeViewDataTemplate" x:DataType="local:RoomViewModel">
-        <Grid x:Name="Griddie" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+        <Grid x:Name="GriddieResize" Margin="0" Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
             <Grid.Resources>
                 <CollectionViewSource x:Key="cvsGroupedDevices" Source="{Binding currentRoom.GroupedDevices}" IsSourceGrouped="True" />
             </Grid.Resources>
@@ -405,8 +414,8 @@
                                 <VariableSizedWrapGrid Orientation="Horizontal" 
                                                        HorizontalAlignment="Stretch"  
                                                        HorizontalChildrenAlignment="Left" 
-                                                       ItemHeight="{Binding ElementName=Griddie, Path=DataContext.currentRoom.ItemHeight}" 
-                                                       ItemWidth="{Binding ElementName=Griddie, Path=DataContext.currentRoom.ItemWidth}"/>
+                                                       ItemHeight="{Binding ElementName=GriddieResize, Path=DataContext.currentRoom.ItemHeight}" 
+                                                       ItemWidth="{Binding ElementName=GriddieResize, Path=DataContext.currentRoom.ItemWidth}"/>
                             </ItemsPanelTemplate>
                         </GroupStyle.Panel>
                     </GroupStyle>
@@ -417,6 +426,8 @@
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
                         <Setter Property="Margin" Value="2"/>
                     </Style>
                 </local:VariableGrid.ItemContainerStyle>
@@ -447,6 +458,8 @@
                         <Setter Property="VerticalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                         <Setter Property="Margin" Value="2"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
                         <Setter Property="Padding" Value="0"/>
                     </Style>
                 </local:VariableGrid.ItemContainerStyle>
@@ -457,9 +470,11 @@
                 </local:VariableGrid.ItemTemplate>
                 <local:VariableGrid.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <VariableSizedWrapGrid Margin="0" Orientation="Horizontal" 
+                        <VariableSizedWrapGrid Margin="0" 
+                                               Orientation="Horizontal" 
                                                HorizontalAlignment="Stretch"  
-                                               HorizontalChildrenAlignment="Left" ItemHeight="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemHeight}"
+                                               HorizontalChildrenAlignment="Left" 
+                                               ItemHeight="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemHeight}"
                                                ItemWidth="{Binding ElementName=griddieDashBoard, Path=DataContext.currentRoom.ItemWidth}"/>
                     </ItemsPanelTemplate>
                 </local:VariableGrid.ItemsPanel>

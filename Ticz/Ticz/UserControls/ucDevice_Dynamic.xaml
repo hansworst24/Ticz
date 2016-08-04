@@ -14,8 +14,12 @@
     BorderThickness="0">
     <UserControl.Resources>
     </UserControl.Resources>
-    <Grid x:Name="rootGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"  Margin="0" Padding="5" HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch" BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" BorderThickness="1" >
+    <Grid x:Name="rootGrid" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
+          Margin="0"
+          Padding="4"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch" 
+          >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
