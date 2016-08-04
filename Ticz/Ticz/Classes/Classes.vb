@@ -257,13 +257,20 @@ End Class
 Namespace TiczStorage
     Public Class RoomConfigurations
         Inherits ObservableCollection(Of RoomConfiguration)
-
         Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+        Public Property DomoticzRooms As New Domoticz.Plans
 
+
+        Public Async Function LoadDomoticzRooms() As Task
+            Await DomoticzRooms.Load()
+        End Function
 
         Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
             WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "start")
             Me.Clear()
+            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "Loading Domoticz Rooms")
+            Await LoadDomoticzRooms()
+
             Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
             Dim storageFile As Windows.Storage.StorageFile
             Dim fileExists As Boolean = True
@@ -293,8 +300,7 @@ Namespace TiczStorage
                 app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomConfiguration)
             End If
 
-
-            For Each r In app.myViewModel.DomoRooms.result.OrderBy(Function(x) x.Order)
+            For Each r In DomoticzRooms.result.OrderBy(Function(x) x.Order)
                 Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
                 If retreivedRoomConfig Is Nothing Then
                     retreivedRoomConfig = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ROOMVIEW.ICONVIEW, .ShowRoom = True}
@@ -308,7 +314,7 @@ Namespace TiczStorage
 
         Public Async Function SaveRoomConfigurations() As Task
             WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "start")
-            If app.myViewModel.DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
+            If DomoticzRooms.result.Any(Function(x) x.Name = "Ticz") Then
                 'We are running in 'Debug mode', therefore we won't save the roomconfigurations
                 Exit Function
             End If
@@ -319,7 +325,7 @@ Namespace TiczStorage
 
             For i As Integer = Me.Count - 1 To 0 Step -1
                 Dim rconfig As TiczStorage.RoomConfiguration = Me(i)
-                Dim domoroom As Domoticz.Plan = (From d In app.myViewModel.DomoRooms.result Where d.idx = rconfig.RoomIDX And d.Name = rconfig.RoomName Select d).FirstOrDefault()
+                Dim domoroom As Domoticz.Plan = (From d In DomoticzRooms.result Where d.idx = rconfig.RoomIDX And d.Name = rconfig.RoomName Select d).FirstOrDefault()
                 If domoroom Is Nothing Then Me.Remove(rconfig)
             Next
 
@@ -882,11 +888,17 @@ Public NotInheritable Class Domoticz
                 'Check if there exists a "Ticz" room in Domoticz. If so, ignore all other rooms
                 If deserialized.result.Any(Function(x) x.Name = "Ticz") Then
                     Me.result.Add(deserialized.result.Where(Function(x) x.Name = "Ticz").FirstOrDefault)
+                    Await app.myViewModel.Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposes, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 1, False, 10)
                 Else
                     For Each p In deserialized.result.OrderBy(Function(x) Int32.Parse(x.Order))
                         Me.result.Add(p)
                     Next
                     If app.myViewModel.TiczSettings.ShowAllDevices Then Me.result.Insert(0, New Plan With {.idx = 12321, .Name = "All Devices", .Order = 0})
+                End If
+
+                If Me.result.Count = 0 Then
+                    Await app.myViewModel.Notify.Update(True, "No roomplans are configured on the Domoticz Server. Create one or more roomplans in Domoticz in order to see something here :)", 2, False, 0)
+                    'Exit Function
                 End If
 
 

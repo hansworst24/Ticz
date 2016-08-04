@@ -15,7 +15,7 @@ Public Class TiczViewModel
     Public Property DomoConfig As New Domoticz.Config
     Public Property DomoSunRiseSet As New Domoticz.SunRiseSet
     Public Property DomoVersion As New Domoticz.Version
-    Public Property DomoRooms As New Domoticz.Plans
+    'Public Property DomoRooms As New Domoticz.Plans
     Public Property DomoSettings As New Domoticz.Settings
     Public Property DomoSecPanel As New SecurityPanelViewModel
     Public Property Variables As New VariableListViewModel
@@ -352,24 +352,24 @@ Public Class TiczViewModel
         Dim RoomToLoad As Domoticz.Plan
         If idx = 0 Then
             ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
-            Dim TiczRoom As Domoticz.Plan = (From r In DomoRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
+            Dim TiczRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
             If Not TiczRoom Is Nothing Then
                 RoomToLoad = TiczRoom
             Else
-                Dim PreferredRoom As Domoticz.Plan = (From r In DomoRooms.result Where r.idx = TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
+                Dim PreferredRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
                 If Not PreferredRoom Is Nothing Then
                     RoomToLoad = PreferredRoom
                     TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
                 Else
                     'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
-                    If Not DomoRooms.result.Count = 0 Then
-                        RoomToLoad = DomoRooms.result(0)
-                        TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(DomoRooms.result(0).idx, DomoRooms.result(0).Name)
+                    If Not TiczRoomConfigs.DomoticzRooms.result.Count = 0 Then
+                        RoomToLoad = TiczRoomConfigs.DomoticzRooms.result(0)
+                        TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(TiczRoomConfigs.DomoticzRooms.result(0).idx, TiczRoomConfigs.DomoticzRooms.result(0).Name)
                     End If
                 End If
             End If
         Else
-            RoomToLoad = (From r In DomoRooms.result Where r.idx = idx Select r).FirstOrDefault()
+            RoomToLoad = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = idx Select r).FirstOrDefault()
         End If
 
         If Not RoomToLoad Is Nothing Then
@@ -417,21 +417,18 @@ Public Class TiczViewModel
         End If
 
         'Load the Room/Floorplans from the Domoticz Server
-        Await Notify.Update(False, "Loading Domoticz rooms...", 0)
-        If Not (Await DomoRooms.Load()).issuccess Then
-            Await Notify.Update(True, "Error loading Domoticz rooms...", 1, False, 0)
-        End If
+        'Await Notify.Update(False, "Loading Domoticz rooms...", 0)
+        'If Not (Await DomoRooms.Load()).issuccess Then
+        '    Await Notify.Update(True, "Error loading Domoticz rooms...", 1, False, 0)
+        'End If
 
-        If DomoRooms.result.Count = 0 Then
-            Await Notify.Update(True, "No roomplans are configured on the Domoticz Server. Create one or more roomplans in Domoticz in order to see something here :)", 2, False, 0)
-            Exit Function
-        End If
+
 
         'TODO : MOVE SECPANEL STUFF TO RIGHT PLACE
         Await Notify.Update(False, "Loading Domoticz Security Panel Status...", 0, False, 0)
         Await DomoSecPanel.GetSecurityStatus()
 
-        'Load the Room Configurations from Storage
+        'Load the Room Configurations from Storage and Domoticz Server
         Await Notify.Update(False, "Loading Ticz Room configuration...", 0, False, 0)
         If Not Await TiczRoomConfigs.LoadRoomConfigurations() Then
             Await Task.Delay(2000)
@@ -445,11 +442,7 @@ Public Class TiczViewModel
         LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
 
-        If DomoRooms.result.Any(Function(x) x.Name = "Ticz") Then
-            Await Notify.Update(False, "You have a room in Domoticz called  'Ticz'. This is used for troubleshooting purposes, in case there are issues with the app in combination with certain controls. Due to this, no other rooms are loaded. Rename the 'Ticz' room to see other rooms.", 1, False, 10)
-        Else
-            Notify.Clear()
-        End If
+        Notify.Clear()
 
         'Start IdleTimeCounter
         IdleTimer.StartCounter()
