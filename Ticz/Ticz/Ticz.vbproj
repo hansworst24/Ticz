@@ -145,6 +145,7 @@
     <Compile Include="Classes\DataTemplateSelectors.vb" />
     <Compile Include="Models\DeviceModel.vb" />
     <Compile Include="Models\DevicesModel.vb" />
+    <Compile Include="Models\RoomConfigurationModel.vb" />
     <Compile Include="SplitView.xaml.vb">
       <DependentUpon>SplitView.xaml</DependentUpon>
     </Compile>

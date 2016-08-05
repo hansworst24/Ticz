@@ -70,7 +70,7 @@
                     Grid.Row="0" 
                     Height="40">
                 <TextBlock VerticalAlignment="Center" 
-                           Text="{x:Bind vm.currentRoom.RoomName, Mode=OneWay}"
+                           Text="{x:Bind vm.Rooms.ActiveRoom.RoomName, Mode=OneWay}"
                            FontSize="24" 
                            Style="{ThemeResource BaseTextBlockStyle}"/>
             </Border>
@@ -108,14 +108,23 @@
                     VerticalAlignment="Center" 
                     Grid.Row="0" 
                     Margin="0,0,4,0">
-                <TextBlock VerticalAlignment="Center" 
-                           Text="{x:Bind vm.DomoVersion.version, Mode=OneWay}"
-                           FontSize="10" 
-                           Style="{ThemeResource BaseTextBlockStyle}"/>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock VerticalAlignment="Center" 
+                               HorizontalAlignment="Right"
+                               Text="{x:Bind vm.DomoVersion.version, Mode=OneWay}"
+                               FontSize="10" 
+                               Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <!--<TextBlock VerticalAlignment="Center" 
+                               HorizontalAlignment="Right"
+                               Text="Ticz v2.0.4"
+                               FontSize="10" 
+                               Style="{ThemeResource BaseTextBlockStyle}"/>-->
+
+                </StackPanel>
             </Border>
             <!-- THIS IS THE ROOM VIEW, WHICH IS THE COLLECETION OF DEVICES THAT ARE SHOWN IN THE SELECTED ROOM VIEW-->
             <ContentControl Grid.Row="1" 
-                            ContentTemplate="{Binding currentRoom.RoomContentTemplate}" 
+                            ContentTemplate="{Binding Rooms.ActiveRoom.RoomContentTemplate}" 
                             HorizontalContentAlignment="Stretch" 
                             VerticalContentAlignment="Stretch"/>
             <!-- BUSY INDICATOR -->

@@ -19,19 +19,11 @@ Public Class TiczViewModel
     Public Property DomoSettings As New Domoticz.Settings
     Public Property DomoSecPanel As New SecurityPanelViewModel
     Public Property Variables As New VariableListViewModel
-    Public Property EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
-        Get
-            Return _EnabledRooms
-        End Get
-        Set(value As ObservableCollection(Of TiczStorage.RoomConfiguration))
-            _EnabledRooms = value
-            RaisePropertyChanged("EnabledRooms")
-        End Set
-    End Property
-    Private Property _EnabledRooms As ObservableCollection(Of TiczStorage.RoomConfiguration)
+    Public Property Rooms As New RoomsViewModel
+
     Public Property TiczSettings As New TiczSettings
     Public Property IdleTimer As New IdleTimerViewModel
-    Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
+    'Public Property TiczRoomConfigs As New TiczStorage.RoomConfigurations
 
     Public Property TiczMenu As New TiczMenuSettings
     Public Property Notify As New ToastMessageViewModel
@@ -46,32 +38,6 @@ Public Class TiczViewModel
     End Property
     Private Property _IsRefreshing As Boolean
     Public Property IsLoading As Boolean
-    Public Property currentRoom As RoomViewModel
-        Get
-            Return _currentRoom
-        End Get
-        Set(value As RoomViewModel)
-            _currentRoom = value
-            RaisePropertyChanged("RoomContentTemplate")
-            RaisePropertyChanged("currentRoom")
-        End Set
-    End Property
-    Private Property _currentRoom As RoomViewModel
-
-    'Public ReadOnly Property RoomContentTemplate As DataTemplate
-    '    Get
-    '        If Not currentRoom Is Nothing Then
-    '            Select Case currentRoom.RoomConfiguration.RoomView
-    '                Case Constants.ROOMVIEW.ICONVIEW : Return CType(CType(Application.Current, Application).Resources("IconViewDataTemplate"), DataTemplate)
-    '                Case Constants.ROOMVIEW.GRIDVIEW : Return CType(CType(Application.Current, Application).Resources("GridViewDataTemplate"), DataTemplate)
-    '                Case Constants.ROOMVIEW.LISTVIEW : Return CType(CType(Application.Current, Application).Resources("ListViewDataTemplate"), DataTemplate)
-    '                Case Constants.ROOMVIEW.RESIZEVIEW : Return CType(CType(Application.Current, Application).Resources("ResizeViewDataTemplate"), DataTemplate)
-    '                Case Constants.ROOMVIEW.DASHVIEW : Return CType(CType(Application.Current, Application).Resources("DashboardViewDataTemplate"), DataTemplate)
-    '            End Select
-    '        End If
-    '    End Get
-
-    'End Property
 
     Public Property LastRefresh As DateTime
 
@@ -94,11 +60,13 @@ Public Class TiczViewModel
     End Sub
 
     Public Async Sub RoomSelected(sender As Object, e As SelectionChangedEventArgs)
-        Dim selectedRoom As TiczStorage.RoomConfiguration = TryCast(sender, ListView).SelectedItem
+        Dim selectedRoom As RoomViewModel = TryCast(sender, ListView).SelectedItem
         If Not selectedRoom Is Nothing Then
+            'Clean up previous Room's Devices first
+            Rooms.ActiveRoom.Devices.Clear()
             Await Notify.Update(False, "Loading room...", 1, False, 0)
             If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
-            Await LoadRoom(selectedRoom.RoomIDX)
+            Await Rooms.SetActiveRoom(selectedRoom.RoomIDX)
             Notify.Clear()
         End If
     End Sub
@@ -288,13 +256,19 @@ Public Class TiczViewModel
             'Get all devices for this room that have been updated since the LastRefresh (Domoticz will tell you which ones)
             Dim dev_response, grp_response As New HttpResponseMessage
             'Hack in case we're looking at the "All Devices" room, we need to download status for all devices regardless of the room
-            If currentRoom.RoomIDX = 12321 Then
-                dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevices()))
-                grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
-            Else
-                dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(currentRoom.RoomIDX, LoadAllUpdates)))
-                grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(currentRoom.RoomIDX)))
-            End If
+            Select Case Rooms.ActiveRoom.RoomIDX
+                Case 12321
+                    dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevices()))
+                    grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
+
+                Case 0
+                    dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getFavouriteDevices()))
+                    'grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
+
+                Case Else
+                    dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(Rooms.ActiveRoom.RoomIDX, LoadAllUpdates)))
+                    grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(Rooms.ActiveRoom.RoomIDX)))
+            End Select
 
             'Collect all updated groups/scenes and devices into a single list
             Dim devicesToRefresh As New List(Of DeviceModel)
@@ -311,7 +285,7 @@ Public Class TiczViewModel
                 For Each d In devicesToRefresh
                     Dim deviceToUpdate As DeviceViewModel
                     'If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                    deviceToUpdate = (From devs In currentRoom.Devices Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
+                    deviceToUpdate = (From devs In Rooms.ActiveRoom.Devices Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
                     'Else
                     '    deviceToUpdate = currentRoom.GetActiveGroupedDeviceList.GetDevice(d.idx, d.Name)
                     'End If
@@ -347,37 +321,37 @@ Public Class TiczViewModel
 
 
 
-    Public Async Function LoadRoom(Optional idx As Integer = -1) As Task
-        ' Notify.Update(False, "Loading room...", 1, False, 0)
-        Dim RoomToLoad As Domoticz.Plan
-        If idx = -1 Then
-            ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
-            Dim TiczRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
-            If Not TiczRoom Is Nothing Then
-                RoomToLoad = TiczRoom
-            Else
-                Dim PreferredRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
-                If Not PreferredRoom Is Nothing Then
-                    RoomToLoad = PreferredRoom
-                    TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
-                Else
-                    'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
-                    If Not TiczRoomConfigs.DomoticzRooms.result.Count = 0 Then
-                        RoomToLoad = TiczRoomConfigs.DomoticzRooms.result(0)
-                        TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(TiczRoomConfigs.DomoticzRooms.result(0).idx, TiczRoomConfigs.DomoticzRooms.result(0).Name)
-                    End If
-                End If
-            End If
-        Else
-            RoomToLoad = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = idx Select r).FirstOrDefault()
-        End If
+    'Public Async Function LoadRoom(Optional idx As Integer = -1) As Task
+    '    ' Notify.Update(False, "Loading room...", 1, False, 0)
+    '    'Dim RoomToLoad As Domoticz.Plan
+    '    'If idx = -1 Then
+    '    '    ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
+    '    '    Dim TiczRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
+    '    '    If Not TiczRoom Is Nothing Then
+    '    '        RoomToLoad = TiczRoom
+    '    '    Else
+    '    '        Dim PreferredRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
+    '    '        If Not PreferredRoom Is Nothing Then
+    '    '            RoomToLoad = PreferredRoom
+    '    '            TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
+    '    '        Else
+    '    '            'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
+    '    '            If Not TiczRoomConfigs.DomoticzRooms.result.Count = 0 Then
+    '    '                RoomToLoad = TiczRoomConfigs.DomoticzRooms.result(0)
+    '    '                TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(TiczRoomConfigs.DomoticzRooms.result(0).idx, TiczRoomConfigs.DomoticzRooms.result(0).Name)
+    '    '            End If
+    '    '        End If
+    '    '    End If
+    '    'Else
+    '    '    RoomToLoad = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = idx Select r).FirstOrDefault()
+    '    'End If
 
-        If Not RoomToLoad Is Nothing Then
-            Dim Room As New RoomViewModel(RoomToLoad, TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name))
-            Await Room.GetDevicesForRoom(Room.RoomConfiguration.RoomView)
-            currentRoom = Room
-        End If
-    End Function
+    '    'If Not RoomToLoad Is Nothing Then
+    '    '    Dim Room As New RoomViewModel(RoomToLoad, TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name))
+    '    '    Await Room.GetDevicesForRoom(Room.RoomConfiguration.RoomView)
+    '    '    currentRoom = Room
+    '    'End If
+    'End Function
 
     ''' <summary>
     ''' Performs initial loading of all Data for Ticz. Ensures all data is cleared before reloading
@@ -429,16 +403,17 @@ Public Class TiczViewModel
         Await DomoSecPanel.GetSecurityStatus()
 
         'Load the Room Configurations from Storage and Domoticz Server
-        Await Notify.Update(False, "Loading Ticz Room configuration...", 0, False, 0)
-        If Not Await TiczRoomConfigs.LoadRoomConfigurations() Then
-            Await Task.Delay(2000)
-        End If
+        Await Notify.Update(False, "Loading Ticz Rooms...", 0, False, 0)
+        Await Rooms.Load()
+        'If Not Await TiczRoomConfigs.LoadRoomConfigurations() Then
+        '    Await Task.Delay(2000)
+        'End If
 
-        Await LoadRoom()
+        'Await LoadRoom()
 
         'Save the (potentially refreshhed) roomconfigurations again
         Await Notify.Update(False, "Saving Ticz Room configuration...", 0, False, 0)
-        Await TiczRoomConfigs.SaveRoomConfigurations()
+        'Await TiczRoomConfigs.SaveRoomConfigurations()
         LastRefresh = Date.Now.ToUniversalTime
         StartRefresh()
 

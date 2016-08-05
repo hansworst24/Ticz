@@ -259,8 +259,8 @@ Public Class TiczMenuSettings
         If IsMenuOpen And ActiveMenuContents = "Rooms" Then
             IsMenuOpen = False
         ElseIf IsMenuOpen And ActiveMenuContents = "Rooms Configuration" Then
-            Await vm.TiczRoomConfigs.SaveRoomConfigurations()
-            Await vm.TiczRoomConfigs.LoadRoomConfigurations()
+            Await vm.Rooms.SaveRoomConfigurations()
+            Await vm.Rooms.LoadRoomConfigurations()
             ActiveMenuContents = "Settings"
         ElseIf IsMenuOpen And ActiveMenuContents = "General" Then
             ActiveMenuContents = "Settings"

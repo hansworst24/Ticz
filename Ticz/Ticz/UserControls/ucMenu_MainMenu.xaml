@@ -152,11 +152,11 @@
             <ScrollViewer x:Name="ScrollRooms" Grid.Row="0" VerticalAlignment="Top" Margin="0" VerticalScrollBarVisibility="Hidden">
                 <Grid Width="300" HorizontalAlignment="Stretch">
                     <ListView x:Name="RoomChooser" Grid.Row="1" 
-                              ItemsSource="{x:Bind vm.EnabledRooms, Mode=OneWay}"
+                              ItemsSource="{x:Bind vm.Rooms.EnabledRooms, Mode=OneWay}"
                               ScrollViewer.VerticalScrollMode="Disabled"
                               SelectionChanged="{x:Bind vm.RoomSelected}">
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="storage:RoomConfiguration">
+                            <DataTemplate x:DataType="local:RoomViewModel">
                                 <Grid>
                                     <TextBlock Text="{x:Bind RoomName}" FontSize="20" Style="{ThemeResource SubheaderTextBlockStyle}"/>
                                 </Grid>

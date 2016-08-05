@@ -6,7 +6,7 @@ Public NotInheritable Class ucDevice_Dynamic
     Public Property Device As DeviceViewModel
     Public ReadOnly Property Room As RoomViewModel
         Get
-            Return CType(Application.Current, Application).myViewModel.currentRoom
+            Return CType(Application.Current, Application).myViewModel.Rooms.ActiveRoom
         End Get
     End Property
     Public Sub New()

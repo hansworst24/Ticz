@@ -80,7 +80,6 @@ Public NotInheritable Class Constants
         Public Const SEC_DISARM As Integer = 0
         Public Const SEC_ARMHOME As Integer = 1
         Public Const SEC_ARMAWAY As Integer = 2
-
         Public Const SEC_NORMAL_STATUS As String = "Normal"
         Public Const SEC_DISARM_STATUS As String = "Disarmed"
         Public Const SEC_ARMHOME_STATUS As String = "Arm Home"
@@ -255,147 +254,108 @@ End Class
 
 
 Namespace TiczStorage
-    Public Class RoomConfigurations
-        Inherits ObservableCollection(Of RoomConfiguration)
-        Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-        Public Property DomoticzRooms As New Domoticz.Plans
+    'Public Class RoomConfigurations
+    '    Inherits ObservableCollection(Of RoomConfigurationModel)
+    '    Private app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+    '    Private Property DomoticzPlans As New Domoticz.Plans
 
 
-        Public Async Function LoadDomoticzRooms() As Task
-            Await DomoticzRooms.Load()
-        End Function
+    '    Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
+    '        'WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "start")
+    '        'Me.Clear()
+    '        'WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "Loading Domoticz Rooms")
+    '        'Await DomoticzPlans.Load()
 
-        Public Async Function LoadRoomConfigurations() As Task(Of Boolean)
-            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "start")
-            Me.Clear()
-            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "Loading Domoticz Rooms")
-            Await LoadDomoticzRooms()
+    '        Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+    '        Dim storageFile As Windows.Storage.StorageFile
+    '        Dim fileExists As Boolean = True
+    '        Dim stuffToLoad As New TiczStorage.RoomConfigurations
+    '        Try
+    '            storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
+    '        Catch ex As Exception
+    '            fileExists = False
+    '            app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"), 0, False, 2)
+    '        End Try
+    '        If fileExists Then
+    '            Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
+    '            Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
+    '            Dim serializer = New XmlSerializer((New TiczStorage.RoomConfigurations).GetType())
+    '            Try
+    '                stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
+    '            Catch ex As Exception
+    '                'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
+    '                app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message), 2, False, 2)
+    '            End Try
+    '            stream.Dispose()
+    '        End If
 
-            Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
-            Dim storageFile As Windows.Storage.StorageFile
-            Dim fileExists As Boolean = True
-            Dim stuffToLoad As New TiczStorage.RoomConfigurations
-            Try
-                storageFile = Await storageFolder.GetFileAsync("ticzconfig.xml")
-            Catch ex As Exception
-                fileExists = False
-                app.myViewModel.Notify.Update(False, String.Format("No configuration file present. We will create a new one"), 0, False, 2)
-            End Try
-            If fileExists Then
-                Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.Read)
-                Dim sessionInputStream As IInputStream = stream.GetInputStreamAt(0)
-                Dim serializer = New XmlSerializer((New TiczStorage.RoomConfigurations).GetType())
-                Try
-                    stuffToLoad = serializer.Deserialize(sessionInputStream.AsStreamForRead())
-                Catch ex As Exception
-                    'Casting the contents of the file to a RoomConfigurations object failed. Potentially the file is empty or malformed. Return a new object
-                    app.myViewModel.Notify.Update(True, String.Format("Config file seems corrupt. We created a new one : {0}", ex.Message), 2, False, 2)
-                End Try
-                stream.Dispose()
-            End If
+    '        'If Not app.myViewModel.EnabledRooms Is Nothing Then
+    '        '    app.myViewModel.EnabledRooms.Clear()
+    '        'Else
+    '        '    app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomModel)
+    '        'End If
+    '        For Each f In stuffToLoad
+    '            Me.Add(f)
+    '        Next
 
-            If Not app.myViewModel.EnabledRooms Is Nothing Then
-                app.myViewModel.EnabledRooms.Clear()
-            Else
-                app.myViewModel.EnabledRooms = New ObservableCollection(Of RoomConfiguration)
-            End If
+    '        'For Each r In DomoticzPlans.result.OrderBy(Function(x) x.Order)
+    '        '    Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
+    '        '    If retreivedRoomConfig Is Nothing Then
+    '        '        retreivedRoomConfig = New RoomModel With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ROOMVIEW.ICONVIEW, .ShowRoom = True}
+    '        '    End If
+    '        '    Me.Add(retreivedRoomConfig)
+    '        '    If retreivedRoomConfig.ShowRoom Then app.myViewModel.EnabledRooms.Add(retreivedRoomConfig)
+    '        'Next
+    '        WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "end")
+    '        Return True
+    '    End Function
 
-            For Each r In DomoticzRooms.result.OrderBy(Function(x) x.Order)
-                Dim retreivedRoomConfig = (From configs In stuffToLoad Where configs.RoomIDX = r.idx And configs.RoomName = r.Name Select configs).FirstOrDefault()
-                If retreivedRoomConfig Is Nothing Then
-                    retreivedRoomConfig = New RoomConfiguration With {.RoomIDX = r.idx, .RoomName = r.Name, .RoomView = Constants.ROOMVIEW.ICONVIEW, .ShowRoom = True}
-                End If
-                Me.Add(retreivedRoomConfig)
-                If retreivedRoomConfig.ShowRoom Then app.myViewModel.EnabledRooms.Add(retreivedRoomConfig)
-            Next
-            WriteToDebug("RoomsConfigurations.LoadRoomConfigurations()", "end")
-            Return True
-        End Function
+    '    Public Async Function SaveRoomConfigurations() As Task
+    '        'WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "start")
+    '        'If DomoticzPlans.result.Any(Function(x) x.Name = "Ticz") Then
+    '        '    'We are running in 'Debug mode', therefore we won't save the roomconfigurations
+    '        '    Exit Function
+    '        'End If
+    '        'Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
+    '        'Dim storageFile As Windows.Storage.StorageFile = Await storageFolder.CreateFileAsync("ticzconfig.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting)
+    '        'Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)
+    '        'Dim sessionOutputStream As IOutputStream = stream.GetOutputStreamAt(0)
 
-        Public Async Function SaveRoomConfigurations() As Task
-            WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "start")
-            If DomoticzRooms.result.Any(Function(x) x.Name = "Ticz") Then
-                'We are running in 'Debug mode', therefore we won't save the roomconfigurations
-                Exit Function
-            End If
-            Dim storageFolder As Windows.Storage.StorageFolder = Windows.Storage.ApplicationData.Current.LocalFolder
-            Dim storageFile As Windows.Storage.StorageFile = Await storageFolder.CreateFileAsync("ticzconfig.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting)
-            Dim stream = Await storageFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)
-            Dim sessionOutputStream As IOutputStream = stream.GetOutputStreamAt(0)
+    '        'For i As Integer = Me.Count - 1 To 0 Step -1
+    '        '    Dim rconfig As RoomModel = Me(i)
+    '        '    Dim domoroom As Domoticz.Plan = (From d In DomoticzPlans.result Where d.idx = rconfig.RoomIDX And d.Name = rconfig.RoomName Select d).FirstOrDefault()
+    '        '    If domoroom Is Nothing Then Me.Remove(rconfig)
+    '        'Next
 
-            For i As Integer = Me.Count - 1 To 0 Step -1
-                Dim rconfig As TiczStorage.RoomConfiguration = Me(i)
-                Dim domoroom As Domoticz.Plan = (From d In DomoticzRooms.result Where d.idx = rconfig.RoomIDX And d.Name = rconfig.RoomName Select d).FirstOrDefault()
-                If domoroom Is Nothing Then Me.Remove(rconfig)
-            Next
+    '        'Dim stuffToSave = Me
+    '        'Dim serializer As XmlSerializer = New XmlSerializer(stuffToSave.GetType())
+    '        'serializer.Serialize(sessionOutputStream.AsStreamForWrite(), stuffToSave)
+    '        'Await sessionOutputStream.FlushAsync()
+    '        'sessionOutputStream.Dispose()
+    '        'stream.Dispose()
+    '        'WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "end")
 
-            Dim stuffToSave = Me
-            Dim serializer As XmlSerializer = New XmlSerializer(stuffToSave.GetType())
-            serializer.Serialize(sessionOutputStream.AsStreamForWrite(), stuffToSave)
-            Await sessionOutputStream.FlushAsync()
-            sessionOutputStream.Dispose()
-            stream.Dispose()
-            WriteToDebug("RoomsConfigurations.SaveRoomConfigurations()", "end")
+    '    End Function
 
-        End Function
+    '    Public Function GetRoomConfig(idx As Integer, name As String) As RoomConfigurationModel
+    '        'Dim c = (From config In Me Where config.RoomIDX = idx And config.RoomName = name Select config).FirstOrDefault()
+    '        'If c Is Nothing Then
+    '        '    c = New RoomModel With {.RoomIDX = idx, .RoomName = name, .RoomView = Constants.ROOMVIEW.ICONVIEW, .ShowRoom = True}
+    '        '    Me.Add(c)
+    '        'End If
+    '        'If c.RoomName = "Ticz" Then c.RoomView = Constants.ROOMVIEW.LISTVIEW
+    '        'Return c
+    '    End Function
 
-        Public Function GetRoomConfig(idx As Integer, name As String) As RoomConfiguration
-            Dim c = (From config In Me Where config.RoomIDX = idx And config.RoomName = name Select config).FirstOrDefault()
-            If c Is Nothing Then
-                c = New RoomConfiguration With {.RoomIDX = idx, .RoomName = name, .RoomView = Constants.ROOMVIEW.ICONVIEW, .ShowRoom = True}
-                Me.Add(c)
-            End If
-            If c.RoomName = "Ticz" Then c.RoomView = Constants.ROOMVIEW.LISTVIEW
-            Return c
-        End Function
-
-    End Class
-
-    Public Class RoomConfiguration
-        Inherits ViewModelBase
-        Public ReadOnly Property RoomViewChoices As List(Of String)
-            Get
-                Return New List(Of String)({Constants.ROOMVIEW.ICONVIEW, Constants.ROOMVIEW.GRIDVIEW, Constants.ROOMVIEW.LISTVIEW,
-                                                                Constants.ROOMVIEW.RESIZEVIEW, Constants.ROOMVIEW.DASHVIEW}).ToList
-            End Get
-        End Property
-
-        Public Property RoomIDX As Integer
-        Public Property RoomName As String
-        Public Property ShowRoom As Boolean
-        Public Property RoomView As String
-            Get
-                Return _RoomView
-            End Get
-            Set(value As String)
-                If _RoomView <> value And value <> "" Then
-                    _RoomView = value
-                    RaisePropertyChanged("RoomView")
-                End If
-            End Set
-        End Property
-        Private Property _RoomView As String
-        Public Property DeviceConfigurations As DeviceConfigurations
-
-        Public Sub New()
-            DeviceConfigurations = New DeviceConfigurations
-            RoomView = "Icon View"
-        End Sub
-    End Class
-
-
+    'End Class
 
     Public Class DeviceConfiguration
         Public Property DeviceIDX As Integer
         Public Property DeviceName As String
         Public Property DeviceOrder As Integer
         Public Property DeviceRepresentation As String
-        'Public Property ColumnSpan As Integer
-        'Public Property RowSpan As Integer
 
         Public Sub New()
-            'ColumnSpan = 1
-            'RowSpan = 1
         End Sub
     End Class
 
@@ -449,24 +409,6 @@ Namespace TiczStorage
                 SortRoomDevices()
             End If
         End Sub
-
-        'Public Function RowSpan(idx As Integer, name As String)
-        '    Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
-        '    If Not dc Is Nothing Then
-        '        Return dc.RowSpan
-        '    Else
-        '        Return 1
-        '    End If
-        'End Function
-
-        'Public Function ColumnSpan(idx As Integer, name As String)
-        '    Dim dc = (From d In Me Where d.DeviceIDX = idx And d.DeviceName = name Select d).FirstOrDefault()
-        '    If Not dc Is Nothing Then
-        '        Return dc.ColumnSpan
-        '    Else
-        '        Return 1
-        '    End If
-        'End Function
     End Class
 End Namespace
 
@@ -1394,7 +1336,7 @@ Public NotInheritable Class DomoApi
     End Function
 
     Public Function getAllDevices() As String
-        Return String.Format("{0}/json.htm?type=devices&filter=all&used=true", ServerURL)
+        Return String.Format("{0}/json.htm?type=devices&filter=all&used=true&order=Name", ServerURL)
     End Function
 
     Public Function getFavouriteDevices() As String

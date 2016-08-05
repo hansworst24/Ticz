@@ -96,8 +96,8 @@ NotInheritable Class Application
             myViewModel.ActiveContentDialog.MinWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
             myViewModel.ActiveContentDialog.MaxWidth = ApplicationView.GetForCurrentView.VisibleBounds.Width
         End If
-        If Not myViewModel.currentRoom Is Nothing Then
-            myViewModel.currentRoom.SetItemWidthHeight()
+        If Not myViewModel.Rooms.ActiveRoom Is Nothing Then
+            myViewModel.Rooms.ActiveRoom.SetItemWidthHeight()
         End If
     End Sub
     Public Sub ResetIdleCounter(sender As Object, args As PointerRoutedEventArgs)

@@ -99,11 +99,11 @@ Partial Public Class TiczSettings
         settings = Windows.Storage.ApplicationData.Current.LocalSettings
     End Sub
 
-    Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
-        Get
-            Return app.myViewModel.TiczRoomConfigs
-        End Get
-    End Property
+    'Public ReadOnly Property TiczRoomConfigs As TiczStorage.RoomConfigurations
+    '    Get
+    '        Return app.myViewModel.TiczRoomConfigs
+    '    End Get
+    'End Property
 
 
     Public Property TestInProgress As Boolean
@@ -132,8 +132,8 @@ Partial Public Class TiczSettings
             Return New RelayCommand(Async Sub()
                                         TestInProgress = True
                                         TestConnectionResult = "Testing connection..."
-                                        app.myViewModel.TiczRoomConfigs.Clear()
-                                        app.myViewModel.TiczRoomConfigs.DomoticzRooms.result.Clear()
+                                        'app.myViewModel.TiczRoomConfigs.Clear()
+                                        'app.myViewModel.TiczRoomConfigs.DomoticzRooms.result.Clear()
                                         app.myViewModel.Notify.Clear(True)
                                         WriteToDebug("TestConnectionCommand", ServerIP)
                                         If ContainsValidIPDetails() Then
@@ -381,7 +381,7 @@ Partial Public Class TiczSettings
             If AddOrUpdateValue(strShowAllDevicesKeyName, value) Then
                 Save()
             End If
-            app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+            app.myViewModel.Rooms.Load()
         End Set
     End Property
 
@@ -393,7 +393,7 @@ Partial Public Class TiczSettings
             If AddOrUpdateValue(strShowFavoritesDevicesKeyName, value) Then
                 Save()
             End If
-            app.myViewModel.TiczRoomConfigs.LoadRoomConfigurations()
+            app.myViewModel.Rooms.Load()
         End Set
     End Property
 
@@ -416,11 +416,11 @@ Partial Public Class TiczSettings
         End Get
     End Property
 
-    Public Property PreferredRoom As TiczStorage.RoomConfiguration
+    Public Property PreferredRoom As RoomViewModel
         Get
             Return _PreferredRoom
         End Get
-        Set(value As TiczStorage.RoomConfiguration)
+        Set(value As RoomViewModel)
             If Not value Is Nothing Then
                 If _PreferredRoom Is Nothing Then
                     _PreferredRoom = value
@@ -433,7 +433,7 @@ Partial Public Class TiczSettings
             End If
         End Set
     End Property
-    Private Property _PreferredRoom As TiczStorage.RoomConfiguration
+    Private Property _PreferredRoom As RoomViewModel
 
 
     Public Property PreferredRoomIDX As Integer

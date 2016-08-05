@@ -11,6 +11,7 @@ Public Class DeviceViewModel
 
     Protected Friend _Device As DeviceModel
     Private _Configuration As TiczStorage.DeviceConfiguration
+
     'Private _cDialog As ContentDialog 'Used to present a password prompt to the user for Protected Devices
 
 #Region "Constructor"
@@ -1068,98 +1069,49 @@ Public Class DeviceViewModel
     End Function
 
     Public Async Function Resize(deviceSize As String) As Task
-        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
+        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
         WriteToDebug(String.Format("Device.Resize() - {0}", deviceSize), "executed")
         'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
         Dim myIndex As Integer
-        myIndex = app.myViewModel.currentRoom.Devices.IndexOf(Me)
-        app.myViewModel.currentRoom.Devices.Remove(Me)
+        myIndex = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
+        vm.Rooms.ActiveRoom.Devices.Remove(Me)
         'Secondly change the DeviceRepresentation to the one selected
         DeviceRepresentation = deviceSize
         'Save the DeviceRepresentation to storage
-        Dim devConfig = (From d In app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
+        Dim devConfig = (From d In vm.Rooms.ActiveRoom._RoomConfiguration.DeviceConfigurations Where d.DeviceIDX = Me.idx And d.DeviceName = Me.Name Select d).FirstOrDefault
         If Not devConfig Is Nothing Then
             devConfig.DeviceRepresentation = DeviceRepresentation
         End If
-        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+        Await vm.Rooms.SaveRoomConfigurations()
         're-insert the device back into the view
-        app.myViewModel.currentRoom.Devices.Insert(myIndex, Me)
+        vm.Rooms.ActiveRoom.Devices.Insert(myIndex, Me)
         'RaisePropertyChanged("DeviceRepresentation")
-        app.myViewModel.currentRoom.Refresh()
+        vm.Rooms.ActiveRoom.Refresh()
     End Function
 
     Public Async Sub MoveUp()
         WriteToDebug("Device.MoveUp()", "executed")
         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-        vm.currentRoom.RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
-        Dim myIndex As Integer = vm.currentRoom.Devices.IndexOf(Me)
+        vm.Rooms.ActiveRoom._RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
+        Dim myIndex As Integer = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
         If Not myIndex = 0 Then
-            vm.currentRoom.Devices.Remove(Me)
-            vm.currentRoom.Devices.Insert(myIndex - 1, Me)
+            vm.Rooms.ActiveRoom.Devices.Remove(Me)
+            vm.Rooms.ActiveRoom.Devices.Insert(myIndex - 1, Me)
         End If
-        Await vm.TiczRoomConfigs.SaveRoomConfigurations()
+        Await vm.Rooms.SaveRoomConfigurations()
     End Sub
 
     Public Async Sub MoveDown()
         WriteToDebug("Device.MoveDown()", "executed")
-        Dim app As Application = CType(Windows.UI.Xaml.Application.Current, Application)
-        app.myViewModel.currentRoom.RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
-        Dim myIndex As Integer = app.myViewModel.currentRoom.Devices.IndexOf(Me)
-        If Not myIndex = app.myViewModel.currentRoom.Devices.Count - 1 Then
-            app.myViewModel.currentRoom.Devices.Remove(Me)
-            app.myViewModel.currentRoom.Devices.Insert(myIndex + 1, Me)
+        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+        vm.Rooms.ActiveRoom._RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
+        Dim myIndex As Integer = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
+        If Not myIndex = vm.Rooms.ActiveRoom.Devices.Count - 1 Then
+            vm.Rooms.ActiveRoom.Devices.Remove(Me)
+            vm.Rooms.ActiveRoom.Devices.Insert(myIndex + 1, Me)
         End If
-        Await app.myViewModel.TiczRoomConfigs.SaveRoomConfigurations()
+        Await vm.Rooms.SaveRoomConfigurations()
     End Sub
-
-    '''' <summary>
-    '''' Triggered by Devices that Open/Close
-    '''' </summary>
-    '''' <returns></returns>
-    'Public Async Function OpenButton() As Task
-    '    WriteToDebug("Device.OpenButtonCommand()", "executed")
-    '    Dim switchToState As String
-    '    Select Case SwitchType
-    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS
-    '            switchToState = Constants.DEVICE.STATUS.OFF
-    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-    '            switchToState = Constants.DEVICE.STATUS.ON
-    '        Case Else
-    '            switchToState = Constants.DEVICE.STATUS.OFF
-    '    End Select
-    '    If [Protected] Then
-    '        'SwitchingToState = switchToState
-    '        'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '        'vm.selectedDevice = Me
-    '        Await ShowPasswordPrompt()
-    '        If PassCode = "" Then Exit Function
-    '    End If
-    '    Dim ret As retvalue = Await SwitchDevice(switchToState)
-    'End Function
-    '''' <summary>
-    '''' Triggered by Devices that Open/Close
-    '''' </summary>
-    '''' <returns></returns>
-    'Public Async Function CloseButton() As Task
-    '    WriteToDebug("Device.CloseButtonCommand()", "executed")
-    '    Dim switchToState As String
-    '    Select Case SwitchType
-    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS
-    '            switchToState = Constants.DEVICE.STATUS.ON
-    '        Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED
-    '            switchToState = Constants.DEVICE.STATUS.OFF
-    '        Case Else
-    '            switchToState = Constants.DEVICE.STATUS.ON
-    '    End Select
-    '    If [Protected] Then
-    '        'SwitchingToState = switchToState
-    '        'Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
-    '        'vm.selectedDevice = Me
-    '        Await ShowPasswordPrompt()
-    '        If PassCode = "" Then Exit Function
-    '    End If
-    '    Dim ret As retvalue = Await SwitchDevice(switchToState)
-    'End Function
 
 
     ''' <summary>

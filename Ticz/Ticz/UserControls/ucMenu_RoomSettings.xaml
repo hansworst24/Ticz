@@ -29,9 +29,9 @@
                     <TextBlock    Text="Preferred Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Select the room you want to load when Ticz starts." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <!--SelectedItem="{x:Bind TiczSettings.PreferredRoom, Mode=TwoWay, Converter={StaticResource RoomConfigConverter}}"-->
-                    <ComboBox     x:Name="lbRoomToLoad" Width="200" ItemsSource="{x:Bind vm.TiczRoomConfigs}" SelectedValue="{x:Bind TiczSettings.PreferredRoom, Mode=TwoWay, Converter={StaticResource RoomConfigConverter}}" >
+                    <ComboBox     x:Name="lbRoomToLoad" Width="200" ItemsSource="{x:Bind vm.Rooms.RoomList}" SelectedValue="{x:Bind TiczSettings.PreferredRoom, Mode=TwoWay, Converter={StaticResource RoomConfigConverter}}" >
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="storage:RoomConfiguration">
+                            <DataTemplate x:DataType="local:RoomViewModel">
                                 <TextBlock Text="{x:Bind RoomName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -52,7 +52,7 @@
                     <TextBlock Grid.Row="0" Margin="0,10,0,0" Text="You can define for each room if the room is visible and in what layout it is presented." 
                                Style="{ThemeResource SettingsExplanationStyle}"/>
                 </StackPanel>
-                <ListView Grid.Row="1" x:Name="lvRoomConfig" ItemsSource="{x:Bind vm.TiczRoomConfigs}" ScrollViewer.VerticalScrollMode="Disabled">
+                <ListView Grid.Row="1" x:Name="lvRoomConfig" ItemsSource="{x:Bind vm.Rooms.RoomList}" ScrollViewer.VerticalScrollMode="Disabled">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -62,7 +62,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="storage:RoomConfiguration">
+                        <DataTemplate x:DataType="local:RoomViewModel">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="100"/>
