@@ -33,7 +33,7 @@
         </Border>
         <!-- THIS IS THE CONTENTS FOR THE DEVICE. IT CONTAINS BOTH AN ICON AND OPTIONALLY THE DEVICEDETAILS. 
         DEPENDING ON THE DEVICEVIEW(ICON/WIDE/LARGE) THE CONTENTS IS SPANNED ACROSS ONE OR MORE COLUMNS/ROWS THROUGH STATETRIGGERS-->
-        <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0,4,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
