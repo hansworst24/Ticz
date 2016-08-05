@@ -29,17 +29,22 @@
                     <TextBlock    Text="Preferred Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Select the room you want to load when Ticz starts." TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
                     <!--SelectedItem="{x:Bind TiczSettings.PreferredRoom, Mode=TwoWay, Converter={StaticResource RoomConfigConverter}}"-->
-                    <ComboBox     x:Name="lbRoomToLoad" Width="200" ItemsSource="{x:Bind vm.Rooms.RoomList}" SelectedValue="{x:Bind TiczSettings.PreferredRoom, Mode=TwoWay, Converter={StaticResource RoomConfigConverter}}" >
+                    <ComboBox x:Name="lbRoomToLoad" 
+                              Width="200" 
+                              ItemsSource="{x:Bind vm.Rooms.RoomList, Mode=OneWay}" 
+                              SelectedItem="{x:Bind vm.Rooms.PreferredRoom, Mode=OneWay}"
+                              SelectionChanged="{x:Bind vm.Rooms.PreferredRoomChanged}">
+
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="local:RoomViewModel">
                                 <TextBlock Text="{x:Bind RoomName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <TextBlock    Text="Only show Favorites" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <!--<TextBlock    Text="Only show Favorites" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Enabling this setting will cause only 'Starred' devices to show up, in other words, the ones that are shown on the Dashboard Page in Domoticz." 
                                   TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind TiczSettings.OnlyShowFavourites, Mode=TwoWay}"/>
+                    <ToggleSwitch IsOn="{x:Bind TiczSettings.OnlyShowFavourites, Mode=TwoWay}"/>-->
 
                     <TextBlock    Text="Add 'All Devices' Room" Margin="0,10,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock    Text="Add a Room which contains All Devices" TextAlignment="Justify" Style="{ThemeResource SettingsExplanationStyle}"/>

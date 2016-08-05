@@ -319,40 +319,6 @@ Public Class TiczViewModel
         End If
     End Function
 
-
-
-    'Public Async Function LoadRoom(Optional idx As Integer = -1) As Task
-    '    ' Notify.Update(False, "Loading room...", 1, False, 0)
-    '    'Dim RoomToLoad As Domoticz.Plan
-    '    'If idx = -1 Then
-    '    '    ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
-    '    '    Dim TiczRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.Name = "Ticz" Select r).FirstOrDefault()
-    '    '    If Not TiczRoom Is Nothing Then
-    '    '        RoomToLoad = TiczRoom
-    '    '    Else
-    '    '        Dim PreferredRoom As Domoticz.Plan = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
-    '    '        If Not PreferredRoom Is Nothing Then
-    '    '            RoomToLoad = PreferredRoom
-    '    '            TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name)
-    '    '        Else
-    '    '            'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
-    '    '            If Not TiczRoomConfigs.DomoticzRooms.result.Count = 0 Then
-    '    '                RoomToLoad = TiczRoomConfigs.DomoticzRooms.result(0)
-    '    '                TiczSettings.PreferredRoom = TiczRoomConfigs.GetRoomConfig(TiczRoomConfigs.DomoticzRooms.result(0).idx, TiczRoomConfigs.DomoticzRooms.result(0).Name)
-    '    '            End If
-    '    '        End If
-    '    '    End If
-    '    'Else
-    '    '    RoomToLoad = (From r In TiczRoomConfigs.DomoticzRooms.result Where r.idx = idx Select r).FirstOrDefault()
-    '    'End If
-
-    '    'If Not RoomToLoad Is Nothing Then
-    '    '    Dim Room As New RoomViewModel(RoomToLoad, TiczRoomConfigs.GetRoomConfig(RoomToLoad.idx, RoomToLoad.Name))
-    '    '    Await Room.GetDevicesForRoom(Room.RoomConfiguration.RoomView)
-    '    '    currentRoom = Room
-    '    'End If
-    'End Function
-
     ''' <summary>
     ''' Performs initial loading of all Data for Ticz. Ensures all data is cleared before reloading
     ''' </summary>

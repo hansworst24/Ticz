@@ -416,24 +416,25 @@ Partial Public Class TiczSettings
         End Get
     End Property
 
-    Public Property PreferredRoom As RoomViewModel
-        Get
-            Return _PreferredRoom
-        End Get
-        Set(value As RoomViewModel)
-            If Not value Is Nothing Then
-                If _PreferredRoom Is Nothing Then
-                    _PreferredRoom = value
-                    PreferredRoomIDX = value.RoomIDX
-                    RaisePropertyChanged("PreferredRoom")
-                Else
-                    _PreferredRoom = value
-                    PreferredRoomIDX = value.RoomIDX
-                End If
-            End If
-        End Set
-    End Property
-    Private Property _PreferredRoom As RoomViewModel
+    'Public Property PreferredRoom As RoomViewModel
+    '    Get
+    '        Return _PreferredRoom
+    '    End Get
+    '    Set(value As RoomViewModel)
+    '        If Not value Is Nothing Then
+    '            If _PreferredRoom Is Nothing Then
+    '                _PreferredRoom = value
+    '                PreferredRoomIDX = value.RoomIDX
+    '                RaisePropertyChanged("PreferredRoom")
+    '            Else
+    '                _PreferredRoom = value
+    '                PreferredRoomIDX = value.RoomIDX
+    '                RaisePropertyChanged("PreferredRoom")
+    '            End If
+    '        End If
+    '    End Set
+    'End Property
+    'Private Property _PreferredRoom As RoomViewModel
 
 
     Public Property PreferredRoomIDX As Integer

@@ -27,6 +27,17 @@ Public Class RoomsViewModel
     End Property
     Private Property _ActiveRoom As RoomViewModel
 
+    Public Property PreferredRoom As RoomViewModel
+        Get
+            Return _PreferredRoom
+        End Get
+        Set(value As RoomViewModel)
+            _PreferredRoom = value
+            RaisePropertyChanged("PreferredRoom")
+        End Set
+    End Property
+    Private Property _PreferredRoom As RoomViewModel
+
     Public Sub New()
         RoomList = New ObservableCollection(Of RoomViewModel)
     End Sub
@@ -42,6 +53,8 @@ Public Class RoomsViewModel
         Next
         Await SaveRoomConfigurations()
         Await SetActiveRoom()
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        PreferredRoom = ActiveRoom
     End Function
 
     Public Async Function LoadRoomConfigurations() As Task(Of List(Of RoomConfigurationModel))
@@ -154,6 +167,18 @@ Public Class RoomsViewModel
         End If
     End Function
 
+    Public Async Sub PreferredRoomChanged(sender As Object, e As SelectionChangedEventArgs)
+        WriteToDebug("RoomsViewMode.PreferredRoomChanged", "executed")
+        Dim cBox As ComboBox = TryCast(sender, ComboBox)
+        If Not cBox Is Nothing Then
+            Dim selectedPreferredRoom As RoomViewModel = TryCast(cBox.SelectedItem, RoomViewModel)
+            If Not selectedPreferredRoom Is Nothing Then
+                Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+                vm.TiczSettings.PreferredRoomIDX = selectedPreferredRoom.RoomIDX
+            End If
+        End If
+
+    End Sub
 End Class
 
 
@@ -201,9 +226,6 @@ Public Class RoomViewModel
             _RoomConfiguration.ShowRoom = value
         End Set
     End Property
-
-
-
 
     Public ReadOnly Property ResizeContextMenuVisibility As String
         Get
@@ -286,15 +308,10 @@ Public Class RoomViewModel
         End Get
     End Property
 
-    'Public Sub New()
-    '    RoomConfiguration = New TiczStorage.RoomConfiguration
-    '    ItemHeight = 120
-    'End Sub
 
     Public Sub New(roomplan As Domoticz.Plan, Optional RoomConfig As RoomConfigurationModel = Nothing)
         _RoomModel = roomplan
         _RoomConfiguration = If(Not RoomConfig Is Nothing, RoomConfig, New RoomConfigurationModel With {.RoomView = Constants.ROOMVIEW.ICONVIEW, .RoomIDX = roomplan.idx, .ShowRoom = True})
-        'ItemHeight = 112
         SetItemWidthHeight()
 
     End Sub
@@ -363,11 +380,11 @@ Public Class RoomViewModel
                 End If
 
                 'If we only want to show favourites, filter the ones out that aren't
-                If app.myViewModel.TiczSettings.OnlyShowFavourites Then
-                    If d.Favorite = 1 Then ret.Add(DevToAdd)
-                Else
-                    ret.Add(DevToAdd)
-                End If
+                'If app.myViewModel.TiczSettings.OnlyShowFavourites Then
+                '    If d.Favorite = 1 Then ret.Add(DevToAdd)
+                'Else
+                ret.Add(DevToAdd)
+                'End If
             Next
             deserialized = Nothing
         Else

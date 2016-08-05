@@ -1231,7 +1231,7 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideGroupView">
-        <Grid Grid.Column="1" Grid.Row="0"  Margin="20,0,0,0" VerticalAlignment="Center">
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="8,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -1263,7 +1263,7 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideSceneView">
-        <Grid Margin="20,0,0,0">
+        <Grid Margin="8,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -1377,7 +1377,7 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideSelectorView">
-        <Grid  Margin="20,0,0,0" VerticalAlignment="Center">
+        <Grid  Margin="8,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -1418,7 +1418,7 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideBlindsView" x:DataType="local:DeviceViewModel">
-        <Grid Grid.Column="1" Grid.Row="0"  Margin="20,0,0,0" VerticalAlignment="Center">
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="8,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -1450,7 +1450,7 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DeviceWideBlindsPercentageView" x:DataType="local:DeviceViewModel">
-        <Grid Grid.Column="1" Grid.Row="0"  Margin="20,0,0,0" VerticalAlignment="Center">
+        <Grid Grid.Column="1" Grid.Row="0"  Margin="8,0,0,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -1528,13 +1528,13 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="ButtonPlus" Width="44" Height="30" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointUpCommand}">
-                        <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
+                    <Button x:Name="ButtonPlus"  MinHeight="30" Padding="0" Grid.Column="0" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointUpCommand}">
+                        <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
                     </Button>
-                    <Button x:Name="ButtonMinus" Width="44"  Height="30" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointDownCommand}">
-                        <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center"/>
+                    <Button x:Name="ButtonMinus"  MinHeight="30" Padding="0" Grid.Column="1" Style="{StaticResource RoundedInnerButton}" HorizontalAlignment="Center" Command="{Binding SetPointDownCommand}">
+                        <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
                     </Button>
-                    <Button x:Name="ButtonSet" Width="52" Height="30" Padding="0" Grid.Column="2" Style="{StaticResource RoundedInnerButton}" Content="SET" VerticalContentAlignment="Center" FontSize="18" HorizontalAlignment="Center" Command="{Binding SetSetPointCommand}"/>
+                    <Button x:Name="ButtonSet" MinHeight="30" Padding="0" Grid.Column="2" Style="{StaticResource RoundedInnerButton}" Content="SET" VerticalContentAlignment="Center" FontSize="16" HorizontalAlignment="Center" Command="{Binding SetSetPointCommand}"/>
                 </Grid>
             </Border>
             <TextBlock x:Name="FourthInfoText" 
@@ -1915,56 +1915,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="RoundedInnerButton" TargetType="Button">
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="Padding" Value="4" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-        <Setter Property="MinWidth" Value="40" />
-        <Setter Property="MinHeight" Value="25" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid Background="{TemplateBinding Background}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ButtonBackground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ColorAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Storyboard.TargetName="ButtonBackground"
-                                                        From="Transparent" To="{ThemeResource SystemAccentColor}" AutoReverse="True" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Border x:Name="ButtonBackground" CornerRadius="10" BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-                            <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" 
-                                            Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                            Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Border>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+   
 
 
     <Style x:Key="DeviceButtonSimple" TargetType="Button">
