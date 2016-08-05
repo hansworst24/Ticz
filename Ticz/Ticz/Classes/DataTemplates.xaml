@@ -1386,10 +1386,15 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Border Grid.Row="0" Padding="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Style="{StaticResource DeviceBorderLess}">
-                <ComboBox x:Name="cbSelector" HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding LevelNamesList}" SelectedIndex="{Binding LevelNameIndex, Mode=TwoWay}" Style="{StaticResource RoundedComboBoxStyle}">
+                <ComboBox x:Name="cbSelector" 
+                          HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Center" 
+                          ItemsSource="{Binding LevelNamesList}" 
+                          SelectedIndex="{Binding LevelNameIndex, Mode=TwoWay}" 
+                          Style="{StaticResource RoundedComboBoxStyle}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" FontSize="{Binding ElementName=cbSelector, Path=DataContext.DataFontSize}"/>
+                            <TextBlock Text="{Binding}" FontSize="12"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                     <Interactivity:Interaction.Behaviors>
