@@ -62,10 +62,14 @@ Public Class TiczViewModel
     Public Async Sub RoomSelected(sender As Object, e As SelectionChangedEventArgs)
         Dim selectedRoom As RoomViewModel = TryCast(sender, ListView).SelectedItem
         If Not selectedRoom Is Nothing Then
-            'Clean up previous Room's Devices first
-            Rooms.ActiveRoom.Devices.Clear()
             Await Notify.Update(False, "Loading room...", 1, False, 0)
             If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
+            'Don't start loading the room if the background refresh task is still running
+            While IsRefreshing
+                Await Task.Delay(100)
+            End While
+            'Clean up previous Room's Devices first
+            Rooms.ActiveRoom.Devices.Clear()
             Await Rooms.SetActiveRoom(selectedRoom.RoomIDX)
             Notify.Clear()
         End If
@@ -241,10 +245,10 @@ Public Class TiczViewModel
 
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
         If Not IsLoading Then
+            'Set IsRefreshing to true, which needs to be done on the GUI thread as the refresh indicator is triggered by this value
             Await RunOnUIThread(Sub()
                                     IsRefreshing = True
                                 End Sub)
-
 
             'Await Notify.Update(False, "Refreshing...", 0, False, 0)
             Dim sWatch = Stopwatch.StartNew()
@@ -264,7 +268,6 @@ Public Class TiczViewModel
                 Case 0
                     dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getFavouriteDevices()))
                     'grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenes()))
-
                 Case Else
                     dev_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllDevicesForRoom(Rooms.ActiveRoom.RoomIDX, LoadAllUpdates)))
                     grp_response = Await Task.Run(Function() (New Domoticz).DownloadJSON((New DomoApi).getAllScenesForRoom(Rooms.ActiveRoom.RoomIDX)))
@@ -272,10 +275,10 @@ Public Class TiczViewModel
 
             'Collect all updated groups/scenes and devices into a single list
             Dim devicesToRefresh As New List(Of DeviceModel)
-            If dev_response.IsSuccessStatusCode Then
+            If dev_response.IsSuccessStatusCode AndAlso Not dev_response.Content Is Nothing Then
                 devicesToRefresh.AddRange((JsonConvert.DeserializeObject(Of DevicesModel)(Await dev_response.Content.ReadAsStringAsync)).result)
             End If
-            If grp_response.IsSuccessStatusCode Then
+            If grp_response.IsSuccessStatusCode AndAlso Not grp_response.Content Is Nothing Then
                 devicesToRefresh.AddRange((JsonConvert.DeserializeObject(Of DevicesModel)(Await grp_response.Content.ReadAsStringAsync)).result)
             End If
 
