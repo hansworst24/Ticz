@@ -1,7 +1,5 @@
-﻿Imports System.Text.RegularExpressions
-Imports System.Threading
+﻿Imports System.Threading
 Imports GalaSoft.MvvmLight
-Imports GalaSoft.MvvmLight.Command
 Imports Windows.UI
 
 
@@ -11,21 +9,14 @@ Public Class DeviceProperty
 End Class
 
 
-Public Class DeviceGroup(Of T)
-    Inherits List(Of DevicesViewModel)
+'Public Class DeviceGroup(Of T)
+'    Inherits ObservableCollection(Of DevicesViewModel)
 
-    Public Sub New()
-    End Sub
+'    Public Sub New()
+'    End Sub
 
-    Public Function GetDevice(idx As Integer, name As String) As DeviceViewModel
-        For Each group In Me
-            Dim dev As DeviceViewModel = (From d In group Where d.idx = idx And d.Name = name Select d).FirstOrDefault()
-            If Not dev Is Nothing Then Return dev : Exit For
-        Next
-        Return Nothing
-    End Function
 
-End Class
+'End Class
 
 
 

@@ -246,8 +246,8 @@ Public Class DeviceViewModel
                                 Case Constants.DEVICE.SWITCHTYPE.BLINDS : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.BLINDS_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
                                     'TODO : REPAIR BLINDS_PERCENTAGE VIEW
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
-                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
+                                Case Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED : Return CType(Application.Current.Resources("DeviceWideBlindsPercentageView"), DataTemplate)
                                 Case Constants.DEVICE.SWITCHTYPE.MEDIA_PLAYER
                                     Select Case HardwareType
                                         Case Constants.DEVICE.HARDWARETYPE.KODIMEDIASERVER : Return CType(Application.Current.Resources("DeviceWideKODIPlayerView"), DataTemplate)
@@ -550,6 +550,7 @@ Public Class DeviceViewModel
                     Case Constants.DEVICE.TYPEIMG.SCALE : Return Constants.ICONPATH.SCALE
                     Case Constants.DEVICE.TYPEIMG.SCENE : Return Constants.ICONPATH.SCENE
                     Case Constants.DEVICE.TYPEIMG.SECURITY : Return Constants.ICONPATH.SECURITY
+                    Case Constants.DEVICE.TYPEIMG.SIREN : Return Constants.ICONPATH.ALARM
                     Case Constants.DEVICE.TYPEIMG.SMOKE : Return Constants.ICONPATH.SMOKE
                     Case Constants.DEVICE.TYPEIMG.SPEAKER : Return Constants.ICONPATH.SPEAKER
                     Case Constants.DEVICE.TYPEIMG.TEMPERATURE : Return Constants.ICONPATH.TEMPERATURE
@@ -1039,8 +1040,8 @@ Public Class DeviceViewModel
                                         If Me.SwitchType = Constants.DEVICE.SWITCHTYPE.DIMMER Or
                                            Me.SwitchType = Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE Or
                                            Me.SwitchType = Constants.DEVICE.SWITCHTYPE.BLINDS_PERCENTAGE_INVERTED Then
-                                            'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent
-                                            Dim ValueToSend As Integer = Math.Round((MaxDimLevel / 100) * LevelInt)
+                                            'Identify what kind of range the Device handles, either 1-15 or 1-100. Based on this, calculate the value to be sent. 
+                                            Dim ValueToSend As Integer = Math.Round((If(MaxDimLevel > 0, MaxDimLevel, 100) / 100) * LevelInt)
                                             WriteToDebug("Device.SliderValueChanged()", String.Format("executed : value {0}", ValueToSend))
                                             Dim SwitchToState As String = (ValueToSend).ToString
                                             If [Protected] Then
@@ -1069,12 +1070,17 @@ Public Class DeviceViewModel
     End Function
 
     Public Async Function Resize(deviceSize As String) As Task
-        Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
+        Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
         WriteToDebug(String.Format("Device.Resize() - {0}", deviceSize), "executed")
-        'First, remove the Device from the ViewModel, otherwise the device isn't resized properly
-        Dim myIndex As Integer
-        myIndex = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
-        vm.Rooms.ActiveRoom.Devices.Remove(Me)
+
+        Dim GroupIndex, ItemIndex As Integer
+        GroupIndex = vm.Rooms.ActiveRoom.GetGroupIndexForDevice(Me)
+        ItemIndex = vm.Rooms.ActiveRoom.GetItemIndexForDevice(Me)
+
+        WriteToDebug("Device.Resize()", String.Format("GroupIndex = {0} : ItemIndex = {1}", GroupIndex, ItemIndex))
+
+        'Remove item from the view
+        vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Remove(Me)
         'Secondly change the DeviceRepresentation to the one selected
         DeviceRepresentation = deviceSize
         'Save the DeviceRepresentation to storage
@@ -1084,33 +1090,35 @@ Public Class DeviceViewModel
         End If
         Await vm.Rooms.SaveRoomConfigurations()
         're-insert the device back into the view
-        vm.Rooms.ActiveRoom.Devices.Insert(myIndex, Me)
-        'RaisePropertyChanged("DeviceRepresentation")
-        vm.Rooms.ActiveRoom.Refresh()
+        vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Insert(ItemIndex, Me)
     End Function
 
     Public Async Sub MoveUp()
         WriteToDebug("Device.MoveUp()", "executed")
         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
         vm.Rooms.ActiveRoom._RoomConfiguration.DeviceConfigurations.MoveUp(idx, Name)
-        Dim myIndex As Integer = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
-        If Not myIndex = 0 Then
-            vm.Rooms.ActiveRoom.Devices.Remove(Me)
-            vm.Rooms.ActiveRoom.Devices.Insert(myIndex - 1, Me)
+        Dim GroupIndex, ItemIndex As Integer
+        GroupIndex = vm.Rooms.ActiveRoom.GetGroupIndexForDevice(Me)
+        ItemIndex = vm.Rooms.ActiveRoom.GetItemIndexForDevice(Me)
+        If Not ItemIndex = 0 Then
+            vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Remove(Me)
+            vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Insert(ItemIndex - 1, Me)
+            Await vm.Rooms.SaveRoomConfigurations()
         End If
-        Await vm.Rooms.SaveRoomConfigurations()
     End Sub
 
     Public Async Sub MoveDown()
         WriteToDebug("Device.MoveDown()", "executed")
         Dim vm As TiczViewModel = CType(Windows.UI.Xaml.Application.Current, Application).myViewModel
         vm.Rooms.ActiveRoom._RoomConfiguration.DeviceConfigurations.MoveDown(idx, Name)
-        Dim myIndex As Integer = vm.Rooms.ActiveRoom.Devices.IndexOf(Me)
-        If Not myIndex = vm.Rooms.ActiveRoom.Devices.Count - 1 Then
-            vm.Rooms.ActiveRoom.Devices.Remove(Me)
-            vm.Rooms.ActiveRoom.Devices.Insert(myIndex + 1, Me)
+        Dim GroupIndex, ItemIndex As Integer
+        GroupIndex = vm.Rooms.ActiveRoom.GetGroupIndexForDevice(Me)
+        ItemIndex = vm.Rooms.ActiveRoom.GetItemIndexForDevice(Me)
+        If Not ItemIndex = vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Count - 1 Then
+            vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Remove(Me)
+            vm.Rooms.ActiveRoom.GroupedDevices(GroupIndex).Insert(ItemIndex + 1, Me)
+            Await vm.Rooms.SaveRoomConfigurations()
         End If
-        Await vm.Rooms.SaveRoomConfigurations()
     End Sub
 
 

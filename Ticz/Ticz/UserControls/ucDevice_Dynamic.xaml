@@ -47,7 +47,7 @@
                 Grid.RowSpan="{x:Bind Device.ButtonRowSpan}" 
                 Style="{StaticResource DeviceButtonSimple}"
                 Click="{x:Bind Device.SwitchDeviceCommand}"  
-                HorizontalAlignment="Center" VerticalAlignment="Center">
+                HorizontalAlignment="Center" VerticalAlignment="Top">
                 <Button.Content>
                     <ContentControl ContentTemplate="{x:Bind Device.DeviceIconTemplate}" Height="{x:Bind Device.ButtonSize}" Width="{x:Bind Device.ButtonSize}"
                         HorizontalContentAlignment="Stretch" 

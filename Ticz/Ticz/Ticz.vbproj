@@ -143,6 +143,12 @@
       <DependentUpon>DataTemplates.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\DataTemplateSelectors.vb" />
+    <Compile Include="Classes\DeviceContentTemplates.xaml.vb">
+      <DependentUpon>DeviceContentTemplates.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\RoomViewTemplates.xaml.vb">
+      <DependentUpon>RoomViewTemplates.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\DeviceModel.vb" />
     <Compile Include="Models\DevicesModel.vb" />
     <Compile Include="Models\RoomConfigurationModel.vb" />
@@ -367,7 +373,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Classes\DeviceContentTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Classes\Dictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Classes\RoomViewTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

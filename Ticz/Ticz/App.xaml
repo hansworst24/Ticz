@@ -11,6 +11,8 @@
                 <local:DataTemplates/>
                 <ResourceDictionary Source="Classes/DataTemplates.xaml"/>
                 <ResourceDictionary Source="Classes/Dictionary.xaml" />
+                <ResourceDictionary Source="Classes/DeviceContentTemplates.xaml" />
+                <ResourceDictionary Source="Classes/RoomViewTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
 

@@ -165,6 +165,7 @@ Public NotInheritable Class Constants
             Public Const RAIN As String = "rain"
             Public Const SCALE As String = "scale"
             Public Const SCENE As String = "scene"
+            Public Const SIREN As String = "siren"
             Public Const SMOKE As String = "smoke"
             Public Const SECURITY As String = "security"
             Public Const SPEAKER As String = "Speaker"
@@ -379,7 +380,7 @@ Namespace TiczStorage
             For Each Device In Me.OrderBy(Function(x) x.DeviceOrder)
                 Device.DeviceOrder = intIndex
                 intIndex += 1
-                WriteToDebug(Device.DeviceName, Device.DeviceOrder)
+                'WriteToDebug(Device.DeviceName, Device.DeviceOrder)
             Next
         End Sub
 

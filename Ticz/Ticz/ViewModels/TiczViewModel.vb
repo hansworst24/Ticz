@@ -37,7 +37,7 @@ Public Class TiczViewModel
         End Set
     End Property
     Private Property _IsRefreshing As Boolean
-    Public Property IsLoading As Boolean
+    Public Property RoomIsLoading As Boolean 'Bool that identifies if a room is being populated with devices. Avoid doing a refresh when this is true
 
     Public Property LastRefresh As DateTime
 
@@ -63,14 +63,15 @@ Public Class TiczViewModel
         Dim selectedRoom As RoomViewModel = TryCast(sender, ListView).SelectedItem
         If Not selectedRoom Is Nothing Then
             Await Notify.Update(False, "Loading room...", 1, False, 0)
+            RoomIsLoading = True
             If TiczMenu.IsMenuOpen Then TiczMenu.IsMenuOpen = False
             'Don't start loading the room if the background refresh task is still running
             While IsRefreshing
                 Await Task.Delay(100)
             End While
-            'Clean up previous Room's Devices first
-            Rooms.ActiveRoom.Devices.Clear()
+            Dim PreviousRoom = Rooms.ActiveRoom
             Await Rooms.SetActiveRoom(selectedRoom.RoomIDX)
+            RoomIsLoading = False
             Notify.Clear()
         End If
     End Sub
@@ -244,7 +245,7 @@ Public Class TiczViewModel
 
 
     Public Async Function Refresh(Optional LoadAllUpdates As Boolean = False) As Task
-        If Not IsLoading Then
+        If Not RoomIsLoading Then
             'Set IsRefreshing to true, which needs to be done on the GUI thread as the refresh indicator is triggered by this value
             Await RunOnUIThread(Sub()
                                     IsRefreshing = True
@@ -284,19 +285,23 @@ Public Class TiczViewModel
 
             'Iterate through the list of updated devices, find the matching device in the room and update it
             If devicesToRefresh.Count > 0 Then
-                'WriteToDebug("TiczViewModel.Refresh()", String.Format("Loaded {0} devices", devicesToRefresh.Count))
                 For Each d In devicesToRefresh
                     Dim deviceToUpdate As DeviceViewModel
-                    'If currentRoom.RoomConfiguration.RoomView = Constants.ROOMVIEW.DASHVIEW Then
-                    deviceToUpdate = (From devs In Rooms.ActiveRoom.Devices Where devs.idx = d.idx And devs.Name = d.Name Select devs).FirstOrDefault()
-                    'Else
-                    '    deviceToUpdate = currentRoom.GetActiveGroupedDeviceList.GetDevice(d.idx, d.Name)
-                    'End If
-                    If Not deviceToUpdate Is Nothing Then
-                        Await RunOnUIThread(Async Sub()
-                                                Await deviceToUpdate.Update(d)
-                                            End Sub)
+                    Dim GroupIndex, ItemIndex As Integer
+                    GroupIndex = Rooms.ActiveRoom.GetGroupIndexForDevice(d.idx, d.Name)
+                    ItemIndex = Rooms.ActiveRoom.GetItemIndexForDevice(d.idx, d.Name)
+                    If GroupIndex > -1 AndAlso ItemIndex > -1 Then
+                        deviceToUpdate = Rooms.ActiveRoom.GroupedDevices(GroupIndex)(ItemIndex)
+                        If Not deviceToUpdate Is Nothing Then
+                            'WriteToDebug("TiczViewModel.Refresh()", String.Format("Updating device {0} / {1}", d.idx, d.Name))
+                            Await RunOnUIThread(Async Sub()
+                                                    Await deviceToUpdate.Update(d)
+                                                End Sub)
+                        End If
+                    Else
+                        'WriteToDebug("TiczViewModel.Refresh()", String.Format("Skipping update for device {0} / {1}", d.idx, d.Name))
                     End If
+
                 Next
             Else
                 If Not grp_response.IsSuccessStatusCode Or Not dev_response.IsSuccessStatusCode Then
@@ -335,7 +340,7 @@ Public Class TiczViewModel
             Exit Function
         End If
         Await Notify.Update(False, "Loading...", 0, True, 0)
-        IsLoading = True
+        RoomIsLoading = True
 
         'Load Domoticz General Config from Domoticz
         Await Notify.Update(False, "Loading Domoticz configuration...", 0, False, 0)
@@ -391,6 +396,6 @@ Public Class TiczViewModel
         'Start IdleTimeCounter
         IdleTimer.StartCounter()
 
-        IsLoading = False
+        RoomIsLoading = False
     End Function
 End Class

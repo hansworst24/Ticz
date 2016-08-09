@@ -140,30 +140,32 @@ Public Class RoomsViewModel
     ''' <returns></returns>
     Public Async Function SetActiveRoom(Optional idx As Integer = -1) As Task
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        Dim newRoom As RoomViewModel
         ' Notify.Update(False, "Loading room...", 1, False, 0)
         If idx = -1 Then
             ' Check for the existence of a Ticz Room. If it exists, load the contents of that room
             Dim TiczRoom As RoomViewModel = (From r In Me.RoomList Where r.RoomName = "Ticz" Select r).FirstOrDefault()
             If Not TiczRoom Is Nothing Then
-                ActiveRoom = TiczRoom
+                newRoom = TiczRoom
             Else
                 Dim PreferredRoom As RoomViewModel = (From r In Me.RoomList Where r.RoomIDX = vm.TiczSettings.PreferredRoomIDX Select r).FirstOrDefault()
                 If Not PreferredRoom Is Nothing Then
-                    ActiveRoom = PreferredRoom
+                    newRoom = PreferredRoom
                 Else
                     'TODO : CHECK IF THERE ACTUALLY ARE ROOMS DEFINED
                     If Not Me.RoomList.Count = 0 Then
-                        ActiveRoom = Me.RoomList(0)
+                        newRoom = Me.RoomList(0)
                     End If
                 End If
             End If
         Else
-            ActiveRoom = (From r In Me.RoomList Where r.RoomIDX = idx Select r).FirstOrDefault()
+            newRoom = (From r In Me.RoomList Where r.RoomIDX = idx Select r).FirstOrDefault()
         End If
 
-        If Not ActiveRoom Is Nothing Then
-            Await ActiveRoom.GetDevicesForRoom(ActiveRoom.RoomView)
-            ActiveRoom.SetItemWidthHeight()
+        If Not newRoom Is Nothing Then
+            Await newRoom.LoadDevicesForRoom()
+            newRoom.SetItemWidthHeight()
+            ActiveRoom = newRoom
         End If
     End Function
 
@@ -265,27 +267,18 @@ Public Class RoomViewModel
     End Property
 
 
-    Public ReadOnly Property GroupedDevices As DeviceGroup(Of DevicesViewModel)
+    Public Property GroupedDevices As List(Of DevicesViewModel)
         Get
-            If Not Devices Is Nothing Then
-                Return CreateGroupedDevices()
-            Else Return Nothing
-            End If
-
+            Return _GroupedDevices
         End Get
-    End Property
-
-    Public Property Devices As DevicesViewModel
-        Get
-            Return _Devices
-        End Get
-        Set(value As DevicesViewModel)
-            _Devices = value
-            RaisePropertyChanged("Devices")
-            RaisePropertyChanged("GroupedDevices")
+        Set(value As List(Of DevicesViewModel))
+            _GroupedDevices = value
+            'RaisePropertyChanged("GroupedDevices")
         End Set
     End Property
-    Private Property _Devices As DevicesViewModel
+    Private Property _GroupedDevices As List(Of DevicesViewModel)
+
+
 
     Public Property ItemWidth As Integer
         Get
@@ -312,13 +305,14 @@ Public Class RoomViewModel
     Public Sub New(roomplan As Domoticz.Plan, Optional RoomConfig As RoomConfigurationModel = Nothing)
         _RoomModel = roomplan
         _RoomConfiguration = If(Not RoomConfig Is Nothing, RoomConfig, New RoomConfigurationModel With {.RoomView = Constants.ROOMVIEW.ICONVIEW, .RoomIDX = roomplan.idx, .ShowRoom = True})
+        GroupedDevices = New List(Of DevicesViewModel)
         SetItemWidthHeight()
 
     End Sub
 
     Public Sub SetItemWidthHeight()
         Const DefaultItemWidth = 120 'The Default Width for an Device in Icon View
-        Const DefaultItemHeight = 120 'The Default Height for an Device in Icon View
+        Const DefaultItemHeight = 116 'The Default Height for an Device in Icon View
         Dim iWidth As Integer  'Minimum Item Width
         Dim iMargin As Integer 'Any additional Margin that the item carries
         Select Case _RoomConfiguration.RoomView
@@ -345,9 +339,9 @@ Public Class RoomViewModel
     End Sub
 
 
-    Public Async Function GetDevicesForRoom(RoomView As String) As Task
+    Public Async Function GetDevicesForRoom(RoomView As String) As Task(Of List(Of DeviceViewModel))
         'TODO : Remove DeviceModel DeviceViewModel tests
-        Dim ret As New DevicesViewModel
+        Dim ret As New List(Of DeviceViewModel)
         Dim url As String = (New DomoApi).getAllDevicesForRoom(RoomIDX, True)
         'Hack to change the URL used when the Room is a "All Devices" room, with a static IDX of 12321
         If Me.RoomIDX = 12321 Then url = (New DomoApi).getAllDevices()
@@ -391,17 +385,107 @@ Public Class RoomViewModel
             Await app.myViewModel.Notify.Update(True, String.Format("Connection error {0}", response.ReasonPhrase), 2, False, 4)
         End If
         WriteToDebug("RoomViewModel.GetDevicesForRoom()", String.Format("Retrieved {0} devices", ret.Count))
-        Devices = New DevicesViewModel(Me.RoomName, ret.OrderBy(Function(x) x.DeviceOrder))
+        Return ret
+        'Devices = New DevicesViewModel(Me.RoomName, ret.OrderBy(Function(x) x.DeviceOrder))
     End Function
+
+
+    Public Function GetGroupIndexForDevice(d As DeviceViewModel) As Integer
+        Return GroupedDevices.IndexOf(GroupedDevices.First(Function(x) x.Contains(d)))
+    End Function
+
+    Public Function GetGroupIndexForDevice(idx As Integer, name As String) As Integer
+        Try
+            Return GroupedDevices.IndexOf(GroupedDevices.FirstOrDefault(Function(x) x.Any(Function(y) y.idx = idx And y.Name = name)))
+        Catch ex As Exception
+            WriteToDebug("asdasd", "asddsadsa")
+        End Try
+
+    End Function
+
+
+    Public Function GetItemIndexForDevice(d As DeviceViewModel) As Integer
+        Dim GroupIndex As Integer = GetGroupIndexForDevice(d)
+        If Not GroupIndex = -1 Then
+            Return GroupedDevices(GroupIndex).IndexOf(d)
+        Else
+            Return -1
+        End If
+    End Function
+
+    Public Function GetItemIndexForDevice(idx As Integer, name As String) As Integer
+        Dim GroupIndex As Integer = GetGroupIndexForDevice(idx, name)
+        If Not GroupIndex = -1 Then
+            Try
+                Return GroupedDevices(GroupIndex).IndexOf(GroupedDevices(GroupIndex).Where(Function(x) x.idx = idx And x.Name = name).FirstOrDefault())
+            Catch ex As Exception
+                WriteToDebug("asdasd", "asddsadsa")
+            End Try
+
+        Else
+            Return -1
+        End If
+    End Function
+
+
+
+
 
     ''' <summary>
     ''' 'Loads the devices for this room into RoomDevices, used for Dashboard View only (not grouped)
     ''' </summary>
     ''' <returns></returns>
     Public Async Function LoadDevicesForRoom() As Task
-        Await GetDevicesForRoom(Me._RoomConfiguration.RoomView)
+        Dim newGroupedDevices = New List(Of DevicesViewModel)
+        'GroupedDevices.Clear()
+        If RoomView <> Constants.ROOMVIEW.DASHVIEW Then
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_GROUPS_SCENES))
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES))
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_WEATHER))
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_TEMPERATURE))
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_UTILITY))
+            newGroupedDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_OTHER))
+        Else
+            newGroupedDevices.Add(New DevicesViewModel("ALL DEVICES"))
+        End If
+
+        Dim devicesToAdd = Await GetDevicesForRoom(Me._RoomConfiguration.RoomView)
+        If RoomView <> Constants.ROOMVIEW.DASHVIEW Then
+            For Each d In devicesToAdd.OrderBy(Function(x) x.DeviceOrder)
+                Select Case d.Type
+                    Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
+                    Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_1,
+                         Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
+                    Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)
+                    Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.THERMOSTAT
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
+                    Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER,
+                         Constants.DEVICE.TYPE.LUX, Constants.DEVICE.TYPE.AIR_QUALITY, Constants.DEVICE.TYPE.RFXMETER,
+                         Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT, Constants.DEVICE.TYPE.WEIGHT
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
+                    Case Else
+                        newGroupedDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)
+                        WriteToDebug("RoomViewModel.LoadGroupedDevicesForRoom()", String.Format("{0} : {1}", d.Name, d.Type))
+                End Select
+            Next
+        Else
+            For Each d In devicesToAdd.OrderBy(Function(x) x.DeviceOrder)
+                newGroupedDevices(0).Add(d)
+            Next
+        End If
+
+        'For Each g In newGroupedDevices
+        '    g = g.OrderBy(Function(x) x.DeviceOrder).ToObservableCollection
+        'Next
+
+
         'Me.Devices = New DevicesViewModel(RoomName, devicesToAdd)
+        GroupedDevices = newGroupedDevices
         Me._RoomConfiguration.DeviceConfigurations.SortRoomDevices()
+
     End Function
 
     ''' <summary>
@@ -411,36 +495,36 @@ Public Class RoomViewModel
         RaisePropertyChanged("GroupedDevices")
     End Sub
 
-    Public Function CreateGroupedDevices() As DeviceGroup(Of DevicesViewModel)
-        Dim NewDevices As New DeviceGroup(Of DevicesViewModel)
-        'Create groups for the Room. Empty groups will be filtered out by the GroupStyle in XAML
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_GROUPS_SCENES))
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES))
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_WEATHER))
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_TEMPERATURE))
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_UTILITY))
-        NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_OTHER))
+    'Public Function CreateGroupedDevices() As DeviceGroup(Of DevicesViewModel)
+    '    Dim NewDevices As New DeviceGroup(Of DevicesViewModel)
+    '    'Create groups for the Room. Empty groups will be filtered out by the GroupStyle in XAML
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_GROUPS_SCENES))
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES))
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_WEATHER))
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_TEMPERATURE))
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_UTILITY))
+    '    NewDevices.Add(New DevicesViewModel(Constants.DEVICEGROUPS.GRP_OTHER))
 
-        For Each d In Devices
-            Select Case d.Type
-                Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_1,
-                     Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.THERMOSTAT
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
-                Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER,
-                     Constants.DEVICE.TYPE.LUX, Constants.DEVICE.TYPE.AIR_QUALITY, Constants.DEVICE.TYPE.RFXMETER,
-                     Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT, Constants.DEVICE.TYPE.WEIGHT
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
-                Case Else
-                    NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)
-                    WriteToDebug("RoomViewModel.LoadGroupedDevicesForRoom()", String.Format("{0} : {1}", d.Name, d.Type))
-            End Select
-        Next
-        Return NewDevices
-    End Function
+    '    For Each d In Devices
+    '        Select Case d.Type
+    '            Case Constants.DEVICE.TYPE.SCENE, Constants.DEVICE.TYPE.GROUP
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_GROUPS_SCENES).FirstOrDefault().Add(d)
+    '            Case Constants.DEVICE.TYPE.LIGHTING_LIMITLESS, Constants.DEVICE.TYPE.LIGHT_SWITCH, Constants.DEVICE.TYPE.LIGHTING_1,
+    '                 Constants.DEVICE.TYPE.LIGHTING_2, Constants.DEVICE.TYPE.SECURITY
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_LIGHTS_SWITCHES).FirstOrDefault().Add(d)
+    '            Case Constants.DEVICE.TYPE.TEMP_HUMI_BARO, Constants.DEVICE.TYPE.WIND, Constants.DEVICE.TYPE.UV, Constants.DEVICE.TYPE.RAIN
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_WEATHER).FirstOrDefault().Add(d)
+    '            Case Constants.DEVICE.TYPE.TEMP, Constants.DEVICE.TYPE.THERMOSTAT
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_TEMPERATURE).FirstOrDefault().Add(d)
+    '            Case Constants.DEVICE.TYPE.GENERAL, Constants.DEVICE.TYPE.USAGE, Constants.DEVICE.TYPE.P1_SMART_METER,
+    '                 Constants.DEVICE.TYPE.LUX, Constants.DEVICE.TYPE.AIR_QUALITY, Constants.DEVICE.TYPE.RFXMETER,
+    '                 Constants.DEVICE.TYPE.HUMIDITY, Constants.DEVICE.TYPE.CURRENT, Constants.DEVICE.TYPE.WEIGHT
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_UTILITY).FirstOrDefault().Add(d)
+    '            Case Else
+    '                NewDevices.Where(Function(x) x.Key = Constants.DEVICEGROUPS.GRP_OTHER).FirstOrDefault().Add(d)
+    '                WriteToDebug("RoomViewModel.LoadGroupedDevicesForRoom()", String.Format("{0} : {1}", d.Name, d.Type))
+    '        End Select
+    '    Next
+    '    Return NewDevices
+    'End Function
 End Class
