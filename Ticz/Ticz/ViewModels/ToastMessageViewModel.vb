@@ -93,7 +93,7 @@ Public Class ToastMessageViewModel
         While Not ct.IsCancellationRequested
             Await RunOnUIThread(Sub()
                                     isGoing = False
-                                    msg = message
+                                    msg = message.Replace(System.Environment.NewLine, " ")
                                     isError = err
                                     msg_Priority = priority
                                 End Sub)
