@@ -20,7 +20,7 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="ThisMessage" Background="Transparent" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" Margin="0">
+    <Grid x:Name="ThisMessage" Background="Transparent" Height="40" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -30,12 +30,12 @@
                                   Data="{Binding IconPathGeometry}">
             </Path>
         </Viewbox>
-        <Border  Grid.Column="1"
+        <Border  Grid.Column="1" Height="30"
                         CornerRadius="0" Opacity="1"
                         BorderThickness="1"
-                        Margin="4" Padding="4">
+                        Margin="4" Padding="0">
 
-            <TextBlock Text="{Binding msg}" Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center" 
+            <TextBlock Text="{Binding msg}" Style="{ThemeResource BodyTextBlockStyle}" Margin="0" FontSize="12" VerticalAlignment="Center" 
                              TextWrapping="Wrap"/>
             <Interactivity:Interaction.Behaviors>
                 <Core:DataTriggerBehavior Binding="{Binding isGoing}"  Value="True">

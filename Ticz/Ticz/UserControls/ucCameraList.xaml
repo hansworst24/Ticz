@@ -124,5 +124,6 @@
             </ListView.ItemTemplate>
 
         </ListView>
+        <local:ucToastMessage Grid.Row="1" VerticalAlignment="Bottom" DataContext="{Binding message}"/>
     </Grid>
 </UserControl>

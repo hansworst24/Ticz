@@ -250,8 +250,6 @@ Public Class TiczViewModel
             Await RunOnUIThread(Sub()
                                     IsRefreshing = True
                                 End Sub)
-
-            'Await Notify.Update(False, "Refreshing...", 0, False, 0)
             Dim sWatch = Stopwatch.StartNew()
             'Refresh the Sunset/Rise values, Exit refresh if getting this fails
             If Not (Await DomoSunRiseSet.Load()).issuccess Then Exit Function

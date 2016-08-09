@@ -40,8 +40,8 @@ Public Class CameraViewModel
             While totalsize > 1024 AndAlso j < sizes.Length
                 totalsize = totalsize / 1024
                     j = j + 1
-                End While
-                Return String.Format("{0} {1}", Math.Round(totalsize, 2), sizes(j))
+            End While
+            Return String.Format("{0} {1}", Math.Round(totalsize, 2), sizes(j))
         End Get
     End Property
 
@@ -160,9 +160,11 @@ Public Class CameraViewModel
 
     Public Async Function GetFrameFromJPG() As Task
         Dim vm As TiczViewModel = CType(Application.Current, Application).myViewModel
+        Dim ErrorThrown As Boolean = False
         Dim httpfilter = (New Domoticz).httpfilter
         Using httpfilter
             Dim url As String = (New DomoApi).getCamFrame(cameraidx)
+            WriteToDebug("CameraViewModel.GetFrameFromJPG()", url)
             'TODO ADD HTTP FILTER
             Using httpClient As New HttpClient(httpfilter)
                 Dim cts As New CancellationTokenSource(1000)
@@ -170,10 +172,17 @@ Public Class CameraViewModel
                 Dim imageStream As IBuffer
                 Try
                     imageStream = Await httpClient.GetBufferAsync(New Uri(url)).AsTask(ct_GrabFrame)
-                Catch ex As Exception
-                    WriteToDebug("CameraViewModel.GetFrameFromJPG()", "Frame Skipped")
+                Catch ex As TaskCanceledException
+                    'vm.Cameras.message.Update(True, String.Format("Error refreshing Camera Frame : {0}", ex.Message.ToString), 2, True, 2)
                     Exit Function
+                Catch ex As Exception
+                    vm.Cameras.message.Update(True, String.Format("Error refreshing Camera Frame : {0}", ex.Message.ToString), 2, True, 2)
+                    ErrorThrown = True
+                    WriteToDebug("CameraViewModel.GetFrameFromJPG()", "Frame Skipped")
+
                 End Try
+                'If an error is thrown, wait for 2 seconds and exit the function
+                If ErrorThrown Then Await Task.Delay(2000) : Exit Function
                 _FrameBytes = imageStream.Length
                 _TotalFrameBytes += imageStream.Length
                 If Not imageStream.Length = 0 Then

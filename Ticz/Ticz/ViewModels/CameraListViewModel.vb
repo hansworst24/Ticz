@@ -3,9 +3,11 @@ Imports Windows.Web.Http
 
 Public Class CameraListViewModel
     Inherits ObservableCollection(Of CameraViewModel)
+    Public Property message As New ToastMessageViewModel
 
     Public Async Function Load() As Task(Of retvalue)
         Me.Clear()
+        message.Clear()
         Dim ret As New retvalue
         Dim url As String = (New DomoApi).getCameras()
         WriteToDebug("CameraListViewModel.Load()", url)

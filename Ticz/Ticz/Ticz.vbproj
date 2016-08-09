@@ -230,6 +230,7 @@
     <Compile Include="ViewModels\SecurityPanelViewModel.vb" />
     <Compile Include="ViewModels\TiczSettings.vb" />
     <Compile Include="ViewModels\TiczViewModel.vb" />
+    <Compile Include="ViewModels\ToastMessageViewModel.vb" />
     <Compile Include="ViewModels\VariableListViewModel.vb" />
     <Compile Include="ViewModels\VariableViewModel.vb" />
     <Compile Include="ViewModel\OtherViewModels.vb" />
