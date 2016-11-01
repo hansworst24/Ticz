@@ -1,6 +1,17 @@
 # __Ticz__
 ## Universal Windows App, written in VB.net, for controlling Domoticz (www.domoticz.com)
-#### Updated for : Ticz v1.9.2
+## Development Stopped
+
+# UPDATE
+Update 1/11/2016
+After my Lumia 830 had it's encounter with the sidewalk past week and got a smashed screen, I decided to leave the Windows Phone user community  :o .The recent news of MS not really focusing on WP anymore, or mainly for enterprise users + the tons of little features that WP users miss in their day-to-day apps + more and more appdevs not developing anymore for WP, makes the WP platform dying from my perspective. 
+
+I went for a relatively cheap Samsung Galaxy A3, which is my first encounter with Droid. Looking at the Droid apps out there... I honestly think my UWP had the nicest interface, so it might not be impossible that Ticz returns Android-style :)
+
+Obviously, this means that the Ticz-UWP development has stopped, although I had great pleasure building it and getting feedback and implement fixes ! The code is still available on Github at https://github.com/hansworst24/Ticz for anyone who wants to take the project any further. The app will remain in the Windows Store as well.
+
+Thank you all for using Ticz ! :)
+
 ---
 ## What and why is Ticz ?
 Ticz is being developed primarily as a Windows 10 Mobile app, to control your devices/lights from Domoticz. Although Domoticz implements a powerful WebGUI, I had trouble using this on Windows 10 Mobile in combination with the Edge browser. My credentials weren't stored properly, so when I was outside my LAN, I always had to retype my credentials on the Login page. Long story short ; It took me too long before I was able to switch a light :)
