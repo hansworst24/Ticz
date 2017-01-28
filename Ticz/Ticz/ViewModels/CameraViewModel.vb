@@ -104,7 +104,9 @@ Public Class CameraViewModel
     Public Sub New(idx As Integer, name As String)
         cameraidx = idx
         Me.name = name
-        Me.MaxItemHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height - 40
+        Me.MaxItemHeight = If(ApplicationView.GetForCurrentView.Orientation = ApplicationViewOrientation.Portrait,
+                               ApplicationView.GetForCurrentView.VisibleBounds.Height - 40,
+                               ApplicationView.GetForCurrentView.VisibleBounds.Height)
         RefreshDelay = 2000
         AutoRefreshEnabled = False
     End Sub

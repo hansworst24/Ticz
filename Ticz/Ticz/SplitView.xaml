@@ -69,7 +69,7 @@
                     VerticalAlignment="Center" 
                     Grid.Row="0" 
                     Height="40">
-                <TextBlock VerticalAlignment="Center" 
+                <TextBlock VerticalAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" 
                            Text="{x:Bind vm.Rooms.ActiveRoom.RoomName, Mode=OneWay}"
                            FontSize="24" 
                            Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -108,21 +108,32 @@
                     VerticalAlignment="Center" 
                     Grid.Row="0" 
                     Margin="0,0,4,0">
-                <StackPanel Orientation="Vertical">
+                <!--<StackPanel Orientation="Vertical">
                     <TextBlock VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="{x:Bind vm.DomoVersion.version, Mode=OneWay}"
                                FontSize="10" 
                                Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <!--<TextBlock VerticalAlignment="Center" 
+                    --><!--<TextBlock VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="Ticz v2.0.4"
                                FontSize="10" 
-                               Style="{ThemeResource BaseTextBlockStyle}"/>-->
+                               Style="{ThemeResource BaseTextBlockStyle}"/>--><!--
 
-                </StackPanel>
+                </StackPanel>-->
+                <AppBarButton Width="48" 
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center" 
+                                      Height="40" 
+                                      Click="{x:Bind vm.TiczMenu.MenuSwitch}">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                          FontSize="26" 
+                                          Glyph="&#xE700;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </Border>
-            <!-- THIS IS THE ROOM VIEW, WHICH IS THE COLLECETION OF DEVICES THAT ARE SHOWN IN THE SELECTED ROOM VIEW-->
+            <!-- THIS IS THE ROOM VIEW, WHICH IS THE COLLECTION OF DEVICES THAT ARE SHOWN IN THE SELECTED ROOM VIEW-->
             <ContentControl Grid.Row="1" 
                             ContentTemplate="{Binding Rooms.ActiveRoom.RoomContentTemplate}" 
                             HorizontalContentAlignment="Stretch" 

@@ -195,6 +195,7 @@ Public NotInheritable Class Constants
             Public Const LIGHT_SWITCH As String = "Light/Switch"
             Public Const LUX As String = "Lux"
             Public Const GROUP As String = "Group"
+            Public Const HEATING As String = "Heating"
             Public Const HUMIDITY As String = "Humidity"
             Public Const RFXMETER As String = "RFXMeter"
             Public Const SCENE As String = "Scene"
@@ -216,6 +217,7 @@ Public NotInheritable Class Constants
             Public Const P1_GAS As String = "Gas"
             Public Const P1_ELECTRIC As String = "Energy"
             Public Const PERCENTAGE As String = "Percentage"
+            Public Const RELAY As String = "Relay"
             Public Const RGB As String = "RGB"
             Public Const RGBW As String = "RGBW"
             Public Const SETPOINT As String = "SetPoint"
@@ -240,6 +242,7 @@ Public NotInheritable Class Constants
             Public Const PUSH_OFF_BUTTON As String = "Push Off Button"
             Public Const SELECTOR As String = "Selector"
             Public Const SMOKE_DETECTOR As String = "Smoke Detector"
+            Public Const TPI As String = "TPI"
             Public Const VEN_BLINDS_EU As String = "Venetian Blinds EU"
             Public Const VEN_BLINDS_US As String = "Venetian Blinds US"
             Public Const X10_SIREN As String = "X10 Siren"
@@ -1407,6 +1410,7 @@ Public NotInheritable Class DomoApi
         Return String.Format("{0}/json.htm?type=plans", ServerURL)
     End Function
 End Class
+
 
 
 

@@ -39,7 +39,9 @@ Public Class CameraListViewModel
     Public Async Sub ResizeCameras(sender As ApplicationView, args As Object)
         WriteToDebug("CameraListViewModel.ResizeCameras()", "executed")
         For Each c In Me
-            c.MaxItemHeight = ApplicationView.GetForCurrentView.VisibleBounds.Height - 40
+            c.MaxItemHeight = If(ApplicationView.GetForCurrentView.Orientation = ApplicationViewOrientation.Portrait,
+                               ApplicationView.GetForCurrentView.VisibleBounds.Height - 40,
+                               ApplicationView.GetForCurrentView.VisibleBounds.Height)
         Next
     End Sub
 

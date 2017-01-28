@@ -7,6 +7,7 @@
     "MvvmLight": "5.2.0",
     "MvvmLightLibs": "5.2.0",
     "Newtonsoft.Json": "8.0.2",
+    "WindowsStateTriggers": "1.1.0",
     "WinRTXamlToolkit.UWP": "1.9.4"
   },
   "frameworks": {

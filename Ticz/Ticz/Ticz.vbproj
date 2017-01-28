@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>Ticz_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>38A83D41BC163B6F16D27CFE0218BB4BB72C181A</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -504,19 +504,21 @@
     <Import Include="Windows.UI.Xaml.Navigation" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
-      <Name>Behaviors SDK %28XAML%29</Name>
-    </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xaml.Interactions">
+      <HintPath>bin\ARM\Release\Microsoft.Xaml.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Interactivity">
+      <HintPath>bin\ARM\Release\Microsoft.Xaml.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="Syncfusion.SfBusyIndicator.WinRT">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for WinRT\8.1\Syncfusion.SfBusyIndicator.WinRT.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfChart.Universal, Version=13.4451.0.53, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Syncfusion.SfChart.Universal">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for Universal\8.1\Syncfusion.SfChart.Universal.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.SfColorPickers.WinRT">
@@ -529,7 +531,6 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Syncfusion\Essential Studio\13.4.0.53\Assemblies for WinRT\8.1\Syncfusion.SfShared.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
