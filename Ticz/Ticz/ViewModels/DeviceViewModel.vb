@@ -5,7 +5,6 @@ Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
 Imports Windows.UI
 Imports Windows.Web.Http
-Imports GalaSoft.MvvmLight.Helpers
 
 Public Class DeviceViewModel
     Inherits ViewModelBase
