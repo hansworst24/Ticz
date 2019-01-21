@@ -1,9 +1,11 @@
 ﻿Imports System.Reflection
+Imports System.Text
 Imports GalaSoft.MvvmLight
 Imports GalaSoft.MvvmLight.Command
 Imports Newtonsoft.Json
 Imports Windows.UI
 Imports Windows.Web.Http
+Imports GalaSoft.MvvmLight.Helpers
 
 Public Class DeviceViewModel
     Inherits ViewModelBase
@@ -691,10 +693,14 @@ Public Class DeviceViewModel
     Public ReadOnly Property LevelNamesList As List(Of String)
         Get
             If Not _Device.LevelNames = "" Then
-                Return _Device.LevelNames.Split("|").ToList()
-            Else
-                Return New List(Of String)
+                Dim levels As String
+                Dim succeed As Boolean
+                levels = TryConvertFromBase64String(_Device.LevelNames, succeed)
+                If succeed Then
+                    Return levels.Split("|").ToList()
+                End If
             End If
+            Return New List(Of String)
         End Get
     End Property
     Public ReadOnly Property MaxDimLevel As Integer
@@ -983,7 +989,7 @@ Public Class DeviceViewModel
                                                            If PassCode = "" Then Exit Sub
                                                        End If
                                                        Dim ret As retvalue = Await SwitchDevice(SwitchToState)
-                                                       Else
+                                                   Else
                                                        WriteToDebug("Device.SelectorSelectionChanged()", "ignoring...")
                                                    End If
                                                End Sub)
@@ -1515,6 +1521,16 @@ Public Class DeviceViewModel
 
     End Function
 
+    Private Function TryConvertFromBase64String(value As String, ByRef succeed As Boolean)
+        Dim result As String = String.Empty
+        Try
+            result = Encoding.UTF8.GetString(Convert.FromBase64String(value))
+            succeed = True
+        Catch ex As Exception
+            succeed = False
+        End Try
+        Return result
+    End Function
 
 #End Region
 #Region "IDisposable Support"
